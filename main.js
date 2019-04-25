@@ -115,7 +115,7 @@ function drawLineChart(data) {
 
 
 // first promise returns the dataset
-var dataset = d3.csv("vpts_test.csv").then(data => data);
+var dataset = d3.csv("data/example_vpts_20160901.csv").then(data => data);
 
 //this promise returns our parsed data
 // http://datawanderings.com/2018/08/15/d3-js-v5-promise-syntax-examples/
