@@ -70,27 +70,27 @@ function drawLineChart(data) {
     var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var x = d3.scaleTime()
+    var xScale = d3.scaleTime()
         .domain(d3.extent(data, d =>  d.datetime ))
         .rangeRound([0, width]);
 
-    var y = d3.scaleLinear()
+    var yScale = d3.scaleLinear()
         .domain(d3.extent(data, d =>  d.mtr))
         .rangeRound([height, 0]);
 
     var line = d3.line()
         .defined(d => !isNaN(d.mtr))
-        .x(d => x(d.datetime))
-        .y(d => y(d.mtr));
+        .x(d => xScale(d.datetime))
+        .y(d => yScale(d.mtr));
 
     g.append("g")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x))
+        .call(d3.axisBottom(xScale))
         .select(".domain")
         .remove();
 
     g.append("g")
-        .call(d3.axisLeft(y))
+        .call(d3.axisLeft(yScale))
         .append("text")
         .attr("fill", "#000")
         .attr("transform", "rotate(-90)")
@@ -107,6 +107,8 @@ function drawLineChart(data) {
         .attr("stroke-linecap", "round")
         .attr("stroke-width", 1.5)
         .attr("d", line);
+
+
 }
 
 
