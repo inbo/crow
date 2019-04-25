@@ -3,12 +3,22 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
         <title>CROW</title>
+        <link rel="stylesheet" href="">
+        <style>
+            .line-chart
+            {
+                border: 0px solid lightgray;
+            }
+        </style>
     </head>
     <body>
-        <h1>Welcome</h1>
-        
+        <h1>MTR plot</h1>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <svg class="line-chart"></svg>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.js" integrity="sha256-kX9/pjvgpDgSmoSfzAlYJeICaZXca16iu+c3F6ueKRo=" crossorigin="anonymous"></script>
         <script src="main.js"></script>
     </body>
