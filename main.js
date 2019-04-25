@@ -56,18 +56,75 @@ function calculateMtr(data, altMin = 0, altMax = Infinity,
     return mtr
 }
 
+function drawLineChart(data) {
+    var svgWidth = 1000, svgHeight = 400;
+    var margin = { top: 20, right: 20, bottom: 30, left: 50 };
+    var width = svgWidth - margin.left - margin.right;
+    var height = svgHeight - margin.top - margin.bottom;
+
+    var svg = d3.select('svg')
+        .attr("width", svgWidth)
+        .attr("height", svgHeight)
+
+    var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var x = d3.scaleTime()
+        .domain(d3.extent(data, d =>  d.datetime ))
+        .rangeRound([0, width]);
+
+    var y = d3.scaleLinear()
+        .domain(d3.extent(data, d =>  d.mtr))
+        .rangeRound([height, 0]);
+
+    var line = d3.line()
+        .x(d => x(d.datetime))
+        .y(d => y(d.mtr));
+
+    g.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+        .select(".domain")
+        .remove();
+
+    g.append("g")
+        .call(d3.axisLeft(y))
+        .append("text")
+        .attr("fill", "#000")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .attr("text-anchor", "end")
+        .text("Number of individuals");
+
+    g.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-linejoin", "round")
+        .attr("stroke-linecap", "round")
+        .attr("stroke-width", 1.5)
+        .attr("d", line);
+}
+
+
+
 
 // first promise returns the dataset
 var dataset = d3.csv("vpts_test.csv").then(data => data);
 
 //this promise returns our parsed data
+// http://datawanderings.com/2018/08/15/d3-js-v5-promise-syntax-examples/
 var csv_parsed = dataset.then(
     function(value) {
         return Promise.all(value.map(function(item){
             return {
                 datetime: Date.parse(item.datetime), // cast to date
                 height: parseInt(item.height), // cast to int
-                dd: +item.dd
+                dd: +item.dd,
+                ff: +item.ff,
+                dens: +item.dens,
+                sd_vvp: +item.sd_vvp
             };
         }))
     });
@@ -79,9 +136,13 @@ csv_parsed.then(function(data) {
         .key(function(d) { return d.datetime}) // group data by datetime
         .entries(data);
 
-    console.log(data_nested);
-    let mtr = data_nested.map(date_values => calculate_vpi(date_values));
-    console.log(data_nested);
+    let mtr_profile = data_nested.map(d => ({
+            datetime : d.key,
+            mtr : calculateMtr(d.values)
+        })); // 400, 2000, 200, 3
+
+    console.log(mtr_profile);
+    drawLineChart(mtr_profile.filter(d => !isNaN(d.mtr)));
 });
 
 
