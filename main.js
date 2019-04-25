@@ -57,6 +57,7 @@ function calculateMtr(data, altMin = 0, altMax = Infinity,
 }
 
 function drawLineChart(data) {
+    // cfr. https://medium.freecodecamp.org/learn-to-create-a-line-chart-using-d3-js-4f43f1ee716b
     var svgWidth = 1000, svgHeight = 400;
     var margin = { top: 20, right: 20, bottom: 30, left: 50 };
     var width = svgWidth - margin.left - margin.right;
@@ -78,6 +79,7 @@ function drawLineChart(data) {
         .rangeRound([height, 0]);
 
     var line = d3.line()
+        .defined(d => !isNaN(d.mtr))
         .x(d => x(d.datetime))
         .y(d => y(d.mtr));
 
@@ -142,7 +144,7 @@ csv_parsed.then(function(data) {
         })); // 400, 2000, 200, 3
 
     console.log(mtr_profile);
-    drawLineChart(mtr_profile.filter(d => !isNaN(d.mtr)));
+    drawLineChart(mtr_profile);
 });
 
 
