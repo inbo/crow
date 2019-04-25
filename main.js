@@ -1,3 +1,13 @@
+import { fetchVptsData, readVptsFile } from "./src/modules/fetchVptsData.js";
+import { integrateProfile } from "./src/modules/integrateProfile.js";
+import { plotVpts } from "./src/modules/plotVpts.js";
+import { plotVpi } from "./src/modules/plotVpi.js";
+
+console.log(fetchVptsData());
+console.log(readVptsFile());
+console.log(integrateProfile());
+console.log(plotVpts());
+console.log(plotVpi());
 
 function calculateMtr(data, altMin = 0, altMax = Infinity,
     interval = 200, vvpThresh = 2, alpha = NaN) {
