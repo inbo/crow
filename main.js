@@ -1,3 +1,5 @@
+"use strict";
+
 import { fetchVpts, readVpts } from "./src/modules/fetchVpts.js";
 import { integrateProfile } from "./src/modules/integrateProfile.js";
 import { plotVpts } from "./src/modules/plotVpts.js";
