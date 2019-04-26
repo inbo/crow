@@ -65,6 +65,9 @@ function calculateMtr(data, altMin = 0, altMax = Infinity,
 const file = "./data/example_vpts_20160901.csv"
 const dataset = readVpts(file);
 
+// Initialize chart
+const vpiChart = plotVpi().width(800).height(400);
+
 //this promise returns our parsed data
 // http://datawanderings.com/2018/08/15/d3-js-v5-promise-syntax-examples/
 var csv_parsed = dataset.then(
@@ -93,9 +96,8 @@ csv_parsed.then(function(data) {
             mtr : calculateMtr(d.values)
         })); // 400, 2000, 200, 3
 
-    console.log(mtr_profile);
-    plotVpi(mtr_profile);
+    // Select element, bind data and call chart
+    d3.select("#vpi-chart")
+      .datum(mtr_profile)
+      .call(vpiChart);
 });
-
-
-

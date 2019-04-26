@@ -8,14 +8,15 @@
     <title>crow</title>
     
     <style>
-      .line-chart {
-        border: 0px solid lightgray;
+      #vpi-chart svg {
+        border: 1px solid #cccccc;
       }
     </style>
   </head>
   <body>
     <h1>MTR plot</h1>
-    <svg class="line-chart"></svg>
+    <div id="vpi-chart">
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.js" integrity="sha256-kX9/pjvgpDgSmoSfzAlYJeICaZXca16iu+c3F6ueKRo=" crossorigin="anonymous"></script>
     <script type="module" src="../src/main.js"></script>
