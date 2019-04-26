@@ -3,12 +3,6 @@ import { integrateProfile } from "./src/modules/integrateProfile.js";
 import { plotVpts } from "./src/modules/plotVpts.js";
 import { plotVpi } from "./src/modules/plotVpi.js";
 
-console.log(fetchVptsData());
-console.log(readVptsFile());
-console.log(integrateProfile());
-console.log(plotVpts());
-console.log(plotVpi());
-
 function calculateMtr(data, altMin = 0, altMax = Infinity,
     interval = 200, vvpThresh = 2, alpha = NaN) {
     // Note: interval and vvpThresh should actually be derived from data/metadata itself
@@ -121,11 +115,9 @@ function drawLineChart(data) {
 
 }
 
-
-
-
-// first promise returns the dataset
-var dataset = d3.csv("./data/example_vpts_20160901.csv").then(data => data);
+// Read example data file
+const file = "./data/example_vpts_20160901.csv"
+const dataset = readVpts(file);
 
 //this promise returns our parsed data
 // http://datawanderings.com/2018/08/15/d3-js-v5-promise-syntax-examples/
