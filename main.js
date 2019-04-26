@@ -42,16 +42,15 @@ function calculateMtr(data, altMin = 0, altMax = Infinity,
     }
 
     // extract the dd, ff and dens values
-    let dd = data.map(x => x.dd);
     let ff = data.map(x => x.ff);
     let dens = data.map(x => x.dens);
 
     // calculate the cosFactor
     let cosFactor = [];
     if (isNaN(alpha)) {
-        cosFactor =  dd.map( x => 1. + 0. * x);
+        cosFactor =  data.map(x => 1. + 0. * x.dd);
       } else {
-        cosFactor = dd.map( x => Math.cos(x - alpha) * Math.PI / 180);
+        cosFactor = data.map(x => Math.cos(x.dd - alpha) * Math.PI / 180);
       }
 
     // calculate mtr
@@ -152,30 +151,6 @@ csv_parsed.then(function(data) {
     console.log(mtr_profile);
     drawLineChart(mtr_profile);
 });
-
-
-/*
-d3.csv("example_vpts.csv", function(error, csv) {
-    if (error) throw error;
-
-    // process vpts data
-    var csv_parsed = csv.map(function(item) {
-        return {
-            datetime: new Date(item.date), // cast to date
-            height: parseInt(item.height), // cast to int
-            dd: +item.vp_files
-        };
-    });
-
-    var data = d3.nest()
-        .key(function(d) { return d.height}) // group data by height
-        .map(csv_parsed);
-
-
-    console.log(csv_parsed);
-
-})
-*/
 
 
 
