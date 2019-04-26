@@ -1,9 +1,9 @@
 "use strict";
 
-import { fetchVpts, readVpts } from "./src/modules/fetchVpts.js";
-import { integrateProfile } from "./src/modules/integrateProfile.js";
-import { plotVpts } from "./src/modules/plotVpts.js";
-import { plotVpi } from "./src/modules/plotVpi.js";
+import { fetchVpts, readVpts } from "./modules/fetchVpts.js";
+import { integrateProfile } from "./modules/integrateProfile.js";
+import { plotVpts } from "./modules/plotVpts.js";
+import { plotVpi } from "./modules/plotVpi.js";
 
 function calculateMtr(data, altMin = 0, altMax = Infinity,
     interval = 200, vvpThresh = 2, alpha = NaN) {
