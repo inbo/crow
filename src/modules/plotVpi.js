@@ -1,6 +1,4 @@
 function plotVpi() {
-  console.log("plotVpi() called");
-
   // Options accessible to caller
   let width = 600;
   let height = 300;
@@ -35,7 +33,7 @@ function plotVpi() {
       var xAxis = d3.axisBottom(xRange);
       var yAxis = d3.axisLeft(yRange);
 
-      // Items below depend on data
+      // Properties below depend on data
 
       // Set value line
       let valueLine = d3.line()
@@ -43,7 +41,7 @@ function plotVpi() {
         .x(d => xRange(d.datetime))
         .y(d => yRange(d.mtr));
 
-      // Scale the range of the data
+      // Scale extend of the data
       xRange.domain(d3.extent(data, d => d.datetime ));
       yRange.domain(d3.extent(data, d => d.mtr ));
 
@@ -80,7 +78,7 @@ function plotVpi() {
 
       // Update functions
       updateData = function() {
-        // Scale the range of the data again
+        // Scale extend of the data again
         xRange.domain(d3.extent(data, d => d.datetime ));
         yRange.domain(d3.extent(data, d => d.mtr ));
 
