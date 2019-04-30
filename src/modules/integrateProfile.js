@@ -18,7 +18,7 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
   const altMinMaxFromData = d3.extent(data, d => d.height );
   altMin = Math.max(altMin, altMinMaxFromData[0]);
   altMax = Math.min(altMax, altMinMaxFromData[1] + interval); // Interval added to get upper bound of height layer
-  
+
   // Filter data on requested heights
   data = data.filter(d => d.height >= altMin & d.height <= altMax);
 
@@ -31,6 +31,7 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
   // Extract dd, ff and dens values
   let ff = data.map(x => x.ff);
   let dens = data.map(x => x.dens);
+  let eta = data.map(x => x.eta);
 
   // Calculate the cosFactor
   let cosFactor = [];
@@ -45,7 +46,22 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
     .filter(x => !Number.isNaN(x))
     .reduce((a, b) => a + b, 0);
 
-  return mtr
+  // Calculate rtr
+  let rtr = 0.001 * interval * cosFactor.map((e, i) => e * ff[i] * eta[i] * 3.6)
+    .filter(x => !Number.isNaN(x))
+    .reduce((a, b) => a + b, 0);
+
+  // Calculate vid
+  let vid = 0.001 * interval * dens
+    .filter(x => !Number.isNaN(x))
+    .reduce((a, b) => a + b, 0);
+
+  // Calculate vir
+  let vir = 0.001 * interval * eta
+    .filter(x => !Number.isNaN(x))
+    .reduce((a, b) => a + b, 0);
+
+  return ({ "mtr" : mtr, "rtr" : rtr, "vid" : vid, "vir" : vir})
 }
 
 export { integrateProfile }

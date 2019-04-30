@@ -19,7 +19,8 @@ var csv_parsed = dataset.then(function(value) {
       dd: +item.dd,
       ff: +item.ff,
       dens: +item.dens,
-      sd_vvp: +item.sd_vvp
+      sd_vvp: +item.sd_vvp,
+      eta: +item.eta
     };
   }))
 });
