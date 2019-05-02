@@ -5,27 +5,11 @@ import { integrateProfile } from "./modules/integrateProfile.js";
 import { plotVpts } from "./modules/plotVpts.js";
 import { plotVpi } from "./modules/plotVpi.js";
 
-// Read example data file
-const file = "./data/example_vpts_20160901.csv";
-const dataset = readVpts(file);
-
-//this promise returns our parsed data
-// http://datawanderings.com/2018/08/15/d3-js-v5-promise-syntax-examples/
-var csv_parsed = dataset.then(function(value) {
-  return Promise.all(value.map(function(item){
-    return {
-      datetime: Date.parse(item.datetime), // cast to date
-      height: parseInt(item.height), // cast to int
-      dd: +item.dd,
-      ff: +item.ff,
-      dens: +item.dens,
-      sd_vvp: +item.sd_vvp
-    };
-  }))
-});
+// Read example data files
+const dataset = readVpts("./data/example_vpts_20160901.csv");
 
 //print the object
-csv_parsed.then(function(data) {
+dataset.then(function(data) {
   var data_nested = d3.nest()
     .key(function(d) { return d.datetime}) // group data by datetime
     .entries(data);
