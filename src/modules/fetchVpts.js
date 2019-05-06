@@ -1,11 +1,9 @@
-function fetchVpts(dateMin = null, dateMax = null, directory = "./") {
+async function fetchVpts(dateMin = null, dateMax = null, directory = "./") {
     /*
     We assume files have daily frequency and the date is available
     in the file name (e.g. example_vpts_20160901.csv)
 
-    startDate - endDate
-        => retrieve the different required dates
-        => compose the filenames
+    Make sure to have the directory input ending with an "/"
     */
 
     // parse the datestrings
@@ -29,13 +27,17 @@ function fetchVpts(dateMin = null, dateMax = null, directory = "./") {
     // compose filename string array with dates
     let pre_string = "example_vpts_"
     let post_string = ".csv"
-    dates = dates.map(date => date.toISOString().split("T")[0].replace(/\D/g,''))
-    filenames = dates.map(date => directory + pre_string + date + post_string)
+    dates = dates.map(date => date.toISOString().split("T")[0].replace(/\D/g,''));
+    filenames = dates.map(date => directory + pre_string + date + post_string);
+    console.log(filenames);
 
-    return filenames
+    // get the files asynchronyous
+    let data = filenames.map(filename => readVpts(filename));
+    const flattened = await Promise.all(data);
+    return flattened.reduce(function(a, b) {
+      return a.concat(b);
+    }, []);
 }
-
-console.log(fetchVpts("2016-09-01", "2016-09-03", "../public/data/"))
 
 async function readVpts(file) {
   let response = await d3.csv(file, d => {

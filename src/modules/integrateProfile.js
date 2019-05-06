@@ -18,7 +18,7 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
   const altMinMaxFromData = d3.extent(data, d => d.height );
   altMin = Math.max(altMin, altMinMaxFromData[0]);
   altMax = Math.min(altMax, altMinMaxFromData[1] + interval); // Interval added to get upper bound of height layer
-  
+
   // Filter data on requested heights
   data = data.filter(d => d.height >= altMin & d.height <= altMax);
 
