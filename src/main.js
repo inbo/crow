@@ -6,9 +6,12 @@ import { plotVpts } from "./modules/plotVpts.js";
 import { plotVpi } from "./modules/plotVpi.js";
 
 // Read example data files
-const dataset = readVpts("./data/example_vpts_20160901.csv");
-const dataset1 = readVpts("./data/example_vpts_20160901.csv");
-const dataset2 = readVpts("./data/example_vpts_20160902.csv");
+const dataset1 = fetchVpts("2016-09-01", "2016-09-01", "../public/data/");
+console.log(dataset1);
+const dataset2 = fetchVpts("2016-09-02", "2016-09-03", "../public/data/");
+console.log(dataset2);
+
+//const dataset2 = fetchVpts("2016-09-02", "2016-09-03", "../public/data/");
 
 // Define and bind (empty) chart
 let vpiChart = plotVpi().width(700).height(350);
