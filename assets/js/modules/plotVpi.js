@@ -1,13 +1,21 @@
 function plotVpi() {
   // Options accessible to caller
-  let width = 600;
-  let height = 300;
+  let width = undefined;
+  let height = undefined;
   let data = [];
-  let updateWidth;
-  let updateHeight;
   let updateData;
 
   function chart(selection) {
+    // Set width and height if undefined
+    if (width == undefined) {
+      // Use parent container width
+      width = selection.node().getBoundingClientRect().width;
+    }
+    if (height == undefined) {
+      // Use parent container height (often collapsed) with minimum of 100
+      height = Math.max(selection.node().getBoundingClientRect().height, 100);
+    }
+
     selection.each(function () {
       // Define chart dimensions
       let margin = { top: 20, right: 20, bottom: 30, left: 50 };
@@ -102,14 +110,12 @@ function plotVpi() {
   chart.width = function(value) {
     if (!arguments.length) return width;
     width = value;
-    // if (typeof updateWidth === 'function') updateWidth(); // updateWidth() not implemented
     return chart;
   };
 
   chart.height = function(value) {
     if (!arguments.length) return height;
     height = value;
-    // if (typeof updateHeight === 'function') updateHeight(); // updateHeight() not implemented
     return chart;
   };
 

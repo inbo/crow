@@ -19,7 +19,7 @@ d3.select("#vpts-chart")
   .call(vptsChart);
 
 // Define and bind (empty) vpi chart
-let vpiChart = plotVpi().width(800).height(300);
+let vpiChart = plotVpi().height(300);
 d3.select("#vpi-chart")
   .call(vpiChart);
 
