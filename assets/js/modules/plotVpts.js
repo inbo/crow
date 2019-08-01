@@ -39,7 +39,6 @@ function plotVpts() {
 
       let yAxis = svg.selectAll(".y-axis")
 
-      
       // Update functions
       updateData = function() {
         
