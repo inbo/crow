@@ -8,9 +8,9 @@ import { plotVpts } from "./modules/plotVpts.js";
 import { plotVpi } from "./modules/plotVpi.js";
 
 // Read example data files
-const dataset1 = fetchVpts("2016-09-01", "2016-09-01", "../data/");
+const dataset1 = fetchVpts("2016-09-01", "2016-09-01", "data/");
 console.log(dataset1);
-const dataset2 = fetchVpts("2016-09-02", "2016-09-03", "../data/");
+const dataset2 = fetchVpts("2016-09-02", "2016-09-03", "data/");
 console.log(dataset2);
 
 // Define and bind (empty) vpts chart
