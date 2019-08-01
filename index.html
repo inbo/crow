@@ -15,13 +15,13 @@
       <div class="container">
         <div class="row">
 
-          <div class="col-5 form-group">
+          <div class="col-md-5 form-group">
             <label for="date">Date</label>
             <input class="form-control" type="date" name="date" v-model="date">
             <small class="form-text text-muted" id="date-help">{{ formattedDate }}</small>
           </div>
 
-          <div class="col-5 form-group">
+          <div class="col-md-5 form-group">
             <label for="radar">Radar</label>
             <select class="form-control" name="radar" v-model="radar">
               <option disabled value="">Please select a radar</option>
@@ -30,7 +30,7 @@
             <small class="form-text text-muted" id="radar-help">{{ radar}} is located in {{ radarCountry }}</small>
           </div>
 
-          <div class="col-2 form-group">
+          <div class="col-md-2 form-group">
             <label class="d-block" for="interval">Interval</label>
             <div class="form-check form-check-inline">
               <input class="form-check-input" type="radio" name="interval" value="week" v-model="interval">
