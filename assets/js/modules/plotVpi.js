@@ -1,13 +1,21 @@
 function plotVpi() {
   // Options accessible to caller
-  let width = 600;
-  let height = 300;
+  let width = undefined;
+  let height = undefined;
   let data = [];
-  let updateWidth;
-  let updateHeight;
   let updateData;
 
   function chart(selection) {
+    // Set width and height if undefined
+    if (width == undefined) {
+      // Use parent container width
+      width = selection.node().getBoundingClientRect().width;
+    }
+    if (height == undefined) {
+      // Use parent container height (often collapsed) with minimum of 100
+      height = Math.max(selection.node().getBoundingClientRect().height, 100);
+    }
+
     selection.each(function () {
       // Define chart dimensions
       let margin = { top: 20, right: 20, bottom: 30, left: 50 };
@@ -16,13 +24,13 @@ function plotVpi() {
       let transitionDuration = 750;
 
       // Create svg and chart element
-      let dom = d3.select(this);
-      let svg = dom.append("svg")
+      let svg = d3.select(this)
+        .append("svg")
         .attr("class", "vpi-plot")
         .attr('height', height)
-        .attr('width', width);
-      let canvas = svg.append("g")
-        .attr("class", "canvas")
+        .attr('width', width)
+        .append("g")
+        .attr("class", "chart")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
       // Define ranges
@@ -33,7 +41,7 @@ function plotVpi() {
       var xAxis = d3.axisBottom(xRange);
       var yAxis = d3.axisLeft(yRange);
 
-      // Properties below depend on data
+      // Properties below depend on data, even though data = [] on first call
 
       // Set value line
       let valueLine = d3.line()
@@ -46,7 +54,7 @@ function plotVpi() {
       yRange.domain(d3.extent(data, d => d.mtr ));
 
       // Add x axis
-      canvas.append("g")
+      svg.append("g")
         .attr("class", "x-axis")
         .attr("transform", "translate(0," + chartHeight + ")")
         .call(xAxis)
@@ -54,7 +62,7 @@ function plotVpi() {
         .remove();
 
       // Add y axis
-      canvas.append("g")
+      svg.append("g")
         .attr("class", "y-axis")
         .call(yAxis)
         .append("text")
@@ -66,7 +74,7 @@ function plotVpi() {
         .text("Number of individuals");
       
       // Add value line
-      canvas.append("path")
+      svg.append("path")
         .attr("class", "line")
         .datum(data)
         .attr("fill", "none")
@@ -102,14 +110,12 @@ function plotVpi() {
   chart.width = function(value) {
     if (!arguments.length) return width;
     width = value;
-    // if (typeof updateWidth === 'function') updateWidth(); // updateWidth() not implemented
     return chart;
   };
 
   chart.height = function(value) {
     if (!arguments.length) return height;
     height = value;
-    // if (typeof updateHeight === 'function') updateHeight(); // updateHeight() not implemented
     return chart;
   };
 
