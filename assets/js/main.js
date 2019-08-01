@@ -41,7 +41,7 @@ dataset1.then(function(data) {
   let subset = data.slice(0, 5);
 
   // Bind to vpts chart
-  vptsChart.data(subset);
+  // vptsChart.data(subset);
   
   // Bind to vpi chart
   vpiChart.data(mtrProfile);
