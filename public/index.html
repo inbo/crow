@@ -11,8 +11,41 @@
   </head>
 
   <body>
+    <div class="jumbotron">
+      <div class="container">
+        <form>  
+          <div class="row">
+            <div class="col form-group">
+              <label for="date">Date</label>
+              <input class="form-control" type="date" id="date" value="2019-08-01">
+              <small class="form-text text-muted" id="date-help">Date is ...</small>
+            </div>
+            <div class="col form-group">
+              <label for="radar">Radar</label>
+              <select class="form-control" id="radar">
+                <option>Jabbeke</option>
+                <option>Zaventem</option>
+                <option>Wideumont</option>
+              </select>
+            </div>
+            <div class="col form-group">
+              <label class="d-block" for="interval">Interval</label>
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-secondary active">
+                  <input type="radio" name="interval" id="interval-week" autocomplete="off" checked> Week
+                </label>
+                <label class="btn btn-secondary">
+                  <input type="radio" name="interval" id="interval-day" autocomplete="off"> Day
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <main>
-      <div class="container-fluid">
+      <div class="container">
         <div class="row">
           
           <div class="col">
@@ -24,12 +57,15 @@
             <h2>VPI</h2>
             <div id="vpi-chart"></div>
           </div>
-          
+
         </div>
       </div>
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.js" integrity="sha256-kX9/pjvgpDgSmoSfzAlYJeICaZXca16iu+c3F6ueKRo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script type="module" src="../src/main.js"></script>
   </body>
 </html>
