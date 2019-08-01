@@ -11,38 +11,40 @@
   </head>
 
   <body>
-    <div class="jumbotron">
+    <form id="form" v-on:change="updateCharts">
       <div class="container">
-        <form>  
-          <div class="row">
-            <div class="col form-group">
-              <label for="date">Date</label>
-              <input class="form-control" type="date" id="date" value="2019-08-01">
-              <small class="form-text text-muted" id="date-help">Date is ...</small>
+        <div class="row">
+
+          <div class="col-5 form-group">
+            <label for="date">Date</label>
+            <input class="form-control" type="date" name="date" v-model="date">
+            <small class="form-text text-muted" id="date-help">{{ formattedDate }}</small>
+          </div>
+
+          <div class="col-5 form-group">
+            <label for="radar">Radar</label>
+            <select class="form-control" name="radar" v-model="radar">
+              <option disabled value="">Please select a radar</option>
+              <option v-for="radar in radars">{{ radar.name }}</option>
+            </select>
+            <small class="form-text text-muted" id="radar-help">{{ radar}} is located in {{ radarCountry }}</small>
+          </div>
+
+          <div class="col-2 form-group">
+            <label class="d-block" for="interval">Interval</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="interval" value="week" v-model="interval">
+              <label class="form-check-label" for="interval-week">Week</label>
             </div>
-            <div class="col form-group">
-              <label for="radar">Radar</label>
-              <select class="form-control" id="radar">
-                <option>Jabbeke</option>
-                <option>Zaventem</option>
-                <option>Wideumont</option>
-              </select>
-            </div>
-            <div class="col form-group">
-              <label class="d-block" for="interval">Interval</label>
-              <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-secondary active">
-                  <input type="radio" name="interval" id="interval-week" autocomplete="off" checked> Week
-                </label>
-                <label class="btn btn-secondary">
-                  <input type="radio" name="interval" id="interval-day" autocomplete="off"> Day
-                </label>
-              </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="interval" value="day" v-model="interval">
+              <label class="form-check-label" for="interval-day">Day</label>
             </div>
           </div>
-        </form>
+        
+        </div>
       </div>
-    </div>
+    </form>
 
     <main>
       <div class="container">
@@ -63,9 +65,7 @@
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.js" integrity="sha256-kX9/pjvgpDgSmoSfzAlYJeICaZXca16iu+c3F6ueKRo=" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script type="module" src="../src/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
   </body>
 </html>

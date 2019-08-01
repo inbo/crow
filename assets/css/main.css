@@ -1,6 +1,7 @@
-.jumbotron {
-  border-radius: 0;
-  padding: 0.5rem 0;
+form {
+  background-color: #f8f9fa;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
 }
 
 svg {
