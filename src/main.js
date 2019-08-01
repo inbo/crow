@@ -11,10 +11,13 @@ console.log(dataset1);
 const dataset2 = fetchVpts("2016-09-02", "2016-09-03", "../public/data/");
 console.log(dataset2);
 
-//const dataset2 = fetchVpts("2016-09-02", "2016-09-03", "../public/data/");
+// Define and bind (empty) vpts chart
+let vptsChart = plotVpts().width(800).height(300);
+d3.select("#vpts-chart")
+  .call(vptsChart);
 
-// Define and bind (empty) chart
-let vpiChart = plotVpi().width(700).height(350);
+// Define and bind (empty) vpi chart
+let vpiChart = plotVpi().width(800).height(300);
 d3.select("#vpi-chart")
   .call(vpiChart);
 
@@ -23,12 +26,22 @@ dataset1.then(function(data) {
   let nestedData = d3.nest()
     .key(d => d.datetime) // group data by datetime
     .entries(data);
+  
+  // Create mtr profile
   let mtrProfile = nestedData.map(d => {
     return {
       datetime: d.key,
       mtr: integrateProfile(d.values)
     }
   });
+
+  // Create subset of vpts data
+  let subset = data.slice(0, 5);
+
+  // Bind to vpts chart
+  vptsChart.data(subset);
+  
+  // Bind to vpi chart
   vpiChart.data(mtrProfile);
 });
 
