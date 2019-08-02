@@ -1,6 +1,6 @@
 "use strict";
 
-// D3.js
+// --- D3.js ---
 
 import { fetchVpts, readVpts } from "./modules/fetchVpts.js";
 import { integrateProfile } from "./modules/integrateProfile.js";
@@ -66,7 +66,7 @@ setTimeout(function() {
   1000
 );
 
-// Vue.js
+// --- Vue.js ---
 
 let form = new Vue({
   el: "#form",
@@ -90,6 +90,17 @@ let form = new Vue({
     }
   },
   methods: {
+    changeInterval(direction) {
+      let daysToAdd = this.interval == "week" ? 7 : 1; // 7 or 1 days
+      if (direction == "previous") {
+        daysToAdd = -1 * daysToAdd;
+      }
+      let updatedDate = new Date(this.date);
+      updatedDate.setDate(updatedDate.getDate() + daysToAdd); // Add days
+      updatedDate = updatedDate.toISOString().substring(0, 10); // Convert back to YYYY-MM-DD
+      this.date = updatedDate;
+      this.updateCharts(); // Call this, as it seems not captured by v-on:change on form
+    },
     updateCharts() {
       console.log("update");
     }
