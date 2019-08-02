@@ -27,7 +27,8 @@ let form = new Vue({
   el: "#form",
   data: {
     radar: "bewid", // TODO: set to bejab
-    date: "2019-03-30", // TODO: set to new Date().toISOString().substring(0, 10), // YYYY-MM-DD
+    date: "2019-03-30", // Date is passed around as YYYY-MM-DD string to form and functions
+    // TODO: set date: moment().format("YYYY-MM-DD"),
     interval: "day", // TODO: set to week
     radars: [
       { code: "bejab", name: "Jabbeke", country: "Belgium" },
@@ -38,7 +39,7 @@ let form = new Vue({
   },
   computed: {
     formattedDate() {
-      return new Date(this.date).toLocaleDateString("en-BE", { day: "numeric", weekday: "long", month: "long" , year: "numeric"});
+      return moment(this.date).format("dddd, D MMMM YYYY");
     },
     radarName() {
       return this.radars.find(d => d.code == this.radar).name;
@@ -56,16 +57,15 @@ let form = new Vue({
       if (direction == "previous") {
         daysToAdd = -1 * daysToAdd;
       }
-      let updatedDate = new Date(this.date);
-      updatedDate.setDate(updatedDate.getDate() + daysToAdd); // Add days
-      updatedDate = updatedDate.toISOString().substring(0, 10); // Convert back to YYYY-MM-DD
-      this.date = updatedDate;
+      let updatedDate = moment(this.date).add(daysToAdd, "days");
+      this.date = updatedDate.format("YYYY-MM-DD"); // Convert back to string
       this.updateCharts(); // Call this, as it seems not captured by v-on:change on form
     },
     updateCharts() {
       console.log("radar:" + this.radar + ", date:" + this.date + ", interval:" + this.interval);
 
       let vpts = fetchVpts(this.date, this.date, "data/bewid", "kmi", this.radar); // TODO: take interval into account
+    
       vpts.then(function(data) { // TODO: create separate function for this to be called
         let nestedVpts = d3.nest()
           .key(d => d.datetime) // group data by datetime

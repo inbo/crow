@@ -1,24 +1,25 @@
-async function fetchVpts(startDate = new Date(), endDate = new Date(), path = "", format = "", radar = "") {
+async function fetchVpts(
+  startDate = moment().format("YYYY-MM-DD"), endDate = moment().format("YYYY-MM-DD"),
+  path = "", format = "", radar = "") {
     /*
     We assume files have daily frequency and the date is available
     in the file name (e.g. example_vpts_20160901.csv)
     */
 
-    // Parse the datestrings
-    startDate = new Date(startDate);
-    endDate = new Date(endDate);
-    if (startDate > endDate) {
+    // Convert datestrings to dates
+    startDate = moment(startDate);
+    endDate = moment(endDate);
+
+    if (startDate.isAfter(endDate)) {
       throw "startDate needs to be before endDate";
     };
 
     // Create range of days (YYYYMMDD) between min and max date
     let dates = [];
-    dates.push(new Date(startDate));
-    while (startDate < endDate) {
-      startDate.setDate(startDate.getDate() + 1);
-      dates.push(new Date(startDate));
+    while (startDate.isSameOrBefore(endDate)) {
+      dates.push(startDate.format("YYYYMMDD")); // Create array of YYYYMMDD dates
+      startDate = startDate.clone().add(1, "days");
     }
-    dates = dates.map(date => date.toISOString().substring(0, 10).replace(/-/g,"")); // YYYYMMDD
 
     // Create filenames
     let filenames = [];
@@ -48,8 +49,8 @@ async function readVpts(file, format = "bioRad") {
 
   if (format == "kmi") {
     // kmi vpts are formatted as fixed width data
-    let rawData = await d3.text(file)
-    data = d3.csvParseRows(rawData, d => {
+    let response = await d3.text(file)
+    data = d3.csvParseRows(response, d => {
       let row = d[0];
       return {
         datetime: Date.parse(
