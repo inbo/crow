@@ -1,7 +1,8 @@
 form {
   background-color: #f8f9fa;
-  padding: 1rem 0;
-  margin-bottom: 1rem;
+  border-bottom: 1px solid #ced4da;
+  padding: 15px 0;
+  margin-bottom: 15px;
   }
   form .btn-group {
     }
@@ -12,9 +13,21 @@ form {
     }
     form .btn-group .btn-secondary {
       background: #ced4da;
-      border: 1px solid #ced4da!important;
+      border: 1px solid #ced4da;
     }
 
+body > main {
+  min-height: calc(100vh - 150px); /* Viewport height minus medium screen form height, to push footer to bottom */
+  padding-bottom: 15px; /* Don't stick to footer */
+}
+
+footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #ced4da;
+  font-size: 0.9rem;
+  padding-top: 15px;
+}
+
 svg {
-  border: 1px solid #cccccc;
+  border: 1px solid #ced4da;
 }
