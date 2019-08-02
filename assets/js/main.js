@@ -46,6 +46,9 @@ let form = new Vue({
     },
     radarCountry() {
       return this.radars.find(d => d.code == this.radar).country;
+    },
+    intervalInDays() {
+      return this.interval == "week" ? 7 : 1; // 7 or 1 days
     }
   },
   mounted () {
@@ -53,19 +56,18 @@ let form = new Vue({
   },
   methods: {
     changeInterval(direction) {
-      let daysToAdd = this.interval == "week" ? 7 : 1; // 7 or 1 days
-      if (direction == "previous") {
-        daysToAdd = -1 * daysToAdd;
+      if (direction == "next") {
+        this.date = moment(this.date).add(this.intervalInDays, "days").format("YYYY-MM-DD");
+      } else {
+        this.date = moment(this.date).subtract(this.intervalInDays, "days").format("YYYY-MM-DD");
       }
-      let updatedDate = moment(this.date).add(daysToAdd, "days");
-      this.date = updatedDate.format("YYYY-MM-DD"); // Convert back to string
       this.updateCharts(); // Call this, as it seems not captured by v-on:change on form
     },
     updateCharts() {
-      console.log("radar:" + this.radar + ", date:" + this.date + ", interval:" + this.interval);
+      console.log("radar:" + this.radar + ", date:" + this.date + ", days:" + this.intervalInDays);
 
-      let vpts = fetchVpts(this.date, this.date, "data/bewid", "kmi", this.radar); // TODO: take interval into account
-    
+      let vpts = fetchVpts(this.date, this.intervalInDays, "data/bewid", "kmi", this.radar);
+
       vpts.then(function(data) { // TODO: create separate function for this to be called
         let nestedVpts = d3.nest()
           .key(d => d.datetime) // group data by datetime
