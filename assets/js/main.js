@@ -105,7 +105,24 @@ let form = new Vue({
       this.updateCharts(); // Call this, as it seems not captured by v-on:change on form
     },
     updateCharts() {
-      console.log("update");
+      console.log("radar:" + this.radar + ", date:" + this.date + ", interval:" + this.interval);
+
+      let vpts = fetchVpts(this.date, this.date, "data/bewid", "kmi", this.radar); // TODO: take interval into account
+      vpts.then(function(data) { // TODO: create separate function for this to be called
+        let nestedVpts = d3.nest()
+          .key(d => d.datetime) // group data by datetime
+          .entries(data);
+        
+        // Create vpi
+        let vpi = nestedVpts.map(d => {
+          return {
+            datetime: d.key,
+            mtr: integrateProfile(d.values)
+          }
+        });
+        // Bind to vpi chart
+        vpiChart.data(vpi);
+      });
     }
   }
 });
