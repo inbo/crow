@@ -1,38 +1,42 @@
-async function fetchVpts(dateMin = null, dateMax = null, directory = "./") {
+async function fetchVpts(startDate = new Date(), endDate = new Date(), path = "", format = "", radar = "") {
     /*
     We assume files have daily frequency and the date is available
     in the file name (e.g. example_vpts_20160901.csv)
-
-    Make sure to have the directory input ending with an "/"
     */
 
-    // parse the datestrings
-    dateMin = new Date(dateMin);
-    dateMax = new Date(dateMax);
-
-    if (dateMin > dateMax) {
-      throw "dateMin need to be before dateMax"
+    // Parse the datestrings
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
+    if (startDate > endDate) {
+      throw "startDate needs to be before endDate";
     };
 
-    // collect each day of the dates in between min and max date
+    // Create range of days (YYYYMMDD) between min and max date
     let dates = [];
-    let filenames = [];
-    dates.push(new Date(dateMin));
-    while (dateMin < dateMax) {
-        console.log(dateMin);
-        dateMin.setDate(dateMin.getDate() + 1);
-        dates.push(new Date(dateMin));
+    dates.push(new Date(startDate));
+    while (startDate < endDate) {
+      startDate.setDate(startDate.getDate() + 1);
+      dates.push(new Date(startDate));
     }
+    dates = dates.map(date => date.toISOString().substring(0, 10).replace(/-/g,"")); // YYYYMMDD
 
-    // compose filename string array with dates
-    let pre_string = "example_vpts_"
-    let post_string = ".csv"
-    dates = dates.map(date => date.toISOString().split("T")[0].replace(/\D/g,''));
-    filenames = dates.map(date => directory + pre_string + date + post_string);
+    // Create filenames
+    let filenames = [];
+    if (format == "kmi") {
+      filenames = dates.map(date => path + "/" + date + "00." + radar + ".vbrd.vpts")
+    } else {
+      filenames = dates.map(date => path + "/" + "example_vpts_" + date + ".csv");
+    }
     console.log(filenames);
 
-    // get the files asynchronyous
-    let data = filenames.map(filename => readVpts(filename));
+    // Get the files asynchronyously
+    let data = []
+    if (format == "kmi") {
+      data = filenames.map(filename => readVpts(filename, "kmi"));
+    } else {
+      data = filenames.map(filename => readVpts(filename));
+    }
+    
     const flattened = await Promise.all(data);
     return flattened.reduce(function(a, b) {
       return a.concat(b);
