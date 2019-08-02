@@ -1,23 +1,17 @@
-async function fetchVpts(
-  startDate = moment().format("YYYY-MM-DD"), endDate = moment().format("YYYY-MM-DD"),
-  path = "", format = "", radar = "") {
+async function fetchVpts(date = moment().format("YYYY-MM-DD"), days = 1, path = "", format = "", radar = "") {
     /*
     We assume files have daily frequency and the date is available
     in the file name (e.g. example_vpts_20160901.csv)
     */
 
-    // Convert datestrings to dates
-    startDate = moment(startDate);
-    endDate = moment(endDate);
+    // Convert YYYY-MM-DD to date
+    const endDate = moment(date);
 
-    if (startDate.isAfter(endDate)) {
-      throw "startDate needs to be before endDate";
-    };
-
-    // Create range of days (YYYYMMDD) between min and max date
+    // Create array of YYYYMMDD days
     let dates = [];
+    let startDate = endDate.subtract(days - 1, "days"); // Set startDate at beginning of range
     while (startDate.isSameOrBefore(endDate)) {
-      dates.push(startDate.format("YYYYMMDD")); // Create array of YYYYMMDD dates
+      dates.push(startDate.format("YYYYMMDD"));
       startDate = startDate.clone().add(1, "days");
     }
 
