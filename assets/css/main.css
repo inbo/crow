@@ -2,7 +2,18 @@ form {
   background-color: #f8f9fa;
   padding: 1rem 0;
   margin-bottom: 1rem;
-}
+  }
+  form .btn-group {
+    }
+    form .btn-group input {
+      border-left: none;
+      border-right: none;
+      border-radius: 0;
+    }
+    form .btn-group .btn-secondary {
+      background: #ced4da;
+      border: 1px solid #ced4da!important;
+    }
 
 svg {
   border: 1px solid #cccccc;
