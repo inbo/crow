@@ -15,7 +15,7 @@
       <div class="container">
         <div class="row">
 
-          <div class="col-md-4 form-group">
+          <div class="col-md-5 form-group">
             <label for="radar">Radar</label>
             <select class="form-control" name="radar" v-model="radar">
               <option disabled value="">Please select a radar</option>
@@ -24,7 +24,7 @@
             <small class="form-text text-muted" id="radar-help">{{ radarName }} (<code>{{ radar }}</code>) is located in {{ radarCountry }}</small>
           </div>
 
-          <div class="col-md-6 form-group">
+          <div class="col-md-5 form-group">
             <label class="d-block" for="date">Date</label>
             <div class="btn-group">
               <a class="btn btn-secondary" v-on:click="changeInterval('previous')">‹</a>
@@ -47,6 +47,7 @@
           </div>
         
         </div>
+        <p class="text-danger small" v-if="error">No data found for this selection.</p>
       </div>
     </form>
 

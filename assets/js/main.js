@@ -35,7 +35,8 @@ let form = new Vue({
       { code: "bezav", name: "Zaventem", country: "Belgium" },
       { code: "bewid", name: "Wideumont", country: "Belgium" },
       { code: "nldhl", name: "Den Helder", country: "the Netherlands" }
-    ]
+    ],
+    error: false
   },
   computed: {
     formattedDate() {
@@ -64,6 +65,9 @@ let form = new Vue({
       this.updateCharts(); // Call this, as it seems not captured by v-on:change on form
     },
     updateCharts() {
+      this.error = false; // Reset error
+      const vm = this; // Set scope
+
       console.log("radar:" + this.radar + ", date:" + this.date + ", days:" + this.intervalInDays);
 
       let vpts = fetchVpts(this.date, this.intervalInDays, "data/bewid", "kmi", this.radar);
@@ -82,6 +86,8 @@ let form = new Vue({
         });
         // Bind to vpi chart
         vpiChart.data(vpi);
+      }).catch(function(error) {
+        vm.error = true;
       });
     }
   }
