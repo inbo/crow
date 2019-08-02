@@ -15,15 +15,15 @@
       <div class="container">
         <div class="row">
 
-          </div>
-
-          <div class="col-md-5 form-group">
+          <div class="col-md-4 form-group">
             <label for="radar">Radar</label>
             <select class="form-control" name="radar" v-model="radar">
               <option disabled value="">Please select a radar</option>
-              <option v-for="radar in radars">{{ radar.name }}</option>
+              <option v-for="radar in radars" :value="radar.code">{{ radar.name }}</option>
             </select>
-            <small class="form-text text-muted" id="radar-help">{{ radar}} is located in {{ radarCountry }}</small>
+            <small class="form-text text-muted" id="radar-help">{{ radarName }} (<code>{{ radar }}</code>) is located in {{ radarCountry }}</small>
+          </div>
+
           <div class="col-md-6 form-group">
             <label class="d-block" for="date">Date</label>
             <div class="btn-group">

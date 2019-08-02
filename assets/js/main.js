@@ -75,18 +75,21 @@ let form = new Vue({
     radar: "Jabbeke",
     interval: "week",
     radars: [
-      { name: "Jabbeke", country: "Belgium" },
-      { name: "Zaventem", country: "Belgium" },
-      { name: "Wideumont", country: "Belgium" },
-      { name: "Den Helder", country: "the Netherlands" }
+      { code: "bejab", name: "Jabbeke", country: "Belgium" },
+      { code: "bezav", name: "Zaventem", country: "Belgium" },
+      { code: "bewid", name: "Wideumont", country: "Belgium" },
+      { code: "nldhl", name: "Den Helder", country: "the Netherlands" }
     ]
   },
   computed: {
     formattedDate() {
       return new Date(this.date).toLocaleDateString("en-BE", { day: "numeric", weekday: "long", month: "long" , year: "numeric"});
     },
+    radarName() {
+      return this.radars.find(d => d.code == this.radar).name;
+    },
     radarCountry() {
-      return this.radars.find(d => d.name == this.radar).country;
+      return this.radars.find(d => d.code == this.radar).country;
     }
   },
   methods: {
