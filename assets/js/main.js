@@ -71,9 +71,9 @@ setTimeout(function() {
 let form = new Vue({
   el: "#form",
   data: {
-    date: new Date().toISOString().substring(0, 10), // String
-    radar: "Jabbeke",
-    interval: "week",
+    radar: "bewid", // TODO: set to bejab
+    date: "2019-03-30", // TODO: set to new Date().toISOString().substring(0, 10), // YYYY-MM-DD
+    interval: "day", // TODO: set to week
     radars: [
       { code: "bejab", name: "Jabbeke", country: "Belgium" },
       { code: "bezav", name: "Zaventem", country: "Belgium" },
@@ -91,6 +91,9 @@ let form = new Vue({
     radarCountry() {
       return this.radars.find(d => d.code == this.radar).country;
     }
+  },
+  mounted () {
+    this.updateCharts();
   },
   methods: {
     changeInterval(direction) {
