@@ -18,11 +18,10 @@ async function fetchVpts(date = moment().format("YYYY-MM-DD"), days = 1, path = 
     // Create filenames
     let filenames = [];
     if (format == "kmi") {
-      filenames = dates.map(date => path + "/" + date + "00." + radar + ".vbrd.vpts")
+      filenames = dates.map(date => path + "/" + radar + "/" + moment(date).year() + "/" + radar + "_vpts_" + date + ".txt");
     } else {
       filenames = dates.map(date => path + "/" + "example_vpts_" + date + ".csv");
     }
-    console.log(filenames);
 
     // Get the files asynchronyously
     let data = []
@@ -81,4 +80,3 @@ async function readVpts(file, format = "bioRad") {
 }
 
 export { fetchVpts, readVpts }
-

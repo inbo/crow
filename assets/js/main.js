@@ -16,21 +16,16 @@ let vptsChart = plotVpts().width(800).height(300);
 d3.select("#vpts-chart")
   .call(vptsChart); // TODO: use this one
 
-// Load example dataset
-// TODO: remove this test
-const exampleDataset = fetchVpts("2016-09-01", "2016-09-03", "data");
-console.log(exampleDataset);
-
 // --- Vue.js ---
-
 let form = new Vue({
   el: "#form",
   data: {
-    radar: "bewid", // TODO: set to bejab
-    date: "2019-03-30", // Date is passed around as YYYY-MM-DD string to form and functions
+    radar: "behel", // TODO: set to bejab
+    date: "2019-10-15", // Date is passed around as YYYY-MM-DD string to form and functions
     // TODO: set date: moment().format("YYYY-MM-DD"),
-    interval: "day", // TODO: set to week
+    interval: "day", // TODO: allow to set a number of days, not just 1 or 7
     radars: [
+      { code: "behel", name: "Behel?", country: "Belgium" },
       { code: "bejab", name: "Jabbeke", country: "Belgium" },
       { code: "bezav", name: "Zaventem", country: "Belgium" },
       { code: "bewid", name: "Wideumont", country: "Belgium" },
@@ -68,9 +63,9 @@ let form = new Vue({
       this.error = false; // Reset error
       const vm = this; // Set scope
 
-      console.log("radar:" + this.radar + ", date:" + this.date + ", days:" + this.intervalInDays);
+      console.log("radar: " + this.radar + ", date: " + this.date + ", days: " + this.intervalInDays);
 
-      let vpts = fetchVpts(this.date, this.intervalInDays, "data/bewid", "kmi", this.radar);
+      let vpts = fetchVpts(this.date, this.intervalInDays, "data", "kmi", this.radar);
 
       vpts.then(function(data) { // TODO: create separate function for this to be called
         let nestedVpts = d3.nest()
