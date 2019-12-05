@@ -1,14 +1,13 @@
 <template>
   <div id="app">
-    <b-container-fluid>
+    <b-container fluid>
       <Crow-navbar />
-    </b-container-fluid>
+    </b-container>
 
     <b-container>
-      <b-row>
-        <Crow />
-      </b-row>
+      <Crow />
 
+      <hr/>
       <b-row>
         <div class="mx-auto">
           Made with:
