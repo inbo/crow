@@ -28,18 +28,14 @@
 <script>
 import moment from "moment";
 
+import config from "../config"
+
 export default {
   data() {
     return {
-      selectedDate: "2019-12-05",
-      selectedRadar: "behel",
-      availableRadars: [
-        { value: "behel", text: "Behel?", country: "Belgium" },
-        { value: "bejab", text: "Jabbeke", country: "Belgium" },
-        { value: "bezav", text: "Zaventem", country: "Belgium" },
-        { value: "bewid", text: "Wideumont", country: "Belgium" },
-        { value: "nldhl", text: "Den Helder", country: "the Netherlands" }
-      ]
+      selectedDate: moment().format("YYYY-MM-DD"),
+      selectedRadar: config.initialRadarCode,
+      availableRadars: config.availableRadars,
     };
   },
   methods: {
@@ -47,9 +43,9 @@ export default {
       alert(this.buildDataUrl(this.selectedRadar, this.selectedDate));
     },
     buildDataUrl(radarName, selectedDate) {
-      let theDate = moment(selectedDate, "YYYY-MM-DD");
+      let theDate = moment(selectedDate, config.localizedDateFormat);
 
-      return `http://crow.weernet.be/${radarName}/${theDate.format(
+      return `${config.dataBaseUrl}/${radarName}/${theDate.format(
         "YYYY"
       )}/${radarName}_vpts_${theDate.format("YYYYMMDD")}.txt`;
     }
