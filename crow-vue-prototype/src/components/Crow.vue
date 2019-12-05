@@ -1,5 +1,10 @@
 <template>
   <div>
+    <b-alert :show="dataLoadError" variant="danger">
+        Data can't be loaded!
+    </b-alert>
+
+
     <b-form-row>
       <b-col class="mt-4">
         <b-form inline @submit.prevent="loadData">
@@ -27,6 +32,7 @@
 
 <script>
 import moment from "moment";
+import axios from "axios";
 
 import config from "../config"
 
@@ -36,11 +42,23 @@ export default {
       selectedDate: moment().format("YYYY-MM-DD"),
       selectedRadar: config.initialRadarCode,
       availableRadars: config.availableRadars,
+
+      dataLoadError: false,
+
+      radarData: ''
     };
   },
   methods: {
     loadData() {
-      alert(this.buildDataUrl(this.selectedRadar, this.selectedDate));
+      let vm = this;
+      let url = this.buildDataUrl(this.selectedRadar, this.selectedDate);
+
+      axios.get(url).then(response => {
+        vm.dataLoadError = false;
+        vm.radarData = response.data;
+      }).catch(function () {
+        vm.dataLoadError = true;
+      })
     },
     buildDataUrl(radarName, selectedDate) {
       let theDate = moment(selectedDate, config.localizedDateFormat);
