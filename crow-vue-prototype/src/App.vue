@@ -1,28 +1,38 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <b-container-fluid>
+      <Crow-navbar />
+    </b-container-fluid>
+
+    <b-container>
+      <b-row>
+        <Crow />
+      </b-row>
+
+      <b-row>
+        <div class="mx-auto">
+          Made with:
+          <img id="cr-vue-logo" alt="Vue logo" src="./assets/logo.png" />
+        </div>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Crow from "./components/Crow.vue";
+import CrowNavbar from "./components/CrowNavbar.vue";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
-    HelloWorld
+    Crow, CrowNavbar
   }
-}
+};
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+#app #cr-vue-logo {
+  width: 32px;
 }
 </style>
