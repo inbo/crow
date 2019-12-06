@@ -1,17 +1,16 @@
 <template>
-    <div>
-        <svg></svg>
-    </div>
+  <div>
+    <svg />
+  </div>
 </template>
 
 <script>
-
 export default {
-  data() {
-
-  },
-}
-
+    props: {
+        vtpsData: Array,
+    },
+    data() {}
+};
 </script>
 
 <style>
