@@ -24,10 +24,16 @@
         </b-form>
       </b-col>
     </b-form-row>
+
+    <b-row>
+      <vtps-chart />
+    </b-row>
   </div>
 </template>
 
 <script>
+import VtpsChart from "./VtpsChart.vue";
+
 import moment from "moment";
 import axios from "axios";
 
@@ -80,6 +86,10 @@ export default {
       return this.availableRadars.find(d => d.value == this.selectedRadar)
         .country;
     }
+  },
+
+  components: {
+    VtpsChart,
   }
 };
 </script>
