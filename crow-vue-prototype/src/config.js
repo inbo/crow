@@ -9,4 +9,8 @@ export default {
     ],
     initialRadarCode: 'behel',
     localizedDateFormat: "YYYY/MM/DD", // As returned by the browser when READING data from the "input type=date" field. TODO: Make it autodetected based on the locale?
+
+    vtpsFormat: {
+        numHeaderLines: 4
+    }
 }
