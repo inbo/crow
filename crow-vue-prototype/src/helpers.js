@@ -3,7 +3,10 @@ import config from "./config";
 
 function readVtps(responseString) {
     let d = responseString.split("\n");
-
+    d = d.splice(config.vtpsFormat.numHeaderLines); // Remove 4 header lines
+    // The file is also terminated by a blank line, which cause issues.
+    d.pop()
+    
     d = d.map(function (row) {
         return {
             datetime: Date.parse(
@@ -25,7 +28,7 @@ function readVtps(responseString) {
         };
     });
 
-    return d.splice(config.vtpsFormat.numHeaderLines); // Remove 4 header lines
+    return d;
 }
 
 export default { readVtps } 

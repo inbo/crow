@@ -26,7 +26,7 @@
     </b-form-row>
 
     <b-row>
-      <vtps-chart />
+      <vtps-chart :vtps-data="radarVtps" />
     </b-row>
   </div>
 </template>
@@ -49,7 +49,7 @@ export default {
 
       dataLoadError: false,
 
-      radarVtps: "",
+      radarVtps: [],
       evt: null // Store event, for debug purposes
     };
   },
