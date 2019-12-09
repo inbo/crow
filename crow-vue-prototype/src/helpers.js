@@ -8,6 +8,13 @@ function readVtps(responseString) {
     d.pop()
     
     d = d.map(function (row) {
+        // There are NaN values everywhere, D3 don't know how to interpret them
+        // For now, we consider a non-number density to mean 0
+        var density = parseFloat(row.substring(76, 82));
+        if (isNaN(density)) {
+            density = 0;
+        }
+
         return {
             datetime: Date.parse(
                 row.substring(0, 4) +
@@ -23,7 +30,7 @@ function readVtps(responseString) {
             height: parseInt(row.substring(14, 18)),
             dd: parseFloat(row.substring(47, 52)),
             ff: parseFloat(row.substring(41, 46)),
-            dens: parseFloat(row.substring(76, 82)),
+            dens: density,
             sd_vvp: parseFloat(row.substring(53, 59))
         };
     });
