@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export default {
     dataBaseUrl: 'http://crow.weernet.be',
     availableRadars: [
@@ -11,6 +13,7 @@ export default {
     localizedDateFormat: "YYYY/MM/DD", // As returned by the browser when READING data from the "input type=date" field. TODO: Make it autodetected based on the locale?
 
     vtpsFormat: {
+        availableHeights: _.range(0, 4800 + 1, 200), // From 0 to 4800 meters, by increment of 200
         numHeaderLines: 4
     }
 }

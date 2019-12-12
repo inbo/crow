@@ -31,7 +31,6 @@ import VtpsChart from "./VtpsChart.vue";
 
 import moment from "moment";
 import axios from "axios";
-import _ from "lodash";
 
 import config from "../config";
 import helpers from "../helpers";
@@ -68,15 +67,13 @@ export default {
         .minute(59)
         .second(59);
 
-      var currentMoment = start.clone();
-      var allHeights = _.range(0, 4800 + 1, 200);
-      var vm = this;
+      var currentMoment = start.clone(); 
 
-      vm.radarVtps = [];
+      this.radarVtps = [];
 
       while (currentMoment.isBefore(end)) {
-        allHeights.forEach(function(height) {
-          vm.radarVtps.push({
+        config.vtpsFormat.availableHeights.forEach(height => {
+          this.radarVtps.push({
             datetime: currentMoment.toDate().getTime(),
             height: height,
             dd: 0,
@@ -104,8 +101,6 @@ export default {
 
       var currentDay = startDay.clone();
 
-      var firstRun = true;
-
       while (currentDay.isBefore(endDay, "day")) {
         let url = this.buildDataUrl(radarName, currentDay);
         var dayData = [];
@@ -119,10 +114,6 @@ export default {
             dayData.forEach(element => {
               // Find row matching time/altitude
               var pos = this.radarVtps.findIndex(function(emptyElem) {
-                if (firstRun) {
-                  firstRun = false;
-                }
-
                 if (
                   emptyElem.datetime === element.datetime &&
                   emptyElem.height === element.height
