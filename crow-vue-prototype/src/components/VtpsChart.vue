@@ -47,8 +47,8 @@ export default {
     },
     renderChart(vtpsData_val) {
       var margin = { top: 30, right: 30, bottom: 30, left: 30 },
-        width = 900 - margin.left - margin.right,
-        height = 450 - margin.top - margin.bottom;
+        width = 1100 - margin.left - margin.right,
+        height = 550 - margin.top - margin.bottom;
 
       var svg = d3
         .select("svg")
@@ -63,7 +63,6 @@ export default {
         .scaleTime()
         .domain([this.getMinDatetime(), this.getMaxDatetime()])
         .range([0, width]);
-      //.padding(0.01);
       svg
         .append("g")
         .attr("transform", "translate(0," + height + ")")
@@ -72,8 +71,8 @@ export default {
       var y = d3
         .scaleBand()
         .range([height, 0])
-        .domain(this.getDistinctHeights());
-      //.padding(0.01);
+        .domain(this.getDistinctHeights())
+        .padding(0.01);
       svg.append("g").call(d3.axisLeft(y));
 
       this.deb = this.getDistinctHeights();
@@ -81,7 +80,7 @@ export default {
       // Build color scale
       var myColor = d3
         .scaleLinear()
-        .range(["white", "#69b3a2"])
+        .range(["#69b3a2", "red"])
         .domain([0, this.getMaxDensity()]);
 
       svg
