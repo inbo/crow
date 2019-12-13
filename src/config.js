@@ -14,6 +14,7 @@ export default {
 
     vtpsFormat: {
         availableHeights: _.range(0, 4800 + 1, 200), // From 0 to 4800 meters, by increment of 200
+        temporalResolution: 5 * 60, // seconds
         numHeaderLines: 4
     }
 }

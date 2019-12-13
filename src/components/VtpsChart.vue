@@ -9,7 +9,8 @@ import * as d3 from "d3";
 
 export default {
   props: {
-    vtpsData: Array
+    vtpsData: Array,
+    dataTemporalResolution: Number
   },
   data() {
     return {
@@ -24,6 +25,10 @@ export default {
     }
   },
   methods: {
+    getRectDivider() {
+      var durationInMs = this.getMaxDatetime() - this.getMinDatetime();
+      return durationInMs / 1000 / 60 / this.dataTemporalResolution;
+    },
     getMinDatetime() {
       return this.vtpsData.reduce(
         (min, p) => (p.datetime < min ? p.datetime : min),
@@ -72,7 +77,6 @@ export default {
         .scaleBand()
         .range([height, 0])
         .domain(this.getDistinctHeights())
-        .padding(0.01);
       svg.append("g").call(d3.axisLeft(y));
 
       this.deb = this.getDistinctHeights();
@@ -94,8 +98,7 @@ export default {
         .attr("y", function(row) {
           return y(row.height);
         })
-        //.attr("width", width/vtpsData_val.length*this.getDistinctHeights().length)
-        .attr("width", width / 288.0)
+        .attr("width", width / this.getRectDivider())
         .attr("height", y.bandwidth())
         .style("fill", function(row) {
           if(row.noData) {

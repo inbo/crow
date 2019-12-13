@@ -21,7 +21,7 @@
     </b-form-row>
 
     <b-row>
-      <vtps-chart :vtps-data="radarVtps" />
+      <vtps-chart :vtps-data="radarVtps" :data-temporal-resolution="dataTemporalResolution" />
     </b-row>
   </div>
 </template>
@@ -49,6 +49,7 @@ export default {
       endDate: moment().format("YYYY-MM-DD"),
       selectedRadar: config.initialRadarCode,
       availableRadars: config.availableRadars,
+      dataTemporalResolution: config.vtpsFormat.temporalResolution,
 
       dataLoadError: false,
 
