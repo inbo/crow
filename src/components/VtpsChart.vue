@@ -15,13 +15,24 @@ export default {
   data() {
     return {
       chart: null,
-      deb: null
+
+      margin: { top: 30, right: 30, bottom: 30, left: 30 },
+      width: 1100 - 30 - 30, // -margin left -margin right: factorize
+      height: 550 - 30 - 30, // -margin top -margin bottom: factorize
+
+      xAxis: null,
+      yAxis: null
     };
   },
   watch: {
     vtpsData(val) {
-      if (this.chart != null) this.chart.remove();
-      this.renderChart(val);
+      if (this.chart != null) {
+        this.chart.remove();
+      }
+
+      this.createEmptyChart();
+      this.createAndAddChartAxis();
+      this.updateChart(val);
     }
   },
   computed: {
@@ -52,57 +63,66 @@ export default {
     }
   },
   methods: {
-    renderChart(vtpsData_val) {
-      let margin = { top: 30, right: 30, bottom: 30, left: 30 },
-        width = 1100 - margin.left - margin.right,
-        height = 550 - margin.top - margin.bottom;
-
+    createEmptyChart() {
       let svg = d3
         .select("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", this.width + this.margin.left + this.margin.right)
+        .attr("height", this.height + this.margin.top + this.margin.bottom)
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr(
+          "transform",
+          "translate(" + this.margin.left + "," + this.margin.top + ")"
+        );
 
       this.chart = svg;
+    },
 
-      let x = d3
+    createAndAddChartAxis() {
+      this.xAxis = d3
         .scaleTime()
         .domain([this.minDatetime, this.maxDatetime])
-        .range([0, width]);
-      svg
+        .range([0, this.width]);
+      this.chart
         .append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
+        .attr("transform", "translate(0," + this.height + ")")
+        .call(d3.axisBottom(this.xAxis));
 
-      let y = d3
+      this.yAxis = d3
         .scaleBand()
-        .range([height, 0])
-        .domain(this.distinctHeights)
-      svg.append("g").call(d3.axisLeft(y));
+        .range([this.height, 0])
+        .domain(this.distinctHeights);
+      this.chart.append("g").call(d3.axisLeft(this.yAxis));
+    },
 
+    updateChart(vtpsData_val) {
       // Build color scale
       let myColor = d3
         .scaleLinear()
         .range(["#69b3a2", "red"])
         .domain([0, this.maxDensity]);
 
-      svg
-        .selectAll()
-        .data(vtpsData_val)
-        .enter()
-        .append("rect")
+      let update = this.chart.selectAll().data(vtpsData_val, function(d) {
+        return `${d.datetime} - ${d.height} - ${d.dens}`;
+      });
+
+      let enter = update.enter().append("rect");
+      let exit = update.exit();
+
+      exit.remove();
+      var vm = this;
+      update
+        .merge(enter)
         .attr("x", function(row) {
-          return x(row.datetime);
+          return vm.xAxis(row.datetime);
         })
         .attr("y", function(row) {
-          return y(row.height);
+          return vm.yAxis(row.height);
         })
-        .attr("width", width / this.rectDivider)
-        .attr("height", y.bandwidth())
+        .attr("width", this.width / this.rectDivider)
+        .attr("height", vm.yAxis.bandwidth())
         .style("fill", function(row) {
-          if(row.noData) {
-            return '#fff';
+          if (row.noData) {
+            return "#fff";
           } else {
             return myColor(row.dens);
           }
