@@ -79,7 +79,8 @@ export default {
             dd: 0,
             ff: 0,
             dens: 0,
-            sd_vvp: 0
+            sd_vvp: 0,
+            noData: true
           });
         });
 
@@ -122,7 +123,8 @@ export default {
                 }
               });
 
-              this.radarVtps.splice(pos, 1, element); // Call splice so reactivity works
+              element.noData = false;
+              this.radarVtps.splice(pos, 1, element); // Call splice instead of this.radaVtps[pos] so reactivity works
             });
           })
           .catch(function() {});

@@ -98,7 +98,11 @@ export default {
         .attr("width", width / 288.0)
         .attr("height", y.bandwidth())
         .style("fill", function(row) {
-          return myColor(row.dens);
+          if(row.noData) {
+            return '#fff';
+          } else {
+            return myColor(row.dens);
+          }
         });
     }
   }
