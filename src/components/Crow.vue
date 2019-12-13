@@ -36,10 +36,8 @@ import config from "../config";
 import helpers from "../helpers";
 
 // TODO: Use moment objects everywhere (currently date in vtpsData, and string for v-model link)
-// TODO: HAve a "no data" color
 // Look at typescript?
 // Look at other fancy JS stuff available
-// Read let, var, const
 // TODO: validation of date min <= max
 
 export default {
@@ -59,16 +57,16 @@ export default {
   },
   methods: {
     emptyVtpsData(startDate, endDate) {
-      var start = moment(startDate, "YYYY-MM-DD")
+      let start = moment(startDate, "YYYY-MM-DD")
         .hour(0)
         .minute(0)
         .second(0);
-      var end = moment(endDate, "YYYY-MM-DD")
+      let end = moment(endDate, "YYYY-MM-DD")
         .hour(23)
         .minute(59)
         .second(59);
 
-      var currentMoment = start.clone(); 
+      let currentMoment = start.clone(); 
 
       this.radarVtps = [];
 
@@ -98,14 +96,14 @@ export default {
       );
     },
     populateDataFromCrowServer(radarName, startDate, endDate) {
-      var startDay = moment(startDate, "YYYY-MM-DD");
-      var endDay = moment(endDate, "YYYY-MM-DD").add(1, "days");
+      let startDay = moment(startDate, "YYYY-MM-DD");
+      let endDay = moment(endDate, "YYYY-MM-DD").add(1, "days");
 
-      var currentDay = startDay.clone();
+      let currentDay = startDay.clone();
 
       while (currentDay.isBefore(endDay, "day")) {
         let url = this.buildDataUrl(radarName, currentDay);
-        var dayData = [];
+        let dayData = [];
 
         axios
           .get(url)
@@ -115,7 +113,7 @@ export default {
             // Merge new data into existing
             dayData.forEach(element => {
               // Find row matching time/altitude
-              var pos = this.radarVtps.findIndex(function(emptyElem) {
+              let pos = this.radarVtps.findIndex(function(emptyElem) {
                 if (
                   emptyElem.datetime === element.datetime &&
                   emptyElem.height === element.height

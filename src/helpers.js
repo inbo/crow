@@ -11,7 +11,7 @@ function readVtps(responseString) {
     d = d.map(function (row) {
         // There are NaN values everywhere, D3 don't know how to interpret them
         // For now, we consider a non-number density to mean 0
-        var density = parseFloat(row.substring(76, 82));
+        let density = parseFloat(row.substring(76, 82));
         if (isNaN(density)) {
             density = 0;
         }

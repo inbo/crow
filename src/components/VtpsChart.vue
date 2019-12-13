@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     rectDivider: function() {
-      var durationInMs = this.maxDatetime - this.minDatetime;
+      let durationInMs = this.maxDatetime - this.minDatetime;
       return durationInMs / 1000 / 60 / this.dataTemporalResolution;
     },
     minDatetime: function() {
@@ -53,11 +53,11 @@ export default {
   },
   methods: {
     renderChart(vtpsData_val) {
-      var margin = { top: 30, right: 30, bottom: 30, left: 30 },
+      let margin = { top: 30, right: 30, bottom: 30, left: 30 },
         width = 1100 - margin.left - margin.right,
         height = 550 - margin.top - margin.bottom;
 
-      var svg = d3
+      let svg = d3
         .select("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -66,7 +66,7 @@ export default {
 
       this.chart = svg;
 
-      var x = d3
+      let x = d3
         .scaleTime()
         .domain([this.minDatetime, this.maxDatetime])
         .range([0, width]);
@@ -75,14 +75,14 @@ export default {
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x));
 
-      var y = d3
+      let y = d3
         .scaleBand()
         .range([height, 0])
         .domain(this.distinctHeights)
       svg.append("g").call(d3.axisLeft(y));
 
       // Build color scale
-      var myColor = d3
+      let myColor = d3
         .scaleLinear()
         .range(["#69b3a2", "red"])
         .domain([0, this.maxDensity]);
