@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>Vtpr Chart</h1>
     <svg />
   </div>
 </template>

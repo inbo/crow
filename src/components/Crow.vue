@@ -23,11 +23,16 @@
     <b-row>
       <vtps-chart :vtps-data="radarVtpsAsArray" :data-temporal-resolution="dataTemporalResolution" />
     </b-row>
+
+    <b-row>
+      <mtr-chart></mtr-chart>
+    </b-row>
   </div>
 </template>
 
 <script>
 import VtpsChart from "./VtpsChart.vue";
+import MtrChart from "./MtrChart.vue";
 
 import moment from "moment";
 import axios from "axios";
@@ -162,7 +167,7 @@ export default {
   },
 
   components: {
-    VtpsChart
+    VtpsChart, MtrChart
   }
 };
 </script>
