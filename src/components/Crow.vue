@@ -21,7 +21,7 @@
     </b-form-row>
 
     <b-row>
-      <vtps-chart :vtps-data="radarVtps" :data-temporal-resolution="dataTemporalResolution" />
+      <vtps-chart :vtps-data="radarVtpsAsArray" :data-temporal-resolution="dataTemporalResolution" />
     </b-row>
   </div>
 </template>
@@ -35,7 +35,7 @@ import axios from "axios";
 import config from "../config";
 import helpers from "../helpers";
 
-// TODO: Use moment objects everywhere (currently date in vtpsData, and string for v-model link)
+// TODO: Use moment objects everywhere (currently date in vtpsDataRow, and string for v-model link)
 // Look at typescript?
 // Look at other fancy JS stuff available
 // TODO: validation of date min <= max
@@ -47,54 +47,62 @@ export default {
       endDate: moment().format("YYYY-MM-DD"),
       selectedRadar: config.initialRadarCode,
       availableRadars: config.availableRadars,
+
       dataTemporalResolution: config.vtpsFormat.temporalResolution,
+      availableHeights: config.vtpsFormat.availableHeights,
 
       dataLoadError: false,
 
-      radarVtps: [],
+      radarVtps: {}, // Data is kept as an object for performance reasons, the "radarVtpsAsArray" computed property allows reading it as an array
+
       evt: null // Store event, for debug purposes
     };
   },
   methods: {
-    emptyVtpsData(startDate, endDate) {
-      let start = moment(startDate, "YYYY-MM-DD")
+    initializeEmptyData() {
+      let startTime = moment(this.startDate, "YYYY-MM-DD")
         .hour(0)
         .minute(0)
         .second(0);
-      let end = moment(endDate, "YYYY-MM-DD")
+      let endTime = moment(this.endDate, "YYYY-MM-DD")
         .hour(23)
         .minute(59)
         .second(59);
 
-      let currentMoment = start.clone(); 
+      let currentMoment = startTime.clone();
 
-      this.radarVtps = [];
-
-      while (currentMoment.isBefore(end)) {
-        config.vtpsFormat.availableHeights.forEach(height => {
-          this.radarVtps.push({
-            datetime: currentMoment.toDate().getTime(),
-            height: height,
-            dd: 0,
-            ff: 0,
-            dens: 0,
-            sd_vvp: 0,
-            noData: true
-          });
+      while (currentMoment.isBefore(endTime)) {
+        let heightObj = {};
+        this.availableHeights.forEach(height => {
+          heightObj[height] = { noData: true };
         });
 
-        currentMoment.add(5, "minutes");
+        this.$set(this.radarVtps, currentMoment.toDate().getTime(), heightObj);
+
+        currentMoment.add(this.dataTemporalResolution, "seconds");
       }
     },
 
     loadData() {
-      this.emptyVtpsData(this.startDate, this.endDate);
+      this.initializeEmptyData();
       this.populateDataFromCrowServer(
         this.selectedRadar,
         this.startDate,
         this.endDate
       );
     },
+    storeDataRow(vtpsDataRow) {
+      let obj = {
+        dd: vtpsDataRow.dd,
+        ff: vtpsDataRow.ff,
+        dens: vtpsDataRow.dens,
+        sd_vvp: vtpsDataRow.sd_vvp,
+        noData: false
+      };
+
+      this.$set(this.radarVtps[vtpsDataRow.datetime], vtpsDataRow.height, obj);
+    },
+
     populateDataFromCrowServer(radarName, startDate, endDate) {
       let startDay = moment(startDate, "YYYY-MM-DD");
       let endDay = moment(endDate, "YYYY-MM-DD").add(1, "days");
@@ -103,28 +111,15 @@ export default {
 
       while (currentDay.isBefore(endDay, "day")) {
         let url = this.buildDataUrl(radarName, currentDay);
-        let dayData = [];
 
         axios
           .get(url)
           .then(response => {
-            dayData = helpers.readVtps(response.data);
+            let dayData = helpers.readVtps(response.data);
 
-            // Merge new data into existing
-            dayData.forEach(element => {
-              // Find row matching time/altitude
-              let pos = this.radarVtps.findIndex(function(emptyElem) {
-                if (
-                  emptyElem.datetime === element.datetime &&
-                  emptyElem.height === element.height
-                ) {
-                  return true;
-                }
-              });
-
-              element.noData = false;
-              this.radarVtps.splice(pos, 1, element); // Call splice instead of this.radaVtps[pos] so reactivity works
-            });
+            for (const val of dayData) {
+              this.storeDataRow(val);
+            }
           })
           .catch(function() {});
 
@@ -145,6 +140,17 @@ export default {
     selectedRadarCountry() {
       return this.availableRadars.find(d => d.value == this.selectedRadar)
         .country;
+    },
+    radarVtpsAsArray() {
+      let dataArray = [];
+      for (let [timestamp, heightObj] of Object.entries(this.radarVtps)) {
+        for (let [height, props] of Object.entries(heightObj)) {
+          let o = { timestamp: timestamp, height: height };
+          dataArray.push({ ...o, ...props });
+        }
+      }
+
+      return dataArray;
     }
   },
 

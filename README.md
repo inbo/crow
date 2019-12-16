@@ -11,6 +11,13 @@ $ cd crow-vue-prototype
 $ yarn serve
 ````
 
+Features to prioritize
+======================
+
+- Arbitrary time range
+- (several days) Large amount of data
+- Smooth transitions
+
 Generated README by Vue-CLI
 ===========================
 

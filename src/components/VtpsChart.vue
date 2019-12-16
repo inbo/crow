@@ -42,14 +42,14 @@ export default {
     },
     minDatetime: function() {
       return this.vtpsData.reduce(
-        (min, p) => (p.datetime < min ? p.datetime : min),
-        this.vtpsData[0].datetime
+        (min, p) => (p.timestamp < min ? p.timestamp : min),
+        this.vtpsData[0].timestamp
       );
     },
     maxDatetime: function() {
       return this.vtpsData.reduce(
-        (max, p) => (p.datetime > max ? p.datetime : max),
-        this.vtpsData[0].datetime
+        (max, p) => (p.timestamp > max ? p.timestamp : max),
+        this.vtpsData[0].timestamp
       );
     },
     maxDensity: function() {
@@ -95,6 +95,7 @@ export default {
     },
 
     updateChart(vtpsData_val) {
+      
       // Build color scale
       let myColor = d3
         .scaleLinear()
@@ -102,23 +103,25 @@ export default {
         .domain([0, this.maxDensity]);
 
       let update = this.chart.selectAll().data(vtpsData_val, function(d) {
-        return `${d.datetime} - ${d.height} - ${d.dens}`;
+        return `${d.timestamp} - ${d.height} - ${d.dens}`;
       });
 
       let enter = update.enter().append("rect");
       let exit = update.exit();
 
       exit.remove();
+      
       var vm = this;
+
       update
         .merge(enter)
         .attr("x", function(row) {
-          return vm.xAxis(row.datetime);
+          return vm.xAxis(row.timestamp);
         })
         .attr("y", function(row) {
           return vm.yAxis(row.height);
         })
-        .attr("width", this.width / this.rectDivider)
+        .attr("width", vm.width / vm.rectDivider)
         .attr("height", vm.yAxis.bandwidth())
         .style("fill", function(row) {
           if (row.noData) {
