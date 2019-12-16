@@ -36,7 +36,6 @@ import config from "../config";
 import helpers from "../helpers";
 
 // TODO: Use moment objects everywhere (currently date in vtpsDataRow, and string for v-model link)
-// Look at typescript?
 // Look at other fancy JS stuff available
 // TODO: validation of date min <= max
 
@@ -59,6 +58,10 @@ export default {
     };
   },
   methods: {
+    /* Initialize radarVtps with empty data 
+       - The temporal range is [startDate, endDate] (resolution: dataTemporalResolution - in seconds)
+       - Heights follow availableHeights
+    */
     initializeEmptyData() {
       let startTime = moment(this.startDate, "YYYY-MM-DD")
         .hour(0)
@@ -91,6 +94,8 @@ export default {
         this.endDate
       );
     },
+
+    /* Store a Vtps data row originating in a file into vtpsData */
     storeDataRow(vtpsDataRow) {
       let obj = {
         dd: vtpsDataRow.dd,
@@ -103,6 +108,7 @@ export default {
       this.$set(this.radarVtps[vtpsDataRow.datetime], vtpsDataRow.height, obj);
     },
 
+    /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */
     populateDataFromCrowServer(radarName, startDate, endDate) {
       let startDay = moment(startDate, "YYYY-MM-DD");
       let endDay = moment(endDate, "YYYY-MM-DD").add(1, "days");
@@ -126,6 +132,8 @@ export default {
         currentDay.add(1, "days");
       }
     },
+
+    /* Build the data URL for a given day and radar */
     buildDataUrl(radarName, selectedDate) {
       return `${config.dataBaseUrl}/${radarName}/${selectedDate.format(
         "YYYY"
@@ -149,7 +157,6 @@ export default {
           dataArray.push({ ...o, ...props });
         }
       }
-
       return dataArray;
     }
   },
