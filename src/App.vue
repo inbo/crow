@@ -1,18 +1,28 @@
 <template>
   <div id="app">
     <b-container fluid class="px-0">
-      <b-row><b-col><Crow-navbar /></b-col></b-row>
+      <b-row>
+        <b-col>
+          <Crow-navbar />
+        </b-col>
+      </b-row>
     </b-container>
 
     <b-container>
       <Crow />
+    </b-container>
 
-      <hr/>
+    <b-container fluid class="px-0">
       <b-row>
-        <div class="mx-auto">
-          Made with:
-          <img id="cr-vue-logo" alt="Vue logo" src="./assets/logo.png" />
-        </div>
+        <b-col><hr /></b-col>
+      </b-row>
+
+      <b-row>
+        <b-col class="text-center">
+            Made with ❤️ and 
+            <img id="cr-vue-logo" alt="Vue logo" src="./assets/logo.png" />
+            by the <a href="https://oscibio.inbo.be/">Open science lab for biodiversity</a>
+        </b-col>
       </b-row>
     </b-container>
   </div>
@@ -25,13 +35,14 @@ import CrowNavbar from "./components/CrowNavbar.vue";
 export default {
   name: "app",
   components: {
-    Crow, CrowNavbar
+    Crow,
+    CrowNavbar
   }
 };
 </script>
 
 <style>
 #app #cr-vue-logo {
-  width: 32px;
+  width: 20px;
 }
 </style>

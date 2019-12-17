@@ -18,9 +18,9 @@ export default {
     return {
       chart: null,
 
-      margin: { top: 0, right: 30, bottom: 30, left: 30 },
-      width: 1100 - 30 - 30, // -margin left -margin right: factorize
-      height: 300 - 0 - 30, // -margin top -margin bottom: factorize
+      margin: this.styleConfig.margin,
+      width: this.styleConfig.width - this.styleConfig.margin.left - this.styleConfig.margin.right,
+      height: this.styleConfig.height - this.styleConfig.margin.top - this.styleConfig.margin.bottom,
 
       xAxis: null,
       yAxis: null
@@ -136,6 +136,3 @@ export default {
   }
 };
 </script>
-
-<style>
-</style>

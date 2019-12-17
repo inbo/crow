@@ -3,7 +3,9 @@
     <b-form-row class="mb-4">
       <b-col class="mt-4">
         <b-form inline @submit.prevent="loadData">
-          <label for="input-radar">Radar:</label>
+          <b>
+            <label for="input-radar">Radar:</label>
+          </b>
           <b-form-select
             id="input-radar"
             v-model="selectedRadar"
@@ -13,7 +15,9 @@
           ></b-form-select>
           <b-form-text class="mx-3">{{ selectedRadarName }} is located in {{ selectedRadarCountry }}</b-form-text>
 
-          <label for="input-from-date">From:</label>
+          <b>
+            <label for="input-from-date">From:</label>
+          </b>
           <b-form-input
             id="input-from-date"
             type="date"
@@ -23,7 +27,9 @@
             size="sm"
           />
 
-          <label for="input-to-date">To:</label>
+          <b>
+            <label for="input-to-date">To:</label>
+          </b>
           <b-form-input
             id="input-to-date"
             type="date"
@@ -38,29 +44,31 @@
       </b-col>
     </b-form-row>
 
-    <b-row>
-      <b-col>
-        <v-p-chart
-          :vtps-data="radarVtpsAsArray"
-          :data-temporal-resolution="dataTemporalResolution"
-          :style-config="VPChartStyle"
-        >
-          <template v-slot:title>
-            <h3>VP Chart</h3>
-          </template>
-        </v-p-chart>
-      </b-col>
-    </b-row>
+    <div v-if="showCharts">
+      <b-row>
+        <b-col>
+          <v-p-chart
+            :vtps-data="radarVtpsAsArray"
+            :data-temporal-resolution="dataTemporalResolution"
+            :style-config="VPChartStyle"
+          >
+            <template v-slot:title>
+              <h3>VP Chart</h3>
+            </template>
+          </v-p-chart>
+        </b-col>
+      </b-row>
 
-    <b-row>
-      <b-col>
-      <v-p-i-chart>
-        <template v-slot:title>
-          <h3>VPI Chart</h3>
-        </template>
-      </v-p-i-chart>
-      </b-col>
-    </b-row>
+      <b-row>
+        <b-col>
+          <v-p-i-chart>
+            <template v-slot:title>
+              <h3>VPI Chart</h3>
+            </template>
+          </v-p-i-chart>
+        </b-col>
+      </b-row>
+    </div>
   </div>
 </template>
 
@@ -87,6 +95,8 @@ export default {
       endDate: yesterday.format(moment.HTML5_FMT.DATE),
       selectedRadar: config.initialRadarCode,
       availableRadars: config.availableRadars,
+
+      showCharts: false,
 
       VPChartStyle: config.VPChartStyle,
 
@@ -126,6 +136,8 @@ export default {
     },
 
     loadData() {
+      this.showCharts = true;
+      
       this.initializeEmptyData();
       this.populateDataFromCrowServer(
         this.selectedRadar,
