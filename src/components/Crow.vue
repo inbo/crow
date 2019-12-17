@@ -1,38 +1,72 @@
 <template>
   <div>
-    <b-alert :show="dataLoadError" variant="danger">Data can't be loaded!</b-alert>
-
-    <b-form-row>
+    <b-form-row class="mb-4">
       <b-col class="mt-4">
         <b-form inline @submit.prevent="loadData">
-          <b-form-group>
-            <b-form-select v-model="selectedRadar" :options="availableRadars"></b-form-select>
-            <small
-              class="form-text text-muted"
-              id="radar-help"
-            >{{ selectedRadarName }} is located in {{ selectedRadarCountry }}</small>
-          </b-form-group>From:
-          <!-- TODO: Add other fields? -->
-          <b-form-input type="date" placeholder="type a date..." v-model="startDate" class="mr-2" />To:
-          <b-form-input type="date" placeholder="type a date..." v-model="endDate" class="mr-2" />
-          <b-button type="submit">Load radar data</b-button>
+          <label for="input-radar">Radar:</label>
+          <b-form-select
+            id="input-radar"
+            v-model="selectedRadar"
+            :options="availableRadars"
+            size="sm"
+            class="mx-1"
+          ></b-form-select>
+          <b-form-text class="mx-3">{{ selectedRadarName }} is located in {{ selectedRadarCountry }}</b-form-text>
+
+          <label for="input-from-date">From:</label>
+          <b-form-input
+            id="input-from-date"
+            type="date"
+            placeholder="type a date..."
+            v-model="startDate"
+            class="mx-1"
+            size="sm"
+          />
+
+          <label for="input-to-date">To:</label>
+          <b-form-input
+            id="input-to-date"
+            type="date"
+            placeholder="type a date..."
+            v-model="endDate"
+            class="mx-1"
+            size="sm"
+          />
+
+          <b-button size="sm" type="submit" variant="primary">Load and view radar data</b-button>
         </b-form>
       </b-col>
     </b-form-row>
 
     <b-row>
-      <vtps-chart :vtps-data="radarVtpsAsArray" :data-temporal-resolution="dataTemporalResolution" />
+      <b-col>
+        <v-p-chart
+          :vtps-data="radarVtpsAsArray"
+          :data-temporal-resolution="dataTemporalResolution"
+          :style-config="VPChartStyle"
+        >
+          <template v-slot:title>
+            <h3>VP Chart</h3>
+          </template>
+        </v-p-chart>
+      </b-col>
     </b-row>
 
     <b-row>
-      <mtr-chart></mtr-chart>
+      <b-col>
+      <v-p-i-chart>
+        <template v-slot:title>
+          <h3>VPI Chart</h3>
+        </template>
+      </v-p-i-chart>
+      </b-col>
     </b-row>
   </div>
 </template>
 
 <script>
-import VtpsChart from "./VtpsChart.vue";
-import MtrChart from "./MtrChart.vue";
+import VPChart from "./VPChart.vue";
+import VPIChart from "./VPIChart.vue";
 
 import moment from "moment";
 import axios from "axios";
@@ -46,20 +80,20 @@ import helpers from "../helpers";
 
 export default {
   data() {
+    let yesterday = moment().subtract(1, "days");
+
     return {
-      startDate: moment().format("YYYY-MM-DD"),
-      endDate: moment().format("YYYY-MM-DD"),
+      startDate: yesterday.format(moment.HTML5_FMT.DATE),
+      endDate: yesterday.format(moment.HTML5_FMT.DATE),
       selectedRadar: config.initialRadarCode,
       availableRadars: config.availableRadars,
+
+      VPChartStyle: config.VPChartStyle,
 
       dataTemporalResolution: config.vtpsFormat.temporalResolution,
       availableHeights: config.vtpsFormat.availableHeights,
 
-      dataLoadError: false,
-
-      radarVtps: {}, // Data is kept as an object for performance reasons, the "radarVtpsAsArray" computed property allows reading it as an array
-
-      evt: null // Store event, for debug purposes
+      radarVtps: {} // Data is kept as an object for performance reasons, the "radarVtpsAsArray" computed property allows reading it as an array
     };
   },
   methods: {
@@ -167,7 +201,8 @@ export default {
   },
 
   components: {
-    VtpsChart, MtrChart
+    VPChart,
+    VPIChart
   }
 };
 </script>

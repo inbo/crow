@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <b-container fluid>
-      <Crow-navbar />
+    <b-container fluid class="px-0">
+      <b-row><b-col><Crow-navbar /></b-col></b-row>
     </b-container>
 
     <b-container>

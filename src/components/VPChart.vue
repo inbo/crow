@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Vtpr Chart</h1>
+    <slot name="title"></slot>
     <svg />
   </div>
 </template>
@@ -11,15 +11,16 @@ import * as d3 from "d3";
 export default {
   props: {
     vtpsData: Array,
-    dataTemporalResolution: Number
+    dataTemporalResolution: Number,
+    styleConfig: Object
   },
   data() {
     return {
       chart: null,
 
-      margin: { top: 30, right: 30, bottom: 30, left: 30 },
+      margin: { top: 0, right: 30, bottom: 30, left: 30 },
       width: 1100 - 30 - 30, // -margin left -margin right: factorize
-      height: 550 - 30 - 30, // -margin top -margin bottom: factorize
+      height: 300 - 0 - 30, // -margin top -margin bottom: factorize
 
       xAxis: null,
       yAxis: null
@@ -100,7 +101,7 @@ export default {
       // Build color scale
       let myColor = d3
         .scaleLinear()
-        .range(["#69b3a2", "red"])
+        .range([this.styleConfig.minDensityColor, this.styleConfig.maxDensityColor])
         .domain([0, this.maxDensity]);
 
       let update = this.chart.selectAll().data(vtpsData_val, function(d) {
@@ -126,7 +127,7 @@ export default {
         .attr("height", vm.yAxis.bandwidth())
         .style("fill", function(row) {
           if (row.noData) {
-            return "#fff";
+            return vm.styleConfig.noDataColor;
           } else {
             return myColor(row.dens);
           }

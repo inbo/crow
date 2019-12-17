@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="lg" type="dark" variant="info">
+  <b-navbar toggleable="lg" type="dark" variant="danger">
     <b-navbar-brand href="#">CROW prototype</b-navbar-brand>
 
     <b-collapse id="nav-collapse" is-nav>
