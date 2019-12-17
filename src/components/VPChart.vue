@@ -87,13 +87,22 @@ export default {
       this.chart
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
-        .call(d3.axisBottom(this.xAxis));
+        .call(d3.axisBottom(this.xAxis).tickSizeOuter(0)); // Remove last tick
 
       this.yAxis = d3
         .scaleBand()
         .range([this.height, 0])
         .domain(this.distinctHeights);
-      this.chart.append("g").call(d3.axisLeft(this.yAxis));
+      this.chart
+        .append("g")
+        .call(d3.axisLeft(this.yAxis).tickSizeOuter(0)); // Remove last tick
+
+      this.chart.append("text")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -this.margin.left+20)
+        .attr("x", -this.margin.top-70)
+        .text("Height (meters)")
     },
 
     updateChart(vtpsData_val) {
