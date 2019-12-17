@@ -1,15 +1,24 @@
 Crow
 ====
 
-Crow prototype, as a Vue.js SPA. Make uses of the [Vue CLI](https://cli.vuejs.org/) toolkit.
+Crow prototype, as a Vue.js SPA. Make uses of the [Vue CLI](https://cli.vuejs.org/) toolkit, [D3](https://d3js.org/) and [BootstrapVue](https://bootstrap-vue.js.org/).
 
 To run (development)
 ====================
 
 ```
-$ cd crow-vue-prototype
 $ yarn serve
 ````
+
+To deploy on [https://inbo.github.io/crow/](https://inbo.github.io/crow/)
+=========================================================================
+
+````
+$ yarn build --dest ./docs
+````
+
+Then commit and push, including the `docs` directory. GitHub pages does the rest. 
+
 
 Features to prioritize
 ======================
@@ -17,32 +26,5 @@ Features to prioritize
 - Arbitrary time range
 - (several days) Large amount of data
 - Smooth transitions
-
-Generated README by Vue-CLI
-===========================
-
-# crow-vue-prototype
-
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
+- Better look and feel
+- Other graphs
