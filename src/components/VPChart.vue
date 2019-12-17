@@ -1,7 +1,7 @@
 <template>
   <div>
     <slot name="title"></slot>
-    <svg />
+    <svg id="vp-chart"/>
   </div>
 </template>
 
@@ -67,7 +67,7 @@ export default {
   methods: {
     createEmptyChart() {
       let svg = d3
-        .select("svg")
+        .select("svg#vp-chart")
         .attr("width", this.width + this.margin.left + this.margin.right)
         .attr("height", this.height + this.margin.top + this.margin.bottom)
         .append("g")

@@ -26,5 +26,10 @@ export default {
         minDensityColor: '#f0f0f0',
         maxDensityColor: '#dc3545',
         noDataColor: 'white',
+    },
+    VPIChartStyle: {
+        margin: { top: 0, right: 30, bottom: 30, left: 65 },
+        width: 1100,
+        height: 300,
     }
 }

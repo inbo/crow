@@ -61,7 +61,10 @@
 
       <b-row>
         <b-col>
-          <v-p-i-chart>
+          <v-p-i-chart
+            :vpi-data="integratedProfiles"
+            :style-config="VPIChartStyle"
+          >
             <template v-slot:title>
               <h3>VPI Chart</h3>
             </template>
@@ -78,6 +81,7 @@ import VPIChart from "./VPIChart.vue";
 
 import moment from "moment";
 import axios from "axios";
+import * as d3 from "d3";
 
 import config from "../config";
 import helpers from "../helpers";
@@ -99,6 +103,7 @@ export default {
       showCharts: false,
 
       VPChartStyle: config.VPChartStyle,
+      VPIChartStyle: config.VPIChartStyle,
 
       dataTemporalResolution: config.vtpsFormat.temporalResolution,
       availableHeights: config.vtpsFormat.availableHeights,
@@ -137,7 +142,7 @@ export default {
 
     loadData() {
       this.showCharts = true;
-      
+
       this.initializeEmptyData();
       this.populateDataFromCrowServer(
         this.selectedRadar,
@@ -209,6 +214,24 @@ export default {
         }
       }
       return dataArray;
+    },
+    integratedProfiles() {
+      // TODO: this was copy-pasted from previous version.
+      // TODO: could be refactored to 1) use our radarVtps structure instead of creating the temporary nestedVpts
+      // TODO: 2) remove dependency to D3
+
+      let nestedVpts = d3
+        .nest()
+        .key(d => d.timestamp) // group data by datetime
+        .entries(this.radarVtpsAsArray);
+
+      let vpi = nestedVpts.map(d => {
+        return {
+          timestamp: d.key,
+          mtr: helpers.integrateProfile(d.values)
+        };
+      });
+      return vpi;
     }
   },
 
