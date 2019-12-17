@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 export default {
-    dataBaseUrl: 'http://crow.weernet.be',
+    dataBaseUrl: 'https://crow.weernet.be',
     availableRadars: [
         { value: "behel", text: "Behel?", country: "Belgium" },
         { value: "bejab", text: "Jabbeke", country: "Belgium" },
