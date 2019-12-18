@@ -100,8 +100,8 @@ export default {
         .attr("transform", "rotate(-90)")
         .attr("y", -this.margin.left + 20)
         .attr("x", -this.margin.top - 70)
-        .text("MTR");
-    },
+        .text("Migration Traffic Rate");
+    }, 
 
     // TODO: update to follow the dynamic update pattern
     // TODO: validate graph by comparing to BioRad

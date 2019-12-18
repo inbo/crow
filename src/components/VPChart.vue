@@ -57,8 +57,14 @@ export default {
     maxDensity: function() {
       return this.vtpsData.reduce(
         (max, p) => (p.dens > max ? p.dens : max),
-        this.vtpsData[0].dens
+        this.vtpsData[this.firstDataIndex].dens
       );
+    },
+    /* returns the index of the element in this.vtpsData where noData = false */ 
+    firstDataIndex: function() {
+      return this.vtpsData.findIndex(function(elem) {
+        return elem.noData === false;
+      })
     },
     distinctHeights: function() {
       return [...new Set(this.vtpsData.map(row => row.height))];
