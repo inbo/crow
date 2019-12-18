@@ -58,8 +58,15 @@ export default {
     maxMTR: function() {
       return this.vpiData.reduce(
         (max, p) => (p.mtr > max ? p.mtr : max),
-        this.vpiData[0].mtr
+        this.vpiData[this.firstMTRIndex].mtr
       );
+    },
+
+    /* Return the index of the first element in this.vpiData that has a valid MTR*/
+    firstMTRIndex: function() {
+      return this.vpiData.findIndex(function(elem) {
+        return !isNaN(elem.mtr);
+      });
     }
   },
   methods: {
@@ -101,7 +108,7 @@ export default {
         .attr("y", -this.margin.left + 20)
         .attr("x", -this.margin.top - 70)
         .text("Migration Traffic Rate");
-    }, 
+    },
 
     // TODO: update to follow the dynamic update pattern
     // TODO: validate graph by comparing to BioRad
@@ -125,7 +132,8 @@ export default {
               return vm.xAxis(d.timestamp);
             })
             .y(function(d) {
-              return vm.yAxis(d.mtr);
+              let mtr = isNaN(d.mtr) ? 0 : d.mtr;
+              return vm.yAxis(mtr);
             })
         );
     }

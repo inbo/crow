@@ -2,6 +2,15 @@
 import config from "./config";
 import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only the "chart" modules need it
 
+function parseFloatOrZero(string) {
+    let val = parseFloat(string);
+    if (isNaN(val)) {
+        return 0;
+    } else {
+        return val;
+    }
+}
+
 function readVtps(responseString) {
     let d = responseString.split("\n");
     d = d.splice(config.vtpsFormat.numHeaderLines); // Remove 4 header lines
@@ -9,12 +18,8 @@ function readVtps(responseString) {
     d.pop()
 
     d = d.map(function (row) {
-        // There are NaN values everywhere, D3 don't know how to interpret them
-        // For now, we consider a non-number density to mean 0
-        let density = parseFloat(row.substring(76, 82));
-        if (isNaN(density)) {
-            density = 0;
-        }
+        // There are NaN values everywhere in the data, D3 don't know how to interpret them
+        // For now, we consider a non-numbers to mean 0
 
         return {
             datetime: Date.parse(
@@ -31,7 +36,7 @@ function readVtps(responseString) {
             height: parseInt(row.substring(14, 18)),
             dd: parseFloat(row.substring(47, 52)),
             ff: parseFloat(row.substring(41, 46)),
-            dens: density,
+            dens: parseFloatOrZero(row.substring(76, 82)),
             sd_vvp: parseFloat(row.substring(53, 59))
         };
     });
