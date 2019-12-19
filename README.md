@@ -19,11 +19,3 @@ $ mv ./dist ./docs
 ```
 
 Then commit and push, including the `docs` directory. GitHub pages does the rest. 
-
-## Features to prioritize
-
-- Arbitrary time range
-- (several days) Large amount of data
-- Smooth transitions
-- Better look and feel
-- Other graphs
