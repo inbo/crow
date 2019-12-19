@@ -5,7 +5,7 @@ Crow prototype, as a Vue.js SPA. Make uses of the [Vue CLI](https://cli.vuejs.or
 ## To run (development)
 
 ```
-$ yarn serve
+$ npm run serve
 ```
 
 ## To deploy
@@ -13,7 +13,9 @@ $ yarn serve
 On [https://inbo.github.io/crow/](https://inbo.github.io/crow/)
 
 ```
-$ yarn build --dest ./docs
+$ rm -rf ./docs
+$ npm run build
+$ mv ./dist ./docs
 ```
 
 Then commit and push, including the `docs` directory. GitHub pages does the rest. 
