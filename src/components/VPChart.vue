@@ -40,7 +40,7 @@ export default {
   computed: {
     rectDivider: function() {
       let durationInMs = this.maxDatetime - this.minDatetime;
-      return durationInMs / 1000 / 60 / this.dataTemporalResolution;
+      return durationInMs / 1000 / this.dataTemporalResolution;
     },
     minDatetime: function() {
       return this.vtpsData.reduce(
@@ -133,7 +133,7 @@ export default {
       update
         .merge(enter)
         .attr("x", function(row) {
-          return vm.xAxis(row.timestamp);
+          return vm.xAxis(row.timestamp) + 1; // 1 is the axis thickness so the rect doesn't hide it. TODO: retreive value dynamically.
         })
         .attr("y", function(row) {
           return vm.yAxis(row.height);
