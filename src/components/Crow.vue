@@ -13,31 +13,28 @@
             size="sm"
             class="mx-1"
           ></b-form-select>
-          <b-form-text class="mx-3">{{ selectedRadarName }} is located in {{ selectedRadarCountry }}</b-form-text>
+          <b-form-text class="mx-2">{{ selectedRadarName }} is located in {{ selectedRadarCountry }}</b-form-text>
 
           <b>
-            <label for="input-from-date">From:</label>
+            <label for="input-selected-date">Centered around:</label>
           </b>
           <b-form-input
-            id="input-from-date"
+            id="input-selected-date"
             type="date"
             placeholder="type a date..."
-            v-model="startDate"
+            v-model="selectedDate"
             class="mx-1"
             size="sm"
           />
 
-          <b>
-            <label for="input-to-date">To:</label>
-          </b>
-          <b-form-input
-            id="input-to-date"
-            type="date"
-            placeholder="type a date..."
-            v-model="endDate"
-            class="mx-1"
-            size="sm"
-          />
+          <b-form-text class="mx-1">at noon</b-form-text>
+
+          <b-form-group label="Interval" label-cols="auto" label-class="font-weight-bold">
+            <b-form-radio-group v-model="intervalInHours">
+              <b-form-radio value="24">24h</b-form-radio>
+              <b-form-radio value="96">96h</b-form-radio>
+            </b-form-radio-group>
+          </b-form-group>
 
           <b-button size="sm" type="submit" variant="primary">Load and view radar data</b-button>
         </b-form>
@@ -61,10 +58,7 @@
 
       <b-row>
         <b-col>
-          <v-p-i-chart
-            :vpi-data="integratedProfiles"
-            :style-config="VPIChartStyle"
-          >
+          <v-p-i-chart :vpi-data="integratedProfiles" :style-config="VPIChartStyle">
             <template v-slot:title>
               <h3>VPI Chart</h3>
             </template>
@@ -92,11 +86,11 @@ import helpers from "../helpers";
 
 export default {
   data() {
-    let yesterday = moment().subtract(1, "days");
+    let twoDaysAgo = moment().subtract(2, "days");
 
     return {
-      startDate: yesterday.format(moment.HTML5_FMT.DATE),
-      endDate: yesterday.format(moment.HTML5_FMT.DATE),
+      selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
+      intervalInHours: 24, // The chart show this amount of hours before and after selectedDate (at noon)
       selectedRadar: config.initialRadarCode,
       availableRadars: config.availableRadars,
 
@@ -198,6 +192,21 @@ export default {
   },
 
   computed: {
+    selectedDateNoon() {
+      return moment(this.selectedDate, "YYYY-MM-DD")
+        .hour(12)
+        .minute(0)
+        .second(0);
+    },
+    startDate() {
+      return moment(this.selectedDateNoon).subtract(
+        this.intervalInHours,
+        "hours"
+      );
+    },
+    endDate() {
+      return moment(this.selectedDateNoon).add(this.intervalInHours, "hours");
+    },
     selectedRadarName() {
       return this.availableRadars.find(d => d.value == this.selectedRadar).text;
     },
