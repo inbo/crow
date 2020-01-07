@@ -75,6 +75,7 @@ import VPIChart from "./VPIChart.vue";
 
 import moment from "moment";
 import axios from "axios";
+import SunCalc from "suncalc";
 import * as d3 from "d3";
 
 import config from "../config";
@@ -128,7 +129,20 @@ export default {
           heightObj[height] = { noData: true };
         });
 
-        this.$set(this.radarVtps, currentMoment.toDate().getTime(), heightObj);
+        let metadataObj = {
+          sunAltitude: (SunCalc.getPosition(
+            currentMoment.toDate(),
+            this.selectedRadarLatitude,
+            this.selectedRadarLongitude
+          ).altitude) * (180 / Math.PI), // In degrees
+          heightData: heightObj
+        };
+
+        this.$set(
+          this.radarVtps,
+          currentMoment.toDate().getTime(),
+          metadataObj
+        );
 
         currentMoment.add(this.dataTemporalResolution, "seconds");
       }
@@ -155,7 +169,11 @@ export default {
         noData: false
       };
 
-      this.$set(this.radarVtps[vtpsDataRow.datetime], vtpsDataRow.height, obj);
+      this.$set(
+        this.radarVtps[vtpsDataRow.datetime].heightData,
+        vtpsDataRow.height,
+        obj
+      );
     },
 
     /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */
@@ -188,9 +206,8 @@ export default {
       return `${config.dataBaseUrl}/${radarName}/${selectedDate.format(
         "YYYY"
       )}/${radarName}_vpts_${selectedDate.format("YYYYMMDD")}.txt`;
-    }
+    },
   },
-
   computed: {
     selectedDateNoon() {
       return moment(this.selectedDate, "YYYY-MM-DD")
@@ -207,6 +224,14 @@ export default {
     endDate() {
       return moment(this.selectedDateNoon).add(this.intervalInHours, "hours");
     },
+    selectedRadarLatitude() {
+      return this.availableRadars.find(d => d.value == this.selectedRadar)
+        .latitude;
+    },
+    selectedRadarLongitude() {
+      return this.availableRadars.find(d => d.value == this.selectedRadar)
+        .longitude;
+    },
     selectedRadarName() {
       return this.availableRadars.find(d => d.value == this.selectedRadar).text;
     },
@@ -216,8 +241,8 @@ export default {
     },
     radarVtpsAsArray() {
       let dataArray = [];
-      for (let [timestamp, heightObj] of Object.entries(this.radarVtps)) {
-        for (let [height, props] of Object.entries(heightObj)) {
+      for (let [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
+        for (let [height, props] of Object.entries(metadataObj.heightData)) {
           let o = { timestamp: timestamp, height: height };
           dataArray.push({ ...o, ...props });
         }

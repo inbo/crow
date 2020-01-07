@@ -3,11 +3,12 @@ import _ from 'lodash';
 export default {
     dataBaseUrl: 'https://crow.weernet.be',
     availableRadars: [
-        { value: "behel", text: "Behel?", country: "Belgium" },
-        { value: "bejab", text: "Jabbeke", country: "Belgium" },
-        { value: "bezav", text: "Zaventem", country: "Belgium" },
-        { value: "bewid", text: "Wideumont", country: "Belgium" },
-        { value: "nldhl", text: "Den Helder", country: "the Netherlands" }
+        // TODO: validate/fix radar coordinates
+        { value: "behel", text: "Behel?", country: "Belgium", latitude: 51.0743268, longitude: 5.3844822 },
+        { value: "bejab", text: "Jabbeke", country: "Belgium", latitude: 51.1846386, longitude: 3.0902954},
+        { value: "bezav", text: "Zaventem", country: "Belgium", latitude: 50.8806207, longitude: 4.4730008},
+        { value: "bewid", text: "Wideumont", country: "Belgium", latitude: 49.9257163, longitude: 5.485025},
+        { value: "nldhl", text: "Den Helder", country: "the Netherlands", latitude: 52.9529894, longitude: 4.8267592}
     ],
     initialRadarCode: 'behel',
     localizedDateFormat: "YYYY/MM/DD", // As returned by the browser when READING data from the "input type=date" field. TODO: Make it autodetected based on the locale?
