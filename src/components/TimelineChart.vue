@@ -68,10 +68,13 @@ export default {
         .scaleTime()
         .domain([this.minDatetime, this.maxDatetime])
         .range([0, this.width]);
-      this.chart
+      
+      if (this.styleConfig.showXAxis) {
+        this.chart
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
         .call(d3.axisBottom(this.xAxis).tickSizeOuter(0)); // Remove last tick
+      }
     },
 
     updateChart(periods) {

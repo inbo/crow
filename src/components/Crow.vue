@@ -44,6 +44,12 @@
     <div v-if="showCharts">
       <b-row>
         <b-col>
+          
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col>
           <v-p-chart
             :vtps-data="radarVtpsAsArray"
             :data-temporal-resolution="dataTemporalResolution"
@@ -51,15 +57,10 @@
           >
             <template v-slot:title>
               <h3>VP Chart</h3>
+              <timeline-chart :periods="timePeriods" :style-config="TimelineChartStyle" :data-temporal-resolution="dataTemporalResolution">
+          </timeline-chart>
             </template>
           </v-p-chart>
-        </b-col>
-      </b-row>
-
-      <b-row>
-        <b-col>
-          <timeline-chart :periods="timePeriods" :style-config="TimelineChartStyle" :data-temporal-resolution="dataTemporalResolution">
-          </timeline-chart>
         </b-col>
       </b-row>
 
