@@ -32,5 +32,15 @@ export default {
         margin: { top: 0, right: 30, bottom: 30, left: 65 },
         width: 1100,
         height: 300,
+    },
+
+    TimelineChartStyle: {
+        margin: { top: 0, right: 30, bottom: 30, left: 65 },
+        width: 1100,
+        height: 50,
+
+        dayColor: '#dae9fe',
+        twilightColor: '#4771bb',
+        nightColor: '#1e252d'
     }
 }

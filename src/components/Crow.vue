@@ -58,6 +58,13 @@
 
       <b-row>
         <b-col>
+          <timeline-chart :periods="timePeriods" :style-config="TimelineChartStyle" :data-temporal-resolution="dataTemporalResolution">
+          </timeline-chart>
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col>
           <v-p-i-chart :vpi-data="integratedProfiles" :style-config="VPIChartStyle">
             <template v-slot:title>
               <h3>VPI Chart</h3>
@@ -72,6 +79,7 @@
 <script>
 import VPChart from "./VPChart.vue";
 import VPIChart from "./VPIChart.vue";
+import TimelineChart from "./TimelineChart.vue";
 
 import moment from "moment";
 import axios from "axios";
@@ -99,6 +107,7 @@ export default {
 
       VPChartStyle: config.VPChartStyle,
       VPIChartStyle: config.VPIChartStyle,
+      TimelineChartStyle: config.TimelineChartStyle,
 
       dataTemporalResolution: config.vtpsFormat.temporalResolution,
       availableHeights: config.vtpsFormat.availableHeights,
@@ -209,6 +218,16 @@ export default {
     },
   },
   computed: {
+    timePeriods() {
+      // An array of all time periods currently shown (derived from radarVtps) with metadata such as the sun's position. 
+      let periods = [];
+      
+      for (let [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
+        periods.push({timestamp: timestamp, sunAltitude: metadataObj.sunAltitude});
+      }
+
+      return periods;
+    },
     selectedDateNoon() {
       return moment(this.selectedDate, "YYYY-MM-DD")
         .hour(12)
@@ -271,7 +290,8 @@ export default {
 
   components: {
     VPChart,
-    VPIChart
+    VPIChart,
+    TimelineChart
   }
 };
 </script>
