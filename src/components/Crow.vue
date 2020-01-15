@@ -9,7 +9,9 @@
           <b-form-select
             id="input-radar"
             v-model="selectedRadarODIMCode"
-            :options="selectRadarOptions"
+            :options="availableRadars"
+            value-field="ODIMCode"
+            text-field="location"
             size="sm"
             class="mx-1"
           ></b-form-select>
@@ -237,19 +239,6 @@ export default {
     },
     endDate() {
       return moment(this.selectedDateNoon).add(this.intervalInHours, "hours");
-    },
-    selectRadarOptions() {
-      // Our config (radar metadata) use explicit key names (such as ODIMCode and location), but the
-      // <form-select> element expects "text" and "value" properties, so we do some mapping here
-      return this.availableRadars.map(radar => {
-        return {
-          value: radar.ODIMCode,
-          text: radar.location,
-          country: radar.country,
-          latitude: radar.latitude,
-          longitude: radar.longitude
-        }
-      }) 
     },
     selectedRadarLatitude() {
       return this.availableRadars.find(d => d.ODIMCode == this.selectedRadarODIMCode)
