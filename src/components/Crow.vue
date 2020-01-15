@@ -8,12 +8,12 @@
           </b>
           <b-form-select
             id="input-radar"
-            v-model="selectedRadar"
+            v-model="selectedRadarODIMCode"
             :options="selectRadarOptions"
             size="sm"
             class="mx-1"
           ></b-form-select>
-          <b-form-text class="mx-2">{{ selectedRadarName }} is located in {{ selectedRadarCountry }}</b-form-text>
+          <b-form-text class="mx-2">{{ selectedRadarLocation }} is located in {{ selectedRadarCountry }}</b-form-text>
 
           <b>
             <label for="input-selected-date">Centered around:</label>
@@ -95,7 +95,7 @@ export default {
     return {
       selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
       intervalInHours: 24, // The chart show this amount of hours before and after selectedDate (at noon)
-      selectedRadar: config.initialRadarODIMCode,
+      selectedRadarODIMCode: config.initialRadarODIMCode,
       availableRadars: config.availableRadars,
 
       showCharts: false,
@@ -157,7 +157,7 @@ export default {
 
       this.initializeEmptyData();
       this.populateDataFromCrowServer(
-        this.selectedRadar,
+        this.selectedRadarODIMCode,
         this.startDate,
         this.endDate
       );
@@ -252,18 +252,18 @@ export default {
       }) 
     },
     selectedRadarLatitude() {
-      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadar)
+      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadarODIMCode)
         .latitude;
     },
     selectedRadarLongitude() {
-      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadar)
+      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadarODIMCode)
         .longitude;
     },
-    selectedRadarName() {
-      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadar).text;
+    selectedRadarLocation() {
+      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadarODIMCode).location;
     },
     selectedRadarCountry() {
-      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadar)
+      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadarODIMCode)
         .country;
     },
     radarVtpsAsArray() {
