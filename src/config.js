@@ -8,7 +8,10 @@ export default {
         { ODIMCode: "bejab", location: "Jabbeke", country: "Belgium", latitude: 51.1919, longitude: 3.0641 },
         { ODIMCode: "bezav", location: "Zaventem", country: "Belgium", latitude: 50.9054, longitude: 4.4579 },
         { ODIMCode: "bewid", location: "Wideumont", country: "Belgium", latitude: 49.9135, longitude: 5.5044 },
-        { ODIMCode: "nlhrw", location: "Herwijnen", country: "the Netherlands", latitude: 51.83708, longitude: 5.13797 }
+        { ODIMCode: "nlhrw", location: "Herwijnen", country: "the Netherlands", latitude: 51.83708, longitude: 5.13797 },
+        { ODIMCode: "deess", location: "Essen", country: "Germany", latitude: 51.4055, longitude: 6.9669 },
+        { ODIMCode: "denhb", location: "Neuheilenbach", country: "Germany", latitude: 50.1097, longitude: 6.5483 },
+
     ],
     initialRadarODIMCode: 'behel',
     localizedDateFormat: "YYYY/MM/DD", // As returned by the browser when READING data from the "input type=date" field. TODO: Make it autodetected based on the locale?
