@@ -4,11 +4,12 @@ export default {
     dataBaseUrl: 'https://crow.weernet.be',
     availableRadars: [
         // TODO: validate/fix radar coordinates
+        // Find metadata on https://www.eumetnet.eu/wp-content/themes/aeron-child/observations-programme/current-activities/opera/database/OPERA_Database/index.html
         { value: "behel", text: "Behel?", country: "Belgium", latitude: 51.0743268, longitude: 5.3844822 },
         { value: "bejab", text: "Jabbeke", country: "Belgium", latitude: 51.1846386, longitude: 3.0902954 },
         { value: "bezav", text: "Zaventem", country: "Belgium", latitude: 50.8806207, longitude: 4.4730008 },
         { value: "bewid", text: "Wideumont", country: "Belgium", latitude: 49.9257163, longitude: 5.485025 },
-        { value: "nldhl", text: "Den Helder", country: "the Netherlands", latitude: 52.9529894, longitude: 4.8267592 }
+        { value: "nlhrw", text: "Herwijnen", country: "the Netherlands", latitude: 51.83708, longitude: 5.13797 }
     ],
     initialRadarCode: 'behel',
     localizedDateFormat: "YYYY/MM/DD", // As returned by the browser when READING data from the "input type=date" field. TODO: Make it autodetected based on the locale?
