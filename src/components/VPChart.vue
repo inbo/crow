@@ -1,12 +1,14 @@
 <template>
   <div>
     <slot name="title"></slot>
-    <svg id="vp-chart"/>
+    <svg id="vp-chart" />
   </div>
 </template>
 
 <script>
 import * as d3 from "d3";
+
+import helpers from "../helpers";
 
 export default {
   props: {
@@ -19,11 +21,18 @@ export default {
       chart: null,
 
       margin: this.styleConfig.margin,
-      width: this.styleConfig.width - this.styleConfig.margin.left - this.styleConfig.margin.right,
-      height: this.styleConfig.height - this.styleConfig.margin.top - this.styleConfig.margin.bottom,
+      width:
+        this.styleConfig.width -
+        this.styleConfig.margin.left -
+        this.styleConfig.margin.right,
+      height:
+        this.styleConfig.height -
+        this.styleConfig.margin.top -
+        this.styleConfig.margin.bottom,
 
       xAxis: null,
-      yAxis: null
+      yAxisLeft: null,
+      yAxisRight: null
     };
   },
   watch: {
@@ -60,14 +69,27 @@ export default {
         this.vtpsData[this.firstDataIndex].dens
       );
     },
-    /* returns the index of the element in this.vtpsData where noData = false */ 
+    /* returns the index of the element in this.vtpsData where noData = false */
+
     firstDataIndex: function() {
       return this.vtpsData.findIndex(function(elem) {
         return elem.noData === false;
-      })
+      });
     },
-    distinctHeights: function() {
+    distinctHeightsMeters: function() {
       return [...new Set(this.vtpsData.map(row => row.height))];
+    },
+    minHeightInMeters: function() {
+      return this.distinctHeightsMeters[0];
+    },
+    maxHeightInMeters: function() {
+      return this.distinctHeightsMeters[this.distinctHeightsMeters.length - 1];
+    },
+    heightRangeInMeters: function() {
+      return [this.minHeightInMeters, this.maxHeightInMeters];
+    },
+    heightRangeInFeet: function() {
+      return this.heightRangeInMeters.map(h => helpers.metersToFeet(h));
     }
   },
   methods: {
@@ -79,7 +101,7 @@ export default {
         .append("g")
         .attr(
           "transform",
-          "translate(" + this.margin.left + "," + this.margin.top + ")"
+          `translate(${this.margin.left}, ${this.margin.top})`
         );
 
       this.chart = svg;
@@ -92,31 +114,49 @@ export default {
         .range([0, this.width]);
       this.chart
         .append("g")
-        .attr("transform", "translate(0," + this.height + ")")
+        .attr("transform", `translate(0, ${this.height})`)
         .call(d3.axisBottom(this.xAxis).tickSizeOuter(0)); // Remove last tick
 
-      this.yAxis = d3
+      this.yAxisLeft = d3
         .scaleBand()
         .range([this.height, 0])
-        .domain(this.distinctHeights);
+        .domain(this.distinctHeightsMeters);
+      this.chart.append("g").call(d3.axisLeft(this.yAxisLeft).tickSizeOuter(0)); // Remove last tick
+
+      this.yAxisRight = d3
+        .scaleLinear()
+        .range([this.height, 0])
+        .domain([0, 15748.03]);
       this.chart
         .append("g")
-        .call(d3.axisLeft(this.yAxis).tickSizeOuter(0)); // Remove last tick
+        .attr("transform", `translate(${this.width}, 0)`)
+        .call(d3.axisRight(this.yAxisRight).tickSizeOuter(0)); // Remove last tick
 
-      this.chart.append("text")
+      this.chart
+        .append("text")
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")
-        .attr("y", -this.margin.left+20)
-        .attr("x", -this.margin.top-70)
-        .text("Height (meters)")
+        .attr("y", -this.margin.left + 20)
+        .attr("x", -this.margin.top - 70)
+        .text("Height (meters)");
+
+      this.chart
+        .append("text")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", this.width + 55)
+        .attr("x", -this.margin.top - 70)
+        .text("Height (feet)");
     },
 
     updateChart(vtpsData_val) {
-      
       // Build color scale
       let myColor = d3
         .scaleLinear()
-        .range([this.styleConfig.minDensityColor, this.styleConfig.maxDensityColor])
+        .range([
+          this.styleConfig.minDensityColor,
+          this.styleConfig.maxDensityColor
+        ])
         .domain([0, this.maxDensity]);
 
       let update = this.chart.selectAll().data(vtpsData_val, function(d) {
@@ -127,7 +167,7 @@ export default {
       let exit = update.exit();
 
       exit.remove();
-      
+
       var vm = this;
 
       update
@@ -136,10 +176,10 @@ export default {
           return vm.xAxis(row.timestamp) + 1; // 1 is the axis thickness so the rect doesn't hide it. TODO: retreive value dynamically.
         })
         .attr("y", function(row) {
-          return vm.yAxis(row.height);
+          return vm.yAxisLeft(row.height);
         })
         .attr("width", vm.width / vm.rectDivider)
-        .attr("height", vm.yAxis.bandwidth())
+        .attr("height", vm.yAxisLeft.bandwidth())
         .style("fill", function(row) {
           if (row.noData) {
             return vm.styleConfig.noDataColor;

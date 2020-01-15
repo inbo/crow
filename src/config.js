@@ -20,7 +20,7 @@ export default {
     },
 
     VPChartStyle: {
-        margin: { top: 0, right: 30, bottom: 30, left: 65 },
+        margin: { top: 0, right: 60, bottom: 30, left: 65 },
         width: 1100,
         height: 300,
 
@@ -29,13 +29,13 @@ export default {
         noDataColor: 'white',
     },
     VPIChartStyle: {
-        margin: { top: 0, right: 30, bottom: 30, left: 65 },
+        margin: { top: 0, right: 60, bottom: 30, left: 65 },
         width: 1100,
         height: 300,
     },
 
     TimelineChartStyle: {
-        margin: { top: 0, right: 30, bottom: 5, left: 65 },
+        margin: { top: 0, right: 60, bottom: 5, left: 65 },
         width: 1100,
         height: 30,
 

@@ -2,6 +2,10 @@
 import config from "./config";
 import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only the "chart" modules need it
 
+function metersToFeet(meters) {
+    return meters * 3,281;
+}
+
 function parseFloatOrZero(string) {
     let val = parseFloat(string);
     if (isNaN(val)) {
@@ -94,4 +98,4 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
     return mtr
 }
 
-export default { readVtps, integrateProfile } 
+export default { readVtps, integrateProfile, metersToFeet } 
