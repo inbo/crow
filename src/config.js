@@ -40,6 +40,7 @@ export default {
         height: 30,
 
         showXAxis: false,
+        showTooltip: true,
 
         dayColor: '#dae9fe',
         twilightColor: '#4771bb',

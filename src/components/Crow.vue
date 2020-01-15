@@ -44,12 +44,6 @@
     <div v-if="showCharts">
       <b-row>
         <b-col>
-          
-        </b-col>
-      </b-row>
-
-      <b-row>
-        <b-col>
           <v-p-chart
             :vtps-data="radarVtpsAsArray"
             :data-temporal-resolution="dataTemporalResolution"
