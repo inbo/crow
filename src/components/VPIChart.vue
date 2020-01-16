@@ -47,14 +47,20 @@ export default {
       return [this.minTimestamp, this.maxTimestamp];
     },
     minTimestamp: function() {
-      return d3.min(this.vpiData, function(d) { return d.timestamp; });
+      return d3.min(this.vpiData, function(d) {
+        return d.timestamp;
+      });
     },
     maxTimestamp: function() {
-      return d3.max(this.vpiData, function(d) { return d.timestamp; });
+      return d3.max(this.vpiData, function(d) {
+        return d.timestamp;
+      });
     },
     maxMTR: function() {
-      return d3.max(this.vpiData, function(d) { return d.mtr; });
-    },
+      return d3.max(this.vpiData, function(d) {
+        return d.mtr;
+      });
+    }
   },
   methods: {
     createEmptyChart() {
@@ -80,7 +86,12 @@ export default {
       this.chart
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
-        .call(d3.axisBottom(this.xAxis).tickSizeOuter(0).tickFormat(d3.timeFormat(this.styleConfig.timeAxisFormat))); // Remove last tick
+        .call(
+          d3
+            .axisBottom(this.xAxis)
+            .tickSizeOuter(0) // Remove last tick
+            .tickFormat(d3.timeFormat(this.styleConfig.timeAxisFormat))
+        ); 
 
       this.yAxis = d3
         .scaleLinear()

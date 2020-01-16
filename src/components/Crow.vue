@@ -106,7 +106,7 @@ export default {
       selectedRadarODIMCode: config.initialRadarODIMCode,
       availableRadars: config.availableRadars,
 
-      timeDisplayedAs: 'local_radar', // 'local_radar' | 'UTC'
+      timeDisplayedAs: "local_radar", // 'local_radar' | 'UTC'
 
       showCharts: false,
 
@@ -146,11 +146,13 @@ export default {
         });
 
         let metadataObj = {
-          sunAltitude: (SunCalc.getPosition(
-            currentMoment.toDate(),
-            this.selectedRadarLatitude,
-            this.selectedRadarLongitude
-          ).altitude) * (180 / Math.PI), // In degrees
+          sunAltitude:
+            SunCalc.getPosition(
+              currentMoment.toDate(),
+              this.selectedRadarLatitude,
+              this.selectedRadarLongitude
+            ).altitude *
+            (180 / Math.PI), // In degrees
           heightData: heightObj
         };
 
@@ -222,23 +224,25 @@ export default {
       return `${config.dataBaseUrl}/${radarName}/${selectedDate.format(
         "YYYY"
       )}/${radarName}_vpts_${selectedDate.format("YYYYMMDD")}.txt`;
-    },
+    }
   },
   computed: {
     timeZoneToShow() {
-      if (this.timeDisplayedAs == 'local_radar') {
+      if (this.timeDisplayedAs == "local_radar") {
         return this.selectedRadarTimezone;
-      }
-      else {
-        return 'UTC'
+      } else {
+        return "UTC";
       }
     },
     timePeriods() {
-      // An array of all time periods currently shown (derived from radarVtps) with metadata such as the sun's position. 
+      // An array of all time periods currently shown (derived from radarVtps) with metadata such as the sun's position.
       let periods = [];
-      
+
       for (let [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
-        periods.push({timestamp: +timestamp, sunAltitude: metadataObj.sunAltitude});
+        periods.push({
+          timestamp: +timestamp,
+          sunAltitude: metadataObj.sunAltitude
+        });
       }
 
       return periods;
@@ -259,7 +263,9 @@ export default {
       return moment(this.selectedDateNoon).add(this.intervalInHours, "hours");
     },
     selectedRadarAsObject() {
-      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadarODIMCode);
+      return this.availableRadars.find(
+        d => d.ODIMCode == this.selectedRadarODIMCode
+      );
     },
     selectedRadarLatitude() {
       return this.selectedRadarAsObject.latitude;

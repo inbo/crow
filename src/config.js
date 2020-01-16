@@ -11,7 +11,7 @@ export default {
         { ODIMCode: "bewid", location: "Wideumont", country: "Belgium", latitude: 49.9135, longitude: 5.5044, timezone: 'Europe/Brussels' },
         { ODIMCode: "nlhrw", location: "Herwijnen", country: "the Netherlands", latitude: 51.83708, longitude: 5.13797, timezone: 'Europe/Amsterdam' },
         { ODIMCode: "deess", location: "Essen", country: "Germany", latitude: 51.4055, longitude: 6.9669, timezone: 'Europe/Berlin' },
-        { ODIMCode: "denhb", location: "Neuheilenbach", country: "Germany", latitude: 50.1097, longitude: 6.5483, timezone: 'Europe/Berlin'},
+        { ODIMCode: "denhb", location: "Neuheilenbach", country: "Germany", latitude: 50.1097, longitude: 6.5483, timezone: 'Europe/Berlin' },
     ].sort((a, b) => (a.location > b.location) ? 1 : -1), // Sort by location for nicer display
 
     initialRadarODIMCode: 'behel',

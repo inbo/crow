@@ -59,18 +59,22 @@ export default {
       } else {
         let adjustedData = [];
 
-        moment
+        moment;
 
         for (const originalRow of this.vtpsData) {
-          const updatedRow = { 
-            ...originalRow, 
+          const updatedRow = {
+            ...originalRow,
             // We add the necessary offset
-            timestamp: originalRow.timestamp - (moment.tz.zone(this.showTimeAs).utcOffset(originalRow.timestamp) * 60 * 1000)
-            };
-          
+            timestamp:
+              originalRow.timestamp -
+              moment.tz.zone(this.showTimeAs).utcOffset(originalRow.timestamp) *
+                60 *
+                1000
+          };
+
           adjustedData.push(updatedRow);
         }
-        
+
         return adjustedData;
       }
     },
@@ -79,13 +83,19 @@ export default {
       return durationInMs / 1000 / this.dataTemporalResolution;
     },
     minTimestamp: function() {
-      return d3.min(this.vtpsDataTimezoneAdjusted, function(d) { return d.timestamp; });
+      return d3.min(this.vtpsDataTimezoneAdjusted, function(d) {
+        return d.timestamp;
+      });
     },
     maxTimestamp: function() {
-      return d3.max(this.vtpsDataTimezoneAdjusted, function(d) { return d.timestamp; });
+      return d3.max(this.vtpsDataTimezoneAdjusted, function(d) {
+        return d.timestamp;
+      });
     },
     maxDensity: function() {
-      return d3.max(this.vtpsDataTimezoneAdjusted, function(d) { return d.dens; });
+      return d3.max(this.vtpsDataTimezoneAdjusted, function(d) {
+        return d.dens;
+      });
     },
     distinctHeightsMeters: function() {
       return [...new Set(this.vtpsDataTimezoneAdjusted.map(row => row.height))];

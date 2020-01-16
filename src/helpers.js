@@ -3,7 +3,7 @@ import config from "./config";
 import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only the "chart" modules need it
 
 function metersToFeet(meters) {
-    return meters * 3,281;
+    return meters * 3, 281;
 }
 
 function parseFloatOrZero(string) {
