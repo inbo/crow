@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 const globalTimeAxisFormat = " %d-%m@%H:%M ";  // See: https://github.com/d3/d3-time-format#locale_format
 
 export default {
@@ -20,7 +18,7 @@ export default {
     localizedDateFormat: "YYYY/MM/DD", // As returned by the browser when READING data from the "input type=date" field. TODO: Make it autodetected based on the locale?
 
     vtpsFormat: {
-        availableHeights: _.range(0, 4800 + 1, 200), // From 0 to 4800 meters, by increment of 200
+        availableHeights: [0, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400, 3600, 3800, 4000, 4200, 4400, 4600, 4800],
         temporalResolution: 5 * 60, // seconds
         numHeaderLines: 4
     },
