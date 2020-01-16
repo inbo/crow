@@ -15,7 +15,9 @@
             size="sm"
             class="mx-1"
           ></b-form-select>
-          <b-form-text class="mx-2">{{ selectedRadarLocation }} is located in {{ selectedRadarCountry }}</b-form-text>
+          <b-form-text
+            class="mx-2"
+          >{{ selectedRadarLocation }} is located in {{ selectedRadarCountry }}</b-form-text>
 
           <b>
             <label for="input-selected-date">Centered around:</label>
@@ -48,13 +50,17 @@
         <b-col>
           <v-p-chart
             :vtps-data="radarVtpsAsArray"
+            :showTimeAs="timeZoneToShow"
             :data-temporal-resolution="dataTemporalResolution"
             :style-config="VPChartStyle"
           >
             <template v-slot:title>
               <h3>VP Chart</h3>
-              <timeline-chart :periods="timePeriods" :style-config="TimelineChartStyle" :data-temporal-resolution="dataTemporalResolution">
-          </timeline-chart>
+              <timeline-chart
+                :periods="timePeriods"
+                :style-config="TimelineChartStyle"
+                :data-temporal-resolution="dataTemporalResolution"
+              ></timeline-chart>
             </template>
           </v-p-chart>
         </b-col>
@@ -100,6 +106,8 @@ export default {
       selectedRadarODIMCode: config.initialRadarODIMCode,
       availableRadars: config.availableRadars,
 
+      timeDisplayedAs: 'local_radar', // 'local_radar' | 'UTC'
+
       showCharts: false,
 
       VPChartStyle: config.VPChartStyle,
@@ -109,7 +117,9 @@ export default {
       dataTemporalResolution: config.vtpsFormat.temporalResolution,
       availableHeights: config.vtpsFormat.availableHeights,
 
-      radarVtps: {} // Data is kept as an object for performance reasons, the "radarVtpsAsArray" computed property allows reading it as an array
+      // Data is kept as an object for performance reasons, the "radarVtpsAsArray" computed property allows reading it as an array.
+      // All timestamps are kept in UTC (transformed later, in the viz components)
+      radarVtps: {}
     };
   },
   methods: {
@@ -215,6 +225,14 @@ export default {
     },
   },
   computed: {
+    timeZoneToShow() {
+      if (this.timeDisplayedAs == 'local_radar') {
+        return this.selectedRadarTimezone;
+      }
+      else {
+        return 'UTC'
+      }
+    },
     timePeriods() {
       // An array of all time periods currently shown (derived from radarVtps) with metadata such as the sun's position. 
       let periods = [];
@@ -240,20 +258,23 @@ export default {
     endDate() {
       return moment(this.selectedDateNoon).add(this.intervalInHours, "hours");
     },
+    selectedRadarAsObject() {
+      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadarODIMCode);
+    },
     selectedRadarLatitude() {
-      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadarODIMCode)
-        .latitude;
+      return this.selectedRadarAsObject.latitude;
     },
     selectedRadarLongitude() {
-      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadarODIMCode)
-        .longitude;
+      return this.selectedRadarAsObject.longitude;
     },
     selectedRadarLocation() {
-      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadarODIMCode).location;
+      return this.selectedRadarAsObject.location;
     },
     selectedRadarCountry() {
-      return this.availableRadars.find(d => d.ODIMCode == this.selectedRadarODIMCode)
-        .country;
+      return this.selectedRadarAsObject.country;
+    },
+    selectedRadarTimezone() {
+      return this.selectedRadarAsObject.timezone;
     },
     radarVtpsAsArray() {
       let dataArray = [];

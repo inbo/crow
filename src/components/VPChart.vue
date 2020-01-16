@@ -7,6 +7,7 @@
 
 <script>
 import * as d3 from "d3";
+import moment from "moment-timezone";
 
 import helpers from "../helpers";
 
@@ -14,7 +15,8 @@ export default {
   props: {
     vtpsData: Array,
     dataTemporalResolution: Number,
-    styleConfig: Object
+    styleConfig: Object,
+    showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
   },
   data() {
     return {
@@ -36,48 +38,73 @@ export default {
     };
   },
   watch: {
-    vtpsData(val) {
+    vtpsData() {
       if (this.chart != null) {
         this.chart.remove();
       }
 
       this.createEmptyChart();
       this.createAndAddChartAxis();
-      this.updateChart(val);
+      this.updateChart();
     }
   },
   computed: {
+    vtpsDataTimezoneAdjusted: function() {
+      // vtpsData contains timestamp in UTC
+      // this computed property return an adjusted (if necessary) version, depending on showTimeAs
+
+      // TODO: implement
+      if (this.showTimeAs === "UTC") {
+        return this.vtpsData;
+      } else {
+        let adjustedData = [];
+
+        moment
+
+        for (const originalRow of this.vtpsData) {
+          const updatedRow = { 
+            ...originalRow, 
+            // We add the necessary offset
+            timestamp: +originalRow.timestamp - (moment.tz.zone(this.showTimeAs).utcOffset(originalRow.timestamp) * 60 * 1000)
+            };
+          
+          adjustedData.push(updatedRow);
+        }
+        
+        return adjustedData;
+      }
+    },
     rectDivider: function() {
       let durationInMs = this.maxDatetime - this.minDatetime;
       return durationInMs / 1000 / this.dataTemporalResolution;
     },
     minDatetime: function() {
-      return this.vtpsData.reduce(
+      return this.vtpsDataTimezoneAdjusted.reduce(
         (min, p) => (p.timestamp < min ? p.timestamp : min),
-        this.vtpsData[0].timestamp
+        this.vtpsDataTimezoneAdjusted[0].timestamp
       );
     },
     maxDatetime: function() {
-      return this.vtpsData.reduce(
+      return this.vtpsDataTimezoneAdjusted.reduce(
         (max, p) => (p.timestamp > max ? p.timestamp : max),
-        this.vtpsData[0].timestamp
+        this.vtpsDataTimezoneAdjusted[0].timestamp
       );
     },
     maxDensity: function() {
-      return this.vtpsData.reduce(
+      return this.vtpsDataTimezoneAdjusted.reduce(
         (max, p) => (p.dens > max ? p.dens : max),
-        this.vtpsData[this.firstDataIndex].dens
+        this.vtpsDataTimezoneAdjusted[this.firstDataIndex].dens
       );
     },
-    /* returns the index of the element in this.vtpsData where noData = false */
 
+    /* returns the index of the element in this.vtpsDataTimezoneAdjusted where noData = false */
     firstDataIndex: function() {
-      return this.vtpsData.findIndex(function(elem) {
+      return this.vtpsDataTimezoneAdjusted.findIndex(function(elem) {
         return elem.noData === false;
       });
     },
     distinctHeightsMeters: function() {
-      return [...new Set(this.vtpsData.map(row => row.height))];
+      return [...new Set(this.vtpsDataTimezoneAdjusted.map(row => row.height))];
     },
     minHeightInMeters: function() {
       return this.distinctHeightsMeters[0];
@@ -115,7 +142,12 @@ export default {
       this.chart
         .append("g")
         .attr("transform", `translate(0, ${this.height})`)
-        .call(d3.axisBottom(this.xAxis).tickSizeOuter(0)); // Remove last tick
+        .call(
+          d3
+            .axisBottom(this.xAxis)
+            .tickSizeOuter(0)
+            .tickFormat(d3.timeFormat(this.styleConfig.timeAxisFormat))
+        ); // Remove last tick
 
       this.yAxisLeft = d3
         .scaleBand()
@@ -149,7 +181,7 @@ export default {
         .text("Height (feet)");
     },
 
-    updateChart(vtpsData_val) {
+    updateChart() {
       // Build color scale
       let myColor = d3
         .scaleLinear()
@@ -159,9 +191,11 @@ export default {
         ])
         .domain([0, this.maxDensity]);
 
-      let update = this.chart.selectAll().data(vtpsData_val, function(d) {
-        return `${d.timestamp} - ${d.height} - ${d.dens}`;
-      });
+      let update = this.chart
+        .selectAll()
+        .data(this.vtpsDataTimezoneAdjusted, function(d) {
+          return `${d.timestamp} - ${d.height} - ${d.dens}`;
+        });
 
       let enter = update.enter().append("rect");
       let exit = update.exit();

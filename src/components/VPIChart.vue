@@ -93,7 +93,7 @@ export default {
       this.chart
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
-        .call(d3.axisBottom(this.xAxis).tickSizeOuter(0)); // Remove last tick
+        .call(d3.axisBottom(this.xAxis).tickSizeOuter(0).tickFormat(d3.timeFormat(this.styleConfig.timeAxisFormat))); // Remove last tick
 
       this.yAxis = d3
         .scaleLinear()
