@@ -65,7 +65,7 @@ export default {
           const updatedRow = { 
             ...originalRow, 
             // We add the necessary offset
-            timestamp: +originalRow.timestamp - (moment.tz.zone(this.showTimeAs).utcOffset(originalRow.timestamp) * 60 * 1000)
+            timestamp: originalRow.timestamp - (moment.tz.zone(this.showTimeAs).utcOffset(originalRow.timestamp) * 60 * 1000)
             };
           
           adjustedData.push(updatedRow);

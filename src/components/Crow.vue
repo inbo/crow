@@ -280,7 +280,7 @@ export default {
       let dataArray = [];
       for (let [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
         for (let [height, props] of Object.entries(metadataObj.heightData)) {
-          let o = { timestamp: timestamp, height: height };
+          let o = { timestamp: +timestamp, height: height };
           dataArray.push({ ...o, ...props });
         }
       }
@@ -298,7 +298,7 @@ export default {
 
       let vpi = nestedVpts.map(d => {
         return {
-          timestamp: d.key,
+          timestamp: +d.key,
           mtr: helpers.integrateProfile(d.values)
         };
       });
