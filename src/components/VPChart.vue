@@ -75,16 +75,16 @@ export default {
       }
     },
     rectDivider: function() {
-      let durationInMs = this.maxDatetime - this.minDatetime;
+      let durationInMs = this.maxTimestamp - this.minTimestamp;
       return durationInMs / 1000 / this.dataTemporalResolution;
     },
-    minDatetime: function() {
+    minTimestamp: function() {
       return this.vtpsDataTimezoneAdjusted.reduce(
         (min, p) => (p.timestamp < min ? p.timestamp : min),
         this.vtpsDataTimezoneAdjusted[0].timestamp
       );
     },
-    maxDatetime: function() {
+    maxTimestamp: function() {
       return this.vtpsDataTimezoneAdjusted.reduce(
         (max, p) => (p.timestamp > max ? p.timestamp : max),
         this.vtpsDataTimezoneAdjusted[0].timestamp
@@ -137,7 +137,7 @@ export default {
     createAndAddChartAxis() {
       this.xAxis = d3
         .scaleTime()
-        .domain([this.minDatetime, this.maxDatetime])
+        .domain([this.minTimestamp, this.maxTimestamp])
         .range([0, this.width]);
       this.chart
         .append("g")
