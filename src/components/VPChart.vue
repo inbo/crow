@@ -79,29 +79,13 @@ export default {
       return durationInMs / 1000 / this.dataTemporalResolution;
     },
     minTimestamp: function() {
-      return this.vtpsDataTimezoneAdjusted.reduce(
-        (min, p) => (p.timestamp < min ? p.timestamp : min),
-        this.vtpsDataTimezoneAdjusted[0].timestamp
-      );
+      return d3.min(this.vtpsDataTimezoneAdjusted, function(d) { return d.timestamp; });
     },
     maxTimestamp: function() {
-      return this.vtpsDataTimezoneAdjusted.reduce(
-        (max, p) => (p.timestamp > max ? p.timestamp : max),
-        this.vtpsDataTimezoneAdjusted[0].timestamp
-      );
+      return d3.max(this.vtpsDataTimezoneAdjusted, function(d) { return d.timestamp; });
     },
     maxDensity: function() {
-      return this.vtpsDataTimezoneAdjusted.reduce(
-        (max, p) => (p.dens > max ? p.dens : max),
-        this.vtpsDataTimezoneAdjusted[this.firstDataIndex].dens
-      );
-    },
-
-    /* returns the index of the element in this.vtpsDataTimezoneAdjusted where noData = false */
-    firstDataIndex: function() {
-      return this.vtpsDataTimezoneAdjusted.findIndex(function(elem) {
-        return elem.noData === false;
-      });
+      return d3.max(this.vtpsDataTimezoneAdjusted, function(d) { return d.dens; });
     },
     distinctHeightsMeters: function() {
       return [...new Set(this.vtpsDataTimezoneAdjusted.map(row => row.height))];

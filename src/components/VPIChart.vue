@@ -43,31 +43,18 @@ export default {
     }
   },
   computed: {
+    extentTimestamp: function() {
+      return [this.minTimestamp, this.maxTimestamp];
+    },
     minTimestamp: function() {
-      return this.vpiData.reduce(
-        (min, p) => (p.timestamp < min ? p.timestamp : min),
-        this.vpiData[0].timestamp
-      );
+      return d3.min(this.vpiData, function(d) { return d.timestamp; });
     },
     maxTimestamp: function() {
-      return this.vpiData.reduce(
-        (max, p) => (p.timestamp > max ? p.timestamp : max),
-        this.vpiData[0].timestamp
-      );
+      return d3.max(this.vpiData, function(d) { return d.timestamp; });
     },
     maxMTR: function() {
-      return this.vpiData.reduce(
-        (max, p) => (p.mtr > max ? p.mtr : max),
-        this.vpiData[this.firstMTRIndex].mtr
-      );
+      return d3.max(this.vpiData, function(d) { return d.mtr; });
     },
-
-    /* Return the index of the first element in this.vpiData that has a valid MTR*/
-    firstMTRIndex: function() {
-      return this.vpiData.findIndex(function(elem) {
-        return !isNaN(elem.mtr);
-      });
-    }
   },
   methods: {
     createEmptyChart() {
@@ -88,7 +75,7 @@ export default {
     createAndAddChartAxis() {
       this.xAxis = d3
         .scaleTime()
-        .domain([this.minTimestamp, this.maxTimestamp])
+        .domain(this.extentTimestamp)
         .range([0, this.width]);
       this.chart
         .append("g")
