@@ -119,7 +119,7 @@ export default {
               .duration(200)
               .style("opacity", 0.9);
             vm.tooltip
-              .html(`<b>Date</b>: ${new Date(row.timestamp/1000).toISOString()} <br/><b>Sun altitude</b>: ${row.sunAltitude.toFixed(2)}°`)
+              .html(`<b>Date</b>: ${new Date(row.timestamp).toISOString()} <br/><b>Sun altitude</b>: ${row.sunAltitude.toFixed(2)}°`)
               .style("left", d3.event.pageX + "px")
               .style("top", d3.event.pageY - 50 + "px");
           })
