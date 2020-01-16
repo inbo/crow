@@ -37,7 +37,7 @@ function readVtps(responseString) {
                 ":" +
                 row.substring(11, 13)
             ),
-            height: parseInt(row.substring(14, 18)),
+            height: +parseInt(row.substring(14, 18)),
             dd: parseFloat(row.substring(47, 52)),
             ff: parseFloat(row.substring(41, 46)),
             dens: parseFloatOrZero(row.substring(76, 82)),
