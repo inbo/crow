@@ -78,6 +78,9 @@ export default {
         return adjustedData;
       }
     },
+    rectHeight: function() {
+      return this.height / this.distinctHeightsMeters.length;
+    },
     rectDivider: function() {
       let durationInMs = this.maxTimestamp - this.minTimestamp;
       return durationInMs / 1000 / this.dataTemporalResolution;
@@ -139,12 +142,12 @@ export default {
         .call(
           d3
             .axisBottom(this.xAxis)
-            .tickSizeOuter(0)
+            .tickSizeOuter(0) // Remove last tick
             .tickFormat(d3.timeFormat(this.styleConfig.timeAxisFormat))
-        ); // Remove last tick
+        );
 
       this.yAxisLeft = d3
-        .scaleBand()
+        .scalePoint()
         .range([this.height, 0])
         .domain(this.distinctHeightsMeters);
       this.chart.append("g").call(d3.axisLeft(this.yAxisLeft).tickSizeOuter(0)); // Remove last tick
@@ -204,10 +207,10 @@ export default {
           return vm.xAxis(row.timestamp) + 1; // 1 is the axis thickness so the rect doesn't hide it. TODO: retreive value dynamically.
         })
         .attr("y", function(row) {
-          return vm.yAxisLeft(row.height);
+          return vm.yAxisLeft(row.height) - vm.rectHeight;
         })
         .attr("width", vm.width / vm.rectDivider)
-        .attr("height", vm.yAxisLeft.bandwidth())
+        .attr("height", vm.rectHeight)
         .style("fill", function(row) {
           if (row.noData) {
             return vm.styleConfig.noDataColor;

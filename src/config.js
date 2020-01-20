@@ -24,7 +24,7 @@ export default {
     },
 
     VPChartStyle: {
-        margin: { top: 0, right: 60, bottom: 30, left: 65 },
+        margin: { top: 20, right: 60, bottom: 30, left: 65 },
         width: 1100,
         height: 300,
 
