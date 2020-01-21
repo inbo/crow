@@ -95,7 +95,6 @@ import helpers from "../helpers";
 // TODO: Use moment objects everywhere (currently date in vtpsDataRow, and string for v-model link)
 // Look at other fancy JS stuff available
 // TODO: validation of date min <= max
-
 export default {
   data() {
     let twoDaysAgo = moment().subtract(2, "days");

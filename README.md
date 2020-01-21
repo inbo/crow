@@ -13,9 +13,7 @@ $ npm run serve
 On [https://inbo.github.io/crow/](https://inbo.github.io/crow/)
 
 ```
-$ rm -rf ./docs
-$ npm run build
-$ mv ./dist ./docs
+$ rm -rf ./docs && npm run build && mv ./dist ./docs
 ```
 
 Then commit and push, including the `docs` directory. GitHub pages does the rest. 
