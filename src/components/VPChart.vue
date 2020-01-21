@@ -149,8 +149,15 @@ export default {
       this.yAxisLeft = d3
         .scalePoint()
         .range([this.height, 0])
-        .domain(this.distinctHeightsMeters);
-      this.chart.append("g").call(d3.axisLeft(this.yAxisLeft).tickSizeOuter(0)); // Remove last tick
+        .domain(this.distinctHeightsMeters.concat([5000])); // The axis needs one more value so the line extends to the top...
+      this.chart
+        .append("g")
+        .call(
+          d3
+            .axisLeft(this.yAxisLeft)
+            .tickValues(this.distinctHeightsMeters) // ... But we don't want to see the added "5000" height, so we specify the tick values manually
+            .tickSizeOuter(0) // And we want to hide the last tick line
+          ); // Remove last tick
 
       this.yAxisRight = d3
         .scaleLinear()
