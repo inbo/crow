@@ -68,7 +68,7 @@
 
       <b-row>
         <b-col>
-          <v-p-i-chart :vpi-data="integratedProfiles" :style-config="VPIChartStyle">
+          <v-p-i-chart :vpi-data="integratedProfiles" :style-config="VPIChartStyle" :showTimeAs="timeZoneToShow">
             <template v-slot:title>
               <h3>VPI Chart</h3>
             </template>

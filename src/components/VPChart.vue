@@ -7,7 +7,6 @@
 
 <script>
 import * as d3 from "d3";
-import moment from "moment-timezone";
 
 import helpers from "../helpers";
 
@@ -50,33 +49,7 @@ export default {
   },
   computed: {
     vtpsDataTimezoneAdjusted: function() {
-      // vtpsData contains timestamp in UTC
-      // this computed property return an adjusted (if necessary) version, depending on showTimeAs
-
-      // TODO: implement
-      if (this.showTimeAs === "UTC") {
-        return this.vtpsData;
-      } else {
-        let adjustedData = [];
-
-        moment;
-
-        for (const originalRow of this.vtpsData) {
-          const updatedRow = {
-            ...originalRow,
-            // We add the necessary offset
-            timestamp:
-              originalRow.timestamp -
-              moment.tz.zone(this.showTimeAs).utcOffset(originalRow.timestamp) *
-                60 *
-                1000
-          };
-
-          adjustedData.push(updatedRow);
-        }
-
-        return adjustedData;
-      }
+      return helpers.adjustTimestamps(this.vtpsData, this.showTimeAs);
     },
     rectHeight: function() {
       return this.height / this.distinctHeightsMeters.length;

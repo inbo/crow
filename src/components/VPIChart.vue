@@ -7,11 +7,13 @@
 
 <script>
 import * as d3 from "d3";
+import helpers from "../helpers";
 
 export default {
   props: {
     vpiData: Array,
-    styleConfig: Object
+    styleConfig: Object,
+    showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
   },
   data() {
     return {
@@ -32,32 +34,35 @@ export default {
     };
   },
   watch: {
-    vpiData(val) {
+    vpiData() {
       if (this.chart != null) {
         this.chart.remove();
       }
 
       this.createEmptyChart();
       this.createAndAddChartAxis();
-      this.updateChart(val);
+      this.updateChart();
     }
   },
   computed: {
+    vpiDataTimezoneAdjusted: function() {
+      return helpers.adjustTimestamps(this.vpiData, this.showTimeAs);
+    },
     extentTimestamp: function() {
       return [this.minTimestamp, this.maxTimestamp];
     },
     minTimestamp: function() {
-      return d3.min(this.vpiData, function(d) {
+      return d3.min(this.vpiDataTimezoneAdjusted, function(d) {
         return d.timestamp;
       });
     },
     maxTimestamp: function() {
-      return d3.max(this.vpiData, function(d) {
+      return d3.max(this.vpiDataTimezoneAdjusted, function(d) {
         return d.timestamp;
       });
     },
     maxMTR: function() {
-      return d3.max(this.vpiData, function(d) {
+      return d3.max(this.vpiDataTimezoneAdjusted, function(d) {
         return d.mtr;
       });
     }
@@ -113,12 +118,12 @@ export default {
     // TODO: Why is MTR chart often empty?
     // TODO: make sure we don't accidentaly initialize data to 0
     // TODO: DRY between charts
-    updateChart(vpiData_val) {
+    updateChart() {
       let vm = this;
 
       this.chart
         .append("path")
-        .datum(vpiData_val)
+        .datum(vm.vpiDataTimezoneAdjusted)
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1.5)

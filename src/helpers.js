@@ -1,6 +1,35 @@
 // TODO: move field position (hardcoded constants) to config.js
 import config from "./config";
 import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only the "chart" modules need it
+import moment from "moment-timezone";
+
+function adjustTimestamps(arr, showTimeAs) {
+    // param arr: Array of objects (each has a 'timestamp' property, in UTC)
+    // param showTimeAs: either a timezone designator such as 'Europe/Brussels' or 'UTC'
+
+    // This function returns an array of objects with timestamps adjusted for the timezone (if necessary)
+    if (showTimeAs === "UTC") {
+        return arr;
+    } else {
+        let adjustedData = [];
+
+        for (const originalRow of arr) {
+            const updatedRow = {
+                ...originalRow,
+                // We add the necessary offset
+                timestamp:
+                    originalRow.timestamp -
+                    moment.tz.zone(showTimeAs).utcOffset(originalRow.timestamp) *
+                    60 *
+                    1000
+            };
+
+            adjustedData.push(updatedRow);
+        }
+
+        return adjustedData;
+    }
+}
 
 function metersToFeet(meters) {
     return meters * 3, 281;
@@ -98,4 +127,4 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
     return mtr
 }
 
-export default { readVtps, integrateProfile, metersToFeet } 
+export default { readVtps, integrateProfile, metersToFeet, adjustTimestamps } 
