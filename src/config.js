@@ -45,9 +45,11 @@ export default {
     TimelineChartStyle: {
         margin: { top: 0, right: 60, bottom: 5, left: 65 },
         width: 1100,
-        height: 30,
+        height: 50,
 
-        showXAxis: false,
+        timeAxisFormat: globalTimeAxisFormat,
+
+        showXAxis: true,
         showTooltip: true,
 
         dayColor: '#dae9fe',
