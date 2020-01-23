@@ -1,48 +1,70 @@
 <template>
   <div id="app">
-    <b-container fluid class="px-0">
-      <b-row>
-        <b-col>
-          <Crow-navbar />
-        </b-col>
-      </b-row>
-    </b-container>
+    <b-navbar type="light" variant="light" toggleable="lg">
+      <b-container>
+        <b-navbar-brand>CROW</b-navbar-brand>
+      </b-container>
+    </b-navbar>
 
-    <b-container>
-      <Crow />
-    </b-container>
-
-    <b-container fluid class="px-0">
-      <b-row>
-        <b-col><hr /></b-col>
-      </b-row>
-
-      <b-row>
-        <b-col class="text-center">
-            Made with ❤️ and 
-            <img id="cr-vue-logo" alt="Vue logo" src="./assets/logo.png" />
-            by the <a href="https://oscibio.inbo.be/">Open science lab for biodiversity</a>
-        </b-col>
-      </b-row>
-    </b-container>
+    <main>
+      <b-container>
+        <Crow/>
+      </b-container>
+    </main>
+    
+    <footer>
+      <b-container>
+        <b-row>
+          <b-col lg>
+            Created by the <a href="https://oscibio.inbo.be">Open science lab for biodiversity</a>
+          </b-col>
+          <b-col lg class="text-right">
+            <a href="https://github.com/inbo/crow/">Source code</a>
+          </b-col>
+        </b-row>
+      </b-container>
+    </footer>
   </div>
 </template>
 
 <script>
 import Crow from "./components/Crow.vue";
-import CrowNavbar from "./components/CrowNavbar.vue";
 
 export default {
   name: "app",
   components: {
-    Crow,
-    CrowNavbar
+    Crow
   }
 };
 </script>
 
 <style>
-#app #cr-vue-logo {
-  width: 20px;
+.navbar {
+  background-color: white!important;
+  border-bottom: 1px solid #e9ecef;
+  }
+  .navbar-brand {
+    font-weight: bold;
+    }
+    .navbar-brand img {
+      height: 30px;
+    }
+
+main {
+  min-height: calc(100vh - 54px); /* Viewport height minus medium screen navbar height, to push footer to bottom */
+  padding-bottom: $grid-gutter-width; /* Don't stick to footer */
 }
+
+footer {
+  background-color: #3c3c3c;
+  border-top: 5px solid #bcbcbc;
+  color: #bcbcbc;
+  font-size: 0.9rem;
+  padding: 15px 0;
+  }
+  footer a,
+  footer a:hover,
+  footer a:visited {
+    color: white;
+  }
 </style>
