@@ -7,11 +7,15 @@
 <script>
 import * as d3 from "d3";
 
+import helpers from "../helpers";
+import moment from 'moment';
+
 export default {
   props: {
     periods: Array,
     styleConfig: Object,
-    dataTemporalResolution: Number
+    dataTemporalResolution: Number,
+    showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
   },
   data() {
     return {
@@ -34,7 +38,7 @@ export default {
   watch: {
     periods: {
       immediate: true,
-      handler(val) {
+      handler() {
         this.$nextTick(function() {
           if (this.chart != null) {
             this.chart.remove();
@@ -42,7 +46,7 @@ export default {
 
           this.createEmptyChart();
           this.createAndAddChartAxis();
-          this.updateChart(val);
+          this.updateChart();
         });
       }
     }
@@ -82,8 +86,8 @@ export default {
       }
     },
 
-    updateChart(periods) {
-      let update = this.chart.selectAll().data(periods);
+    updateChart() {
+      let update = this.chart.selectAll().data(this.periodsTimezoneAdjusted);
       let enter = update.enter().append("rect");
       let exit = update.exit();
       exit.remove();
@@ -120,11 +124,8 @@ export default {
               .style("opacity", 0.9);
             vm.tooltip
               .html(
-                `<b>Date</b>: ${new Date(
-                  row.timestamp
-                ).toISOString()} <br/><b>Sun altitude</b>: ${row.sunAltitude.toFixed(
-                  2
-                )}°`
+                `<b>Date</b>: ${moment.tz(row.timestamp, vm.showTimeAs).format()}<br/>
+                <b>Sun altitude</b>: ${row.sunAltitude.toFixed(2)}°`
               )
               .style("left", d3.event.pageX + "px")
               .style("top", d3.event.pageY - 50 + "px");
@@ -139,15 +140,18 @@ export default {
     }
   },
   computed: {
+    periodsTimezoneAdjusted: function() {
+      return helpers.adjustTimestamps(this.periods, this.showTimeAs);
+    },
     rectDivider: function() {
       let durationInMs = this.maxDatetime - this.minDatetime;
       return durationInMs / 1000 / this.dataTemporalResolution;
     },
     minDatetime: function() {
-      return this.periods[0].timestamp;
+      return this.periodsTimezoneAdjusted[0].timestamp;
     },
     maxDatetime: function() {
-      return this.periods[this.periods.length - 1].timestamp;
+      return this.periodsTimezoneAdjusted[this.periodsTimezoneAdjusted.length - 1].timestamp;
     }
   }
 };

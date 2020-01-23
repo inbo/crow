@@ -60,6 +60,7 @@
                 :periods="timePeriods"
                 :style-config="TimelineChartStyle"
                 :data-temporal-resolution="dataTemporalResolution"
+                :showTimeAs="timeZoneToShow"
               ></timeline-chart>
             </template>
           </v-p-chart>
@@ -144,10 +145,17 @@ export default {
           heightObj[height] = { noData: true };
         });
 
+        let locallyAdjustedDate;
+        if (this.timeDisplayedAs != 'UTC') {
+          locallyAdjustedDate = new Date(helpers.UTCTimestampToLocal(currentMoment.toDate().getTime(), this.selectedRadarTimezone));
+        } else {
+          locallyAdjustedDate = currentMoment.toDate();
+        }
+
         let metadataObj = {
           sunAltitude:
             SunCalc.getPosition(
-              currentMoment.toDate(),
+              locallyAdjustedDate, 
               this.selectedRadarLatitude,
               this.selectedRadarLongitude
             ).altitude *
