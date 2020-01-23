@@ -7,12 +7,11 @@
 <script>
 import * as d3 from "d3";
 
-import helpers from "../helpers";
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 export default {
   props: {
-    periods: Array,
+    periods: Array,  // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
     styleConfig: Object,
     dataTemporalResolution: Number,
     showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
@@ -75,7 +74,7 @@ export default {
     createAndAddChartAxis() {
       this.xAxis = d3
         .scaleTime()
-        .domain([this.minDatetime, this.maxDatetime])
+        .domain([this.minMoment.valueOf(), this.maxMoment.valueOf()])
         .range([0, this.width]);
 
       if (this.styleConfig.showXAxis) {
@@ -87,7 +86,7 @@ export default {
     },
 
     updateChart() {
-      let update = this.chart.selectAll().data(this.periodsTimezoneAdjusted);
+      let update = this.chart.selectAll().data(this.periods);
       let enter = update.enter().append("rect");
       let exit = update.exit();
       exit.remove();
@@ -97,7 +96,7 @@ export default {
       let sel = update
         .merge(enter)
         .attr("x", function(row) {
-          return vm.xAxis(row.timestamp) + 1; // 1 is the axis thickness so the rect doesn't hide it. TODO: retreive value dynamically.
+          return vm.xAxis(row.moment.valueOf()) + 1; // 1 is the axis thickness so the rect doesn't hide it. TODO: retreive value dynamically.
         })
         .attr("y", 0)
         .attr("width", vm.width / vm.rectDivider)
@@ -124,7 +123,7 @@ export default {
               .style("opacity", 0.9);
             vm.tooltip
               .html(
-                `<b>Date</b>: ${moment.tz(row.timestamp, vm.showTimeAs).format()}<br/>
+                `<b>Date</b>: ${row.moment.tz(vm.showTimeAs).format()}<br/>
                 <b>Sun altitude</b>: ${row.sunAltitude.toFixed(2)}°`
               )
               .style("left", d3.event.pageX + "px")
@@ -140,18 +139,15 @@ export default {
     }
   },
   computed: {
-    periodsTimezoneAdjusted: function() {
-      return helpers.adjustTimestamps(this.periods, this.showTimeAs);
-    },
     rectDivider: function() {
-      let durationInMs = this.maxDatetime - this.minDatetime;
-      return durationInMs / 1000 / this.dataTemporalResolution;
+      let duration = moment.duration(this.maxMoment.diff(this.minMoment));
+      return duration.asSeconds() / this.dataTemporalResolution;
     },
-    minDatetime: function() {
-      return this.periodsTimezoneAdjusted[0].timestamp;
+    minMoment: function() { // Now returns a moment obj.
+      return this.periods[0].moment;
     },
-    maxDatetime: function() {
-      return this.periodsTimezoneAdjusted[this.periodsTimezoneAdjusted.length - 1].timestamp;
+    maxMoment: function() {
+      return this.periods[this.periods.length - 1].moment;
     }
   }
 };

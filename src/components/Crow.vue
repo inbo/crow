@@ -247,7 +247,7 @@ export default {
 
       for (let [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
         periods.push({
-          timestamp: +timestamp,
+          moment: moment.utc(+timestamp),
           sunAltitude: metadataObj.sunAltitude
         });
       }
