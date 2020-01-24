@@ -7,9 +7,7 @@
     </b-navbar>
 
     <main>
-      <b-container>
-        <Crow/>
-      </b-container>
+      <Crow/>
     </main>
     
     <footer>

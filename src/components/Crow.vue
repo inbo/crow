@@ -1,5 +1,4 @@
 <template>
-  <div>
   <b-container class="content">
     <b-form @submit.prevent="loadData" class="mb-4">
       <b-row>
@@ -132,7 +131,7 @@
         </b-col>
       </b-row>
     </div>
-  </div>
+  </b-container>
 </template>
 
 <script>
