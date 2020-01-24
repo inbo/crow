@@ -61,7 +61,7 @@ export default {
         .append("g")
         .attr(
           "transform",
-          "translate(" + this.margin.left + "," + this.margin.top + ")"
+          `translate(${this.margin.left}, ${this.margin.top})`
         );
 
       if (this.styleConfig.showTooltip) {
@@ -82,7 +82,7 @@ export default {
       if (this.styleConfig.showXAxis) {
         this.chart
           .append("g")
-          .attr("transform", "translate(0," + (this.height - 20) + ")")
+          .attr("transform", `translate(0, ${this.height - 20})`)
           .call(
             d3
               .axisBottom(this.xAxis)

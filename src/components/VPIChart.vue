@@ -138,7 +138,7 @@ export default {
         .append("path")
         .datum(vm.vpiDataTimezoneAdjusted)
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("stroke", vm.styleConfig.MTRLineColor)
         .attr("stroke-width", 1.5)
         .attr(
           "d",
