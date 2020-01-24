@@ -52,8 +52,11 @@ export default {
 
 main {
   min-height: calc(100vh - 54px); /* Viewport height minus medium screen navbar height, to push footer to bottom */
-  padding-bottom: $grid-gutter-width; /* Don't stick to footer */
-}
+  padding-bottom: 30px; /* Don't stick to footer */
+  }
+  .content {
+    margin-top: 15px;
+    }
 
 footer {
   background-color: #3c3c3c;

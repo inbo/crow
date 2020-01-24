@@ -1,53 +1,99 @@
 <template>
   <div>
-    <b-form-row class="mb-4">
-      <b-col class="mt-4">
-        <b-form inline @submit.prevent="loadData">
-          <b>
-            <label for="input-radar">Radar:</label>
-          </b>
-          <b-form-select
-            id="input-radar"
-            v-model="selectedRadarODIMCode"
-            :options="availableRadars"
-            value-field="ODIMCode"
-            text-field="location"
-            size="sm"
-            class="mx-1"
-          ></b-form-select>
-          <b-form-text
-            class="mx-2"
-          >{{ selectedRadarLocation }} is located in {{ selectedRadarCountry }}</b-form-text>
+  <b-container class="content">
+    <b-form @submit.prevent="loadData" class="mb-4">
+      <b-row>
+        <b-col lg>
+          <b-row>
+            <b-col sm>
+              <b-form-group
+                id="input-radar-group"
+                label="Radar:"
+                label-for="input-radar"
+                :description="selectedRadarLocation + ' is located in ' + selectedRadarCountry + '.'"
+              >
+                <b-form-select
+                  id="input-radar"
+                  size="sm"
+                  v-model="selectedRadarODIMCode"
+                  :options="availableRadars"
+                  value-field="ODIMCode"
+                  text-field="location"
+                ></b-form-select>
+              </b-form-group>
+            </b-col>
 
-          <b>
-            <label for="input-selected-date">Centered around:</label>
-          </b>
-          <b-form-input
-            id="input-selected-date"
-            type="date"
-            placeholder="type a date..."
-            v-model="selectedDate"
-            class="mx-1"
-            size="sm"
-          />
+            <b-col sm>
+              <b-form-group
+                id="input-date-group"
+                label="Date:"
+                label-for="input-date"
+                description="Charts will be centered on noon for selected date."
+              >
+                <b-form-input
+                id="input-date"
+                size="sm"
+                type="date"
+                placeholder="Type a date..."
+                v-model="selectedDate"
+              />
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </b-col>
 
-          <b-form-text class="mx-1">at noon</b-form-text>
-
-          <b-form-group label="Interval" label-cols="auto" label-class="font-weight-bold">
-            <b-form-radio-group v-model="selectedIntervalInHours" :options="availableIntervals"></b-form-radio-group>
-          </b-form-group>
-
-          <b-form-group label="Time display" label-cols="auto" label-class="font-weight-bold">
-            <b-form-radio-group v-model="timeDisplayedAs">
-              <b-form-radio value="radarLocal">Local (to radar)</b-form-radio>
-              <b-form-radio value="UTC">UTC</b-form-radio>
-            </b-form-radio-group>
-          </b-form-group>
-
-          <b-button size="sm" type="submit" variant="primary">Load and view radar data</b-button>
-        </b-form>
-      </b-col>
-    </b-form-row>
+        <b-col lg>
+          <b-row>
+            <b-col xs="3" sm="3">
+              <b-form-group
+                id="input-interval-group"
+                label="Interval:"
+                label-for="input-interval"
+              >
+                <b-form-radio-group
+                  id="input-interval"
+                  size="sm"
+                  buttons
+                  button-variant="outline-secondary"
+                  v-model="selectedIntervalInHours"
+                  :options="availableIntervals"
+                >
+                </b-form-radio-group>
+              </b-form-group>
+            </b-col>
+          
+            <b-col xs="3" sm="3">
+              <b-form-group
+                id="input-timezone-group"
+                label="Time zone:"
+                label-for="input-timezone"
+              >
+                <b-form-radio-group
+                  id="input-timezone"
+                  size="sm"
+                  buttons
+                  button-variant="outline-secondary"
+                  v-model="timeDisplayedAs"
+                >
+                  <b-form-radio value="radarLocal">Radar</b-form-radio>
+                  <b-form-radio value="UTC">UTC</b-form-radio>
+                </b-form-radio-group>
+              </b-form-group>
+            </b-col>
+        
+            <b-col xs>
+              <b-form-group
+                label="Load data:"
+                label-for="submit"
+                label-class="invisible"
+              >
+                <b-button id="submit" size="sm" type="submit" variant="primary">Load</b-button>
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </b-col>
+      </b-row>
+    </b-form>
 
     <div v-if="showCharts">
       <b-row>
