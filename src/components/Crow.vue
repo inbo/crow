@@ -225,9 +225,7 @@ export default {
         axios.get(url).then(response => {
           let dayData = helpers.readVtps(response.data);
 
-          console.log("before loop, dayData: ", dayData);
           for (const val of dayData) {
-            console.log("in loop, val: ", val);
             this.storeDataRow(val);
           }
         });
