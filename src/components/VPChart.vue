@@ -108,7 +108,7 @@ export default {
     createAndAddChartAxis() {
       this.xAxis = d3
         .scaleTime()
-        .domain([this.minTimestamp, this.maxTimestamp])
+        .domain([this.minTimestamp, this.maxTimestamp + (this.dataTemporalResolution * 1000)])
         .range([0, this.width]);
 
       this.chart

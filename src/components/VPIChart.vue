@@ -14,7 +14,8 @@ export default {
   props: {
     vpiData: Array, // Each entry: {moment: <moment-tz object>, mtr: <mtr>}
     styleConfig: Object,
-    showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
+    showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")
+    dataTemporalResolution: Number,
   },
   data() {
     return {
@@ -47,8 +48,6 @@ export default {
   },
   computed: {
     vpiDataTimezoneAdjusted: function() {
-      //return helpers.adjustTimestamps(this.vpiData, this.showTimeAs);
-
       let adjustedData = [];
 
       for (const originalRow of this.vpiData) {
@@ -62,18 +61,20 @@ export default {
 
       return adjustedData;
     },
-    extentTimestamp: function() {
-      return [this.minTimestamp, this.maxTimestamp];
-    },
-    minTimestamp: function() {
+    
+    minMoment: function() {
       return d3.min(this.vpiDataTimezoneAdjusted, function(d) {
-        return d.moment.valueOf();
+        return d.moment;
       });
     },
-    maxTimestamp: function() {
+    maxMoment: function() {
       return d3.max(this.vpiDataTimezoneAdjusted, function(d) {
-        return d.moment.valueOf();
+        return d.moment;
       });
+    },
+    maxMomentPlusOne: function() {
+      // TODO: duplicate code in other charts ! Mixin? Helper?
+      return this.maxMoment.clone().add(this.dataTemporalResolution, "seconds");
     },
     maxMTR: function() {
       return d3.max(this.vpiDataTimezoneAdjusted, function(d) {
@@ -100,7 +101,7 @@ export default {
     createAndAddChartAxis() {
       this.xAxis = d3
         .scaleTime()
-        .domain(this.extentTimestamp)
+        .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
         .range([0, this.width]);
 
       this.chart

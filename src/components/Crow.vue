@@ -77,6 +77,7 @@
             :vpi-data="integratedProfiles"
             :style-config="VPIChartStyle"
             :showTimeAs="timeZoneToShow"
+            :data-temporal-resolution="dataTemporalResolution"
           >
             <template v-slot:title>
               <h3>VPI Chart</h3>
