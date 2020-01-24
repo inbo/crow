@@ -34,7 +34,7 @@
           <b-form-text class="mx-1">at noon</b-form-text>
 
           <b-form-group label="Interval" label-cols="auto" label-class="font-weight-bold">
-            <b-form-radio-group v-model="intervalInHours" :options="availableIntervals"></b-form-radio-group>
+            <b-form-radio-group v-model="selectedIntervalInHours" :options="availableIntervals"></b-form-radio-group>
           </b-form-group>
 
           <b-form-group label="Time display" label-cols="auto" label-class="font-weight-bold">
@@ -107,7 +107,7 @@ export default {
     return {
       selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
       
-      intervalInHours: config.initialTimeInterval, // The chart show this amount of hours before and after selectedDate (at noon)
+      selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours before and after selectedDate (at noon)
       availableIntervals: config.availableTimeIntervals,
       
       selectedRadarODIMCode: config.initialRadarODIMCode,
@@ -269,12 +269,12 @@ export default {
     },
     startDate() {
       return moment(this.selectedDateNoon).subtract(
-        this.intervalInHours,
+        this.selectedIntervalInHours,
         "hours"
       );
     },
     endDate() {
-      return moment(this.selectedDateNoon).add(this.intervalInHours, "hours");
+      return moment(this.selectedDateNoon).add(this.selectedIntervalInHours, "hours");
     },
     selectedRadarAsObject() {
       return this.availableRadars.find(
