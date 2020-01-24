@@ -7,10 +7,11 @@
 
 <script>
 import * as d3 from "d3";
-
 import helpers from "../helpers";
+import { timeFormatting} from './../mixins/timeFormatting.js'
 
 export default {
+  mixins: [timeFormatting],
   props: {
     vtpsData: Array,
     dataTemporalResolution: Number,
@@ -109,15 +110,15 @@ export default {
         .scaleTime()
         .domain([this.minTimestamp, this.maxTimestamp])
         .range([0, this.width]);
+      
+      let vm = this;
+
       this.chart
         .append("g")
         .attr("transform", `translate(0, ${this.height})`)
-        .call(
-          d3
-            .axisBottom(this.xAxis)
-            .tickSizeOuter(0) // Remove last tick
-            .tickFormat(d3.timeFormat(this.styleConfig.timeAxisFormat))
-        );
+        .call(d3.axisBottom(this.xAxis).ticks(7).tickFormat(function(d) {
+            return vm.formatTimestamp(d);
+        }));
 
       this.yAxisLeft = d3
         .scalePoint()

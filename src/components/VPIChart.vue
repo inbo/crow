@@ -7,11 +7,12 @@
 
 <script>
 import * as d3 from "d3";
-import helpers from "../helpers";
+import { timeFormatting} from './../mixins/timeFormatting.js'
 
 export default {
+  mixins: [timeFormatting],
   props: {
-    vpiData: Array,
+    vpiData: Array, // Each entry: {moment: <moment-tz object>, mtr: <mtr>}
     styleConfig: Object,
     showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
   },
@@ -46,19 +47,32 @@ export default {
   },
   computed: {
     vpiDataTimezoneAdjusted: function() {
-      return helpers.adjustTimestamps(this.vpiData, this.showTimeAs);
+      //return helpers.adjustTimestamps(this.vpiData, this.showTimeAs);
+
+      let adjustedData = [];
+
+      for (const originalRow of this.vpiData) {
+        const updatedRow = {
+          ...originalRow,
+          moment: originalRow.moment.tz(this.showTimeAs)
+        };
+
+        adjustedData.push(updatedRow);
+      }
+
+      return adjustedData;
     },
     extentTimestamp: function() {
       return [this.minTimestamp, this.maxTimestamp];
     },
     minTimestamp: function() {
       return d3.min(this.vpiDataTimezoneAdjusted, function(d) {
-        return d.timestamp;
+        return d.moment.valueOf();
       });
     },
     maxTimestamp: function() {
       return d3.max(this.vpiDataTimezoneAdjusted, function(d) {
-        return d.timestamp;
+        return d.moment.valueOf();
       });
     },
     maxMTR: function() {
@@ -88,15 +102,15 @@ export default {
         .scaleTime()
         .domain(this.extentTimestamp)
         .range([0, this.width]);
+      
+      let vm = this;
+      
       this.chart
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
-        .call(
-          d3
-            .axisBottom(this.xAxis)
-            .tickSizeOuter(0) // Remove last tick
-            .tickFormat(d3.timeFormat(this.styleConfig.timeAxisFormat))
-        ); 
+        .call(d3.axisBottom(this.xAxis).ticks(7).tickFormat(function(d) {
+            return vm.formatTimestamp(d);
+        }));
 
       this.yAxis = d3
         .scaleLinear()
@@ -132,7 +146,7 @@ export default {
           d3
             .line()
             .x(function(d) {
-              return vm.xAxis(d.timestamp);
+              return vm.xAxis(d.moment.valueOf());
             })
             .y(function(d) {
               let mtr = isNaN(d.mtr) ? 0 : d.mtr;

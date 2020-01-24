@@ -40,6 +40,13 @@
             </b-form-radio-group>
           </b-form-group>
 
+          <b-form-group label="Time display" label-cols="auto" label-class="font-weight-bold">
+            <b-form-radio-group v-model="timeDisplayedAs">
+              <b-form-radio value="radarLocal">Local (to radar)</b-form-radio>
+              <b-form-radio value="UTC">UTC</b-form-radio>
+            </b-form-radio-group>
+          </b-form-group>
+
           <b-button size="sm" type="submit" variant="primary">Load and view radar data</b-button>
         </b-form>
       </b-col>
@@ -106,7 +113,7 @@ export default {
       selectedRadarODIMCode: config.initialRadarODIMCode,
       availableRadars: config.availableRadars,
 
-      timeDisplayedAs: "local_radar", // 'local_radar' | 'UTC'
+      timeDisplayedAs: "radarLocal", // 'radarLocal' | 'UTC'
 
       showCharts: false,
 
@@ -235,7 +242,7 @@ export default {
   },
   computed: {
     timeZoneToShow() {
-      if (this.timeDisplayedAs == "local_radar") {
+      if (this.timeDisplayedAs == "radarLocal") {
         return this.selectedRadarTimezone;
       } else {
         return "UTC";
@@ -311,7 +318,7 @@ export default {
 
       let vpi = nestedVpts.map(d => {
         return {
-          timestamp: +d.key,
+          moment: moment.utc(+d.key),
           mtr: helpers.integrateProfile(d.values)
         };
       });

@@ -8,8 +8,10 @@
 import * as d3 from "d3";
 
 import moment from 'moment-timezone';
+import { timeFormatting} from './../mixins/timeFormatting.js'
 
 export default {
+  mixins: [timeFormatting],
   props: {
     periods: Array,  // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
     styleConfig: Object,
@@ -77,11 +79,15 @@ export default {
         .domain([this.minMoment.valueOf(), this.maxMoment.valueOf()])
         .range([0, this.width]);
 
+      let vm = this;
+
       if (this.styleConfig.showXAxis) {
         this.chart
           .append("g")
           .attr("transform", "translate(0," + (this.height - 20) + ")")
-          .call(d3.axisBottom(this.xAxis).tickSizeOuter(0).tickFormat(d3.timeFormat(this.styleConfig.timeAxisFormat))); // Remove last tick
+          .call(d3.axisBottom(this.xAxis).ticks(7).tickFormat(function(d) {
+            return vm.formatTimestamp(d);
+          }));
       }
     },
 
@@ -123,7 +129,7 @@ export default {
               .style("opacity", 0.9);
             vm.tooltip
               .html(
-                `<b>Date</b>: ${row.moment.tz(vm.showTimeAs).format()}<br/>
+                `<b>Date</b>: ${vm.formatMoment(row.moment)}<br/>
                 <b>Sun altitude</b>: ${row.sunAltitude.toFixed(2)}°`
               )
               .style("left", d3.event.pageX + "px")

@@ -1,4 +1,4 @@
-const globalTimeAxisFormat = " %d-%m@%H:%M ";  // See: https://github.com/d3/d3-time-format#locale_format
+const globalTimeAxisFormat = " D-M@HH:mm z";  // See: https://momentjs.com/docs/#/displaying/
 
 export default {
     dataBaseUrl: 'https://crow.weernet.be',
