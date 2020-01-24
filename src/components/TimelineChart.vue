@@ -76,7 +76,7 @@ export default {
     createAndAddChartAxis() {
       this.xAxis = d3
         .scaleTime()
-        .domain([this.minMoment.valueOf(), this.maxMoment.valueOf()])
+        .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
         .range([0, this.width]);
 
       if (this.styleConfig.showXAxis) {
@@ -152,6 +152,9 @@ export default {
     },
     maxMoment: function() {
       return this.periods[this.periods.length - 1].moment;
+    },
+    maxMomentPlusOne: function() {
+      return this.maxMoment.clone().add(this.dataTemporalResolution, "seconds");
     }
   }
 };
