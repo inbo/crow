@@ -102,14 +102,12 @@ export default {
         .scaleTime()
         .domain(this.extentTimestamp)
         .range([0, this.width]);
-      
-      let vm = this;
-      
+
       this.chart
         .append("g")
         .attr("transform", "translate(0," + this.height + ")")
-        .call(d3.axisBottom(this.xAxis).ticks(7).tickFormat(function(d) {
-            return vm.formatTimestamp(d);
+        .call(d3.axisBottom(this.xAxis).ticks(7).tickFormat(d => {
+            return this.formatTimestamp(d);
         }));
 
       this.yAxis = d3
