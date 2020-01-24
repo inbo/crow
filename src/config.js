@@ -13,10 +13,16 @@ export default {
         { ODIMCode: "deess", location: "Essen", country: "Germany", latitude: 51.4055, longitude: 6.9669, timezone: 'Europe/Berlin' },
         { ODIMCode: "denhb", location: "Neuheilenbach", country: "Germany", latitude: 50.1097, longitude: 6.5483, timezone: 'Europe/Berlin' },
     ].sort((a, b) => (a.location > b.location) ? 1 : -1), // Sort by location for nicer display
-
     initialRadarODIMCode: 'behel',
-    localizedDateFormat: "YYYY/MM/DD", // As returned by the browser when READING data from the "input type=date" field. TODO: Make it autodetected based on the locale?
 
+    localizedDateFormat: "YYYY/MM/DD", // As returned by the browser when READING data from the "input type=date" field. TODO: Make it autodetected based on the locale?
+    
+    availableTimeIntervals: [
+        { text: '24h', value: 24 },
+        { text: '96h', value: 96 }
+    ],
+    initialTimeInterval: 24,
+    
     vtpsFormat: {
         availableHeights: [0, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400, 3600, 3800, 4000, 4200, 4400, 4600, 4800],
         temporalResolution: 5 * 60, // seconds

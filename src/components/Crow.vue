@@ -34,10 +34,7 @@
           <b-form-text class="mx-1">at noon</b-form-text>
 
           <b-form-group label="Interval" label-cols="auto" label-class="font-weight-bold">
-            <b-form-radio-group v-model="intervalInHours">
-              <b-form-radio value="24">24h</b-form-radio>
-              <b-form-radio value="96">96h</b-form-radio>
-            </b-form-radio-group>
+            <b-form-radio-group v-model="intervalInHours" :options="availableIntervals"></b-form-radio-group>
           </b-form-group>
 
           <b-form-group label="Time display" label-cols="auto" label-class="font-weight-bold">
@@ -109,7 +106,10 @@ export default {
 
     return {
       selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
-      intervalInHours: 24, // The chart show this amount of hours before and after selectedDate (at noon)
+      
+      intervalInHours: config.initialTimeInterval, // The chart show this amount of hours before and after selectedDate (at noon)
+      availableIntervals: config.availableTimeIntervals,
+      
       selectedRadarODIMCode: config.initialRadarODIMCode,
       availableRadars: config.availableRadars,
 
