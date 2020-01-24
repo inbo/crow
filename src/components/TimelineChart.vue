@@ -100,10 +100,10 @@ export default {
       let sel = update
         .merge(enter)
         .attr("x", function(row) {
-          return vm.xAxis(row.moment.valueOf()) + 1; // 1 is the axis thickness so the rect doesn't hide it. TODO: retreive value dynamically.
+          return Math.round(vm.xAxis(row.moment.valueOf()));
         })
         .attr("y", 0)
-        .attr("width", vm.width / vm.rectDivider)
+        .attr("width", Math.round(vm.width / vm.rectDivider))
         .attr("height", 20)
         .style("fill", function(row) {
           let alt = row.sunAltitude;
