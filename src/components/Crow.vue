@@ -73,7 +73,11 @@
 
       <b-row>
         <b-col>
-          <v-p-i-chart :vpi-data="integratedProfiles" :style-config="VPIChartStyle" :showTimeAs="timeZoneToShow">
+          <v-p-i-chart
+            :vpi-data="integratedProfiles"
+            :style-config="VPIChartStyle"
+            :showTimeAs="timeZoneToShow"
+          >
             <template v-slot:title>
               <h3>VPI Chart</h3>
             </template>
@@ -106,10 +110,10 @@ export default {
 
     return {
       selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
-      
+
       selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours before and after selectedDate (at noon)
       availableIntervals: config.availableTimeIntervals,
-      
+
       selectedRadarODIMCode: config.initialRadarODIMCode,
       availableRadars: config.availableRadars,
 
@@ -131,18 +135,12 @@ export default {
   },
   methods: {
     /* Initialize radarVtps with empty data 
-       - The temporal range is [startDate, endDate] (resolution: dataTemporalResolution - in seconds)
+       - The temporal range is [startMoment, endMoment] (resolution: dataTemporalResolution - in seconds)
        - Heights follow availableHeights
     */
     initializeEmptyData() {
-      let startTime = moment(this.startDate, "YYYY-MM-DD")
-        .hour(0)
-        .minute(0)
-        .second(0);
-      let endTime = moment(this.endDate, "YYYY-MM-DD")
-        .hour(23)
-        .minute(59)
-        .second(59);
+      let startTime = this.startMoment; // TODO: remove unecessary variable
+      let endTime = this.endMoment; // TODO: remove unecessary variable
 
       let currentMoment = startTime.clone();
 
@@ -153,8 +151,13 @@ export default {
         });
 
         let locallyAdjustedDate;
-        if (this.timeDisplayedAs != 'UTC') {
-          locallyAdjustedDate = new Date(helpers.UTCTimestampToLocal(currentMoment.toDate().getTime(), this.selectedRadarTimezone));
+        if (this.timeDisplayedAs != "UTC") {
+          locallyAdjustedDate = new Date(
+            helpers.UTCTimestampToLocal(
+              currentMoment.toDate().getTime(),
+              this.selectedRadarTimezone
+            )
+          );
         } else {
           locallyAdjustedDate = currentMoment.toDate();
         }
@@ -162,7 +165,7 @@ export default {
         let metadataObj = {
           sunAltitude:
             SunCalc.getPosition(
-              locallyAdjustedDate, 
+              locallyAdjustedDate,
               this.selectedRadarLatitude,
               this.selectedRadarLongitude
             ).altitude *
@@ -186,8 +189,8 @@ export default {
       this.initializeEmptyData();
       this.populateDataFromCrowServer(
         this.selectedRadarODIMCode,
-        this.startDate,
-        this.endDate
+        this.startMoment,
+        this.endMoment
       );
     },
 
@@ -201,34 +204,33 @@ export default {
         noData: false
       };
 
-      this.$set(
-        this.radarVtps[vtpsDataRow.datetime].heightData,
-        vtpsDataRow.height,
-        obj
-      );
+      if (this.radarVtps.hasOwnProperty(vtpsDataRow.datetime)) {
+        this.$set(
+          this.radarVtps[vtpsDataRow.datetime].heightData,
+          vtpsDataRow.height,
+          obj
+        );
+      }
     },
 
     /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */
-    populateDataFromCrowServer(radarName, startDate, endDate) {
-      let startDay = moment(startDate, "YYYY-MM-DD");
-      let endDay = moment(endDate, "YYYY-MM-DD").add(1, "days");
+    populateDataFromCrowServer(radarName, startMoment, endMoment) {
+      let startDay = moment(startMoment, "YYYY-MM-DD");
+      let endDay = moment(endMoment, "YYYY-MM-DD").add(1, "days");
 
       let currentDay = startDay.clone();
 
       while (currentDay.isBefore(endDay, "day")) {
         let url = this.buildDataUrl(radarName, currentDay);
+        axios.get(url).then(response => {
+          let dayData = helpers.readVtps(response.data);
 
-        axios
-          .get(url)
-          .then(response => {
-            let dayData = helpers.readVtps(response.data);
-
-            for (const val of dayData) {
-              this.storeDataRow(val);
-            }
-          })
-          .catch(function() {});
-
+          console.log("before loop, dayData: ", dayData);
+          for (const val of dayData) {
+            console.log("in loop, val: ", val);
+            this.storeDataRow(val);
+          }
+        });
         currentDay.add(1, "days");
       }
     },
@@ -267,14 +269,17 @@ export default {
         .minute(0)
         .second(0);
     },
-    startDate() {
+    startMoment() {
       return moment(this.selectedDateNoon).subtract(
         this.selectedIntervalInHours,
         "hours"
       );
     },
-    endDate() {
-      return moment(this.selectedDateNoon).add(this.selectedIntervalInHours, "hours");
+    endMoment() {
+      return moment(this.selectedDateNoon).add(
+        this.selectedIntervalInHours,
+        "hours"
+      );
     },
     selectedRadarAsObject() {
       return this.availableRadars.find(
