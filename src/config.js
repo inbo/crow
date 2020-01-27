@@ -5,7 +5,7 @@ export default {
     availableRadars: [
         // Radar metadata available at: https://www.eumetnet.eu/wp-content/themes/aeron-child/observations-programme/current-activities/opera/database/OPERA_Database/index.html
         // Timezone: the timezone the radar is located (timestamps in data files are always assumed UTC) 
-        { ODIMCode: "behel", location: "Behel?", country: "Belgium", latitude: 51.069199, longitude: 5.406138, timezone: 'Europe/Brussels' },
+        { ODIMCode: "behel", location: "Helchteren", country: "Belgium", latitude: 51.069199, longitude: 5.406138, timezone: 'Europe/Brussels' },
         { ODIMCode: "bejab", location: "Jabbeke", country: "Belgium", latitude: 51.1919, longitude: 3.0641, timezone: 'Europe/Brussels' },
         { ODIMCode: "bezav", location: "Zaventem", country: "Belgium", latitude: 50.9054, longitude: 4.4579, timezone: 'Europe/Brussels' },
         { ODIMCode: "bewid", location: "Wideumont", country: "Belgium", latitude: 49.9135, longitude: 5.5044, timezone: 'Europe/Brussels' },
