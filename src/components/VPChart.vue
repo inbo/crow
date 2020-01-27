@@ -49,9 +49,6 @@ export default {
     }
   },
   computed: {
-    vtpsDataTimezoneAdjusted: function() {
-      return helpers.adjustTimestamps(this.vtpsData, this.showTimeAs);
-    },
     rectHeight: function() {
       return this.height / this.distinctHeightsMeters.length;
     },
@@ -60,22 +57,22 @@ export default {
       return durationInMs / 1000 / this.dataTemporalResolution;
     },
     minTimestamp: function() {
-      return d3.min(this.vtpsDataTimezoneAdjusted, function(d) {
+      return d3.min(this.vtpsData, function(d) {
         return d.timestamp;
       });
     },
     maxTimestamp: function() {
-      return d3.max(this.vtpsDataTimezoneAdjusted, function(d) {
+      return d3.max(this.vtpsData, function(d) {
         return d.timestamp;
       });
     },
     maxDensity: function() {
-      return d3.max(this.vtpsDataTimezoneAdjusted, function(d) {
+      return d3.max(this.vtpsData, function(d) {
         return d.dens;
       });
     },
     distinctHeightsMeters: function() {
-      return [...new Set(this.vtpsDataTimezoneAdjusted.map(row => row.height))];
+      return [...new Set(this.vtpsData.map(row => row.height))];
     },
     minHeightInMeters: function() {
       return this.distinctHeightsMeters[0];
@@ -169,7 +166,7 @@ export default {
 
       let update = this.chart
         .selectAll()
-        .data(this.vtpsDataTimezoneAdjusted, function(d) {
+        .data(this.vtpsData, function(d) {
           return `${d.timestamp} - ${d.height} - ${d.dens}`;
         });
 

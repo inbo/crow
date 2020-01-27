@@ -7,30 +7,6 @@ function UTCTimestampToLocal(UTCTimestamp, zone) {
     return UTCTimestamp - moment.tz.zone(zone).utcOffset(UTCTimestamp) * 60 * 1000;
 }
 
-function adjustTimestamps(arr, showTimeAs) {
-    // param arr: Array of objects (each has a 'timestamp' property, in UTC)
-    // param showTimeAs: either a timezone designator such as 'Europe/Brussels' or 'UTC'
-
-    // This function returns an array of objects with timestamps adjusted for the timezone (if necessary)
-    if (showTimeAs === "UTC") {
-        return arr;
-    } else {
-        let adjustedData = [];
-
-        for (const originalRow of arr) {
-            const updatedRow = {
-                ...originalRow,
-                // We add the necessary offset
-                timestamp: UTCTimestampToLocal(originalRow.timestamp, showTimeAs)
-            };
-
-            adjustedData.push(updatedRow);
-        }
-
-        return adjustedData;
-    }
-}
-
 function metersToFeet(meters) {
     return meters * 3, 281;
 }
@@ -50,22 +26,12 @@ function readVtps(responseString) {
     // The file is also terminated by a blank line, which cause issues.
     d.pop()
 
-    d = d.map(function (row) {
+    let r = d.map(function (row) {
         // There are NaN values everywhere in the data, D3 don't know how to interpret them
         // For now, we consider a non-numbers to mean 0
 
         return {
-            datetime: Date.parse(
-                row.substring(0, 4) +
-                "-" +
-                row.substring(4, 6) +
-                "-" +
-                row.substring(6, 8) +
-                "T" +
-                row.substring(9, 11) +
-                ":" +
-                row.substring(11, 13)
-            ),
+            datetime: moment.utc(row.substring(0, 13), "YYYYMMDD HHmm").valueOf(),
             height: +parseInt(row.substring(14, 18)),
             dd: parseFloat(row.substring(47, 52)),
             ff: parseFloat(row.substring(41, 46)),
@@ -74,7 +40,7 @@ function readVtps(responseString) {
         };
     });
 
-    return d;
+    return r;
 }
 
 function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, vvpThresh = 2, alpha = NaN) {
@@ -127,4 +93,4 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
     return mtr
 }
 
-export default { readVtps, integrateProfile, metersToFeet, adjustTimestamps, UTCTimestampToLocal } 
+export default { readVtps, integrateProfile, metersToFeet, UTCTimestampToLocal } 

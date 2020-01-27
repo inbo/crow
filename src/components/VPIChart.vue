@@ -46,29 +46,14 @@ export default {
       this.updateChart();
     }
   },
-  computed: {
-    vpiDataTimezoneAdjusted: function() {
-      let adjustedData = [];
-
-      for (const originalRow of this.vpiData) {
-        const updatedRow = {
-          ...originalRow,
-          moment: originalRow.moment.tz(this.showTimeAs)
-        };
-
-        adjustedData.push(updatedRow);
-      }
-
-      return adjustedData;
-    },
-    
+  computed: {    
     minMoment: function() {
-      return d3.min(this.vpiDataTimezoneAdjusted, function(d) {
+      return d3.min(this.vpiData, function(d) {
         return d.moment;
       });
     },
     maxMoment: function() {
-      return d3.max(this.vpiDataTimezoneAdjusted, function(d) {
+      return d3.max(this.vpiData, function(d) {
         return d.moment;
       });
     },
@@ -77,7 +62,7 @@ export default {
       return this.maxMoment.clone().add(this.dataTemporalResolution, "seconds");
     },
     maxMTR: function() {
-      return d3.max(this.vpiDataTimezoneAdjusted, function(d) {
+      return d3.max(this.vpiData, function(d) {
         return d.mtr;
       });
     }
@@ -136,7 +121,7 @@ export default {
 
       this.chart
         .append("path")
-        .datum(vm.vpiDataTimezoneAdjusted)
+        .datum(vm.vpiData)
         .attr("fill", "none")
         .attr("stroke", vm.styleConfig.MTRLineColor)
         .attr("stroke-width", 1.5)
