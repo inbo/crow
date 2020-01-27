@@ -43,7 +43,7 @@
 
         <b-col lg>
           <b-row>
-            <b-col xs="3" sm="3">
+            <b-col cols="6" sm="3">
               <b-form-group
                 id="input-interval-group"
                 label="Interval:"
@@ -61,7 +61,7 @@
               </b-form-group>
             </b-col>
           
-            <b-col xs="3" sm="3">
+            <b-col cols="6" sm="3">
               <b-form-group
                 id="input-timezone-group"
                 label="Time zone:"
@@ -80,7 +80,7 @@
               </b-form-group>
             </b-col>
         
-            <b-col xs>
+            <b-col>
               <b-form-group
                 label="Load data:"
                 label-for="submit"
