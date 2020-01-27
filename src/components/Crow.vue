@@ -185,12 +185,11 @@ export default {
        - Heights follow availableHeights
     */
     initializeEmptyData() {
-      let startTime = this.startMoment; // TODO: remove unecessary variable
-      let endTime = this.endMoment; // TODO: remove unecessary variable
+      // Remove existing data
+      this.radarVtps = {};
 
-      let currentMoment = startTime.clone();
-
-      while (currentMoment.isBefore(endTime)) {
+      let currentMoment = this.startMoment.clone();
+      while (currentMoment.isBefore(this.endMoment)) {
         let heightObj = {};
         this.availableHeights.forEach(height => {
           heightObj[height] = { noData: true };
