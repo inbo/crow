@@ -50,22 +50,12 @@ function readVtps(responseString) {
     // The file is also terminated by a blank line, which cause issues.
     d.pop()
 
-    d = d.map(function (row) {
+    let r = d.map(function (row) {
         // There are NaN values everywhere in the data, D3 don't know how to interpret them
         // For now, we consider a non-numbers to mean 0
 
         return {
-            datetime: Date.parse(
-                row.substring(0, 4) +
-                "-" +
-                row.substring(4, 6) +
-                "-" +
-                row.substring(6, 8) +
-                "T" +
-                row.substring(9, 11) +
-                ":" +
-                row.substring(11, 13)
-            ),
+            datetime: moment.utc(row.substring(0, 13), "YYYYMMDD HHmm").valueOf(),
             height: +parseInt(row.substring(14, 18)),
             dd: parseFloat(row.substring(47, 52)),
             ff: parseFloat(row.substring(41, 46)),
@@ -74,7 +64,7 @@ function readVtps(responseString) {
         };
     });
 
-    return d;
+    return r;
 }
 
 function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, vvpThresh = 2, alpha = NaN) {
