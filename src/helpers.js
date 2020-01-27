@@ -7,30 +7,6 @@ function UTCTimestampToLocal(UTCTimestamp, zone) {
     return UTCTimestamp - moment.tz.zone(zone).utcOffset(UTCTimestamp) * 60 * 1000;
 }
 
-function adjustTimestamps(arr, showTimeAs) {
-    // param arr: Array of objects (each has a 'timestamp' property, in UTC)
-    // param showTimeAs: either a timezone designator such as 'Europe/Brussels' or 'UTC'
-
-    // This function returns an array of objects with timestamps adjusted for the timezone (if necessary)
-    if (showTimeAs === "UTC") {
-        return arr;
-    } else {
-        let adjustedData = [];
-
-        for (const originalRow of arr) {
-            const updatedRow = {
-                ...originalRow,
-                // We add the necessary offset
-                timestamp: UTCTimestampToLocal(originalRow.timestamp, showTimeAs)
-            };
-
-            adjustedData.push(updatedRow);
-        }
-
-        return adjustedData;
-    }
-}
-
 function metersToFeet(meters) {
     return meters * 3, 281;
 }
@@ -117,4 +93,4 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
     return mtr
 }
 
-export default { readVtps, integrateProfile, metersToFeet, adjustTimestamps, UTCTimestampToLocal } 
+export default { readVtps, integrateProfile, metersToFeet, UTCTimestampToLocal } 
