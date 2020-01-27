@@ -8,6 +8,12 @@ Crow prototype, as a Vue.js SPA. Make uses of the [Vue CLI](https://cli.vuejs.or
 $ npm run serve
 ```
 
+## Run unit tests
+
+```
+$ npm run test:unit
+```
+
 ## To deploy
 
 On [https://inbo.github.io/crow/](https://inbo.github.io/crow/)
