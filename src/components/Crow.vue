@@ -139,7 +139,7 @@ import VPChart from "./VPChart.vue";
 import VPIChart from "./VPIChart.vue";
 import TimelineChart from "./TimelineChart.vue";
 
-import moment from "moment";
+import moment from "moment-timezone";
 import axios from "axios";
 import SunCalc from "suncalc";
 import * as d3 from "d3";
@@ -157,7 +157,7 @@ export default {
     return {
       selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
 
-      selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours before and after selectedDate (at noon)
+      selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours before and after selectedDate at noon, local (to the radar) time
       availableIntervals: config.availableTimeIntervals,
 
       selectedRadarODIMCode: config.initialRadarODIMCode,
@@ -310,7 +310,8 @@ export default {
       return moment(this.selectedDate, "YYYY-MM-DD")
         .hour(12)
         .minute(0)
-        .second(0);
+        .second(0)
+        .tz(this.selectedRadarTimezone);
     },
     startMoment() {
       return moment(this.selectedDateNoon).subtract(
