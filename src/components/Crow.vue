@@ -1,6 +1,6 @@
 <template>
   <b-container class="content">
-    <b-form @submit.prevent="loadData" class="mb-4">
+    <b-form form v-on:change="loadData" class="mb-4">
       <b-row>
         <b-col lg>
           <b-row>
@@ -30,12 +30,12 @@
                 description="Charts will be centered on noon for selected date."
               >
                 <b-form-input
-                id="input-date"
-                size="sm"
-                type="date"
-                placeholder="Type a date..."
-                v-model="selectedDate"
-              />
+                  id="input-date"
+                  size="sm"
+                  type="date"
+                  placeholder="Type a date..."
+                  v-model="selectedDate"
+                />
               </b-form-group>
             </b-col>
           </b-row>
@@ -44,11 +44,7 @@
         <b-col lg>
           <b-row>
             <b-col cols="6" sm="3">
-              <b-form-group
-                id="input-interval-group"
-                label="Interval:"
-                label-for="input-interval"
-              >
+              <b-form-group id="input-interval-group" label="Interval:" label-for="input-interval">
                 <b-form-radio-group
                   id="input-interval"
                   size="sm"
@@ -56,17 +52,12 @@
                   button-variant="outline-secondary"
                   v-model="selectedIntervalInHours"
                   :options="availableIntervals"
-                >
-                </b-form-radio-group>
+                ></b-form-radio-group>
               </b-form-group>
             </b-col>
-          
+
             <b-col cols="6" sm="3">
-              <b-form-group
-                id="input-timezone-group"
-                label="Time zone:"
-                label-for="input-timezone"
-              >
+              <b-form-group id="input-timezone-group" label="Time zone:" label-for="input-timezone">
                 <b-form-radio-group
                   id="input-timezone"
                   size="sm"
@@ -77,16 +68,6 @@
                   <b-form-radio value="radarLocal">Radar</b-form-radio>
                   <b-form-radio value="UTC">UTC</b-form-radio>
                 </b-form-radio-group>
-              </b-form-group>
-            </b-col>
-        
-            <b-col>
-              <b-form-group
-                label="Load data:"
-                label-for="submit"
-                label-class="invisible"
-              >
-                <b-button id="submit" size="sm" type="submit" variant="primary">Load</b-button>
               </b-form-group>
             </b-col>
           </b-row>
@@ -375,6 +356,11 @@ export default {
     }
   },
 
+  mounted: function () {
+    this.$nextTick(function () {
+      this.loadData();
+    })
+  },
   components: {
     VPChart,
     VPIChart,
