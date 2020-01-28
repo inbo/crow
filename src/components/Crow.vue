@@ -29,13 +29,26 @@
                 label-for="input-date"
                 description="Charts will be centered on noon for selected date."
               >
-                <b-form-input
+                
+
+                <b-input-group>
+                  <b-input-group-prepend>
+                    <b-button size="sm" v-on:click="decrementPeriod">&lt;&lt;</b-button>
+                  </b-input-group-prepend>
+
+                  <b-form-input
                   id="input-date"
                   size="sm"
                   type="date"
                   placeholder="Type a date..."
                   v-model="selectedDate"
-                />
+                  />
+
+                  <b-input-group-append>
+                    <b-button size="sm" v-on:click="incrementPeriod">&gt;&gt;</b-button>
+                  </b-input-group-append>
+                </b-input-group>
+
               </b-form-group>
             </b-col>
           </b-row>
@@ -209,6 +222,20 @@ export default {
       }
     },
 
+    decrementPeriod() {
+      this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
+        .subtract("1", "days")
+        .format(moment.HTML5_FMT.DATE);
+      this.loadData();
+    },
+
+    incrementPeriod() {
+      this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
+        .add("1", "days")
+        .format(moment.HTML5_FMT.DATE);
+      this.loadData();
+    },
+
     loadData() {
       this.showCharts = true;
 
@@ -356,10 +383,10 @@ export default {
     }
   },
 
-  mounted: function () {
-    this.$nextTick(function () {
+  mounted: function() {
+    this.$nextTick(function() {
       this.loadData();
-    })
+    });
   },
   components: {
     VPChart,
