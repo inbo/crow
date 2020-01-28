@@ -17,7 +17,7 @@
             Created by the <a href="https://oscibio.inbo.be">Open science lab for biodiversity</a>
           </b-col>
           <b-col lg class="text-right">
-            <a href="https://github.com/inbo/crow/">Source code</a>
+            <a href="https://github.com/inbo/crow/">Source code</a> (rev: {{ commitHash() }})
           </b-col>
         </b-row>
       </b-container>
@@ -30,6 +30,11 @@ import Crow from "./components/Crow.vue";
 
 export default {
   name: "app",
+  methods: {
+    commitHash: function() {
+      return __COMMIT_HASH__;
+    }
+  },
   components: {
     Crow
   }
