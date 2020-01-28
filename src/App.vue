@@ -60,19 +60,7 @@ main {
   .content {
     margin-top: 15px;
     }
-    .btn-primary {
-      background-color: #356196;
-      border-color: #356196;
-      }
-      .btn-primary.active {
-        background-color: #284970;
-        border-color: #244367;
-      }
-      .btn-primary:hover {
-        background-color: #2b4f7a;
-        border-color: #284970;
-      }
-
+    
 footer {
   background-color: #3c3c3c;
   border-top: 5px solid #bcbcbc;
