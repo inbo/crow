@@ -157,7 +157,7 @@ export default {
     return {
       selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
 
-      selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours before and after selectedDate at noon, local (to the radar) time
+      selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours around selectedDate at noon, local (to the radar) time
       availableIntervals: config.availableTimeIntervals,
 
       selectedRadarODIMCode: config.initialRadarODIMCode,
@@ -315,13 +315,13 @@ export default {
     },
     startMoment() {
       return moment(this.selectedDateNoon).subtract(
-        this.selectedIntervalInHours,
+        this.selectedIntervalInHours / 2,
         "hours"
       );
     },
     endMoment() {
       return moment(this.selectedDateNoon).add(
-        this.selectedIntervalInHours,
+        this.selectedIntervalInHours / 2,
         "hours"
       );
     },
