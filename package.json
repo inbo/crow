@@ -39,7 +39,7 @@
   },
   "eslintConfig": {
     "globals": {
-      "__COMMIT_HASH__": true 
+      "__COMMIT_HASH__": true
     },
     "root": true,
     "env": {
