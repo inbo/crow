@@ -8,7 +8,7 @@
 <script>
 import * as d3 from "d3";
 import helpers from "../helpers";
-import { timeFormatting} from './../mixins/timeFormatting.js'
+import { timeFormatting } from "./../mixins/timeFormatting.js";
 
 export default {
   mixins: [timeFormatting],
@@ -44,8 +44,9 @@ export default {
       }
 
       this.createEmptyChart();
-      this.createAndAddChartAxis();
+      this.createChartAxis();
       this.updateChart();
+      this.drawChartAxis();
     }
   },
   computed: {
@@ -54,7 +55,7 @@ export default {
     },
     rectDivider: function() {
       let durationInMs = this.maxTimestamp - this.minTimestamp;
-      return (durationInMs / 1000 / this.dataTemporalResolution) + 1;
+      return durationInMs / 1000 / this.dataTemporalResolution + 1;
     },
     minTimestamp: function() {
       return d3.min(this.vtpsData, function(d) {
@@ -102,36 +103,26 @@ export default {
       this.chart = svg;
     },
 
-    createAndAddChartAxis() {
-      this.xAxis = d3
-        .scaleTime()
-        .domain([this.minTimestamp, this.maxTimestamp + (this.dataTemporalResolution * 1000)])
-        .range([0, this.width]);
-
+    drawChartAxis() {
       this.chart
         .append("g")
         .attr("transform", `translate(0, ${this.height})`)
-        .call(d3.axisBottom(this.xAxis).ticks(7).tickFormat(d => {
-            return this.formatTimestamp(d);
-        }));
-
-      this.yAxisLeft = d3
-        .scalePoint()
-        .range([this.height, 0])
-        .domain(this.distinctHeightsMeters.concat([5000])); // The axis needs one more value so the line extends to the top...
-      this.chart
-        .append("g")
         .call(
           d3
-            .axisLeft(this.yAxisLeft)
-            .tickValues(this.distinctHeightsMeters) // ... But we don't want to see the added "5000" height, so we specify the tick values manually
-            .tickSizeOuter(0) // And we want to hide the last tick line
-          ); // Remove last tick
+            .axisBottom(this.xAxis)
+            .ticks(7)
+            .tickFormat(d => {
+              return this.formatTimestamp(d);
+            })
+        );
 
-      this.yAxisRight = d3
-        .scaleLinear()
-        .range([this.height, 0])
-        .domain([0, 15748.03]);
+      this.chart.append("g").call(
+        d3
+          .axisLeft(this.yAxisLeft)
+          .tickValues(this.distinctHeightsMeters) // ... But we don't want to see the added "5000" height, so we specify the tick values manually
+          .tickSizeOuter(0) // And we want to hide the last tick line
+      ); // Remove last tick
+
       this.chart
         .append("g")
         .attr("transform", `translate(${this.width}, 0)`)
@@ -154,6 +145,26 @@ export default {
         .text("Height (feet)");
     },
 
+    createChartAxis() {
+      this.xAxis = d3
+        .scaleTime()
+        .domain([
+          this.minTimestamp,
+          this.maxTimestamp + this.dataTemporalResolution * 1000
+        ])
+        .range([0, this.width]);
+
+      this.yAxisLeft = d3
+        .scalePoint()
+        .range([this.height, 0])
+        .domain(this.distinctHeightsMeters.concat([5000])); // The axis needs one more value so the line extends to the top...
+
+      this.yAxisRight = d3
+        .scaleLinear()
+        .range([this.height, 0])
+        .domain([0, 15748.03]);
+    },
+
     updateChart() {
       // Build color scale
       let myColor = d3
@@ -164,11 +175,9 @@ export default {
         ])
         .domain([0, this.maxDensity]);
 
-      let update = this.chart
-        .selectAll()
-        .data(this.vtpsData, function(d) {
-          return `${d.timestamp} - ${d.height} - ${d.dens}`;
-        });
+      let update = this.chart.selectAll().data(this.vtpsData, function(d) {
+        return `${d.timestamp} - ${d.height} - ${d.dens}`;
+      });
 
       let enter = update.enter().append("rect");
       let exit = update.exit();
