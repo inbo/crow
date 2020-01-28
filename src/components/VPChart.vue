@@ -54,7 +54,7 @@ export default {
     },
     rectDivider: function() {
       let durationInMs = this.maxTimestamp - this.minTimestamp;
-      return durationInMs / 1000 / this.dataTemporalResolution;
+      return (durationInMs / 1000 / this.dataTemporalResolution) + 1;
     },
     minTimestamp: function() {
       return d3.min(this.vtpsData, function(d) {
@@ -180,12 +180,12 @@ export default {
       update
         .merge(enter)
         .attr("x", function(row) {
-          return vm.xAxis(row.timestamp) + 1; // 1 is the axis thickness so the rect doesn't hide it. TODO: retreive value dynamically.
+          return Math.round(vm.xAxis(row.timestamp)) + 1; // 1 is the axis thickness so the rect doesn't hide it. TODO: retreive value dynamically.
         })
         .attr("y", function(row) {
           return vm.yAxisLeft(row.height) - vm.rectHeight;
         })
-        .attr("width", vm.width / vm.rectDivider)
+        .attr("width", Math.round(vm.width / vm.rectDivider))
         .attr("height", vm.rectHeight)
         .style("fill", function(row) {
           if (row.noData) {

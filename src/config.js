@@ -1,5 +1,10 @@
 const globalTimeAxisFormat = " D-M@HH:mm z";  // See: https://momentjs.com/docs/#/displaying/
 
+const globalChartMarginLeft = 65;
+const globalChartMarginRight = 60;
+const globalChartWidth = 1152 + globalChartMarginLeft + globalChartMarginRight;
+
+
 export default {
     dataBaseUrl: 'https://crow.weernet.be',
     availableRadars: [
@@ -31,8 +36,8 @@ export default {
     },
 
     VPChartStyle: {
-        margin: { top: 20, right: 60, bottom: 30, left: 65 },
-        width: 1100,
+        margin: { top: 20, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },
+        width: globalChartWidth,
         height: 300,
 
         minDensityColor: '#f0f0f0',
@@ -42,8 +47,8 @@ export default {
         timeAxisFormat: globalTimeAxisFormat,
     },
     VPIChartStyle: {
-        margin: { top: 0, right: 60, bottom: 30, left: 65 },
-        width: 1100,
+        margin: { top: 0, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },
+        width: globalChartWidth,
         height: 300,
 
         timeAxisFormat: globalTimeAxisFormat,
@@ -52,8 +57,8 @@ export default {
     },
 
     TimelineChartStyle: {
-        margin: { top: 0, right: 60, bottom: 5, left: 65 },
-        width: 1100,
+        margin: { top: 0, right: globalChartMarginRight, bottom: 5, left: globalChartMarginLeft },
+        width: globalChartWidth,
         height: 50,
 
         timeAxisFormat: globalTimeAxisFormat,
