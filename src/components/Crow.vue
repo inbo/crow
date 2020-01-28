@@ -260,8 +260,8 @@ export default {
 
     /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */
     populateDataFromCrowServer(radarName, startMoment, endMoment) {
-      let startDay = moment(startMoment, "YYYY-MM-DD");
-      let endDay = moment(endMoment, "YYYY-MM-DD").add(1, "days");
+      let startDay = moment.utc(startMoment, "YYYY-MM-DD");
+      let endDay = moment.utc(endMoment, "YYYY-MM-DD").add(1, "days");
 
       let currentDay = startDay.clone();
 
