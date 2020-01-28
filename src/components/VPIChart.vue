@@ -65,6 +65,14 @@ export default {
       return d3.max(this.vpiData, function(d) {
         return d.mtr;
       });
+    }, 
+    maxMTRWithMinimum: function() {
+      // If the maximum MTR is small, we return 50 so a small peak on a very calm day doesn't seem huge
+      if (this.maxMTR < 50) {
+        return 50;
+      } else {
+        return this.maxMTR;
+      }
     }
   },
   methods: {
@@ -99,7 +107,7 @@ export default {
       this.yAxis = d3
         .scaleLinear()
         .range([this.height, 0])
-        .domain([0, this.maxMTR]);
+        .domain([0, this.maxMTRWithMinimum]);
       this.chart.append("g").call(d3.axisLeft(this.yAxis).tickSizeOuter(0)); // Remove last tick
 
       this.chart

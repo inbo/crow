@@ -47,7 +47,7 @@ export default {
         timeAxisFormat: globalTimeAxisFormat,
     },
     VPIChartStyle: {
-        margin: { top: 0, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },
+        margin: { top: 15, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },
         width: globalChartWidth,
         height: 300,
 
