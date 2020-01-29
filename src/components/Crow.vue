@@ -189,22 +189,10 @@ export default {
           heightObj[height] = { noData: true };
         });
 
-        let locallyAdjustedDate;
-        if (this.timeDisplayedAs != "UTC") {
-          locallyAdjustedDate = new Date(
-            helpers.UTCTimestampToLocal(
-              currentMoment.toDate().getTime(),
-              this.selectedRadarTimezone
-            )
-          );
-        } else {
-          locallyAdjustedDate = currentMoment.toDate();
-        }
-
         let metadataObj = {
           sunAltitude:
             SunCalc.getPosition(
-              locallyAdjustedDate,
+              currentMoment.toDate(),
               this.selectedRadarLatitude,
               this.selectedRadarLongitude
             ).altitude *

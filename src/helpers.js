@@ -3,10 +3,6 @@ import config from "./config";
 import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only the "chart" modules need it
 import moment from "moment-timezone";
 
-function UTCTimestampToLocal(UTCTimestamp, zone) {
-    return UTCTimestamp - moment.tz.zone(zone).utcOffset(UTCTimestamp) * 60 * 1000;
-}
-
 function metersToFeet(meters) {
     return meters * 3, 281;
 }
@@ -93,4 +89,4 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
     return mtr
 }
 
-export default { readVtps, integrateProfile, metersToFeet, UTCTimestampToLocal } 
+export default { readVtps, integrateProfile, metersToFeet } 
