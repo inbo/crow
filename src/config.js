@@ -23,8 +23,8 @@ export default {
     localizedDateFormat: "YYYY/MM/DD", // As returned by the browser when READING data from the "input type=date" field. TODO: Make it autodetected based on the locale?
     
     availableTimeIntervals: [
-        { text: '24h', value: 24 },
-        { text: '96h', value: 96 },
+        { text: '1d', value: 24 },
+        { text: '4d', value: 96 },
         { text: '1h', value: 1}
     ],
     initialTimeInterval: 24,
