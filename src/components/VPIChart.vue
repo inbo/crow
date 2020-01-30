@@ -51,19 +51,19 @@ export default {
         },
         {
           id: "rtr",
-          label: "RTR",
+          label: "Reflectivity traffic rate",
           propertyName: "rtr",
           yMaxValComputedName: "maxRTR"
         },
         {
           id: "vid",
-          label: "VID",
+          label: "Vertically integrated density",
           propertyName: "vid",
           yMaxValComputedName: "maxVID"
         },
         {
           id: "vir",
-          label: "VIR",
+          label: "Vertically integrated reflectivity",
           propertyName: "vir",
           yMaxValComputedName: "maxVIR"
         }
