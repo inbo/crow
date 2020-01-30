@@ -119,7 +119,7 @@ export default {
       this.chart.append("g").call(
         d3
           .axisLeft(this.yAxisLeft)
-          .tickValues(this.distinctHeightsMeters) // ... But we don't want to see the added "5000" height, so we specify the tick values manually
+          .tickValues(this.styleConfig.yAxisLeftTicks)
           .tickSizeOuter(0) // And we want to hide the last tick line
       ); // Remove last tick
 

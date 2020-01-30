@@ -45,6 +45,8 @@ export default {
         noDataColor: 'white',
 
         timeAxisFormat: globalTimeAxisFormat,
+
+        yAxisLeftTicks: [0, 1000, 2000, 3000, 4000] // Let's not show all altitudes (too crowded)
     },
     VPIChartStyle: {
         margin: { top: 15, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },
