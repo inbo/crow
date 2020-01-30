@@ -200,10 +200,10 @@ export default {
       // TODO: make sure label is well positioned in all cases
       this.chart
         .append("text")
-        .attr("text-anchor", "end")
+        .attr("text-anchor", "middle")
         .attr("transform", "rotate(-90)")
         .attr("y", -this.margin.left + 20)
-        .attr("x", -this.margin.top - 70)
+        .attr("x", -this.margin.top - 110)
         .text(this.selectedModeLabel);
     },
 
