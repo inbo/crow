@@ -364,7 +364,7 @@ export default {
       let vpi = nestedVpts.map(d => {
         return {
           moment: moment.utc(+d.key),
-          mtr: helpers.integrateProfile(d.values)
+          integratedProfiles: helpers.integrateProfile(d.values),
         };
       });
       return vpi;
