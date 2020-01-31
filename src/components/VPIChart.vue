@@ -3,7 +3,7 @@
     <slot name="title"></slot>
     <b-form>
       <b-form-row>
-        <b-col cols=3>
+        <b-col cols="3">
           <b-form-group id="vpi-display-mode-group" label="Show:" label-for="vpi-display-mode">
             <b-form-select
               id="vpi-display-mode"
@@ -156,6 +156,9 @@ export default {
       this.createEmptyChart();
       this.createAndAddChartAxis();
       this.updateChart();
+      if (this.styleConfig.showTooltip) {
+        this.initializeTooltip();
+      }
     },
     createEmptyChart() {
       // TODO: Same code in VPChart: factorize!!
@@ -207,6 +210,85 @@ export default {
         .text(this.selectedModeLabel);
     },
 
+    initializeTooltip() {
+      let vm = this;
+
+      let focus = this.chart
+        .append("g")
+        .attr("class", "focus")
+        .style("display", "none");
+
+      focus.append("circle").attr("r", 4).style("fill", vm.styleConfig.lineColor);
+
+      focus
+        .append("rect")
+        .attr("class", "tooltip")
+        .attr("width", 100)
+        .attr("height", 50)
+        .attr("x", 10)
+        .attr("y", -22)
+        .attr("rx", 4)
+        .attr("ry", 4);
+
+      focus
+        .append("text")
+        .attr("class", "tooltip-date")
+        .attr("x", 18)
+        .attr("y", -2);
+
+      focus
+        .append("text")
+        .attr("class", "tooltip-val-title")
+        .attr("x", 18)
+        .attr("y", 18);
+
+      focus
+        .append("text")
+        .attr("class", "tooltip-val")
+        .attr("x", 60)
+        .attr("y", 18);
+
+      this.chart
+        .append("rect")
+        .style("fill", "none")
+        .style("pointer-events", "all")
+        .attr("width", vm.width)
+        .attr("height", vm.height)
+        .on("mouseover", function() {
+          focus.style("display", null);
+        })
+        .on("mouseout", function() {
+          focus.style("display", "none");
+        })
+        .on("mousemove", mousemove);
+
+      let bisectMoment = d3.bisector(function(d) {
+          return d.moment.valueOf();
+        }).left,
+        formatValue = d3.format(",");
+
+      function mousemove() {
+        let x0 = vm.xAxis.invert(d3.mouse(this)[0]),
+          i = bisectMoment(vm.vpiData, x0, 1),
+          d0 = vm.vpiData[i - 1],
+          d1 = vm.vpiData[i],
+          d = x0 - d0.moment.valueOf() > d1.moment.valueOf() - x0 ? d1 : d0;
+
+        let yVal = d.integratedProfiles[vm.selectedModePropertyName];
+
+        focus.attr(
+          "transform",
+          "translate(" +
+            vm.xAxis(d.moment.valueOf()) +
+            "," +
+            vm.yAxis(yVal) +
+            ")"
+        );
+        focus.select(".tooltip-date").text(vm.formatTimestamp(d.moment.valueOf()));
+        focus.select(".tooltip-val-title").text(vm.selectedModeObject.id);
+        focus.select(".tooltip-val").text(formatValue(yVal));
+      }
+    },
     // TODO: update to follow the dynamic update pattern
     // TODO: validate graph by comparing to BioRad
     // TODO: Why is MTR chart often empty?
@@ -219,7 +301,7 @@ export default {
         .append("path")
         .datum(vm.vpiData)
         .attr("fill", "none")
-        .attr("stroke", vm.styleConfig.MTRLineColor)
+        .attr("stroke", vm.styleConfig.lineColor)
         .attr("stroke-width", 1.5)
         .attr(
           "d",

@@ -55,7 +55,9 @@ export default {
 
         timeAxisFormat: globalTimeAxisFormat,
 
-        MTRLineColor: 'steelblue'
+        lineColor: 'steelblue',
+
+        showTooltip: true,
     },
 
     TimelineChartStyle: {
