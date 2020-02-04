@@ -29,26 +29,22 @@
                 label-for="input-date"
                 description="Charts will be centered on noon for selected date."
               >
-                
-
-                <b-input-group>
+                <b-input-group size="sm">
                   <b-input-group-prepend>
-                    <b-button size="sm" v-on:click="decrementPeriod">&lt;&lt;</b-button>
+                    <b-button variant="outline-secondary" v-on:click="decrementPeriod">-{{ selectedIntervalInHours }}h</b-button>
                   </b-input-group-prepend>
 
                   <b-form-input
-                  id="input-date"
-                  size="sm"
-                  type="date"
-                  placeholder="Type a date..."
-                  v-model="selectedDate"
+                    id="input-date"
+                    type="date"
+                    placeholder="Type a date..."
+                    v-model="selectedDate"
                   />
 
                   <b-input-group-append>
-                    <b-button size="sm" v-on:click="incrementPeriod">&gt;&gt;</b-button>
+                    <b-button variant="outline-secondary" v-on:click="incrementPeriod">+{{ selectedIntervalInHours }}h</b-button>
                   </b-input-group-append>
                 </b-input-group>
-
               </b-form-group>
             </b-col>
           </b-row>
