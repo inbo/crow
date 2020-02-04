@@ -25,7 +25,7 @@ export default {
     availableTimeIntervals: [
         { text: '1d', value: 24 },
         { text: '4d', value: 96 },
-        { text: '1h', value: 1}
+        { text: '1h', value: 1} // Only for debugging: intervals that are not multiple of 24h won't work properly with the time navigation logic
     ],
     initialTimeInterval: 24,
 

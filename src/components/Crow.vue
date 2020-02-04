@@ -31,7 +31,7 @@
               >
                 <b-input-group size="sm">
                   <b-input-group-prepend>
-                    <b-button variant="outline-secondary" v-on:click="decrementPeriod">-{{ selectedIntervalInHours }}h</b-button>
+                    <b-button variant="outline-secondary" v-on:click="decrementPeriod">-{{ selectedIntervalLabel }}</b-button>
                   </b-input-group-prepend>
 
                   <b-form-input
@@ -42,7 +42,7 @@
                   />
 
                   <b-input-group-append>
-                    <b-button variant="outline-secondary" v-on:click="incrementPeriod">+{{ selectedIntervalInHours }}h</b-button>
+                    <b-button variant="outline-secondary" v-on:click="incrementPeriod">+{{ selectedIntervalLabel }}</b-button>
                   </b-input-group-append>
                 </b-input-group>
               </b-form-group>
@@ -208,14 +208,14 @@ export default {
 
     decrementPeriod() {
       this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
-        .subtract("1", "days")
+        .subtract(this.selectedIntervalInHours, "hours")
         .format(moment.HTML5_FMT.DATE);
       this.loadData();
     },
 
     incrementPeriod() {
       this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
-        .add("1", "days")
+        .add(this.selectedIntervalInHours, "hours")
         .format(moment.HTML5_FMT.DATE);
       this.loadData();
     },
@@ -278,6 +278,11 @@ export default {
     }
   },
   computed: {
+    selectedIntervalLabel() {
+      return this.availableIntervals.find(
+        d => d.value == this.selectedIntervalInHours
+      ).text;
+    },
     timeZoneToShow() {
       if (this.timeDisplayedAs == "radarLocal") {
         return this.selectedRadarTimezone;
