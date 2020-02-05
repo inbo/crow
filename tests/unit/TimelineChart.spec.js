@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import NewTimelineChart from '../../src/components/NewTimelineChart'
+import TimelineChart from '../../src/components/TimelineChart'
 import moment from 'moment-timezone';
 
 let styleConfig = {
@@ -34,7 +34,7 @@ let testPeriods = [
 ]
 
 test('General TimelineChart component rendering', () => {
-  const wrapper = mount(NewTimelineChart, {
+  const wrapper = mount(TimelineChart, {
     propsData: {
         styleConfig: styleConfig,
         dataTemporalResolution: 300,
@@ -66,7 +66,7 @@ test('General TimelineChart component rendering', () => {
 // TODO: should we split in multiple "test" blocks
 
 test('TimelineChart axis texts in UTC mode', () => {
-  const wrapper = mount(NewTimelineChart, {
+  const wrapper = mount(TimelineChart, {
     propsData: {
         styleConfig: styleConfig,
         dataTemporalResolution: 300,

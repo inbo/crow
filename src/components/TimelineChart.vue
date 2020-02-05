@@ -1,179 +1,142 @@
 <template>
-  <div>
-    <svg id="timeline-chart" />
-  </div>
+  <svg id="new-timeline-chart" :width="svgWidth" :height="svgHeight">
+    <g :transform="`translate(${margin.left}, ${margin.top})`">
+      <g v-if="styleConfig.showXAxis" transform="translate(0, 25)" v-axis:x="scale" />
+      <template v-for="period in populatedPeriods">
+        <rect
+          :key="'rect ' + period.x"
+          :x="period.x"
+          y="0"
+          :width="periodWidth"
+          height="20"
+          :class="period.class"
+          :id="'period-at-' + period.x"
+        />
+
+        <b-popover
+          v-if="styleConfig.showTooltip"
+          :target="'period-at-' + period.x"
+          triggers="hover"
+          placement="top"
+          :key="'popover ' + period.x"
+        >
+          <template v-slot:title>{{ formatMoment(period.moment) }}</template>
+          <b>Sun altitude:</b>
+          {{ period.sunAltitude | round2decimals }}°
+          <b>Period</b>
+          : {{ period.name }}
+        </b-popover>
+      </template>
+    </g>
+  </svg>
 </template>
 
 <script>
-import * as d3 from "d3";
+// TODO: margin.top in the main SVG group seems different than with TimelineChart.vue
+// TODO: try with a class and scoped styles instead of hardcoding the color
 
+import * as d3 from "d3";
 import moment from "moment-timezone";
 import { timeFormatting } from "./../mixins/timeFormatting.js";
+import helpers from "../helpers";
 
 export default {
   mixins: [timeFormatting],
   props: {
     periods: Array, // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
     styleConfig: Object,
-    dataTemporalResolution: Number,
-    showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
+    dataTemporalResolution: Number, // TODO: automatically infer from data?
+    showTimeAs: String
   },
-  data() {
+  data: function() {
     return {
-      chart: null,
-
       margin: this.styleConfig.margin,
-      width:
+
+      innerWidth:
         this.styleConfig.width -
         this.styleConfig.margin.left -
         this.styleConfig.margin.right,
-      height:
+
+      innerHeight:
         this.styleConfig.height -
         this.styleConfig.margin.top -
-        this.styleConfig.margin.bottom,
-
-      xAxis: null,
-      tooltip: null
+        this.styleConfig.margin.bottom
     };
   },
-  watch: {
-    periods: {
-      immediate: true,
-      handler() {
-        this.$nextTick(function() {
-          if (this.chart != null) {
-            this.chart.remove();
-          }
-
-          this.createEmptyChart();
-          this.createAndAddChartAxis();
-          this.updateChart();
-        });
-      }
+  filters: {
+    round2decimals: function(num) {
+      return (Math.round(num * 100) / 100).toFixed(2);
     }
   },
   methods: {
-    createEmptyChart() {
-      this.chart = d3
-        .select("svg#timeline-chart")
-        .attr("width", this.width + this.margin.left + this.margin.right)
-        .attr("height", this.height + this.margin.top + this.margin.bottom)
-        .append("g")
-        .attr(
-          "transform",
-          `translate(${this.margin.left}, ${this.margin.top})`
-        );
-
-      if (this.styleConfig.showTooltip) {
-        this.tooltip = d3
-          .select("body")
-          .append("div")
-          .attr("class", "tooltip")
-          .style("opacity", 0);
-      }
-    },
-
-    createAndAddChartAxis() {
-      this.xAxis = d3
-        .scaleTime()
-        .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
-        .range([0, this.width]);
-
-      if (this.styleConfig.showXAxis) {
-        this.chart
-          .append("g")
-          .attr("transform", `translate(0, ${this.height - 20})`)
-          .call(
-            d3
-              .axisBottom(this.xAxis)
-              .ticks(7)
-              .tickFormat(d => {
-                return this.formatTimestamp(d);
-              })
-          );
-      }
-    },
-
-    getPeriodFillColor(sunAltitude) {
-      return this.getPeriodData(sunAltitude).color;
+    getPeriodClass(sunAltitude) {
+      return helpers.makeSafeForCSS(this.getPeriodName(sunAltitude));
     },
 
     getPeriodName(sunAltitude) {
-      return this.getPeriodData(sunAltitude).name;
-    },
-
-    getPeriodData(sunAltitude) {
-      let style = this.styleConfig;
-      
-      let color;
-      let name;
-
+      // TODO: move to helpers?
       if (sunAltitude >= 0) {
-        color = style.dayColor;
-        name = 'day'
+        return "day";
       } else if (sunAltitude < 0 && sunAltitude >= -18) {
-        color = style.twilightColor;
-        name = 'twilight'
+        return "twilight";
       } else {
-        color = style.nightColor;
-        name = 'night'
-      }
-
-      return {
-        'color': color,
-        'name': name
-      }
-    },
-
-    updateChart() {
-      let update = this.chart.selectAll().data(this.periods);
-      let enter = update.enter().append("rect");
-      let exit = update.exit();
-      exit.remove();
-
-      var vm = this;
-
-      let sel = update
-        .merge(enter)
-        .attr("x", function(row) {
-          return Math.round(vm.xAxis(row.moment.valueOf()));
-        })
-        .attr("y", 0)
-        .attr("width", Math.round(vm.width / vm.rectDivider))
-        .attr("height", 20)
-        .style("fill", row => {
-          return this.getPeriodFillColor(row.sunAltitude);
-        });
-
-      if (this.styleConfig.showTooltip) {
-        sel
-          .on("mouseover", function(row) {
-            vm.tooltip
-              .transition()
-              .duration(200)
-              .style("opacity", 0.9);
-            vm.tooltip
-              .html(
-                `<b>Date</b>: ${vm.formatMoment(row.moment)}<br/>
-                <b>Period</b>: ${vm.getPeriodName(row.sunAltitude)}<br/>
-                <b>Sun altitude</b>: ${row.sunAltitude.toFixed(2)}°`
-              )
-              .style("left", d3.event.pageX + "px")
-              .style("top", d3.event.pageY - 65 + "px");
-          })
-          .on("mouseout", function() {
-            vm.tooltip
-              .transition()
-              .duration(500)
-              .style("opacity", 0);
-          });
+        return "night";
       }
     }
   },
+
+  directives: {
+    axis(el, binding, vnode) {
+      // Approach taken from: https://stackoverflow.com/questions/48726636/draw-d3-axis-without-direct-dom-manipulation
+      const axis = binding.arg;
+      const axisMethod = { x: "axisBottom", y: "axisLeft" }[axis];
+      const methodArg = binding.value[axis];
+
+      let vm = vnode.context;
+
+      let d3Axis = d3[axisMethod](methodArg)
+        .ticks(7)
+        .tickFormat(d => {
+          return vm.formatTimestamp(d);
+        });
+
+      d3.select(el).call(d3Axis);
+    }
+  },
+
   computed: {
+    scale: function() {
+      // Computed property created just so the "axis" directive can be more easily reused and shared
+      return { x: this.xScale, y: null };
+    },
+    xScale: function() {
+      return d3
+        .scaleTime()
+        .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
+        .range([0, this.innerWidth]);
+    },
+    populatedPeriods: function() {
+      const scale = this.xScale;
+
+      return this.periods.map(period => ({
+        ...period,
+        x: Math.round(scale(period.moment.valueOf())),
+        class: this.getPeriodClass(period.sunAltitude),
+        name: this.getPeriodName(period.sunAltitude)
+      }));
+    },
+    svgWidth: function() {
+      return this.styleConfig.width;
+    },
+    svgHeight: function() {
+      return this.styleConfig.height;
+    },
+    periodWidth: function() {
+      return Math.round(this.innerWidth / this.rectDivider);
+    },
     rectDivider: function() {
       let duration = moment.duration(this.maxMoment.diff(this.minMoment));
-      return duration.asSeconds() / this.dataTemporalResolution;
+      return (duration.asSeconds() / this.dataTemporalResolution) + 1;
     },
     minMoment: function() {
       // Now returns a moment obj.
@@ -188,3 +151,15 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+rect.day {
+  fill: #dae9fe;
+}
+rect.twilight {
+  fill: #4771bb;
+}
+rect.night {
+  fill: #1e252d;
+}
+</style>
