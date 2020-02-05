@@ -1,6 +1,7 @@
 <template>
   <svg id="new-timeline-chart" :width="svgWidth" :height="svgHeight">
     <g :transform="`translate(${margin.left}, ${margin.top})`">
+      <g transform="translate(0, 25)" v-axis:x="scale" />
       <rect
         v-for="period in populatedPeriods"
         :key="period.moment.valueOf()"
@@ -16,6 +17,8 @@
 
 <script>
 // TODO: margin.top in the main SVG group seems different than with TimelineChart.vue
+// TODO: try with a class and scoped styles instead of hardcoding the color
+
 import * as d3 from "d3";
 import moment from "moment-timezone";
 
@@ -69,14 +72,28 @@ export default {
     }
   },
 
+  directives: {
+    axis(el, binding) {
+      // Approach taken from: https://stackoverflow.com/questions/48726636/draw-d3-axis-without-direct-dom-manipulation
+      const axis = binding.arg;
+      const axisMethod = { x: "axisBottom", y: "axisLeft" }[axis];
+      const methodArg = binding.value[axis];
+
+      d3.select(el).call(d3[axisMethod](methodArg));
+    }
+  },
+
   computed: {
+    scale: function() {
+      // Computed property added just so the "axis" directive can be more easily reused and shared
+      return { x: this.xScale, y: null };
+    },
     xScale: function() {
       return d3
         .scaleTime()
         .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
         .range([0, this.width]);
     },
-
     populatedPeriods: function() {
       const scale = this.xScale;
 
@@ -86,7 +103,6 @@ export default {
         color: this.getPeriodFillColor(period.sunAltitude)
       }));
     },
-
     svgWidth: function() {
       return this.styleConfig.width;
     },
