@@ -136,7 +136,7 @@ export default {
     },
     rectDivider: function() {
       let duration = moment.duration(this.maxMoment.diff(this.minMoment));
-      return duration.asSeconds() / this.dataTemporalResolution;
+      return (duration.asSeconds() / this.dataTemporalResolution) + 1;
     },
     minMoment: function() {
       // Now returns a moment obj.
