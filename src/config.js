@@ -69,10 +69,5 @@ export default {
 
         showXAxis: true,
         showTooltip: true,
-
-        // TODO: when replacing TimelineChart by the new implementation, remove color configuration (now in component <style> section)
-        dayColor: 'red',
-        twilightColor: '#4771bb',
-        nightColor: '#1e252d'
     }
 }
