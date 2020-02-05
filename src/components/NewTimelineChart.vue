@@ -1,17 +1,17 @@
 <template>
-    <svg id="new-timeline-chart" :width="svgWidth" :height="svgHeight">
-      <g :transform="`translate(${margin.left}, ${margin.top})`">
-        <rect
-          v-for="period in populatedPeriods"
-          :key="period.moment.valueOf()"
-          :x="period.x"
-          y="0"
-          :width="periodWidth"
-          height="20"
-          :style="`fill: ${period.color};`"
-        />
-      </g>
-    </svg>
+  <svg id="new-timeline-chart" :width="svgWidth" :height="svgHeight">
+    <g :transform="`translate(${margin.left}, ${margin.top})`">
+      <rect
+        v-for="period in populatedPeriods"
+        :key="period.moment.valueOf()"
+        :x="period.x"
+        y="0"
+        :width="periodWidth"
+        height="20"
+        :style="`fill: ${period.color};`"
+      />
+    </g>
+  </svg>
 </template>
 
 <script>
@@ -38,9 +38,7 @@ export default {
       height:
         this.styleConfig.height -
         this.styleConfig.margin.top -
-        this.styleConfig.margin.bottom,
-
-      populatedPeriods: null
+        this.styleConfig.margin.bottom
     };
   },
   methods: {
@@ -68,28 +66,27 @@ export default {
         color: color,
         name: name
       };
-    },
-    getScale: function() {
+    }
+  },
+
+  computed: {
+    xScale: function() {
       return d3
         .scaleTime()
         .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
         .range([0, this.width]);
     },
-    populatePeriods: function() {
-      const scale = this.getScale();
 
-      this.populatedPeriods = this.periods.map(period => ({
+    populatedPeriods: function() {
+      const scale = this.xScale;
+
+      return this.periods.map(period => ({
         ...period,
         x: Math.round(scale(period.moment.valueOf())),
         color: this.getPeriodFillColor(period.sunAltitude)
       }));
-    }
-  },
-  mounted() {
-    this.populatePeriods();
-  },
+    },
 
-  computed: {
     svgWidth: function() {
       return this.styleConfig.width;
     },
