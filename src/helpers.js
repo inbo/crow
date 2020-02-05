@@ -3,6 +3,15 @@ import config from "./config";
 import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only the "chart" modules need it
 import moment from "moment-timezone";
 
+function makeSafeForCSS(name) {
+    return name.replace(/[^a-z0-9]/g, function(s) {
+        var c = s.charCodeAt(0);
+        if (c == 32) return '-';
+        if (c >= 65 && c <= 90) return '_' + s.toLowerCase();
+        return '__' + ('000' + c.toString(16)).slice(-4);
+    });
+}
+
 function metersToFeet(meters) {
     return meters * 3, 281;
 }
@@ -105,4 +114,4 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
     return ({ "mtr": mtr, "rtr": rtr, "vid": vid, "vir": vir })
 }
 
-export default { readVtps, integrateProfile, metersToFeet } 
+export default { readVtps, integrateProfile, metersToFeet, makeSafeForCSS } 

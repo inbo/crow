@@ -9,7 +9,7 @@
         y="0"
         :width="periodWidth"
         height="20"
-        :style="`fill: ${period.color};`"
+        :class="period.class"
       />
     </g>
   </svg>
@@ -22,9 +22,10 @@
 import * as d3 from "d3";
 import moment from "moment-timezone";
 import { timeFormatting } from "./../mixins/timeFormatting.js";
+import helpers from "../helpers";
 
 export default {
-  mixins: [timeFormatting],  
+  mixins: [timeFormatting],
   props: {
     periods: Array, // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
     styleConfig: Object,
@@ -39,7 +40,7 @@ export default {
         this.styleConfig.width -
         this.styleConfig.margin.left -
         this.styleConfig.margin.right,
-    
+
       innerHeight:
         this.styleConfig.height -
         this.styleConfig.margin.top -
@@ -47,30 +48,19 @@ export default {
     };
   },
   methods: {
-    getPeriodFillColor(sunAltitude) {
-      return this.getPeriodData(sunAltitude).color;
+    getPeriodClass(sunAltitude) {
+      return helpers.makeSafeForCSS(this.getPeriodName(sunAltitude));
     },
-    getPeriodData(sunAltitude) {
-      let style = this.styleConfig;
 
-      let color;
-      let name;
-
+    getPeriodName(sunAltitude) {
+      // TODO: move to helpers?
       if (sunAltitude >= 0) {
-        color = style.dayColor;
-        name = "day";
+        return "day";
       } else if (sunAltitude < 0 && sunAltitude >= -18) {
-        color = style.twilightColor;
-        name = "twilight";
+        return "twilight";
       } else {
-        color = style.nightColor;
-        name = "night";
+        return "night";
       }
-
-      return {
-        color: color,
-        name: name
-      };
     }
   },
 
@@ -95,7 +85,7 @@ export default {
 
   computed: {
     scale: function() {
-      // Computed property added just so the "axis" directive can be more easily reused and shared
+      // Computed property created just so the "axis" directive can be more easily reused and shared
       return { x: this.xScale, y: null };
     },
     xScale: function() {
@@ -110,7 +100,7 @@ export default {
       return this.periods.map(period => ({
         ...period,
         x: Math.round(scale(period.moment.valueOf())),
-        color: this.getPeriodFillColor(period.sunAltitude)
+        class: this.getPeriodClass(period.sunAltitude)
       }));
     },
     svgWidth: function() {
@@ -139,3 +129,15 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+rect.day {
+  fill: #dae9fe;
+}
+rect.twilight {
+  fill: #4771bb;
+}
+rect.night {
+  fill: #1e252d;
+}
+</style>
