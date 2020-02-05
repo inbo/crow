@@ -35,13 +35,12 @@ export default {
     return {
       margin: this.styleConfig.margin,
 
-      // TODO: rename innerWidth
-      width:
+      innerWidth:
         this.styleConfig.width -
         this.styleConfig.margin.left -
         this.styleConfig.margin.right,
-      // TODO: rename innerHeight
-      height:
+    
+      innerHeight:
         this.styleConfig.height -
         this.styleConfig.margin.top -
         this.styleConfig.margin.bottom
@@ -103,7 +102,7 @@ export default {
       return d3
         .scaleTime()
         .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
-        .range([0, this.width]);
+        .range([0, this.innerWidth]);
     },
     populatedPeriods: function() {
       const scale = this.xScale;
@@ -121,7 +120,7 @@ export default {
       return this.styleConfig.height;
     },
     periodWidth: function() {
-      return Math.round(this.width / this.rectDivider);
+      return Math.round(this.innerWidth / this.rectDivider);
     },
     rectDivider: function() {
       let duration = moment.duration(this.maxMoment.diff(this.minMoment));
