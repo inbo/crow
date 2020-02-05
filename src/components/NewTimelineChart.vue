@@ -2,15 +2,23 @@
   <svg id="new-timeline-chart" :width="svgWidth" :height="svgHeight">
     <g :transform="`translate(${margin.left}, ${margin.top})`">
       <g transform="translate(0, 25)" v-axis:x="scale" />
-      <rect
-        v-for="period in populatedPeriods"
-        :key="period.moment.valueOf()"
-        :x="period.x"
-        y="0"
-        :width="periodWidth"
-        height="20"
-        :class="period.class"
-      />
+      <template v-for="period in populatedPeriods">
+        <rect
+          :key="'rect ' + period.x"
+          :x="period.x"
+          y="0"
+          :width="periodWidth"
+          height="20"
+          :class="period.class"
+          :id="'period-at-' + period.x"
+        />
+        
+        <b-popover :target="'period-at-' + period.x" triggers="hover" placement="top" :key="'popover ' + period.x">
+          <template v-slot:title>{{ formatMoment(period.moment) }}</template>
+          <b>Sun altitude:</b> {{ period.sunAltitude }}
+          <b>Period</b>: {{ period.name }}
+        </b-popover>
+      </template>
     </g>
   </svg>
 </template>
@@ -100,7 +108,8 @@ export default {
       return this.periods.map(period => ({
         ...period,
         x: Math.round(scale(period.moment.valueOf())),
-        class: this.getPeriodClass(period.sunAltitude)
+        class: this.getPeriodClass(period.sunAltitude),
+        name: this.getPeriodName(period.sunAltitude)
       }));
     },
     svgWidth: function() {
