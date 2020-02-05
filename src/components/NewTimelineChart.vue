@@ -1,7 +1,7 @@
 <template>
   <svg id="new-timeline-chart" :width="svgWidth" :height="svgHeight">
     <g :transform="`translate(${margin.left}, ${margin.top})`">
-      <g transform="translate(0, 25)" v-axis:x="scale" />
+      <g v-if="styleConfig.showXAxis" transform="translate(0, 25)" v-axis:x="scale" />
       <template v-for="period in populatedPeriods">
         <rect
           :key="'rect ' + period.x"
@@ -13,7 +13,7 @@
           :id="'period-at-' + period.x"
         />
         
-        <b-popover :target="'period-at-' + period.x" triggers="hover" placement="top" :key="'popover ' + period.x">
+        <b-popover v-if="styleConfig.showTooltip" :target="'period-at-' + period.x" triggers="hover" placement="top" :key="'popover ' + period.x">
           <template v-slot:title>{{ formatMoment(period.moment) }}</template>
           <b>Sun altitude:</b> {{ period.sunAltitude }}
           <b>Period</b>: {{ period.name }}
