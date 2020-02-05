@@ -21,12 +21,15 @@
 
 import * as d3 from "d3";
 import moment from "moment-timezone";
+import { timeFormatting } from "./../mixins/timeFormatting.js";
 
 export default {
+  mixins: [timeFormatting],  
   props: {
     periods: Array, // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
     styleConfig: Object,
-    dataTemporalResolution: Number // TODO: automatically infer from data?
+    dataTemporalResolution: Number, // TODO: automatically infer from data?
+    showTimeAs: String
   },
   data: function() {
     return {
@@ -73,13 +76,21 @@ export default {
   },
 
   directives: {
-    axis(el, binding) {
+    axis(el, binding, vnode) {
       // Approach taken from: https://stackoverflow.com/questions/48726636/draw-d3-axis-without-direct-dom-manipulation
       const axis = binding.arg;
       const axisMethod = { x: "axisBottom", y: "axisLeft" }[axis];
       const methodArg = binding.value[axis];
 
-      d3.select(el).call(d3[axisMethod](methodArg));
+      let vm = vnode.context;
+
+      let d3Axis = d3[axisMethod](methodArg)
+        .ticks(7)
+        .tickFormat(d => {
+          return vm.formatTimestamp(d);
+        });
+
+      d3.select(el).call(d3Axis);
     }
   },
 
