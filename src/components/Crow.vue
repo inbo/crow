@@ -101,6 +101,13 @@
                 :data-temporal-resolution="dataTemporalResolution"
                 :showTimeAs="timeZoneToShow"
               ></timeline-chart>
+
+              <new-timeline-chart
+                :periods="timePeriods"
+                :style-config="TimelineChartStyle"
+                :data-temporal-resolution="dataTemporalResolution"
+                :showTimeAs="timeZoneToShow"
+              ></new-timeline-chart>
             </template>
           </v-p-chart>
         </b-col>
@@ -128,6 +135,7 @@
 import VPChart from "./VPChart.vue";
 import VPIChart from "./VPIChart.vue";
 import TimelineChart from "./TimelineChart.vue";
+import NewTimelineChart from './NewTimelineChart.vue';
 
 import moment from "moment-timezone";
 import axios from "axios";
@@ -380,7 +388,8 @@ export default {
   components: {
     VPChart,
     VPIChart,
-    TimelineChart
+    TimelineChart,
+    NewTimelineChart
   }
 };
 </script>
