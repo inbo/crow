@@ -12,11 +12,19 @@
           :class="period.class"
           :id="'period-at-' + period.x"
         />
-        
-        <b-popover v-if="styleConfig.showTooltip" :target="'period-at-' + period.x" triggers="hover" placement="top" :key="'popover ' + period.x">
+
+        <b-popover
+          v-if="styleConfig.showTooltip"
+          :target="'period-at-' + period.x"
+          triggers="hover"
+          placement="top"
+          :key="'popover ' + period.x"
+        >
           <template v-slot:title>{{ formatMoment(period.moment) }}</template>
-          <b>Sun altitude:</b> {{ period.sunAltitude }}
-          <b>Period</b>: {{ period.name }}
+          <b>Sun altitude:</b>
+          {{ period.sunAltitude | round2decimals }}°
+          <b>Period</b>
+          : {{ period.name }}
         </b-popover>
       </template>
     </g>
@@ -54,6 +62,11 @@ export default {
         this.styleConfig.margin.top -
         this.styleConfig.margin.bottom
     };
+  },
+  filters: {
+    round2decimals: function(num) {
+      return (Math.round(num * 100) / 100).toFixed(2);
+    }
   },
   methods: {
     getPeriodClass(sunAltitude) {
