@@ -22,14 +22,15 @@
         </b-row>
       </b-container>
     </footer>
-  </div>
+      </div>
 </template>
 
 <script>
-import Crow from "./components/Crow.vue";
+import Vue from 'vue';
+import Crow from './components/Crow.vue';
 
-export default {
-  name: "app",
+export default Vue.extend({
+  name: 'app',
   methods: {
     commitHash: function() {
       return __COMMIT_HASH__;
@@ -38,7 +39,7 @@ export default {
   components: {
     Crow
   }
-};
+});
 </script>
 
 <style>
