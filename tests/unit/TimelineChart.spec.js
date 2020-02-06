@@ -33,7 +33,7 @@ let testPeriods = [
     {"moment": moment("2020-01-23T11:25:00.000Z"), "sunAltitude": 18.950371795084237},
 ]
 
-test('General TimelineChart component rendering', () => {
+test('General TimelineChart component rendering & behaviour', () => {
   const wrapper = mount(TimelineChart, {
     propsData: {
         styleConfig: styleConfig,
@@ -56,6 +56,11 @@ test('General TimelineChart component rendering', () => {
 
   const lastTickText = wrapper.findAll('g.tick text').at(11)
   expect(lastTickText.text()).toBe("23-1@12:25 CET")
+
+  // Wit this basic data, everything should be 'day'
+
+  // Check it can correctly autodetect the temporal resolution (5 minutes)
+  expect(wrapper.vm.dataTemporalResolution).toBe(5 * 60);
 
   //console.log(wrapper.html({ prettyPrint: true}));
 });

@@ -98,7 +98,6 @@
               <timeline-chart
                 :periods="timePeriods"
                 :style-config="TimelineChartStyle"
-                :data-temporal-resolution="dataTemporalResolution"
                 :showTimeAs="timeZoneToShow"
               ></timeline-chart>
             </template>

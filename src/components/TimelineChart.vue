@@ -33,8 +33,6 @@
 
 <script>
 // TODO: margin.top in the main SVG group seems different than with TimelineChart.vue
-// TODO: try with a class and scoped styles instead of hardcoding the color
-
 import * as d3 from "d3";
 import moment from "moment-timezone";
 import { timeFormatting } from "./../mixins/timeFormatting.js";
@@ -45,7 +43,6 @@ export default {
   props: {
     periods: Array, // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
     styleConfig: Object,
-    dataTemporalResolution: Number, // TODO: automatically infer from data?
     showTimeAs: String
   },
   data: function() {
@@ -133,6 +130,9 @@ export default {
     },
     periodWidth: function() {
       return Math.round(this.innerWidth / this.rectDivider);
+    },
+    dataTemporalResolution: function() {
+      return moment.duration(this.periods[1].moment.diff(this.periods[0].moment)).asSeconds();
     },
     rectDivider: function() {
       let duration = moment.duration(this.maxMoment.diff(this.minMoment));
