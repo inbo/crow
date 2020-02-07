@@ -3,7 +3,13 @@
     <slot name="title"></slot>
     <svg id="vp-chart" :width="styleConfig.width" :height="styleConfig.height">
       <g :transform="`translate(${margin.left}, ${margin.top})`">
-        <rect v-for="d in vtpsDataPrepared" :key="d.timestamp + '-' + d.height" />
+        <rect v-for="d in vtpsDataPrepared" :key="d.timestamp + '-' + d.height" 
+        :x="d.x"
+        :y="d.y"
+        :fill="d.fill"
+        :height="rectHeight"
+        :width="rectWidth"
+        />
       </g>
     </svg>
   </div>
@@ -11,7 +17,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { scaleTime } from "d3-scale";
+import { scaleTime, scalePoint, scaleLinear } from "d3-scale";
 import { max, min } from "d3-array";
 
 interface Scales {
@@ -30,7 +36,9 @@ interface VTPSEntry {
 }
 
 interface VTPSEntryPrepared extends VTPSEntry {
-  x: Number;
+  x: number;
+  y: number | undefined;
+  fill: string
 }
 
 export default Vue.extend({
@@ -54,8 +62,35 @@ export default Vue.extend({
         this.styleConfig.margin.bottom
     };
   },
-  methods: {},
+  methods: {
+    getRectYValue: function(height: number): number {
+      const scaledValue = this.yScale(height.toString()); 
+      if(scaledValue) {
+        return scaledValue - this.rectHeight;
+      } else {
+        // We've asked yScale for a value outside of the domain, log error?
+        return 0;
+      }
+    },
+    getRectColor: function(data: VTPSEntry): string {
+      if (data.noData) {
+            return this.styleConfig.noDataColor;
+          } else {
+            return this.colorScale(data.dens);
+          }
+    }
+  },
   computed: {
+    rectHeight: function(): number {
+      return this.innerHeight / this.distinctHeightsMeters.length;
+    },
+    rectWidth: function() : number {
+      return Math.round(this.innerWidth / this.rectDivider);
+    },
+    rectDivider: function() : number {
+      let durationInMs = this.maxTimestamp - this.minTimestamp;
+      return (durationInMs / 1000 / this.dataTemporalResolution) + 1;
+    },
     minTimestamp: function(): number {
       let minVal = min(this.vtpsData, function(d: VTPSEntry) {
         return d.timestamp;
@@ -68,8 +103,18 @@ export default Vue.extend({
       });
       return maxVal || 0;
     },
+    maxDensity: function(): number {
+      let maxVal = max(this.vtpsData, function(d) {
+        return d.dens;
+      });
+      return maxVal || 0;
+    },
     dataTemporalResolution: function(): number {
-      return (this.vtpsData[26].timestamp - this.vtpsData[0].timestamp) / 1000;
+      return (this.vtpsData[26].timestamp - this.vtpsData[0].timestamp) / 1000; // TODO: replace 26 by dynamic value
+    },
+    distinctHeightsMeters: function(): number[] {
+      let heightsSet = new Set(this.vtpsData.map(row => row.height));
+      return Array.from(heightsSet.values());
     },
     scale: function(): Scales {
       // Computed property created just so the "axis" directive can be more easily reused and shared
@@ -83,14 +128,26 @@ export default Vue.extend({
         ])
         .range([0, this.innerWidth]);
     },
+    yScale: function(): d3.ScalePoint<string> {
+      return scalePoint()
+        .range([this.innerHeight, 0])
+        .domain(this.distinctHeightsMeters.concat([5000]).map(String)); // The axis needs one more value so the line extends to the top...
+    },
+    colorScale: function(): d3.ScaleLinear<string, string> {
+      return scaleLinear<string>()
+        .range([
+          this.styleConfig.minDensityColor,
+          this.styleConfig.maxDensityColor
+        ])
+        .domain([0, this.maxDensity]);
+    },
     vtpsDataPrepared: function(): VTPSEntryPrepared[] {
       return this.vtpsData.map(data => ({
         ...data,
 
-        x: Math.round(Math.round(this.xScale(data.timestamp)) + 1)
-
-        /*class: this.getPeriodClass(period.sunAltitude),
-        name: this.getPeriodName(period.sunAltitude)*/
+        x: Math.round(Math.round(this.xScale(data.timestamp)) + 1),
+        y: this.getRectYValue(data.height),
+        fill: this.getRectColor(data)
       }));
     }
   }
