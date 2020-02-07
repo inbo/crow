@@ -240,7 +240,7 @@ export default {
         noData: false
       };
 
-      if (this.radarVtps.hasOwnProperty(vtpsDataRow.datetime)) {
+      if (Object.prototype.hasOwnProperty.call(this.radarVtps, vtpsDataRow.datetime)) {
         this.$set(
           this.radarVtps[vtpsDataRow.datetime].heightData,
           vtpsDataRow.height,
