@@ -11,7 +11,8 @@
 
 <script lang="ts">
 import Vue from "vue";
-import * as d3 from "d3";
+import { scaleTime } from "d3-scale";
+import { max, min } from "d3-array";
 
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)
@@ -56,16 +57,16 @@ export default Vue.extend({
   methods: {},
   computed: {
     minTimestamp: function(): number {
-      let min = d3.min(this.vtpsData, function(d: VTPSEntry) {
+      let minVal = min(this.vtpsData, function(d: VTPSEntry) {
         return d.timestamp;
       });
-      return min || 0;
+      return minVal || 0;
     },
     maxTimestamp: function(): number {
-      let max = d3.max(this.vtpsData, function(d: VTPSEntry) {
+      let maxVal = max(this.vtpsData, function(d: VTPSEntry) {
         return d.timestamp;
       });
-      return max || 0;
+      return maxVal || 0;
     },
     dataTemporalResolution: function(): number {
       return (this.vtpsData[26].timestamp - this.vtpsData[0].timestamp) / 1000;
@@ -75,8 +76,7 @@ export default Vue.extend({
       return { x: this.xScale, y: null };
     },
     xScale: function(): d3.ScaleTime<number, number> {
-      return d3
-        .scaleTime()
+      return scaleTime()
         .domain([
           this.minTimestamp,
           this.maxTimestamp + this.dataTemporalResolution * 1000
