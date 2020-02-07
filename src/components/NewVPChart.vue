@@ -2,13 +2,20 @@
   <div>
     <slot name="title"></slot>
     <svg id="vp-chart" :width="styleConfig.width" :height="styleConfig.height">
+      
       <g :transform="`translate(${margin.left}, ${margin.top})`">
-        <rect v-for="d in vtpsDataPrepared" :key="d.timestamp + '-' + d.height" 
-        :x="d.x"
-        :y="d.y"
-        :fill="d.fill"
-        :height="rectHeight"
-        :width="rectWidth"
+        <g
+        :transform="`translate(0, ${this.innerHeight})`"
+        v-xaxis="xScale"
+      />
+        <rect
+          v-for="d in vtpsDataPrepared"
+          :key="d.timestamp + '-' + d.height"
+          :x="d.x"
+          :y="d.y"
+          :fill="d.fill"
+          :height="rectHeight"
+          :width="rectWidth"
         />
       </g>
     </svg>
@@ -19,6 +26,20 @@
 import Vue from "vue";
 import { scaleTime, scalePoint, scaleLinear } from "d3-scale";
 import { max, min } from "d3-array";
+import { select } from "d3-selection";
+import { axisBottom, axisLeft } from "d3-axis";
+import { timeFormatting } from "./../mixins/timeFormatting.js";
+
+const d3 = {
+  scaleTime,
+  scalePoint,
+  scaleLinear,
+  max,
+  min,
+  select,
+  axisBottom,
+  axisLeft
+};
 
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)
@@ -26,6 +47,7 @@ interface Scales {
 }
 
 interface VTPSEntry {
+  // Data, as received via props
   dd: number;
   dens: number;
   ff: number;
@@ -36,13 +58,15 @@ interface VTPSEntry {
 }
 
 interface VTPSEntryPrepared extends VTPSEntry {
+  // Data, once ready for display
   x: number;
   y: number | undefined;
-  fill: string
+  fill: string;
 }
 
 export default Vue.extend({
   name: "newvpchart",
+  mixins: [timeFormatting],
   props: {
     vtpsData: Array as () => VTPSEntry[],
     styleConfig: Object
@@ -64,8 +88,8 @@ export default Vue.extend({
   },
   methods: {
     getRectYValue: function(height: number): number {
-      const scaledValue = this.yScale(height.toString()); 
-      if(scaledValue) {
+      const scaledValue = this.yScale(height.toString());
+      if (scaledValue) {
         return scaledValue - this.rectHeight;
       } else {
         // We've asked yScale for a value outside of the domain, log error?
@@ -74,37 +98,53 @@ export default Vue.extend({
     },
     getRectColor: function(data: VTPSEntry): string {
       if (data.noData) {
-            return this.styleConfig.noDataColor;
-          } else {
-            return this.colorScale(data.dens);
-          }
+        return this.styleConfig.noDataColor;
+      } else {
+        return this.colorScale(data.dens);
+      }
     }
+  },
+  directives: {
+    xaxis(el, binding, vnode) {
+      const scaleFunction = binding.value;
+      console.log("scalename", scaleFunction);
+
+      let vm = vnode.context;
+
+      let d3Axis = d3.axisBottom(scaleFunction)
+              .ticks(7)
+              /*.tickFormat(d => { // Todo: fix issues when uncommenting
+                return vm.formatTimestamp(d);
+              })*/;
+
+      d3.select(el).call(d3Axis); // TODO: Fix TS error
+    },
   },
   computed: {
     rectHeight: function(): number {
       return this.innerHeight / this.distinctHeightsMeters.length;
     },
-    rectWidth: function() : number {
+    rectWidth: function(): number {
       return Math.round(this.innerWidth / this.rectDivider);
     },
-    rectDivider: function() : number {
+    rectDivider: function(): number {
       let durationInMs = this.maxTimestamp - this.minTimestamp;
-      return (durationInMs / 1000 / this.dataTemporalResolution) + 1;
+      return durationInMs / 1000 / this.dataTemporalResolution + 1;
     },
     minTimestamp: function(): number {
-      let minVal = min(this.vtpsData, function(d: VTPSEntry) {
+      let minVal = d3.min(this.vtpsData, function(d: VTPSEntry) {
         return d.timestamp;
       });
       return minVal || 0;
     },
     maxTimestamp: function(): number {
-      let maxVal = max(this.vtpsData, function(d: VTPSEntry) {
+      let maxVal = d3.max(this.vtpsData, function(d: VTPSEntry) {
         return d.timestamp;
       });
       return maxVal || 0;
     },
     maxDensity: function(): number {
-      let maxVal = max(this.vtpsData, function(d) {
+      let maxVal = d3.max(this.vtpsData, function(d) {
         return d.dens;
       });
       return maxVal || 0;
@@ -121,7 +161,8 @@ export default Vue.extend({
       return { x: this.xScale, y: null };
     },
     xScale: function(): d3.ScaleTime<number, number> {
-      return scaleTime()
+      return d3
+        .scaleTime()
         .domain([
           this.minTimestamp,
           this.maxTimestamp + this.dataTemporalResolution * 1000
@@ -129,12 +170,14 @@ export default Vue.extend({
         .range([0, this.innerWidth]);
     },
     yScale: function(): d3.ScalePoint<string> {
-      return scalePoint()
+      return d3
+        .scalePoint()
         .range([this.innerHeight, 0])
         .domain(this.distinctHeightsMeters.concat([5000]).map(String)); // The axis needs one more value so the line extends to the top...
     },
     colorScale: function(): d3.ScaleLinear<string, string> {
-      return scaleLinear<string>()
+      return d3
+        .scaleLinear<string>()
         .range([
           this.styleConfig.minDensityColor,
           this.styleConfig.maxDensityColor
