@@ -9,6 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/d3": "^5.7.2",
     "axios": "^0.19.2",
     "bootstrap-vue": "^2.4.0",
     "core-js": "^3.6.4",

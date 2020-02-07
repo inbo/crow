@@ -107,6 +107,26 @@
 
       <b-row>
         <b-col>
+          <new-v-p-chart
+            :vtps-data="radarVtpsAsArray"
+            :showTimeAs="timeZoneToShow"
+            :data-temporal-resolution="dataTemporalResolution"
+            :style-config="VPChartStyle"
+          >
+            <template v-slot:title>
+              <h3>New VP Chart</h3>
+              <timeline-chart
+                :periods="timePeriods"
+                :style-config="TimelineChartStyle"
+                :showTimeAs="timeZoneToShow"
+              ></timeline-chart>
+            </template>
+          </new-v-p-chart>
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col>
           <v-p-i-chart
             :vpi-data="integratedProfiles"
             :style-config="VPIChartStyle"
@@ -127,6 +147,7 @@
 import VPChart from "./VPChart.vue";
 import VPIChart from "./VPIChart.vue";
 import TimelineChart from "./TimelineChart.vue";
+import NewVPChart from './NewVPChart.vue';
 
 import moment from "moment-timezone";
 import axios from "axios";
@@ -379,7 +400,8 @@ export default {
   components: {
     VPChart,
     VPIChart,
-    TimelineChart
+    TimelineChart,
+    NewVPChart
   }
 };
 </script>
