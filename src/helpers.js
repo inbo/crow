@@ -3,6 +3,16 @@ import config from "./config";
 import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only the "chart" modules need it
 import moment from "moment-timezone";
 
+function formatMoment(moment, showTimeAs, timeAxisFormat) {
+    // Format the timestamp passed as argument, according to timezone and timeAxisFormat
+    return moment.tz(showTimeAs).format(timeAxisFormat);
+}
+
+function formatTimestamp(ts, showTimeAs, timeAxisFormat) {
+    // Format the timestamp passed as argument, according to timezone and timeAxisFormat
+    return formatMoment(moment(ts), showTimeAs, timeAxisFormat);
+}
+
 function makeSafeForCSS(name) {
     return name.replace(/[^a-z0-9]/g, function(s) {
         var c = s.charCodeAt(0);
@@ -114,4 +124,4 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
     return ({ "mtr": mtr, "rtr": rtr, "vid": vid, "vir": vir })
 }
 
-export default { readVtps, integrateProfile, metersToFeet, makeSafeForCSS } 
+export default { readVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp } 

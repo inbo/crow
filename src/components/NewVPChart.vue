@@ -6,7 +6,7 @@
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <g
         :transform="`translate(0, ${this.innerHeight})`"
-        v-xaxis="xScale"
+        v-xaxis="{scale: xScale, timezone: showTimeAs, timeAxisFormat: styleConfig.timeAxisFormat}"
       />
         <rect
           v-for="d in vtpsDataPrepared"
@@ -28,7 +28,7 @@ import { scaleTime, scalePoint, scaleLinear } from "d3-scale";
 import { max, min } from "d3-array";
 import { select } from "d3-selection";
 import { axisBottom, axisLeft } from "d3-axis";
-import { timeFormatting } from "./../mixins/timeFormatting.js";
+import helpers from "../helpers";
 
 const d3 = {
   scaleTime,
@@ -66,10 +66,10 @@ interface VTPSEntryPrepared extends VTPSEntry {
 
 export default Vue.extend({
   name: "newvpchart",
-  mixins: [timeFormatting],
   props: {
     vtpsData: Array as () => VTPSEntry[],
-    styleConfig: Object
+    styleConfig: Object,
+    showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
   },
   data: function() {
     return {
@@ -106,18 +106,17 @@ export default Vue.extend({
   },
   directives: {
     xaxis(el, binding, vnode) {
-      const scaleFunction = binding.value;
-      console.log("scalename", scaleFunction);
-
-      let vm = vnode.context;
+      const scaleFunction = binding.value.scale;
+      const showTimeAs = binding.value.timezone;
+      const timeAxisFormat = binding.value.timeAxisFormat;
 
       let d3Axis = d3.axisBottom(scaleFunction)
               .ticks(7)
-              /*.tickFormat(d => { // Todo: fix issues when uncommenting
-                return vm.formatTimestamp(d);
-              })*/;
+              .tickFormat(d => { // Todo: fix issues when uncommenting
+                return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
+              });
 
-      d3.select(el).call(d3Axis); // TODO: Fix TS error
+      d3Axis(d3.select(el as unknown as SVGGElement)); // TODO: There's probably a better solution than this double casting
     },
   },
   computed: {

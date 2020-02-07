@@ -7,7 +7,7 @@ export const timeFormatting = {
     //  - styleconfig.timeAxisFormat
 
     methods: {
-        formatMoment(moment) {
+         formatMoment(moment) {
             // Format the timestamp passed as argument, according to timezone (showTimeAs) and styleConfig.timeAxisFormat
             return moment.tz(this.showTimeAs).format(this.styleConfig.timeAxisFormat);
         },
