@@ -40,6 +40,8 @@ export default {
         width: globalChartWidth,
         height: 300,
 
+        showTooltip: false, // BEWARE: useful for debugging, but performance is horrible
+
         minDensityColor: '#f0f0f0',
         maxDensityColor: '#dc3545',
         noDataColor: 'white',

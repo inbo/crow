@@ -9,15 +9,31 @@
         />
         <g v-yaxis-left="{'scale': yScale, 'tickValues': styleConfig.yAxisLeftTicks}" />
 
-        <rect
-          v-for="d in vtpsDataPrepared"
-          :key="d.timestamp + '-' + d.height"
-          :x="d.x"
-          :y="d.y"
-          :fill="d.fill"
-          :height="rectHeight"
-          :width="rectWidth"
-        />
+        <template v-for="d in vtpsDataPrepared">
+          <rect
+            :key="'rect-' + d.timestamp + '-' + d.height"
+            :id="'rect-' + d.timestamp + '-' + d.height"
+            :x="d.x"
+            :y="d.y"
+            :fill="d.fill"
+            :height="rectHeight"
+            :width="rectWidth"
+          />
+
+          <b-popover
+            v-if="styleConfig.showTooltip"
+            :target="'rect-' + d.timestamp + '-' + d.height"
+            triggers="hover"
+            placement="top"
+            :key="'popover-' + d.timestamp + '-' + d.height"
+          >
+            <template v-slot:title>{{ formatTimestamp(d.timestamp) }}</template>
+            <b>Height</b>
+              {{ d.height }}m <br/>
+            <b>Density</b>
+              {{ d.dens }}
+        </b-popover>
+        </template>
 
         <g v-yaxis-right="{'scale': yScaleFeet }" :transform="`translate(${this.innerWidth}, 0)`" />
 
@@ -104,6 +120,9 @@ export default Vue.extend({
     };
   },
   methods: {
+    formatTimestamp: function(ts: number):string {
+      return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.timeAxisFormat);
+    },
     getRectYValue: function(height: number): number {
       const scaledValue = this.yScale(height.toString());
       if (scaledValue) {
@@ -149,7 +168,6 @@ export default Vue.extend({
         .axisBottom(scaleFunction)
         .ticks(7)
         .tickFormat(d => {
-          // Todo: fix issues when uncommenting
           return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
         });
 
