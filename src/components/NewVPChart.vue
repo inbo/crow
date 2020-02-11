@@ -2,12 +2,13 @@
   <div>
     <slot name="title"></slot>
     <svg id="vp-chart" :width="styleConfig.width" :height="styleConfig.height">
-      
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <g
-        :transform="`translate(0, ${this.innerHeight})`"
-        v-xaxis="{scale: xScale, timezone: showTimeAs, timeAxisFormat: styleConfig.timeAxisFormat}"
-      />
+          :transform="`translate(0, ${this.innerHeight})`"
+          v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}"
+        />
+        <g v-yaxis-left="{'scale': yScale, 'tickValues': styleConfig.yAxisLeftTicks}" />
+
         <rect
           v-for="d in vtpsDataPrepared"
           :key="d.timestamp + '-' + d.height"
@@ -17,6 +18,21 @@
           :height="rectHeight"
           :width="rectWidth"
         />
+
+        <g v-yaxis-right="{'scale': yScaleFeet }" :transform="`translate(${this.innerWidth}, 0)`" />
+
+        <text
+          text-anchor="end"
+          transform="rotate(-90)"
+          :y="-this.margin.left + 20"
+          :x="-this.margin.top - 70"
+        >Height (meters)</text>
+        <text
+          text-anchor="end"
+          transform="rotate(-90)"
+          :y="this.innerWidth + 55"
+          :x="-this.margin.top - 70"
+        >Height (feet)</text>
       </g>
     </svg>
   </div>
@@ -27,7 +43,7 @@ import Vue from "vue";
 import { scaleTime, scalePoint, scaleLinear } from "d3-scale";
 import { max, min } from "d3-array";
 import { select } from "d3-selection";
-import { axisBottom, axisLeft } from "d3-axis";
+import { axisBottom, axisLeft, axisRight } from "d3-axis";
 import helpers from "../helpers";
 
 const d3 = {
@@ -38,7 +54,8 @@ const d3 = {
   min,
   select,
   axisBottom,
-  axisLeft
+  axisLeft,
+  axisRight
 };
 
 interface Scales {
@@ -105,19 +122,39 @@ export default Vue.extend({
     }
   },
   directives: {
+    yaxisRight(el, binding, vnode) {
+      const scaleFunction = binding.value.scale;
+
+      let d3Axis = d3.axisRight(scaleFunction).tickSizeOuter(0);
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    },
+    yaxisLeft(el, binding, vnode) {
+      const scaleFunction = binding.value.scale;
+      const tickValues = binding.value.tickValues;
+
+      let d3Axis = d3
+        .axisLeft(scaleFunction)
+        .tickValues(tickValues)
+        .tickSizeOuter(0); // And we want to hide the last tick line
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    },
     xaxis(el, binding, vnode) {
       const scaleFunction = binding.value.scale;
       const showTimeAs = binding.value.timezone;
       const timeAxisFormat = binding.value.timeAxisFormat;
 
-      let d3Axis = d3.axisBottom(scaleFunction)
-              .ticks(7)
-              .tickFormat(d => { // Todo: fix issues when uncommenting
-                return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
-              });
+      let d3Axis = d3
+        .axisBottom(scaleFunction)
+        .ticks(7)
+        .tickFormat(d => {
+          // Todo: fix issues when uncommenting
+          return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
+        });
 
-      d3Axis(d3.select(el as unknown as SVGGElement)); // TODO: There's probably a better solution than this double casting
-    },
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    }
   },
   computed: {
     rectHeight: function(): number {
@@ -173,6 +210,12 @@ export default Vue.extend({
         .scalePoint()
         .range([this.innerHeight, 0])
         .domain(this.distinctHeightsMeters.concat([5000]).map(String)); // The axis needs one more value so the line extends to the top...
+    },
+    yScaleFeet: function(): d3.ScaleLinear<number, number> {
+      return d3
+        .scaleLinear()
+        .range([this.innerHeight, 0])
+        .domain([0, 15748.03]); // TODO: make dynamic
     },
     colorScale: function(): d3.ScaleLinear<string, string> {
       return d3

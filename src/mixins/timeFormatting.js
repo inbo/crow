@@ -1,4 +1,5 @@
 import moment from 'moment-timezone';
+// TODO: deprecate this mixin in favor of helpers (already there), it creates issues with TS and makes code less readable
 
 export const timeFormatting = {
     // This mixin export time formatting methods
