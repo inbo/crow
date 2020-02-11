@@ -90,7 +90,6 @@
           <v-p-chart
             :vtps-data="radarVtpsAsArray"
             :showTimeAs="timeZoneToShow"
-            :data-temporal-resolution="dataTemporalResolution"
             :style-config="VPChartStyle"
           >
             <template v-slot:title>

@@ -82,7 +82,7 @@ interface VTPSEntryPrepared extends VTPSEntry {
 }
 
 export default Vue.extend({
-  name: "newvpchart",
+  name: "VPChart",
   props: {
     vtpsData: Array as () => VTPSEntry[],
     styleConfig: Object,
