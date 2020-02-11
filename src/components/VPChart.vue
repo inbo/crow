@@ -1,209 +1,240 @@
 <template>
   <div>
     <slot name="title"></slot>
-    <svg id="vp-chart" />
+    <svg id="vp-chart" :width="styleConfig.width" :height="styleConfig.height">
+      <g :transform="`translate(${margin.left}, ${margin.top})`">
+        <g
+          :transform="`translate(0, ${this.innerHeight})`"
+          v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}"
+        />
+        <g v-yaxis-left="{'scale': yScale, 'tickValues': styleConfig.yAxisLeftTicks}" />
+
+        <rect
+          v-for="d in vtpsDataPrepared"
+          :key="d.timestamp + '-' + d.height"
+          :x="d.x"
+          :y="d.y"
+          :fill="d.fill"
+          :height="rectHeight"
+          :width="rectWidth"
+        />
+
+        <g v-yaxis-right="{'scale': yScaleFeet }" :transform="`translate(${this.innerWidth}, 0)`" />
+
+        <text
+          text-anchor="end"
+          transform="rotate(-90)"
+          :y="-this.margin.left + 20"
+          :x="-this.margin.top - 70"
+        >Height (meters)</text>
+        <text
+          text-anchor="end"
+          transform="rotate(-90)"
+          :y="this.innerWidth + 55"
+          :x="-this.margin.top - 70"
+        >Height (feet)</text>
+      </g>
+    </svg>
   </div>
 </template>
 
-<script>
-import * as d3 from "d3";
+<script lang="ts">
+import Vue from "vue";
+import { scaleTime, scalePoint, scaleLinear } from "d3-scale";
+import { max, min } from "d3-array";
+import { select } from "d3-selection";
+import { axisBottom, axisLeft, axisRight } from "d3-axis";
 import helpers from "../helpers";
-import { timeFormatting } from "./../mixins/timeFormatting.js";
 
-export default {
-  mixins: [timeFormatting],
+const d3 = {
+  scaleTime,
+  scalePoint,
+  scaleLinear,
+  max,
+  min,
+  select,
+  axisBottom,
+  axisLeft,
+  axisRight
+};
+
+interface Scales {
+  x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)
+  y: null;
+}
+
+interface VTPSEntry {
+  // Data, as received via props
+  dd: number;
+  dens: number;
+  ff: number;
+  height: number;
+  noData: boolean;
+  sd_vvp: number;
+  timestamp: number;
+}
+
+interface VTPSEntryPrepared extends VTPSEntry {
+  // Data, once ready for display
+  x: number;
+  y: number | undefined;
+  fill: string;
+}
+
+export default Vue.extend({
+  name: "newvpchart",
   props: {
-    vtpsData: Array,
-    dataTemporalResolution: Number,
+    vtpsData: Array as () => VTPSEntry[],
     styleConfig: Object,
     showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
   },
-  data() {
+  data: function() {
     return {
-      chart: null,
-
       margin: this.styleConfig.margin,
-      width:
+
+      innerWidth:
         this.styleConfig.width -
         this.styleConfig.margin.left -
         this.styleConfig.margin.right,
-      height:
+
+      innerHeight:
         this.styleConfig.height -
         this.styleConfig.margin.top -
-        this.styleConfig.margin.bottom,
-
-      xAxis: null,
-      yAxisLeft: null,
-      yAxisRight: null
+        this.styleConfig.margin.bottom
     };
   },
-  watch: {
-    vtpsData() {
-      if (this.chart != null) {
-        this.chart.remove();
+  methods: {
+    getRectYValue: function(height: number): number {
+      const scaledValue = this.yScale(height.toString());
+      if (scaledValue) {
+        return scaledValue - this.rectHeight;
+      } else {
+        // We've asked yScale for a value outside of the domain, log error?
+        return 0;
       }
+    },
+    getRectColor: function(data: VTPSEntry): string {
+      if (data.noData) {
+        return this.styleConfig.noDataColor;
+      } else {
+        return this.colorScale(data.dens);
+      }
+    }
+  },
+  directives: {
+    yaxisRight(el, binding, vnode) {
+      const scaleFunction = binding.value.scale;
 
-      this.createEmptyChart();
-      this.createChartAxis();
-      this.updateChart();
-      this.drawChartAxis();
+      let d3Axis = d3.axisRight(scaleFunction).tickSizeOuter(0);
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    },
+    yaxisLeft(el, binding, vnode) {
+      const scaleFunction = binding.value.scale;
+      const tickValues = binding.value.tickValues;
+
+      let d3Axis = d3
+        .axisLeft(scaleFunction)
+        .tickValues(tickValues)
+        .tickSizeOuter(0); // And we want to hide the last tick line
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    },
+    xaxis(el, binding, vnode) {
+      const scaleFunction = binding.value.scale;
+      const showTimeAs = binding.value.timezone;
+      const timeAxisFormat = binding.value.timeAxisFormat;
+
+      let d3Axis = d3
+        .axisBottom(scaleFunction)
+        .ticks(7)
+        .tickFormat(d => {
+          // Todo: fix issues when uncommenting
+          return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
+        });
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
     }
   },
   computed: {
-    rectHeight: function() {
-      return this.height / this.distinctHeightsMeters.length;
+    rectHeight: function(): number {
+      return this.innerHeight / this.distinctHeightsMeters.length;
     },
-    rectDivider: function() {
+    rectWidth: function(): number {
+      return Math.round(this.innerWidth / this.rectDivider);
+    },
+    rectDivider: function(): number {
       let durationInMs = this.maxTimestamp - this.minTimestamp;
       return durationInMs / 1000 / this.dataTemporalResolution + 1;
     },
-    minTimestamp: function() {
-      return d3.min(this.vtpsData, function(d) {
+    minTimestamp: function(): number {
+      let minVal = d3.min(this.vtpsData, function(d: VTPSEntry) {
         return d.timestamp;
       });
+      return minVal || 0;
     },
-    maxTimestamp: function() {
-      return d3.max(this.vtpsData, function(d) {
+    maxTimestamp: function(): number {
+      let maxVal = d3.max(this.vtpsData, function(d: VTPSEntry) {
         return d.timestamp;
       });
+      return maxVal || 0;
     },
-    maxDensity: function() {
-      return d3.max(this.vtpsData, function(d) {
+    maxDensity: function(): number {
+      let maxVal = d3.max(this.vtpsData, function(d) {
         return d.dens;
       });
+      return maxVal || 0;
     },
-    distinctHeightsMeters: function() {
-      return [...new Set(this.vtpsData.map(row => row.height))];
+    dataTemporalResolution: function(): number {
+      return (this.vtpsData[26].timestamp - this.vtpsData[0].timestamp) / 1000; // TODO: replace 26 by dynamic value
     },
-    minHeightInMeters: function() {
-      return this.distinctHeightsMeters[0];
+    distinctHeightsMeters: function(): number[] {
+      let heightsSet = new Set(this.vtpsData.map(row => row.height));
+      return Array.from(heightsSet.values());
     },
-    maxHeightInMeters: function() {
-      return this.distinctHeightsMeters[this.distinctHeightsMeters.length - 1];
+    scale: function(): Scales {
+      // Computed property created just so the "axis" directive can be more easily reused and shared
+      return { x: this.xScale, y: null };
     },
-    heightRangeInMeters: function() {
-      return [this.minHeightInMeters, this.maxHeightInMeters];
-    },
-    heightRangeInFeet: function() {
-      return this.heightRangeInMeters.map(h => helpers.metersToFeet(h));
-    }
-  },
-  methods: {
-    createEmptyChart() {
-      let svg = d3
-        .select("svg#vp-chart")
-        .attr("width", this.width + this.margin.left + this.margin.right)
-        .attr("height", this.height + this.margin.top + this.margin.bottom)
-        .append("g")
-        .attr(
-          "transform",
-          `translate(${this.margin.left}, ${this.margin.top})`
-        );
-
-      this.chart = svg;
-    },
-
-    drawChartAxis() {
-      this.chart
-        .append("g")
-        .attr("transform", `translate(0, ${this.height})`)
-        .call(
-          d3
-            .axisBottom(this.xAxis)
-            .ticks(7)
-            .tickFormat(d => {
-              return this.formatTimestamp(d);
-            })
-        );
-
-      this.chart.append("g").call(
-        d3
-          .axisLeft(this.yAxisLeft)
-          .tickValues(this.styleConfig.yAxisLeftTicks)
-          .tickSizeOuter(0) // And we want to hide the last tick line
-      ); // Remove last tick
-
-      this.chart
-        .append("g")
-        .attr("transform", `translate(${this.width}, 0)`)
-        .call(d3.axisRight(this.yAxisRight).tickSizeOuter(0)); // Remove last tick
-
-      this.chart
-        .append("text")
-        .attr("text-anchor", "end")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -this.margin.left + 20)
-        .attr("x", -this.margin.top - 70)
-        .text("Height (meters)");
-
-      this.chart
-        .append("text")
-        .attr("text-anchor", "end")
-        .attr("transform", "rotate(-90)")
-        .attr("y", this.width + 55)
-        .attr("x", -this.margin.top - 70)
-        .text("Height (feet)");
-    },
-
-    createChartAxis() {
-      this.xAxis = d3
+    xScale: function(): d3.ScaleTime<number, number> {
+      return d3
         .scaleTime()
         .domain([
           this.minTimestamp,
           this.maxTimestamp + this.dataTemporalResolution * 1000
         ])
-        .range([0, this.width]);
-
-      this.yAxisLeft = d3
-        .scalePoint()
-        .range([this.height, 0])
-        .domain(this.distinctHeightsMeters.concat([5000])); // The axis needs one more value so the line extends to the top...
-
-      this.yAxisRight = d3
-        .scaleLinear()
-        .range([this.height, 0])
-        .domain([0, 15748.03]);
+        .range([0, this.innerWidth]);
     },
-
-    updateChart() {
-      // Build color scale
-      let myColor = d3
+    yScale: function(): d3.ScalePoint<string> {
+      return d3
+        .scalePoint()
+        .range([this.innerHeight, 0])
+        .domain(this.distinctHeightsMeters.concat([5000]).map(String)); // The axis needs one more value so the line extends to the top...
+    },
+    yScaleFeet: function(): d3.ScaleLinear<number, number> {
+      return d3
         .scaleLinear()
+        .range([this.innerHeight, 0])
+        .domain([0, 15748.03]); // TODO: make dynamic
+    },
+    colorScale: function(): d3.ScaleLinear<string, string> {
+      return d3
+        .scaleLinear<string>()
         .range([
           this.styleConfig.minDensityColor,
           this.styleConfig.maxDensityColor
         ])
         .domain([0, this.maxDensity]);
+    },
+    vtpsDataPrepared: function(): VTPSEntryPrepared[] {
+      return this.vtpsData.map(data => ({
+        ...data,
 
-      let update = this.chart.selectAll().data(this.vtpsData, function(d) {
-        return `${d.timestamp} - ${d.height} - ${d.dens}`;
-      });
-
-      let enter = update.enter().append("rect");
-      let exit = update.exit();
-
-      exit.remove();
-
-      var vm = this;
-
-      update
-        .merge(enter)
-        .attr("x", function(row) {
-          return Math.round(vm.xAxis(row.timestamp)) + 1; // 1 is the axis thickness so the rect doesn't hide it. TODO: retreive value dynamically.
-        })
-        .attr("y", function(row) {
-          return vm.yAxisLeft(row.height) - vm.rectHeight;
-        })
-        .attr("width", Math.round(vm.width / vm.rectDivider))
-        .attr("height", vm.rectHeight)
-        .style("fill", function(row) {
-          if (row.noData) {
-            return vm.styleConfig.noDataColor;
-          } else {
-            return myColor(row.dens);
-          }
-        });
+        x: Math.round(Math.round(this.xScale(data.timestamp)) + 1),
+        y: this.getRectYValue(data.height),
+        fill: this.getRectColor(data)
+      }));
     }
   }
-};
+});
 </script>
