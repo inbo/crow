@@ -20,21 +20,43 @@
 
     <svg id="new-vpi-chart" :width="styleConfig.width" :height="styleConfig.height">
       <g :transform="`translate(${margin.left}, ${margin.top})`">
+        <!-- X axis -->
         <g
           :transform="`translate(0, ${this.innerHeight})`"
           v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}"
         />
+
+        <!-- Y axis -->
         <g v-yaxis="{'scale': yScale}" />
 
-        <text 
+        <!-- Y axis legend -->
+        <text
           text-anchor="middle"
           transform="rotate(-90)"
           :y="-margin.left + 20"
           :x="-margin.top - 110"
-        >
-        {{ selectedModeLabel }}
-        </text>
+        >{{ selectedModeLabel }}</text>
 
+        <!-- tooltip -->
+        <template v-if="styleConfig.showTooltip">
+          <rect
+            style="visibility: hidden"
+            pointer-events="all"
+            @mousemove="mouseMove"
+            @mouseenter="mouseEnter"
+            @mouseleave="mouseLeave"
+            :width="innerWidth"
+            :height="innerHeight"
+          />
+          <circle
+            v-show="tooltipVisible"
+            :cx="mouseXPosition"
+            r="4"
+            :style="`fill: ${styleConfig.lineColor} `"
+          />
+        </template>
+
+        <!-- finally, the chart line -->
         <path fill="none" :stroke="styleConfig.lineColor" stroke-width="1.5" :d="pathData" />
       </g>
     </svg>
@@ -49,6 +71,7 @@ import moment from "moment-timezone";
 import helpers from "../helpers";
 
 type integratedPropertyName = "mtr" | "rtr" | "vid" | "vir";
+type NullableNumber = number | null;
 
 interface Profiles {
   mtr: number;
@@ -80,7 +103,6 @@ export default Vue.extend({
   data: function() {
     return {
       selectedMode: "mtr" as integratedPropertyName,
-
       availableModes: [
         {
           label: "Migration Traffic Rate",
@@ -106,6 +128,10 @@ export default Vue.extend({
 
       margin: this.styleConfig.margin,
 
+      tooltipVisible: false,
+
+      mouseXPosition: null as NullableNumber, // If the mouse is over the chart
+
       innerWidth:
         this.styleConfig.width -
         this.styleConfig.margin.left -
@@ -116,17 +142,36 @@ export default Vue.extend({
         this.styleConfig.margin.bottom
     };
   },
+  methods: {
+    mouseEnter() {
+      this.tooltipVisible = true;
+      this.mouseXPosition = 0;
+    },
+    mouseLeave() {
+      this.tooltipVisible = false;
+      this.mouseXPosition = null;
+    },
+    mouseMove(event: MouseEvent) {
+      let target = event.target as HTMLElement;
+      let bounds = target.getBoundingClientRect();
+      let x = event.clientX - bounds.left;
+      let y = event.clientY - bounds.top;
+
+      // x and y are now relative to the topleft corner of the graph
+      this.mouseXPosition = x;
+      //console.log(x, y);
+    }
+  },
   directives: {
     yaxis(el, binding, vnode) {
       const scaleFunction = binding.value.scale;
 
-      let d3Axis = d3
-        .axisLeft(scaleFunction)
-        .tickSizeOuter(0); // And we want to hide the last tick line
+      let d3Axis = d3.axisLeft(scaleFunction).tickSizeOuter(0); // And we want to hide the last tick line
 
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
     },
-    xaxis(el, binding, vnode) { // TODO: code copy/pasted from VPChart. Possible to factorize (without mixins)? Or isn't it worth it?
+    xaxis(el, binding, vnode) {
+      // TODO: code copy/pasted from VPChart. Possible to factorize (without mixins)? Or isn't it worth it?
       const scaleFunction = binding.value.scale;
       const showTimeAs = binding.value.timezone;
       const timeAxisFormat = binding.value.timeAxisFormat;
