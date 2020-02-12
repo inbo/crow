@@ -20,6 +20,21 @@
 
     <svg id="new-vpi-chart" :width="styleConfig.width" :height="styleConfig.height">
       <g :transform="`translate(${margin.left}, ${margin.top})`">
+        <g
+          :transform="`translate(0, ${this.innerHeight})`"
+          v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}"
+        />
+        <g v-yaxis="{'scale': yScale}" />
+
+        <text 
+          text-anchor="middle"
+          transform="rotate(-90)"
+          :y="-margin.left + 20"
+          :x="-margin.top - 110"
+        >
+        {{ selectedModeLabel }}
+        </text>
+
         <path fill="none" :stroke="styleConfig.lineColor" stroke-width="1.5" :d="pathData" />
       </g>
     </svg>
@@ -31,7 +46,9 @@ import Vue from "vue";
 import * as d3 from "d3";
 import moment from "moment-timezone";
 
-type integratedPropertyName = 'mtr' | 'rtr' | 'vid' | 'vir';
+import helpers from "../helpers";
+
+type integratedPropertyName = "mtr" | "rtr" | "vid" | "vir";
 
 interface Profiles {
   mtr: number;
@@ -47,9 +64,9 @@ interface VPIEntry {
 }
 
 interface DisplayMode {
-  propertyName: integratedPropertyName, // the name of the property (on vpiData[].integratedProfiles) where data can be found. Can be used as an ID
-  label: string, // appears in <select> and as legend of the Y axis
-  yMaxValComputedName: 'maxMTRWithMinimum' | 'maxRTR' | 'maxVID' | 'maxVIR' // the name of a computed property to get the max value for the Y Axis
+  propertyName: integratedPropertyName; // the name of the property (on vpiData[].integratedProfiles) where data can be found. Can be used as an ID
+  label: string; // appears in <select> and as legend of the Y axis
+  yMaxValComputedName: "maxMTRWithMinimum" | "maxRTR" | "maxVID" | "maxVIR"; // the name of a computed property to get the max value for the Y Axis
 }
 
 export default Vue.extend({
@@ -99,6 +116,31 @@ export default Vue.extend({
         this.styleConfig.margin.bottom
     };
   },
+  directives: {
+    yaxis(el, binding, vnode) {
+      const scaleFunction = binding.value.scale;
+
+      let d3Axis = d3
+        .axisLeft(scaleFunction)
+        .tickSizeOuter(0); // And we want to hide the last tick line
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    },
+    xaxis(el, binding, vnode) { // TODO: code copy/pasted from VPChart. Possible to factorize (without mixins)? Or isn't it worth it?
+      const scaleFunction = binding.value.scale;
+      const showTimeAs = binding.value.timezone;
+      const timeAxisFormat = binding.value.timeAxisFormat;
+
+      let d3Axis = d3
+        .axisBottom(scaleFunction)
+        .ticks(7)
+        .tickFormat(d => {
+          return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
+        });
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    }
+  },
   computed: {
     maxVID: function(): number {
       let max = d3.max(this.vpiData, function(d) {
@@ -142,7 +184,9 @@ export default Vue.extend({
       return this.selectedModeObject.label;
     },
     selectedModeObject: function(): DisplayMode {
-      let found = this.availableModes.find(d => d.propertyName == this.selectedMode);
+      let found = this.availableModes.find(
+        d => d.propertyName == this.selectedMode
+      );
       return found || this.availableModes[0]; // Default: first entry
     },
     minMoment: function(): moment.Moment {
@@ -173,14 +217,15 @@ export default Vue.extend({
         .range([this.innerHeight, 0])
         .domain([0, this.yMaxVal]);
     },
-    pathData: function(): string|null {
+    pathData: function(): string | null {
       const path = d3
         .line<VPIEntry>()
         .x(vpiEntry => {
           return this.xScale(vpiEntry.moment.valueOf());
         })
         .y(vpiEntry => {
-          let rawValue = vpiEntry.integratedProfiles[this.selectedModePropertyName];
+          let rawValue =
+            vpiEntry.integratedProfiles[this.selectedModePropertyName];
           return this.yScale(isNaN(rawValue) ? 0 : rawValue);
         });
 
@@ -189,4 +234,3 @@ export default Vue.extend({
   }
 });
 </script>
-
