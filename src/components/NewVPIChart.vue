@@ -1,5 +1,23 @@
 <template>
   <div>
+    <slot name="title"></slot>
+    <b-form>
+      <b-form-row>
+        <b-col cols="3">
+          <b-form-group id="vpi-display-mode-group" label="Show:" label-for="vpi-display-mode">
+            <b-form-select
+              id="vpi-display-mode"
+              size="sm"
+              v-model="selectedMode"
+              :options="availableModes"
+              value-field="propertyName"
+              text-field="label"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+    </b-form>
+
     <svg id="new-vpi-chart" :width="styleConfig.width" :height="styleConfig.height">
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <path fill="none" :stroke="styleConfig.lineColor" stroke-width="1.5" :d="pathData" />
