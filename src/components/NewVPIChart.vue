@@ -13,9 +13,7 @@ import Vue from "vue";
 import * as d3 from "d3";
 import moment from "moment-timezone";
 
-type shownVariable = 'mtr' | 'rtr' | 'vid' | 'vir'; 
-type maxValPropName = 'maxMTRWithMinimum' | 'maxRTR' | 'maxVID' | 'maxVIR'
-type integratedPropertyName = 'mtr' | 'rtr' | 'vid' | 'vir'; // TODO: use this as an identifier and get rid of 'shownVariable'
+type integratedPropertyName = 'mtr' | 'rtr' | 'vid' | 'vir';
 
 interface Profiles {
   mtr: number;
@@ -31,10 +29,9 @@ interface VPIEntry {
 }
 
 interface DisplayMode {
-  id: shownVariable,
-  label: string,
-  propertyName: integratedPropertyName,
-  yMaxValComputedName: maxValPropName
+  propertyName: integratedPropertyName, // the name of the property (on vpiData[].integratedProfiles) where data can be found. Can be used as an ID
+  label: string, // appears in <select> and as legend of the Y axis
+  yMaxValComputedName: 'maxMTRWithMinimum' | 'maxRTR' | 'maxVID' | 'maxVIR' // the name of a computed property to get the max value for the Y Axis
 }
 
 export default Vue.extend({
@@ -47,32 +44,25 @@ export default Vue.extend({
   },
   data: function() {
     return {
-      selectedMode: "mtr" as shownVariable,
+      selectedMode: "mtr" as integratedPropertyName,
 
       availableModes: [
-        // label: appears in <select> and as legend of the Y axis
-        // propertyName: the name of the property (on vpiData[].integratedProfiles) where data can be found
-        // yMaxValComputedName: the name of a computed property to get the max value for the Y Axis
         {
-          id: "mtr",
           label: "Migration Traffic Rate",
           propertyName: "mtr",
           yMaxValComputedName: "maxMTRWithMinimum"
         },
         {
-          id: "rtr",
           label: "Reflectivity traffic rate",
           propertyName: "rtr",
           yMaxValComputedName: "maxRTR"
         },
         {
-          id: "vid",
           label: "Vertically integrated density",
           propertyName: "vid",
           yMaxValComputedName: "maxVID"
         },
         {
-          id: "vir",
           label: "Vertically integrated reflectivity",
           propertyName: "vir",
           yMaxValComputedName: "maxVIR"
@@ -134,7 +124,7 @@ export default Vue.extend({
       return this.selectedModeObject.label;
     },
     selectedModeObject: function(): DisplayMode {
-      let found = this.availableModes.find(d => d.id == this.selectedMode);
+      let found = this.availableModes.find(d => d.propertyName == this.selectedMode);
       return found || this.availableModes[0]; // Default: first entry
     },
     minMoment: function(): moment.Moment {
