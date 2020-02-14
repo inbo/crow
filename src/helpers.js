@@ -124,4 +124,4 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
     return ({ "mtr": mtr, "rtr": rtr, "vid": vid, "vir": vir })
 }
 
-export default { readVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp } 
+export default { readVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment } 

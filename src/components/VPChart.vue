@@ -55,6 +55,7 @@
 </template>
 
 <script lang="ts">
+// TODO: create a single popover for performance reasons?
 import Vue from "vue";
 import { scaleTime, scalePoint, scaleLinear } from "d3-scale";
 import { max, min } from "d3-array";

@@ -18,6 +18,8 @@
       </b-form-row>
     </b-form>
 
+    <div id="ignore-mouse-events" style="pointer-events:none;"></div>
+
     <svg id="new-vpi-chart" :width="styleConfig.width" :height="styleConfig.height">
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <!-- X axis -->
@@ -50,15 +52,22 @@
           />
           <circle
             v-show="tooltipVisible"
+            style="pointer-events:none;"
+            id="tooltipCircle"
             :cx="closestMomentXPosition"
             :cy="YPositionAtTimeX"
             r="4"
             :style="`fill: ${styleConfig.lineColor} `"
           />
+
+          <b-popover container="ignore-mouse-events" :show.sync="tooltipVisible" target="tooltipCircle" placement="top">
+            <template v-slot:title>{{ formattedMomentAtTimeX }}</template>
+            <div><b>{{ selectedModeLabel }}: {{ selectedValAtTimeX | round2decimals }}</b></div>
+          </b-popover>
         </template>
 
         <!-- finally, the chart line -->
-        <path fill="none" :stroke="styleConfig.lineColor" stroke-width="1.5" :d="pathData" />
+        <path fill="none" style="pointer-events:none;" :stroke="styleConfig.lineColor" stroke-width="1.5" :d="pathData" />
       </g>
     </svg>
   </div>
@@ -151,6 +160,11 @@ export default Vue.extend({
         this.styleConfig.margin.bottom
     };
   },
+  filters: {
+    round2decimals: function(num: number): string {
+      return (Math.round(num * 100) / 100).toFixed(2);
+    },
+  },
   methods: {
     mouseEnter() {
       this.tooltipVisible = true;
@@ -205,6 +219,12 @@ export default Vue.extend({
     }
   },
   computed: {
+    formattedMomentAtTimeX: function(): string {
+      if (this.VPIEntryAtTimeX) {
+        return helpers.formatMoment(this.VPIEntryAtTimeX.moment, this.showTimeAs, this.styleConfig.timeAxisFormat);
+      }
+      return ''
+    },
     YPositionAtTimeX: function(): number | null {
       if (this.selectedValAtTimeX) {
         return this.yScale(this.selectedValAtTimeX);
