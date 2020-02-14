@@ -50,7 +50,8 @@
           />
           <circle
             v-show="tooltipVisible"
-            :cx="mouseXPosition"
+            :cx="closestMomentXPosition"
+            :cy="YPositionAtTimeX"
             r="4"
             :style="`fill: ${styleConfig.lineColor} `"
           />
@@ -72,6 +73,7 @@ import helpers from "../helpers";
 
 type integratedPropertyName = "mtr" | "rtr" | "vid" | "vir";
 type NullableNumber = number | null;
+type NullableVPIEntry = VPIEntry | null;
 
 interface Profiles {
   mtr: number;
@@ -130,7 +132,14 @@ export default Vue.extend({
 
       tooltipVisible: false,
 
-      mouseXPosition: null as NullableNumber, // If the mouse is over the chart
+      // For tooltip: those will be null if the mouse is *not* over the chart
+      // See also computed properties: selectedValAtTimeX and YPositionAtTimeX
+      mouseXPosition: null as NullableNumber, // in pixels, 0 is left border of the graph
+      VPIEntryAtTimeX: null as NullableVPIEntry,
+
+      momentBisector: d3.bisector(function(d: VPIEntry) {
+        return d.moment.valueOf();
+      }).left,
 
       innerWidth:
         this.styleConfig.width -
@@ -152,14 +161,23 @@ export default Vue.extend({
       this.mouseXPosition = null;
     },
     mouseMove(event: MouseEvent) {
+      // When mouse is moved over the chart, updates this.mouseXPosition and this.VPIEntryAtTimeX
       let target = event.target as HTMLElement;
       let bounds = target.getBoundingClientRect();
-      let x = event.clientX - bounds.left;
-      let y = event.clientY - bounds.top;
+      this.mouseXPosition = event.clientX - bounds.left;
 
-      // x and y are now relative to the topleft corner of the graph
-      this.mouseXPosition = x;
-      //console.log(x, y);
+      let x0 = this.xScale.invert(this.mouseXPosition);
+
+      let i = this.momentBisector(this.vpiData, x0, 1);
+      let d0 = this.vpiData[i - 1];
+      let d1 = this.vpiData[i];
+      let d =
+        x0.getTime() / 1000 - d0.moment.valueOf() >
+        d1.moment.valueOf() - x0.getTime() / 1000
+          ? d1
+          : d0;
+
+      this.VPIEntryAtTimeX = d;
     }
   },
   directives: {
@@ -187,6 +205,26 @@ export default Vue.extend({
     }
   },
   computed: {
+    YPositionAtTimeX: function(): number | null {
+      if (this.selectedValAtTimeX) {
+        return this.yScale(this.selectedValAtTimeX);
+      }
+      return null;
+    },
+    selectedValAtTimeX: function(): number | null {
+      if (this.VPIEntryAtTimeX) {
+        return this.VPIEntryAtTimeX.integratedProfiles[
+          this.selectedModePropertyName
+        ];
+      }
+      return null;
+    },
+    closestMomentXPosition: function(): number | null {
+      if (this.VPIEntryAtTimeX) {
+        return this.xScale(this.VPIEntryAtTimeX.moment.valueOf());
+      }
+      return null;
+    },
     maxVID: function(): number {
       let max = d3.max(this.vpiData, function(d) {
         return d.integratedProfiles.vid;
