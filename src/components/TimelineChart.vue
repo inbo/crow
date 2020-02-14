@@ -1,7 +1,12 @@
 <template>
   <svg id="new-timeline-chart" :width="svgWidth" :height="svgHeight">
     <g :transform="`translate(${margin.left}, ${margin.top})`">
-      <g v-if="styleConfig.showXAxis" transform="translate(0, 25)" v-axis:x="scale" />
+      <g
+          v-if="styleConfig.showXAxis"
+          transform="translate(0, 25)"
+          v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}"
+        />
+         
       <template v-for="period in populatedPeriods">
         <rect
           :key="'rect ' + period.x"
@@ -31,17 +36,29 @@
   </svg>
 </template>
 
-<script>
+<script lang="ts">
 // TODO: margin.top in the main SVG group seems different than with TimelineChart.vue
+import Vue from "vue";
 import * as d3 from "d3";
 import moment from "moment-timezone";
 import { timeFormatting } from "./../mixins/timeFormatting.js";
 import helpers from "../helpers";
 
-export default {
+interface Period {
+  moment: moment.Moment,
+  sunAltitude: number
+}
+
+interface DisplayablePeriod extends Period {
+  x: number,
+  class: string,
+  name: string
+}
+
+export default Vue.extend({
   mixins: [timeFormatting],
   props: {
-    periods: Array, // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
+    periods: Array as () => Period[], // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
     styleConfig: Object,
     showTimeAs: String
   },
@@ -61,16 +78,16 @@ export default {
     };
   },
   filters: {
-    round2decimals: function(num) {
+    round2decimals: function(num: number) {
       return (Math.round(num * 100) / 100).toFixed(2);
     }
   },
   methods: {
-    getPeriodClass(sunAltitude) {
+    getPeriodClass(sunAltitude: number) {
       return helpers.makeSafeForCSS(this.getPeriodName(sunAltitude));
     },
 
-    getPeriodName(sunAltitude) {
+    getPeriodName(sunAltitude: number) {
       // TODO: move to helpers?
       if (sunAltitude >= 0) {
         return "day";
@@ -83,36 +100,31 @@ export default {
   },
 
   directives: {
-    axis(el, binding, vnode) {
-      // Approach taken from: https://stackoverflow.com/questions/48726636/draw-d3-axis-without-direct-dom-manipulation
-      const axis = binding.arg;
-      const axisMethod = { x: "axisBottom", y: "axisLeft" }[axis];
-      const methodArg = binding.value[axis];
+    xaxis(el, binding, vnode) {
+      // TODO: code copy/pasted from VPChart. Possible to factorize (without mixins)? Or isn't it worth it?
+      const scaleFunction = binding.value.scale;
+      const showTimeAs = binding.value.timezone;
+      const timeAxisFormat = binding.value.timeAxisFormat;
 
-      let vm = vnode.context;
-
-      let d3Axis = d3[axisMethod](methodArg)
+      let d3Axis = d3
+        .axisBottom(scaleFunction)
         .ticks(7)
         .tickFormat(d => {
-          return vm.formatTimestamp(d);
+          return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
         });
 
-      d3.select(el).call(d3Axis);
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
     }
   },
 
   computed: {
-    scale: function() {
-      // Computed property created just so the "axis" directive can be more easily reused and shared
-      return { x: this.xScale, y: null };
-    },
-    xScale: function() {
+    xScale: function(): d3.ScaleTime<number, number> {
       return d3
         .scaleTime()
         .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
         .range([0, this.innerWidth]);
-    },
-    populatedPeriods: function() {
+    }, 
+    populatedPeriods: function(): DisplayablePeriod[] {
       const scale = this.xScale;
 
       return this.periods.map(period => ({
@@ -122,34 +134,34 @@ export default {
         name: this.getPeriodName(period.sunAltitude)
       }));
     },
-    svgWidth: function() {
+    svgWidth: function(): number {
       return this.styleConfig.width;
     },
-    svgHeight: function() {
+    svgHeight: function():number {
       return this.styleConfig.height;
     },
-    periodWidth: function() {
+    periodWidth: function():number {
       return Math.round(this.innerWidth / this.rectDivider);
     },
-    dataTemporalResolution: function() {
+    dataTemporalResolution: function():number {
       return moment.duration(this.periods[1].moment.diff(this.periods[0].moment)).asSeconds();
     },
-    rectDivider: function() {
+    rectDivider: function():number {
       let duration = moment.duration(this.maxMoment.diff(this.minMoment));
       return (duration.asSeconds() / this.dataTemporalResolution) + 1;
     },
-    minMoment: function() {
+    minMoment: function():moment.Moment {
       // Now returns a moment obj.
       return this.periods[0].moment;
     },
-    maxMoment: function() {
+    maxMoment: function(): moment.Moment {
       return this.periods[this.periods.length - 1].moment;
     },
-    maxMomentPlusOne: function() {
+    maxMomentPlusOne: function(): moment.Moment {
       return this.maxMoment.clone().add(this.dataTemporalResolution, "seconds");
     }
   }
-};
+});
 </script>
 
 <style scoped>
