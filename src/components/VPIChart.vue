@@ -10,7 +10,7 @@
               size="sm"
               v-model="selectedMode"
               :options="availableModes"
-              value-field="id"
+              value-field="propertyName"
               text-field="label"
             ></b-form-select>
           </b-form-group>
@@ -18,304 +18,322 @@
       </b-form-row>
     </b-form>
 
-    <svg id="vpi-chart" />
+    <div id="ignore-mouse-events" style="pointer-events:none;"></div>
+
+    <svg id="new-vpi-chart" :width="styleConfig.width" :height="styleConfig.height">
+      <g :transform="`translate(${margin.left}, ${margin.top})`">
+        <!-- X axis -->
+        <g
+          :transform="`translate(0, ${this.innerHeight})`"
+          v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}"
+        />
+
+        <!-- Y axis -->
+        <g v-yaxis="{'scale': yScale}" />
+
+        <!-- Y axis legend -->
+        <text
+          text-anchor="middle"
+          transform="rotate(-90)"
+          :y="-margin.left + 20"
+          :x="-margin.top - 110"
+        >{{ selectedModeLabel }}</text>
+
+        <!-- tooltip -->
+        <template v-if="styleConfig.showTooltip">
+          <rect
+            style="visibility: hidden"
+            pointer-events="all"
+            @mousemove="mouseMove"
+            @mouseenter="mouseEnter"
+            @mouseleave="mouseLeave"
+            :width="innerWidth"
+            :height="innerHeight"
+          />
+          <circle
+            v-show="tooltipVisible"
+            style="pointer-events:none;"
+            id="tooltipCircle"
+            :cx="closestMomentXPosition"
+            :cy="YPositionAtTimeX"
+            r="4"
+            :style="`fill: ${styleConfig.lineColor} `"
+          />
+
+          <b-popover container="ignore-mouse-events" :show.sync="tooltipVisible" target="tooltipCircle" placement="top">
+            <template v-slot:title>{{ formattedMomentAtTimeX }}</template>
+            <div><b>{{ selectedModeLabel }}: {{ selectedValAtTimeX | round2decimals }}</b></div>
+          </b-popover>
+        </template>
+
+        <!-- finally, the chart line -->
+        <path fill="none" style="pointer-events:none;" :stroke="styleConfig.lineColor" stroke-width="1.5" :d="pathData" />
+      </g>
+    </svg>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from "vue";
 import * as d3 from "d3";
-import { timeFormatting } from "./../mixins/timeFormatting.js";
+import moment from "moment-timezone";
 
-export default {
-  mixins: [timeFormatting],
+import helpers from "../helpers";
+
+type integratedPropertyName = "mtr" | "rtr" | "vid" | "vir";
+type NullableNumber = number | null;
+type NullableVPIEntry = VPIEntry | null;
+
+interface Profiles {
+  mtr: number;
+  rtr: number;
+  vid: number;
+  vir: number;
+}
+
+interface VPIEntry {
+  // Data, as received via props
+  moment: moment.Moment;
+  integratedProfiles: Profiles;
+}
+
+interface DisplayMode {
+  propertyName: integratedPropertyName; // the name of the property (on vpiData[].integratedProfiles) where data can be found. Can be used as an ID
+  label: string; // appears in <select> and as legend of the Y axis
+  yMaxValComputedName: "maxMTRWithMinimum" | "maxRTR" | "maxVID" | "maxVIR"; // the name of a computed property to get the max value for the Y Axis
+}
+
+export default Vue.extend({
+  name: "VPIChart",
   props: {
-    vpiData: Array, // Each entry: {moment: <moment-tz object>, integratedProfiles: <{mtr: 1.23, rtr: 4.06, ....}>}
+    vpiData: Array as () => VPIEntry[],
     styleConfig: Object,
     showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")
     dataTemporalResolution: Number
   },
-  data() {
+  data: function() {
     return {
-      chart: null,
-
-      selectedMode: "mtr",
+      selectedMode: "mtr" as integratedPropertyName,
       availableModes: [
-        // label: appears in <select> and as legend of the Y axis
-        // propertyName: the name of the property (on vpiData[].integratedProfiles) where data can be found
-        // yMaxValComputedName: the name of a computed property to get the max value for the Y Axis
         {
-          id: "mtr",
           label: "Migration Traffic Rate",
           propertyName: "mtr",
           yMaxValComputedName: "maxMTRWithMinimum"
         },
         {
-          id: "rtr",
           label: "Reflectivity traffic rate",
           propertyName: "rtr",
           yMaxValComputedName: "maxRTR"
         },
         {
-          id: "vid",
           label: "Vertically integrated density",
           propertyName: "vid",
           yMaxValComputedName: "maxVID"
         },
         {
-          id: "vir",
           label: "Vertically integrated reflectivity",
           propertyName: "vir",
           yMaxValComputedName: "maxVIR"
         }
-      ],
+      ] as DisplayMode[],
 
       margin: this.styleConfig.margin,
-      width:
+
+      tooltipVisible: false,
+
+      // For tooltip: those will be null if the mouse is *not* over the chart
+      // See also computed properties: selectedValAtTimeX and YPositionAtTimeX
+      mouseXPosition: null as NullableNumber, // in pixels, 0 is left border of the graph
+      VPIEntryAtTimeX: null as NullableVPIEntry,
+
+      momentBisector: d3.bisector(function(d: VPIEntry) {
+        return d.moment.valueOf();
+      }).left,
+
+      innerWidth:
         this.styleConfig.width -
         this.styleConfig.margin.left -
         this.styleConfig.margin.right,
-      height:
+      innerHeight:
         this.styleConfig.height -
         this.styleConfig.margin.top -
-        this.styleConfig.margin.bottom,
-
-      xAxis: null,
-      yAxis: null
+        this.styleConfig.margin.bottom
     };
   },
-  watch: {
-    vpiData() {
-      this.renderChart();
+  filters: {
+    round2decimals: function(num: number): string {
+      return (Math.round(num * 100) / 100).toFixed(2);
     },
-    selectedMode() {
-      this.renderChart();
+  },
+  methods: {
+    mouseEnter() {
+      this.tooltipVisible = true;
+      this.mouseXPosition = 0;
+    },
+    mouseLeave() {
+      this.tooltipVisible = false;
+      this.mouseXPosition = null;
+    },
+    mouseMove(event: MouseEvent) {
+      // When mouse is moved over the chart, updates this.mouseXPosition and this.VPIEntryAtTimeX
+      let target = event.target as HTMLElement;
+      let bounds = target.getBoundingClientRect();
+      this.mouseXPosition = event.clientX - bounds.left;
+
+      let x0 = this.xScale.invert(this.mouseXPosition);
+
+      let i = this.momentBisector(this.vpiData, x0, 1);
+      let d0 = this.vpiData[i - 1];
+      let d1 = this.vpiData[i];
+      let d =
+        x0.getTime() / 1000 - d0.moment.valueOf() >
+        d1.moment.valueOf() - x0.getTime() / 1000
+          ? d1
+          : d0;
+
+      this.VPIEntryAtTimeX = d;
+    }
+  },
+  directives: {
+    yaxis(el, binding, vnode) {
+      const scaleFunction = binding.value.scale;
+
+      let d3Axis = d3.axisLeft(scaleFunction).tickSizeOuter(0); // And we want to hide the last tick line
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    },
+    xaxis(el, binding, vnode) {
+      // TODO: code copy/pasted from VPChart. Possible to factorize (without mixins)? Or isn't it worth it?
+      const scaleFunction = binding.value.scale;
+      const showTimeAs = binding.value.timezone;
+      const timeAxisFormat = binding.value.timeAxisFormat;
+
+      let d3Axis = d3
+        .axisBottom(scaleFunction)
+        .ticks(7)
+        .tickFormat(d => {
+          return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
+        });
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
     }
   },
   computed: {
-    yMaxVal: function() {
-      return this[this.selectedModeObject.yMaxValComputedName];
+    formattedMomentAtTimeX: function(): string {
+      if (this.VPIEntryAtTimeX) {
+        return helpers.formatMoment(this.VPIEntryAtTimeX.moment, this.showTimeAs, this.styleConfig.timeAxisFormat);
+      }
+      return ''
     },
-    selectedModePropertyName: function() {
-      return this.selectedModeObject.propertyName;
+    YPositionAtTimeX: function(): number | null {
+      if (this.selectedValAtTimeX) {
+        return this.yScale(this.selectedValAtTimeX);
+      }
+      return null;
     },
-    selectedModeLabel: function() {
-      return this.selectedModeObject.label;
+    selectedValAtTimeX: function(): number | null {
+      if (this.VPIEntryAtTimeX) {
+        return this.VPIEntryAtTimeX.integratedProfiles[
+          this.selectedModePropertyName
+        ];
+      }
+      return null;
     },
-    selectedModeObject: function() {
-      return this.availableModes.find(d => d.id == this.selectedMode);
+    closestMomentXPosition: function(): number | null {
+      if (this.VPIEntryAtTimeX) {
+        return this.xScale(this.VPIEntryAtTimeX.moment.valueOf());
+      }
+      return null;
     },
-    minMoment: function() {
-      return d3.min(this.vpiData, function(d) {
-        return d.moment;
-      });
-    },
-    maxMoment: function() {
-      return d3.max(this.vpiData, function(d) {
-        return d.moment;
-      });
-    },
-    maxMomentPlusOne: function() {
-      // TODO: duplicate code in other charts ! Mixin? Helper?
-      return this.maxMoment.clone().add(this.dataTemporalResolution, "seconds");
-    },
-    maxVID: function() {
-      return d3.max(this.vpiData, function(d) {
+    maxVID: function(): number {
+      let max = d3.max(this.vpiData, function(d) {
         return d.integratedProfiles.vid;
       });
+      return max || 0;
     },
-    maxVIR: function() {
-      return d3.max(this.vpiData, function(d) {
+    maxVIR: function(): number {
+      let max = d3.max(this.vpiData, function(d) {
         return d.integratedProfiles.vir;
       });
+      return max || 0;
     },
-    maxMTR: function() {
-      return d3.max(this.vpiData, function(d) {
+    maxMTR: function(): number {
+      let max = d3.max(this.vpiData, function(d) {
         return d.integratedProfiles.mtr;
       });
+      return max || 0;
     },
-    maxRTR: function() {
-      return d3.max(this.vpiData, function(d) {
+    maxRTR: function(): number {
+      let max = d3.max(this.vpiData, function(d) {
         return d.integratedProfiles.rtr;
       });
+      return max || 0;
     },
-    maxMTRWithMinimum: function() {
+    maxMTRWithMinimum: function(): number {
       // If the maximum MTR is small, we return 50 so a small peak on a very calm day doesn't seem huge
       if (this.maxMTR < 50) {
         return 50;
       } else {
         return this.maxMTR;
       }
-    }
-  },
-  methods: {
-    renderChart() {
-      if (this.chart != null) {
-        this.chart.remove();
-      }
-
-      this.createEmptyChart();
-      this.createAndAddChartAxis();
-      this.updateChart();
-      if (this.styleConfig.showTooltip) {
-        this.initializeTooltip();
-      }
     },
-    createEmptyChart() {
-      // TODO: Same code in VPChart: factorize!!
-      let svg = d3
-        .select("svg#vpi-chart")
-        .attr("width", this.width + this.margin.left + this.margin.right)
-        .attr("height", this.height + this.margin.top + this.margin.bottom)
-        .append("g")
-        .attr(
-          "transform",
-          "translate(" + this.margin.left + "," + this.margin.top + ")"
-        );
-
-      this.chart = svg;
+    yMaxVal: function(): number {
+      return this[this.selectedModeObject.yMaxValComputedName];
     },
-
-    createAndAddChartAxis() {
-      this.xAxis = d3
+    selectedModePropertyName: function(): integratedPropertyName {
+      return this.selectedModeObject.propertyName;
+    },
+    selectedModeLabel: function(): string {
+      return this.selectedModeObject.label;
+    },
+    selectedModeObject: function(): DisplayMode {
+      let found = this.availableModes.find(
+        d => d.propertyName == this.selectedMode
+      );
+      return found || this.availableModes[0]; // Default: first entry
+    },
+    minMoment: function(): moment.Moment {
+      let foundMoment = d3.min(this.vpiData, function(d) {
+        return d.moment;
+      });
+      return foundMoment || moment();
+    },
+    maxMoment: function(): moment.Moment {
+      let foundMoment = d3.max(this.vpiData, function(d) {
+        return d.moment;
+      });
+      return foundMoment || moment();
+    },
+    maxMomentPlusOne: function(): moment.Moment {
+      // TODO: duplicate code in other charts ! Mixin? Helper?
+      return this.maxMoment.clone().add(this.dataTemporalResolution, "seconds");
+    },
+    xScale: function(): d3.ScaleTime<number, number> {
+      return d3
         .scaleTime()
         .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
-        .range([0, this.width]);
-
-      this.chart
-        .append("g")
-        .attr("transform", "translate(0," + this.height + ")")
-        .call(
-          d3
-            .axisBottom(this.xAxis)
-            .ticks(7)
-            .tickFormat(d => {
-              return this.formatTimestamp(d);
-            })
-        );
-
-      this.yAxis = d3
+        .range([0, this.innerWidth]);
+    },
+    yScale: function(): d3.ScaleLinear<number, number> {
+      return d3
         .scaleLinear()
-        .range([this.height, 0])
+        .range([this.innerHeight, 0])
         .domain([0, this.yMaxVal]);
-
-      this.chart.append("g").call(d3.axisLeft(this.yAxis).tickSizeOuter(0)); // Remove last tick
-
-      // TODO: make sure label is well positioned in all cases
-      this.chart
-        .append("text")
-        .attr("text-anchor", "middle")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -this.margin.left + 20)
-        .attr("x", -this.margin.top - 110)
-        .text(this.selectedModeLabel);
     },
-
-    initializeTooltip() {
-      let vm = this;
-
-      let focus = this.chart
-        .append("g")
-        .attr("class", "focus")
-        .style("display", "none");
-
-      focus.append("circle").attr("r", 4).style("fill", vm.styleConfig.lineColor);
-
-      focus
-        .append("rect")
-        .attr("class", "tooltip")
-        .attr("width", 100)
-        .attr("height", 50)
-        .attr("x", 10)
-        .attr("y", -22)
-        .attr("rx", 4)
-        .attr("ry", 4);
-
-      focus
-        .append("text")
-        .attr("class", "tooltip-date")
-        .attr("x", 18)
-        .attr("y", -2);
-
-      focus
-        .append("text")
-        .attr("class", "tooltip-val-title")
-        .attr("x", 18)
-        .attr("y", 18);
-
-      focus
-        .append("text")
-        .attr("class", "tooltip-val")
-        .attr("x", 60)
-        .attr("y", 18);
-
-      this.chart
-        .append("rect")
-        .style("fill", "none")
-        .style("pointer-events", "all")
-        .attr("width", vm.width)
-        .attr("height", vm.height)
-        .on("mouseover", function() {
-          focus.style("display", null);
+    pathData: function(): string | null {
+      const path = d3
+        .line<VPIEntry>()
+        .x(vpiEntry => {
+          return this.xScale(vpiEntry.moment.valueOf());
         })
-        .on("mouseout", function() {
-          focus.style("display", "none");
-        })
-        .on("mousemove", mousemove);
+        .y(vpiEntry => {
+          let rawValue =
+            vpiEntry.integratedProfiles[this.selectedModePropertyName];
+          return this.yScale(isNaN(rawValue) ? 0 : rawValue);
+        });
 
-      let bisectMoment = d3.bisector(function(d) {
-          return d.moment.valueOf();
-        }).left,
-        formatValue = d3.format(",");
-
-      function mousemove() {
-        let x0 = vm.xAxis.invert(d3.mouse(this)[0]),
-          i = bisectMoment(vm.vpiData, x0, 1),
-          d0 = vm.vpiData[i - 1],
-          d1 = vm.vpiData[i],
-          d = x0 - d0.moment.valueOf() > d1.moment.valueOf() - x0 ? d1 : d0;
-
-        let yVal = d.integratedProfiles[vm.selectedModePropertyName];
-
-        focus.attr(
-          "transform",
-          "translate(" +
-            vm.xAxis(d.moment.valueOf()) +
-            "," +
-            vm.yAxis(yVal) +
-            ")"
-        );
-        focus.select(".tooltip-date").text(vm.formatTimestamp(d.moment.valueOf()));
-        focus.select(".tooltip-val-title").text(vm.selectedModeObject.id);
-        focus.select(".tooltip-val").text(formatValue(yVal));
-      }
-    },
-    // TODO: update to follow the dynamic update pattern
-    // TODO: validate graph by comparing to BioRad
-    // TODO: Why is MTR chart often empty?
-    // TODO: make sure we don't accidentaly initialize data to 0
-    // TODO: DRY between charts
-    updateChart() {
-      let vm = this;
-
-      this.chart
-        .append("path")
-        .datum(vm.vpiData)
-        .attr("fill", "none")
-        .attr("stroke", vm.styleConfig.lineColor)
-        .attr("stroke-width", 1.5)
-        .attr(
-          "d",
-          d3
-            .line()
-            .x(function(d) {
-              return vm.xAxis(d.moment.valueOf());
-            })
-            .y(function(d) {
-              let rawValue = d.integratedProfiles[vm.selectedModePropertyName];
-              return vm.yAxis(isNaN(rawValue) ? 0 : rawValue);
-            })
-        );
+      return path(this.vpiData);
     }
   }
-};
+});
 </script>

@@ -118,21 +118,6 @@
           </v-p-i-chart>
         </b-col>
       </b-row>
-
-      <b-row>
-        <b-col>
-          <new-v-p-i-chart
-            :vpi-data="integratedProfiles"
-            :style-config="VPIChartStyle"
-            :showTimeAs="timeZoneToShow"
-            :data-temporal-resolution="dataTemporalResolution"
-          >
-            <template v-slot:title>
-              <h3>VPI Chart</h3>
-            </template>
-          </new-v-p-i-chart>
-        </b-col>
-      </b-row>
     </div>
   </b-container>
 </template>
@@ -140,7 +125,6 @@
 <script>
 import VPChart from "./VPChart.vue";
 import VPIChart from "./VPIChart.vue";
-import NewVPIChart from "./NewVPIChart.vue";
 import TimelineChart from "./TimelineChart.vue";
 
 import moment from "moment-timezone";
@@ -393,7 +377,6 @@ export default {
   },
   components: {
     VPChart,
-    NewVPIChart,
     VPIChart,
     TimelineChart,
   }
