@@ -80,22 +80,11 @@ import moment from "moment-timezone";
 
 import helpers from "../helpers";
 
+import { VPIEntry } from "../VPIEntryInterface"
+
 type integratedPropertyName = "mtr" | "rtr" | "vid" | "vir";
 type NullableNumber = number | null;
 type NullableVPIEntry = VPIEntry | null;
-
-interface Profiles {
-  mtr: number;
-  rtr: number;
-  vid: number;
-  vir: number;
-}
-
-interface VPIEntry {
-  // Data, as received via props
-  moment: moment.Moment;
-  integratedProfiles: Profiles;
-}
 
 interface DisplayMode {
   propertyName: integratedPropertyName; // the name of the property (on vpiData[].integratedProfiles) where data can be found. Can be used as an ID

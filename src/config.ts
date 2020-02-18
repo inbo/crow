@@ -1,3 +1,6 @@
+import { TimeInterval } from './TimeIntervaInterface';
+import { RadarInterface } from './RadarInterface';
+
 const globalTimeAxisFormat = " D-M@HH:mm z";  // See: https://momentjs.com/docs/#/displaying/
 
 const globalChartMarginLeft = 65;
@@ -17,7 +20,8 @@ export default {
         { ODIMCode: "nlhrw", location: "Herwijnen", country: "the Netherlands", latitude: 51.83708, longitude: 5.13797, timezone: 'Europe/Amsterdam' },
         { ODIMCode: "deess", location: "Essen", country: "Germany", latitude: 51.4055, longitude: 6.9669, timezone: 'Europe/Berlin' },
         { ODIMCode: "denhb", location: "Neuheilenbach", country: "Germany", latitude: 50.1097, longitude: 6.5483, timezone: 'Europe/Berlin' },
-    ].sort((a, b) => (a.location > b.location) ? 1 : -1), // Sort by location for nicer display
+    ].sort((a, b) => (a.location > b.location) ? 1 : -1) as RadarInterface[], // Sort by location for nicer display
+    
     initialRadarODIMCode: 'behel',
 
     localizedDateFormat: "YYYY/MM/DD", // As returned by the browser when READING data from the "input type=date" field. TODO: Make it autodetected based on the locale?
@@ -26,7 +30,8 @@ export default {
         { text: '1d', value: 24 },
         { text: '4d', value: 96 },
         { text: '1h', value: 1} // Only for debugging: intervals that are not multiple of 24h won't work properly with the time navigation logic
-    ],
+    ] as TimeInterval[],
+    
     initialTimeInterval: 24,
 
     vtpsFormat: {

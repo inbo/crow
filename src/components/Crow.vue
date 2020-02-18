@@ -31,7 +31,10 @@
               >
                 <b-input-group size="sm">
                   <b-input-group-prepend>
-                    <b-button variant="outline-secondary" v-on:click="decrementPeriod">-{{ selectedIntervalLabel }}</b-button>
+                    <b-button
+                      variant="outline-secondary"
+                      v-on:click="decrementPeriod"
+                    >-{{ selectedIntervalLabel }}</b-button>
                   </b-input-group-prepend>
 
                   <b-form-input
@@ -42,7 +45,10 @@
                   />
 
                   <b-input-group-append>
-                    <b-button variant="outline-secondary" v-on:click="incrementPeriod">+{{ selectedIntervalLabel }}</b-button>
+                    <b-button
+                      variant="outline-secondary"
+                      v-on:click="incrementPeriod"
+                    >+{{ selectedIntervalLabel }}</b-button>
                   </b-input-group-append>
                 </b-input-group>
               </b-form-group>
@@ -122,7 +128,8 @@
   </b-container>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from "vue";
 import VPChart from "./VPChart.vue";
 import VPIChart from "./VPIChart.vue";
 import TimelineChart from "./TimelineChart.vue";
@@ -135,22 +142,44 @@ import * as d3 from "d3";
 import config from "../config";
 import helpers from "../helpers";
 
+import { VPIEntry } from "../VPIEntryInterface";
+import { VTPSDataRow } from "../VTPSDataRowInterface";
+import { Period } from "../PeriodInterface";
+import { RadarInterface } from "../RadarInterface";
+import { VTPSEntry } from "../VTPSEntryInterface";
+import { TimeInterval } from "../TimeIntervaInterface";
+
+interface VTPSDataByHeight {
+  [key: number]: VTPSDataRow;
+}
+
+interface RadarVTPSTreeEntry {
+  heightData: VTPSDataByHeight;
+  sunAltitude: number;
+}
+
+interface RadarVtpsAsTree {
+  [key: number]: RadarVTPSTreeEntry;
+}
+
 // TODO: Use moment objects everywhere (currently date in vtpsDataRow, and string for v-model link)
 // Look at other fancy JS stuff available
 // TODO: validation of date min <= max
-export default {
-  data() {
+export default Vue.extend({
+  name: "Crow",
+  data: function() {
     let twoDaysAgo = moment().subtract(2, "days");
 
     return {
       selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
 
       selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours around selectedDate at noon, local (to the radar) time
-      availableIntervals: config.availableTimeIntervals,
+      //availableIntervals: <TimeInterval[]>config.availableTimeIntervals,
+      availableIntervals: config.availableTimeIntervals as TimeInterval[], 
 
       selectedRadarODIMCode: config.initialRadarODIMCode,
-      availableRadars: config.availableRadars,
-
+      availableRadars: config.availableRadars as RadarInterface[],
+ 
       timeDisplayedAs: "radarLocal", // 'radarLocal' | 'UTC'
 
       showCharts: false,
@@ -159,12 +188,12 @@ export default {
       VPIChartStyle: config.VPIChartStyle,
       TimelineChartStyle: config.TimelineChartStyle,
 
-      dataTemporalResolution: config.vtpsFormat.temporalResolution,
-      availableHeights: config.vtpsFormat.availableHeights,
+      dataTemporalResolution: config.vtpsFormat.temporalResolution as number,
+      availableHeights: config.vtpsFormat.availableHeights as number[],
 
       // Data is kept as an object for performance reasons, the "radarVtpsAsArray" computed property allows reading it as an array.
       // All timestamps are kept in UTC (transformed later, in the viz components)
-      radarVtps: {}
+      radarVtps: {} //as () => <RadarVtpsAsTree>
     };
   },
   methods: {
@@ -174,11 +203,11 @@ export default {
     */
     initializeEmptyData() {
       // Remove existing data
-      this.radarVtps = {};
+      this.radarVtps = {} as () => RadarVtpsAsTree;
 
       let currentMoment = this.startMoment.clone();
       while (currentMoment.isBefore(this.endMoment)) {
-        let heightObj = {};
+        let heightObj = {} as VTPSDataByHeight;
         this.availableHeights.forEach(height => {
           heightObj[height] = { noData: true };
         });
@@ -230,7 +259,7 @@ export default {
     },
 
     /* Store a Vtps data row originating in a file into vtpsData */
-    storeDataRow(vtpsDataRow) {
+    storeDataRow(vtpsDataRow: VTPSDataRow) {
       let obj = {
         dd: vtpsDataRow.dd,
         ff: vtpsDataRow.ff,
@@ -239,7 +268,12 @@ export default {
         noData: false
       };
 
-      if (Object.prototype.hasOwnProperty.call(this.radarVtps, vtpsDataRow.datetime)) {
+      if (
+        Object.prototype.hasOwnProperty.call(
+          this.radarVtps,
+          vtpsDataRow.datetime
+        )
+      ) {
         this.$set(
           this.radarVtps[vtpsDataRow.datetime].heightData,
           vtpsDataRow.height,
@@ -249,7 +283,11 @@ export default {
     },
 
     /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */
-    populateDataFromCrowServer(radarName, startMoment, endMoment) {
+    populateDataFromCrowServer(
+      radarName: string,
+      startMoment: moment.Moment,
+      endMoment: moment.Moment
+    ) {
       let startDay = moment.utc(startMoment, "YYYY-MM-DD");
       let endDay = moment.utc(endMoment, "YYYY-MM-DD").add(1, "days");
 
@@ -269,26 +307,33 @@ export default {
     },
 
     /* Build the data URL for a given day and radar */
-    buildDataUrl(radarName, selectedDate) {
+    buildDataUrl(radarName: string, selectedDate: moment.Moment) {
       return `${config.dataBaseUrl}/${radarName}/${selectedDate.format(
         "YYYY"
       )}/${radarName}_vpts_${selectedDate.format("YYYYMMDD")}.txt`;
     }
   },
   computed: {
-    selectedIntervalLabel() {
-      return this.availableIntervals.find(
-        d => d.value == this.selectedIntervalInHours
-      ).text;
+    selectedIntervalLabel(): string {
+      /*if (this.availableIntervals) {
+        if (this.selectedIntervalInHours) {
+          return this.availableIntervals.find(
+            d => d.value == this.selectedIntervalInHours
+          ).text;
+        }
+      }*/
+
+      return "1d"; // TODO: fix me
+
     },
-    timeZoneToShow() {
+    timeZoneToShow(): string {
       if (this.timeDisplayedAs == "radarLocal") {
         return this.selectedRadarTimezone;
       } else {
         return "UTC";
       }
     },
-    timePeriods() {
+    timePeriods(): Period[] {
       // An array of all time periods currently shown (derived from radarVtps) with metadata such as the sun's position.
       let periods = [];
 
@@ -301,46 +346,47 @@ export default {
 
       return periods;
     },
-    selectedDateNoon() {
+    selectedDateNoon(): moment.Moment {
       return moment(this.selectedDate, "YYYY-MM-DD")
         .hour(12)
         .minute(0)
         .second(0)
         .tz(this.selectedRadarTimezone);
     },
-    startMoment() {
+    startMoment(): moment.Moment {
       return moment(this.selectedDateNoon).subtract(
         this.selectedIntervalInHours / 2,
         "hours"
       );
     },
-    endMoment() {
+    endMoment(): moment.Moment {
       return moment(this.selectedDateNoon).add(
         this.selectedIntervalInHours / 2,
         "hours"
       );
     },
-    selectedRadarAsObject() {
-      return this.availableRadars.find(
+    selectedRadarAsObject(): RadarInterface {
+      let found = this.availableRadars.find(
         d => d.ODIMCode == this.selectedRadarODIMCode
       );
+      return found || this.availableRadars[0];
     },
-    selectedRadarLatitude() {
+    selectedRadarLatitude(): number {
       return this.selectedRadarAsObject.latitude;
     },
-    selectedRadarLongitude() {
+    selectedRadarLongitude(): number {
       return this.selectedRadarAsObject.longitude;
     },
-    selectedRadarLocation() {
+    selectedRadarLocation(): string {
       return this.selectedRadarAsObject.location;
     },
-    selectedRadarCountry() {
+    selectedRadarCountry(): string {
       return this.selectedRadarAsObject.country;
     },
-    selectedRadarTimezone() {
+    selectedRadarTimezone(): string {
       return this.selectedRadarAsObject.timezone;
     },
-    radarVtpsAsArray() {
+    radarVtpsAsArray(): VTPSEntry[] {
       let dataArray = [];
       for (let [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
         for (let [height, props] of Object.entries(metadataObj.heightData)) {
@@ -350,20 +396,20 @@ export default {
       }
       return dataArray;
     },
-    integratedProfiles() {
+    integratedProfiles(): VPIEntry[] {
       // TODO: this was copy-pasted from previous version.
       // TODO: could be refactored to 1) use our radarVtps structure instead of creating the temporary nestedVpts
       // TODO: 2) remove dependency to D3
 
       let nestedVpts = d3
-        .nest()
-        .key(d => d.timestamp) // group data by datetime
+        .nest<VTPSEntry>()
+        .key(d => d.timestamp.toString()) // group data by datetime
         .entries(this.radarVtpsAsArray);
 
       let vpi = nestedVpts.map(d => {
         return {
           moment: moment.utc(+d.key),
-          integratedProfiles: helpers.integrateProfile(d.values),
+          integratedProfiles: helpers.integrateProfile(d.values)
         };
       });
       return vpi;
@@ -378,7 +424,7 @@ export default {
   components: {
     VPChart,
     VPIChart,
-    TimelineChart,
+    TimelineChart
   }
-};
+});
 </script>

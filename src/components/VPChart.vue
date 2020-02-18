@@ -62,6 +62,7 @@ import { max, min } from "d3-array";
 import { select } from "d3-selection";
 import { axisBottom, axisLeft, axisRight } from "d3-axis";
 import helpers from "../helpers";
+import { VTPSEntry } from "../VTPSEntryInterface"
 
 const d3 = {
   scaleTime,
@@ -78,17 +79,6 @@ const d3 = {
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)
   y: null;
-}
-
-interface VTPSEntry {
-  // Data, as received via props
-  dd: number;
-  dens: number;
-  ff: number;
-  height: number;
-  noData: boolean;
-  sd_vvp: number;
-  timestamp: number;
 }
 
 interface VTPSEntryPrepared extends VTPSEntry {

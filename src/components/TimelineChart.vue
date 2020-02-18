@@ -42,12 +42,8 @@ import Vue from "vue";
 import * as d3 from "d3";
 import moment from "moment-timezone";
 import { timeFormatting } from "./../mixins/timeFormatting.js";
+import { Period } from "../PeriodInterface"
 import helpers from "../helpers";
-
-interface Period {
-  moment: moment.Moment,
-  sunAltitude: number
-}
 
 interface DisplayablePeriod extends Period {
   x: number,
