@@ -2,18 +2,20 @@
 import config from "./config";
 import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only the "chart" modules need it
 import moment from "moment-timezone";
+import { VTPSDataRowFromFile } from "./VTPSDataRowFromFileInterface";
+import { Profiles } from './ProfilesInterface';
 
-function formatMoment(moment, showTimeAs, timeAxisFormat) {
+function formatMoment(moment: moment.Moment, showTimeAs:string, timeAxisFormat:string): string {
     // Format the timestamp passed as argument, according to timezone and timeAxisFormat
     return moment.tz(showTimeAs).format(timeAxisFormat);
 }
 
-function formatTimestamp(ts, showTimeAs, timeAxisFormat) {
+function formatTimestamp(ts:number, showTimeAs:string, timeAxisFormat:string): string {
     // Format the timestamp passed as argument, according to timezone and timeAxisFormat
     return formatMoment(moment(ts), showTimeAs, timeAxisFormat);
 }
 
-function makeSafeForCSS(name) {
+function makeSafeForCSS(name: string): string {
     return name.replace(/[^a-z0-9]/g, function(s) {
         var c = s.charCodeAt(0);
         if (c == 32) return '-';
@@ -22,12 +24,12 @@ function makeSafeForCSS(name) {
     });
 }
 
-function metersToFeet(meters) {
-    return meters * 3, 281;
+function metersToFeet(meters: number): number {
+    return meters * 3.281;
 }
 
-function parseFloatOrZero(string) {
-    let val = parseFloat(string);
+function parseFloatOrZero(str: string): number {
+    let val = parseFloat(str);
     if (isNaN(val)) {
         return 0;
     } else {
@@ -35,7 +37,7 @@ function parseFloatOrZero(string) {
     }
 }
 
-function readVtps(responseString) {
+function readVtps(responseString: string): VTPSDataRowFromFile[] {
     let d = responseString.split("\n");
     d = d.splice(config.vtpsFormat.numHeaderLines); // Remove 4 header lines
     // The file is also terminated by a blank line, which cause issues.
@@ -51,17 +53,17 @@ function readVtps(responseString) {
             dd: parseFloat(row.substring(47, 52)),
             ff: parseFloat(row.substring(41, 46)),
             dens: parseFloatOrZero(row.substring(76, 82)),
-            sd_vvp: parseFloat(row.substring(53, 59))
+            sd_vvp: parseFloat(row.substring(53, 59)),
+            eta: parseFloatOrZero(row.substring(70, 75))
         };
     });
 
     return r;
 }
 
-function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, vvpThresh = 2, alpha = NaN) {
+function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infinity, interval = 200, vvpThresh = 2, alpha = NaN): Profiles | number {
     // TODO: interval and vvpThresh should actually be derived from data/metadata itself
     // TODO: extract the data - could be improved by using data itself as input
-    // TODO: return other properties than mtr
 
     // Check input arguments
     if (!(typeof altMin == 'number') || !(typeof altMax == 'number' || altMax == Infinity)) {
@@ -76,12 +78,16 @@ function integrateProfile(data, altMin = 0, altMax = Infinity, interval = 200, v
 
     // Get height ranges
     const altMinMaxFromData = d3.extent(data, d => d.height);
-    altMin = Math.max(altMin, altMinMaxFromData[0]);
-    altMax = Math.min(altMax, altMinMaxFromData[1] + interval); // Interval added to get upper bound of height layer
-
+    if (altMinMaxFromData[0] == undefined || altMinMaxFromData[1] == undefined) {
+        throw "Can not extract altMin/altMax from data"
+    } else {
+        altMin = Math.max(altMin, altMinMaxFromData[0]);
+        altMax = Math.min(altMax, altMinMaxFromData[1] + interval); // Interval added to get upper bound of height layer
+        data = data.filter(d => d.height >= altMin && d.height <= altMax);
+    }
+    
+    // TODO: check if we really need those filters and if no, get rid of them. That would simplify typing since we won't return NaN anymore (so return value is only the Profiles interface)
     // Filter data on requested heights
-    data = data.filter(d => d.height >= altMin & d.height <= altMax);
-
     // Filter data on sd_vvp values above sd_vvp threshold
     data = data.filter(d => d.sd_vvp >= vvpThresh);
     if (data.length == 0) {

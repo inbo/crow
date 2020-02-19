@@ -1,4 +1,3 @@
-// All is optional because we first populate the empty with only "noData". Should we split this (VTPSData as coming from source data, and ready to be visualized)
 export interface VTPSDataRow {
     datetime?: number
     height?: number

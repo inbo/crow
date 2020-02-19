@@ -137,13 +137,13 @@ import TimelineChart from "./TimelineChart.vue";
 import moment from "moment-timezone";
 import axios from "axios";
 import SunCalc from "suncalc";
-import * as d3 from "d3";
 
 import config from "../config";
 import helpers from "../helpers";
 
 import { VPIEntry } from "../VPIEntryInterface";
 import { VTPSDataRow } from "../VTPSDataRowInterface";
+import { VTPSDataRowFromFile } from "../VTPSDataRowFromFileInterface"
 import { Period } from "../PeriodInterface";
 import { RadarInterface } from "../RadarInterface";
 import { VTPSEntry } from "../VTPSEntryInterface";
@@ -163,7 +163,6 @@ interface RadarVtpsAsTree {
 }
 
 // TODO: Use moment objects everywhere (currently date in vtpsDataRow, and string for v-model link)
-// Look at other fancy JS stuff available
 // TODO: validation of date min <= max
 export default Vue.extend({
   name: "Crow",
@@ -174,7 +173,6 @@ export default Vue.extend({
       selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
 
       selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours around selectedDate at noon, local (to the radar) time
-      //availableIntervals: <TimeInterval[]>config.availableTimeIntervals,
       availableIntervals: config.availableTimeIntervals as TimeInterval[], 
 
       selectedRadarODIMCode: config.initialRadarODIMCode,
@@ -193,7 +191,7 @@ export default Vue.extend({
 
       // Data is kept as an object for performance reasons, the "radarVtpsAsArray" computed property allows reading it as an array.
       // All timestamps are kept in UTC (transformed later, in the viz components)
-      radarVtps: {} //as () => <RadarVtpsAsTree>
+      radarVtps: {} as RadarVtpsAsTree
     };
   },
   methods: {
@@ -203,7 +201,7 @@ export default Vue.extend({
     */
     initializeEmptyData() {
       // Remove existing data
-      this.radarVtps = {} as () => RadarVtpsAsTree;
+      this.radarVtps = {} as RadarVtpsAsTree;
 
       let currentMoment = this.startMoment.clone();
       while (currentMoment.isBefore(this.endMoment)) {
@@ -259,7 +257,7 @@ export default Vue.extend({
     },
 
     /* Store a Vtps data row originating in a file into vtpsData */
-    storeDataRow(vtpsDataRow: VTPSDataRow) {
+    storeDataRow(vtpsDataRow: VTPSDataRowFromFile) {
       let obj = {
         dd: vtpsDataRow.dd,
         ff: vtpsDataRow.ff,
@@ -315,16 +313,11 @@ export default Vue.extend({
   },
   computed: {
     selectedIntervalLabel(): string {
-      /*if (this.availableIntervals) {
-        if (this.selectedIntervalInHours) {
-          return this.availableIntervals.find(
-            d => d.value == this.selectedIntervalInHours
-          ).text;
-        }
-      }*/
-
-      return "1d"; // TODO: fix me
-
+      let found = this.availableIntervals.find(
+        d => d.value == this.selectedIntervalInHours
+      );
+      
+      return found ? found.text : '';
     },
     timeZoneToShow(): string {
       if (this.timeDisplayedAs == "radarLocal") {
@@ -386,33 +379,32 @@ export default Vue.extend({
     selectedRadarTimezone(): string {
       return this.selectedRadarAsObject.timezone;
     },
-    radarVtpsAsArray(): VTPSEntry[] {
+    radarVtpsAsArray(): VTPSDataRow[] {
       let dataArray = [];
       for (let [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
         for (let [height, props] of Object.entries(metadataObj.heightData)) {
           let o = { timestamp: +timestamp, height: +height };
-          dataArray.push({ ...o, ...props });
+          dataArray.push({ ...o, ...props as VTPSDataRow });
         }
       }
       return dataArray;
     },
     integratedProfiles(): VPIEntry[] {
-      // TODO: this was copy-pasted from previous version.
-      // TODO: could be refactored to 1) use our radarVtps structure instead of creating the temporary nestedVpts
-      // TODO: 2) remove dependency to D3
-
-      let nestedVpts = d3
-        .nest<VTPSEntry>()
-        .key(d => d.timestamp.toString()) // group data by datetime
-        .entries(this.radarVtpsAsArray);
-
-      let vpi = nestedVpts.map(d => {
-        return {
-          moment: moment.utc(+d.key),
-          integratedProfiles: helpers.integrateProfile(d.values)
-        };
-      });
-      return vpi;
+      let integratedProfiles = [] as VPIEntry[];
+      for (let [timestamp, treeEntry] of Object.entries(this.radarVtps)) {
+        // VTPS values are stored in a tree per height, we need a flat array for integratedProfile
+        let dataToIntegrate = []
+        for (let [height, vtpsValues] of Object.entries(treeEntry.heightData)) {
+          let o = {height: +height}
+          dataToIntegrate.push({...vtpsValues as VTPSDataRow, ...o})
+        }
+        
+        integratedProfiles.push({
+          moment: moment.utc(+timestamp),
+          integratedProfiles: helpers.integrateProfile(dataToIntegrate)
+        });
+      }
+      return integratedProfiles;
     }
   },
 
