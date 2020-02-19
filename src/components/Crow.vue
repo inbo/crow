@@ -263,6 +263,7 @@ export default Vue.extend({
         ff: vtpsDataRow.ff,
         dens: vtpsDataRow.dens,
         sd_vvp: vtpsDataRow.sd_vvp,
+        eta: vtpsDataRow.eta,
         noData: false
       };
 
@@ -396,7 +397,7 @@ export default Vue.extend({
         let dataToIntegrate = []
         for (let [height, vtpsValues] of Object.entries(treeEntry.heightData)) {
           let o = {height: +height}
-          dataToIntegrate.push({...vtpsValues as VTPSDataRow, ...o})
+          dataToIntegrate.push({...vtpsValues as VTPSDataRowFromFile, ...o})
         }
         
         integratedProfiles.push({

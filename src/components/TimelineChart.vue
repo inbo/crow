@@ -103,7 +103,7 @@ export default Vue.extend({
       const timeAxisFormat = binding.value.timeAxisFormat;
 
       let d3Axis = d3
-        .axisBottom(scaleFunction)
+        .axisBottom<number>(scaleFunction)
         .ticks(7)
         .tickFormat(d => {
           return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
