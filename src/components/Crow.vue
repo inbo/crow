@@ -258,14 +258,7 @@ export default Vue.extend({
 
     /* Store a Vtps data row originating in a file into vtpsData */
     storeDataRow(vtpsDataRow: VTPSDataRowFromFile) {
-      let obj = {
-        dd: vtpsDataRow.dd,
-        ff: vtpsDataRow.ff,
-        dens: vtpsDataRow.dens,
-        sd_vvp: vtpsDataRow.sd_vvp,
-        eta: vtpsDataRow.eta,
-        noData: false
-      };
+      const objToStore = {...vtpsDataRow, ...{noData: false}}
 
       if (
         Object.prototype.hasOwnProperty.call(
@@ -276,7 +269,7 @@ export default Vue.extend({
         this.$set(
           this.radarVtps[vtpsDataRow.datetime].heightData,
           vtpsDataRow.height,
-          obj
+          objToStore
         );
       }
     },
