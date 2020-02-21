@@ -82,6 +82,7 @@
           :d="pathData"
         />
         
+        <!-- days separators -->
         <line
           fill="none"
           v-for="day in daysCovered"
@@ -91,8 +92,10 @@
           pointer-events="none"
           y1="0"
           :y2="innerHeight"
-          style="stroke:rgb(255,0,0);stroke-width:1;pointer-events:none;"
+          class="day-separator"
+          style="stroke-width:1;pointer-events:none;"
         />
+        <text v-for="day in daysCovered" :key="'text-' + day.xPositionAtMidnight" :x="day.xPositionAtMidnight + 5" :y="15" class="day-separator">{{ day.dayLabel }}</text>
       </g>
     </svg>
   </div>
@@ -253,7 +256,8 @@ export default Vue.extend({
       return uniqueCoveredDays.map(mom => {
         return {
           moment: mom,
-          xPositionAtMidnight: this.xScale(mom.valueOf())
+          xPositionAtMidnight: this.xScale(mom.valueOf()),
+          dayLabel: mom.format("MMM DD")
         };
       });
     },
@@ -379,3 +383,11 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style scoped>
+  .day-separator {
+    stroke:rgb(33,37,41); /* for line */
+    fill: rgb(33,37,41); /* For text */
+    font: 12px sans-serif;
+  }
+</style>
