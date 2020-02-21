@@ -60,14 +60,39 @@
             :style="`fill: ${styleConfig.lineColor} `"
           />
 
-          <b-popover container="ignore-mouse-events" :show.sync="tooltipVisible" target="tooltipCircle" placement="top">
+          <b-popover
+            container="ignore-mouse-events"
+            :show.sync="tooltipVisible"
+            target="tooltipCircle"
+            placement="top"
+          >
             <template v-slot:title>{{ formattedMomentAtTimeX }}</template>
-            <div><b>{{ selectedModeLabel }}: {{ selectedValAtTimeX | round2decimals }}</b></div>
+            <div>
+              <b>{{ selectedModeLabel }}: {{ selectedValAtTimeX | round2decimals }}</b>
+            </div>
           </b-popover>
         </template>
 
         <!-- finally, the chart line -->
-        <path fill="none" style="pointer-events:none;" :stroke="styleConfig.lineColor" stroke-width="1.5" :d="pathData" />
+        <path
+          fill="none"
+          style="pointer-events:none;"
+          :stroke="styleConfig.lineColor"
+          stroke-width="1.5"
+          :d="pathData"
+        />
+        
+        <line
+          fill="none"
+          v-for="day in daysCovered"
+          :key="day.xPositionAtMidnight"
+          :x1="day.xPositionAtMidnight"
+          :x2="day.xPositionAtMidnight"
+          pointer-events="none"
+          y1="0"
+          :y2="innerHeight"
+          style="stroke:rgb(255,0,0);stroke-width:1;pointer-events:none;"
+        />
       </g>
     </svg>
   </div>
@@ -76,11 +101,11 @@
 <script lang="ts">
 import Vue from "vue";
 import * as d3 from "d3";
-import moment from "moment-timezone";
+import moment, { Moment } from "moment-timezone";
 
 import helpers from "../helpers";
 
-import { VPIEntry } from "../VPIEntryInterface"
+import { VPIEntry } from "../VPIEntryInterface";
 
 type integratedPropertyName = "mtr" | "rtr" | "vid" | "vir";
 type NullableNumber = number | null;
@@ -90,6 +115,11 @@ interface DisplayMode {
   propertyName: integratedPropertyName; // the name of the property (on vpiData[].integratedProfiles) where data can be found. Can be used as an ID
   label: string; // appears in <select> and as legend of the Y axis
   yMaxValComputedName: "maxMTRWithMinimum" | "maxRTR" | "maxVID" | "maxVIR"; // the name of a computed property to get the max value for the Y Axis
+}
+
+interface DayData {
+  moment: Moment;
+  xPositionAtMidnight: number;
 }
 
 export default Vue.extend({
@@ -152,7 +182,7 @@ export default Vue.extend({
   filters: {
     round2decimals: function(num: number): string {
       return (Math.round(num * 100) / 100).toFixed(2);
-    },
+    }
   },
   methods: {
     mouseEnter() {
@@ -165,22 +195,22 @@ export default Vue.extend({
     },
     mouseMove(event: MouseEvent) {
       // When mouse is moved over the chart, updates this.mouseXPosition and this.VPIEntryAtTimeX
+      // 1. Get (and save in data) the mouse position
       let target = event.target as HTMLElement;
       let bounds = target.getBoundingClientRect();
-      this.mouseXPosition = event.clientX - bounds.left;
+      let mouseX = event.clientX - bounds.left;
+      this.mouseXPosition = mouseX;
 
+      // 2. Find out (and save in data) the VPI data at the mouse position
       let x0 = this.xScale.invert(this.mouseXPosition);
-
-      let i = this.momentBisector(this.vpiData, x0, 1);
+      let i = this.momentBisector(this.vpiData, x0);
       let d0 = this.vpiData[i - 1];
       let d1 = this.vpiData[i];
-      let d =
+      this.VPIEntryAtTimeX =
         x0.getTime() / 1000 - d0.moment.valueOf() >
         d1.moment.valueOf() - x0.getTime() / 1000
           ? d1
           : d0;
-
-      this.VPIEntryAtTimeX = d;
     }
   },
   directives: {
@@ -208,11 +238,34 @@ export default Vue.extend({
     }
   },
   computed: {
+    daysCovered: function(): DayData[] {
+      // Find the day covered by each entry in vpiData
+      const coveredDays = this.vpiData.map(vpiEntry => {
+        return vpiEntry.moment.clone().tz(this.showTimeAs).startOf("day");
+      });
+      
+      // Remove duplicates
+      const comparisonValues = coveredDays.map(v => v.valueOf());
+      const uniqueCoveredDays = coveredDays.filter(
+        (v, i) => comparisonValues.indexOf(v.valueOf()) == i
+      );
+
+      return uniqueCoveredDays.map(mom => {
+        return {
+          moment: mom,
+          xPositionAtMidnight: this.xScale(mom.valueOf())
+        };
+      });
+    },
     formattedMomentAtTimeX: function(): string {
       if (this.VPIEntryAtTimeX) {
-        return helpers.formatMoment(this.VPIEntryAtTimeX.moment, this.showTimeAs, this.styleConfig.timeAxisFormat);
+        return helpers.formatMoment(
+          this.VPIEntryAtTimeX.moment,
+          this.showTimeAs,
+          this.styleConfig.timeAxisFormat
+        );
       }
-      return ''
+      return "";
     },
     YPositionAtTimeX: function(): number | null {
       if (this.selectedValAtTimeX) {
