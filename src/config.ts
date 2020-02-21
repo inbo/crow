@@ -60,7 +60,7 @@ export default {
         width: globalChartWidth,
         height: 300,
 
-        timeAxisFormat: " HH:mm z";,
+        timeAxisFormat: " HH:mm z",
 
         lineColor: 'steelblue',
 
