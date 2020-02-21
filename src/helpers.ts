@@ -61,7 +61,7 @@ function readVtps(responseString: string): VTPSDataRowFromFile[] {
     return r;
 }
 
-function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infinity, interval = 200, vvpThresh = 2, alpha = NaN): Profiles | number {
+function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infinity, interval = 200, vvpThresh = 2, alpha = NaN): Profiles {
     // TODO: interval and vvpThresh should actually be derived from data/metadata itself
     // TODO: extract the data - could be improved by using data itself as input
 
@@ -76,6 +76,7 @@ function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infi
         console.log("'altMin' should be smaller than 'altMax'");
     }
 
+    // Filter data on requested heights
     // Get height ranges
     const altMinMaxFromData = d3.extent(data, d => d.height);
     if (altMinMaxFromData[0] == undefined || altMinMaxFromData[1] == undefined) {
@@ -86,12 +87,10 @@ function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infi
         data = data.filter(d => d.height >= altMin && d.height <= altMax);
     }
     
-    // TODO: check if we really need those filters and if no, get rid of them. That would simplify typing since we won't return NaN anymore (so return value is only the Profiles interface)
-    // Filter data on requested heights
     // Filter data on sd_vvp values above sd_vvp threshold
     data = data.filter(d => d.sd_vvp >= vvpThresh);
     if (data.length == 0) {
-        return NaN;
+        return { "mtr": NaN, "rtr": NaN, "vid": NaN, "vir": NaN }
     }
 
     // Extract dd, ff and dens values
