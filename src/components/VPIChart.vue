@@ -271,11 +271,11 @@ export default Vue.extend({
       }
       return "";
     },
-    YPositionAtTimeX: function(): number | null {
+    YPositionAtTimeX: function(): number {
       if (this.selectedValAtTimeX) {
         return this.yScale(this.selectedValAtTimeX);
       }
-      return null;
+      return this.innerHeight;
     },
     selectedValAtTimeX: function(): number | null {
       if (this.VPIEntryAtTimeX) {
