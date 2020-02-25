@@ -57,24 +57,9 @@
 <script lang="ts">
 // TODO: create a single popover for performance reasons?
 import Vue from "vue";
-import { scaleTime, scalePoint, scaleLinear } from "d3-scale";
-import { max, min } from "d3-array";
-import { select } from "d3-selection";
-import { axisBottom, axisLeft, axisRight } from "d3-axis";
+import * as d3 from "d3";
 import helpers from "../helpers";
 import { VTPSEntry } from "../VTPSEntryInterface"
-
-const d3 = {
-  scaleTime,
-  scalePoint,
-  scaleLinear,
-  max,
-  min,
-  select,
-  axisBottom,
-  axisLeft,
-  axisRight
-};
 
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)
@@ -135,7 +120,10 @@ export default Vue.extend({
     yaxisRight(el, binding, vnode) {
       const scaleFunction = binding.value.scale;
 
-      let d3Axis = d3.axisRight(scaleFunction).tickSizeOuter(0);
+      let d3Axis = 
+        d3.axisRight<number>(scaleFunction)
+          .tickSizeOuter(0)
+          .tickFormat(d3.format("d"));
 
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
     },
