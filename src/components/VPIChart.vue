@@ -24,8 +24,10 @@
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <!-- X axis -->
         <g :transform="`translate(0, ${this.innerHeight})`">
-          <slot name="in-x-axis-group"></slot>
-          <g v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}" />
+          <slot name="in-x-axis-group" />
+          <g
+            v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}"
+          />
         </g>
 
         <!-- Y axis -->
@@ -81,7 +83,7 @@
           stroke-width="1.5"
           :d="pathData"
         />
-        
+
         <!-- days separators -->
         <line
           fill="none"
@@ -95,7 +97,13 @@
           class="day-separator"
           style="stroke-width:1;pointer-events:none;"
         />
-        <text v-for="day in daysCovered" :key="'text-' + day.xPositionAtMidnight" :x="day.xPositionAtMidnight + 5" :y="15" class="day-separator">{{ day.dayLabel }}</text>
+        <text
+          v-for="day in daysCovered"
+          :key="'text-' + day.xPositionAtMidnight"
+          :x="day.xPositionAtMidnight + 5"
+          :y="15"
+          class="day-separator"
+        >{{ day.dayLabel }}</text>
       </g>
     </svg>
   </div>
@@ -109,6 +117,8 @@ import moment, { Moment } from "moment-timezone";
 import helpers from "../helpers";
 
 import { VPIEntry } from "../VPIEntryInterface";
+
+import TWEEN from "@tweenjs/tween.js";
 
 type integratedPropertyName = "mtr" | "rtr" | "vid" | "vir";
 type NullableNumber = number | null;
@@ -125,6 +135,14 @@ interface DayData {
   xPositionAtMidnight: number;
 }
 
+interface VPIEntryForPath {
+  // "prepared" VPI data to draw path, derived from VPIEntry. Changes:
+  // - time data stored as a timestamp (no further conversion needed)
+  // - only single value to display (allow to animate when the user switch between MTR and VID, for example)
+  timestamp: number;
+  val: number;
+}
+
 export default Vue.extend({
   name: "VPIChart",
   props: {
@@ -135,6 +153,7 @@ export default Vue.extend({
   },
   data: function() {
     return {
+      vpiDataForPath: [] as VPIEntryForPath[],
       selectedMode: "mtr" as integratedPropertyName,
       availableModes: [
         {
@@ -188,6 +207,47 @@ export default Vue.extend({
     }
   },
   methods: {
+    animate() {
+      if (TWEEN.update()) {
+        requestAnimationFrame(this.animate);
+      }
+    },
+
+    syncVPIDataForPath() {
+      // We smoothly update each entry in vpiDataForPath, based on selectedModePropertyName and vpiData
+      // 1) Add new entries, if necessary (when populating vpiData for example)
+      // 2) Update .val, based on selectedModePropertyName
+      // TODO: if we want to support all possible transitions, we shoudl probably also implement deletion
+      // (values in vpiDataForPath that are no more in vpiData)
+      for (let entry of this.vpiData) {
+        const timestamp = entry.moment.valueOf();
+
+        const foundIndex = this.vpiDataForPath.findIndex(
+          element => element.timestamp == timestamp
+        );
+
+        const rawValue =
+          entry.integratedProfiles[this.selectedModePropertyName];
+        const newScaledValue = this.yScale(isNaN(rawValue) ? 0 : rawValue);
+
+        if (foundIndex == -1) {
+          this.vpiDataForPath.push({
+            timestamp: timestamp,
+            val: newScaledValue
+          });
+        } else {
+          let cloneElem = { ...this.vpiDataForPath[foundIndex] };
+
+          var tween = new TWEEN.Tween(cloneElem)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .to({ val: newScaledValue }, 300)
+            .onUpdate(() => {
+              this.$set(this.vpiDataForPath[foundIndex], "val", cloneElem.val);
+            })
+            .start(); // Start the tween immediately.
+        }
+      }
+    },
     mouseEnter() {
       this.tooltipVisible = true;
       this.mouseXPosition = 0;
@@ -241,13 +301,32 @@ export default Vue.extend({
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
     }
   },
+  watch: {
+    selectedMode: {
+      immediate: true,
+      handler: function(newMode: string, oldMode: string) {
+        this.syncVPIDataForPath();
+        this.animate();
+      }
+    },
+    vpiData: {
+      immediate: true,
+      handler: function() {
+        this.syncVPIDataForPath();
+        this.animate();
+      }
+    }
+  },
   computed: {
     daysCovered: function(): DayData[] {
       // Find the day covered by each entry in vpiData
       const coveredDays = this.vpiData.map(vpiEntry => {
-        return vpiEntry.moment.clone().tz(this.showTimeAs).startOf("day");
+        return vpiEntry.moment
+          .clone()
+          .tz(this.showTimeAs)
+          .startOf("day");
       });
-      
+
       // Remove duplicates
       const comparisonValues = coveredDays.map(v => v.valueOf());
       const uniqueCoveredDays = coveredDays.filter(
@@ -369,26 +448,24 @@ export default Vue.extend({
     },
     pathData: function(): string | null {
       const path = d3
-        .line<VPIEntry>()
-        .x(vpiEntry => {
-          return this.xScale(vpiEntry.moment.valueOf());
+        .line<VPIEntryForPath>()
+        .x(vpiEntryFP => {
+          return this.xScale(vpiEntryFP.timestamp);
         })
-        .y(vpiEntry => {
-          let rawValue =
-            vpiEntry.integratedProfiles[this.selectedModePropertyName];
-          return this.yScale(isNaN(rawValue) ? 0 : rawValue);
+        .y(vpiEntryFP => {
+          return vpiEntryFP.val;
         });
 
-      return path(this.vpiData);
+      return path(this.vpiDataForPath);
     }
   }
 });
 </script>
 
 <style scoped>
-  .day-separator {
-    stroke:rgb(33,37,41); /* for line */
-    fill: rgb(33,37,41); /* For text */
-    font: 12px sans-serif;
-  }
+.day-separator {
+  stroke: rgb(33, 37, 41); /* for line */
+  fill: rgb(33, 37, 41); /* For text */
+  font: 12px sans-serif;
+}
 </style>
