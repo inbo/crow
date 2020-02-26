@@ -68,13 +68,12 @@ export default {
     },
 
     TimelineChartStyle: {
-        margin: { top: 0, right: globalChartMarginRight, bottom: 5, left: globalChartMarginLeft },
-        width: globalChartWidth,
-        height: 50,
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+        width: globalChartWidth - globalChartMarginLeft - globalChartMarginRight,
+        height: 10,
 
-        timeAxisFormat: globalTimeAxisFormat,
+        timeDisplayFormat: globalTimeAxisFormat,
 
-        showXAxis: true,
         showTooltip: true,
     }
 }

@@ -23,10 +23,10 @@
     <svg id="new-vpi-chart" :width="styleConfig.width" :height="styleConfig.height">
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <!-- X axis -->
-        <g
-          :transform="`translate(0, ${this.innerHeight})`"
-          v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}"
-        />
+        <g :transform="`translate(0, ${this.innerHeight})`">
+          <slot name="in-x-axis-group"></slot>
+          <g v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}" />
+        </g>
 
         <!-- Y axis -->
         <g v-yaxis="{'scale': yScale}" />
@@ -233,6 +233,7 @@ export default Vue.extend({
       let d3Axis = d3
         .axisBottom<number>(scaleFunction)
         .ticks(7)
+        .tickSize(15)
         .tickFormat(d => {
           return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
         });

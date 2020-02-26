@@ -1,58 +1,48 @@
 <template>
-  <svg id="new-timeline-chart" :width="svgWidth" :height="svgHeight">
-    <g :transform="`translate(${margin.left}, ${margin.top})`">
-      <g
-          v-if="styleConfig.showXAxis"
-          transform="translate(0, 25)"
-          v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}"
-        />
-         
-      <template v-for="period in populatedPeriods">
-        <rect
-          :key="'rect ' + period.x"
-          :x="period.x"
-          y="0"
-          :width="periodWidth"
-          height="20"
-          :class="period.class"
-          :id="'period-at-' + period.x"
-        />
+  <g :transform="`translate(${margin.left}, ${margin.top})`">
+    <template v-for="period in populatedPeriods">
+      <rect
+        :key="'rect ' + period.x"
+        :x="period.x"
+        y="0"
+        :width="periodWidth"
+        :height="styleConfig.height"
+        :class="period.class"
+        :id="uuid + '-period-at-' + period.x"
+      />
 
-        <b-popover
-          v-if="styleConfig.showTooltip"
-          :target="'period-at-' + period.x"
-          triggers="hover"
-          placement="top"
-          :key="'popover ' + period.x"
-        >
-          <template v-slot:title>{{ formatMoment(period.moment) }}</template>
-          <b>Sun altitude:</b>
-          {{ period.sunAltitude | round2decimals }}°
-          <b>Period</b>
-          : {{ period.name }}
-        </b-popover>
-      </template>
-    </g>
-  </svg>
+      <b-popover
+        v-if="styleConfig.showTooltip"
+        :target="uuid + '-period-at-' + period.x"
+        triggers="hover"
+        placement="bottom"
+        :key="'popover ' + period.x"
+      >
+        <template v-slot:title>{{ formatMoment(period.moment) }}</template>
+        Sun altitude:
+        {{ period.sunAltitude | round2decimals }}°<br/>
+        Period
+        : {{ period.name }}
+      </b-popover>
+    </template>
+  </g>
 </template>
 
 <script lang="ts">
 // TODO: margin.top in the main SVG group seems different than with TimelineChart.vue
 import Vue from "vue";
 import * as d3 from "d3";
-import moment from "moment-timezone";
-import { timeFormatting } from "./../mixins/timeFormatting.js";
-import { Period } from "../PeriodInterface"
+import moment, { Moment } from "moment-timezone";
+import { Period } from "../PeriodInterface";
 import helpers from "../helpers";
 
 interface DisplayablePeriod extends Period {
-  x: number,
-  class: string,
-  name: string
+  x: number;
+  class: string;
+  name: string;
 }
 
 export default Vue.extend({
-  mixins: [timeFormatting],
   props: {
     periods: Array as () => Period[], // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
     styleConfig: Object,
@@ -60,6 +50,8 @@ export default Vue.extend({
   },
   data: function() {
     return {
+      uuid: '',
+
       margin: this.styleConfig.margin,
 
       innerWidth:
@@ -79,10 +71,16 @@ export default Vue.extend({
     }
   },
   methods: {
+    formatMoment(m: moment.Moment): string {
+      return helpers.formatMoment(
+          m,
+          this.showTimeAs,
+          this.styleConfig.timeDisplayFormat
+        );
+    },
     getPeriodClass(sunAltitude: number) {
       return helpers.makeSafeForCSS(this.getPeriodName(sunAltitude));
     },
-
     getPeriodName(sunAltitude: number) {
       // TODO: move to helpers?
       if (sunAltitude >= 0) {
@@ -94,32 +92,16 @@ export default Vue.extend({
       }
     }
   },
-
-  directives: {
-    xaxis(el, binding, vnode) {
-      // TODO: code copy/pasted from VPChart. Possible to factorize (without mixins)? Or isn't it worth it?
-      const scaleFunction = binding.value.scale;
-      const showTimeAs = binding.value.timezone;
-      const timeAxisFormat = binding.value.timeAxisFormat;
-
-      let d3Axis = d3
-        .axisBottom<number>(scaleFunction)
-        .ticks(7)
-        .tickFormat(d => {
-          return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
-        });
-
-      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
-    }
+  mounted () {
+    this.uuid = helpers.uuidv4();
   },
-
   computed: {
     xScale: function(): d3.ScaleTime<number, number> {
       return d3
         .scaleTime()
         .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
         .range([0, this.innerWidth]);
-    }, 
+    },
     populatedPeriods: function(): DisplayablePeriod[] {
       const scale = this.xScale;
 
@@ -130,23 +112,19 @@ export default Vue.extend({
         name: this.getPeriodName(period.sunAltitude)
       }));
     },
-    svgWidth: function(): number {
-      return this.styleConfig.width;
-    },
-    svgHeight: function():number {
-      return this.styleConfig.height;
-    },
-    periodWidth: function():number {
+    periodWidth: function(): number {
       return Math.round(this.innerWidth / this.rectDivider);
     },
-    dataTemporalResolution: function():number {
-      return moment.duration(this.periods[1].moment.diff(this.periods[0].moment)).asSeconds();
+    dataTemporalResolution: function(): number {
+      return moment
+        .duration(this.periods[1].moment.diff(this.periods[0].moment))
+        .asSeconds();
     },
-    rectDivider: function():number {
+    rectDivider: function(): number {
       let duration = moment.duration(this.maxMoment.diff(this.minMoment));
-      return (duration.asSeconds() / this.dataTemporalResolution) + 1;
+      return duration.asSeconds() / this.dataTemporalResolution + 1;
     },
-    minMoment: function():moment.Moment {
+    minMoment: function(): moment.Moment {
       // Now returns a moment obj.
       return this.periods[0].moment;
     },
@@ -162,12 +140,12 @@ export default Vue.extend({
 
 <style scoped>
 rect.day {
-  fill: #dae9fe;
+  fill: #afbbc0;
 }
 rect.twilight {
-  fill: #4771bb;
+  fill: #486fa3;
 }
 rect.night {
-  fill: #1e252d;
+  fill: #162c54;
 }
 </style>

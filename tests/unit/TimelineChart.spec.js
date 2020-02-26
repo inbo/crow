@@ -7,9 +7,8 @@ let styleConfig = {
   width: 1277, // 1152 forn the graph, after we remove margins
   height: 50,
 
-  timeAxisFormat: " D-M@HH:mm z",
+  timeDisplayFormat: " D-M@HH:mm z",
 
-  showXAxis: true,
   showTooltip: true,
 
   dayColor: '#dae9fe',
@@ -42,19 +41,11 @@ test('General TimelineChart component rendering & behaviour', () => {
     }
   });
 
-  expect(wrapper.contains('svg')).toBe(true);
-
   // To cover 1 hours by 5 minutes increment, we need 12 rectangles
   expect(wrapper.findAll('rect').length).toBe(12);
 
   // After removing margins, we have 1152 pixels for the data. So each of the 12 rectangle must be 96px wide
   expect(wrapper.find('rect').attributes('width')).toBe("96");
-
-  // We want to display time as in Brussels, but the data is in UTC, so the range of the axis should be 11:30 - 12:25 and mention CET time
-  expect(wrapper.find('g.tick text').text()).toBe("23-1@11:30 CET");
-
-  const lastTickText = wrapper.findAll('g.tick text').at(11)
-  expect(lastTickText.text()).toBe("23-1@12:25 CET")
 
   // With this basic dataset, everything should be 'day'
   wrapper.findAll('rect').wrappers.forEach(wp => expect(wp.classes()).toContain('day'));
@@ -96,23 +87,6 @@ test("Don't have popovers when asked in the config", () => {
 
 
 // TOTO: check popover content
-// TODO: should we split in multiple "test" blocks
-
-test('TimelineChart axis texts in UTC mode', () => {
-  const wrapper = mount(TimelineChart, {
-    propsData: {
-      styleConfig: styleConfig,
-      dataTemporalResolution: 300,
-      showTimeAs: "UTC",
-      periods: testPeriods
-    }
-  });
-
-  // Data in UTC, display too. So the ticks should match the passed data, and have the 'UTC' mention
-  expect(wrapper.find('g.tick text').text()).toBe("23-1@10:30 UTC");
-  const lastTickText = wrapper.findAll('g.tick text').at(11)
-  expect(lastTickText.text()).toBe("23-1@11:25 UTC")
-});
 
 test('TimelineChart axis can be disabled', () => {
   let disabledAxisconfig = styleConfig;

@@ -100,11 +100,14 @@
           >
             <template v-slot:title>
               <h3>VP Chart</h3>
+            </template>
+
+            <template v-slot:in-x-axis-group>
               <timeline-chart
                 :periods="timePeriods"
                 :style-config="TimelineChartStyle"
                 :showTimeAs="timeZoneToShow"
-              ></timeline-chart>
+              />
             </template>
           </v-p-chart>
         </b-col>
@@ -120,6 +123,14 @@
           >
             <template v-slot:title>
               <h3>VPI Chart</h3>
+            </template>
+
+            <template v-slot:in-x-axis-group>
+              <timeline-chart
+                :periods="timePeriods"
+                :style-config="TimelineChartStyle"
+                :showTimeAs="timeZoneToShow"
+              />
             </template>
           </v-p-i-chart>
         </b-col>

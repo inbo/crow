@@ -3,10 +3,10 @@
     <slot name="title"></slot>
     <svg id="vp-chart" :width="styleConfig.width" :height="styleConfig.height">
       <g :transform="`translate(${margin.left}, ${margin.top})`">
-        <g
-          :transform="`translate(0, ${this.innerHeight})`"
-          v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}"
-        />
+        <g :transform="`translate(0, ${this.innerHeight})`">
+          <slot name="in-x-axis-group"></slot>
+          <g v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}" />
+        </g>
         <g v-yaxis-left="{'scale': yScale, 'tickValues': styleConfig.yAxisLeftTicks}" />
 
         <template v-for="d in vtpsDataPrepared">
@@ -18,7 +18,7 @@
             :fill="d.fill"
             :height="rectHeight"
             :width="rectWidth"
-          />
+          /> 
 
           <b-popover
             v-if="styleConfig.showTooltip"
@@ -146,6 +146,7 @@ export default Vue.extend({
       let d3Axis = d3
         .axisBottom<number>(scaleFunction)
         .ticks(7)
+        .tickSize(15)
         .tickFormat(d => {
           return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
         });
