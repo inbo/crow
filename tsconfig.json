@@ -11,11 +11,6 @@
     "sourceMap": true,
     "baseUrl": ".",
     "allowJs": true,
-    "types": [
-      "webpack-env",
-      "jest",
-      "d3"
-    ],
     "paths": {
       "@/*": [
         "src/*"
