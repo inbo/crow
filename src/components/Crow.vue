@@ -154,7 +154,7 @@ import helpers from "../helpers";
 
 import { VPIEntry } from "../VPIEntryInterface";
 import { VTPSDataRow } from "../VTPSDataRowInterface";
-import { VTPSDataRowFromFile } from "../VTPSDataRowFromFileInterface"
+import { VTPSDataRowFromFile } from "../VTPSDataRowFromFileInterface";
 import { Period } from "../PeriodInterface";
 import { RadarInterface } from "../RadarInterface";
 import { VTPSEntry } from "../VTPSEntryInterface";
@@ -184,11 +184,11 @@ export default Vue.extend({
       selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
 
       selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours around selectedDate at noon, local (to the radar) time
-      availableIntervals: config.availableTimeIntervals as TimeInterval[], 
+      availableIntervals: config.availableTimeIntervals as TimeInterval[],
 
       selectedRadarODIMCode: config.initialRadarODIMCode,
       availableRadars: config.availableRadars as RadarInterface[],
- 
+
       timeDisplayedAs: "radarLocal", // 'radarLocal' | 'UTC'
 
       showCharts: false,
@@ -269,7 +269,7 @@ export default Vue.extend({
 
     /* Store a Vtps data row originating in a file into vtpsData */
     storeDataRow(vtpsDataRow: VTPSDataRowFromFile) {
-      const objToStore = {...vtpsDataRow, ...{noData: false}}
+      const objToStore = { ...vtpsDataRow, ...{ noData: false } };
 
       if (
         Object.prototype.hasOwnProperty.call(
@@ -321,8 +321,8 @@ export default Vue.extend({
       let found = this.availableIntervals.find(
         d => d.value == this.selectedIntervalInHours
       );
-      
-      return found ? found.text : '';
+
+      return found ? found.text : "";
     },
     timeZoneToShow(): string {
       if (this.timeDisplayedAs == "radarLocal") {
@@ -345,11 +345,20 @@ export default Vue.extend({
       return periods;
     },
     selectedDateNoon(): moment.Moment {
-      return moment(this.selectedDate, "YYYY-MM-DD")
-        .hour(12)
-        .minute(0)
-        .second(0)
-        .tz(this.selectedRadarTimezone);
+      if (this.timeZoneToShow == "UTC") {
+        // Noon UTC, if we are in UTC mode
+        return moment
+          .utc(this.selectedDate, "YYYY-MM-DD")
+          .hour(12)
+          .minute(0)
+          .second(0);
+      } else {
+        return moment(this.selectedDate, "YYYY-MM-DD") // Noon at radar, if we are in radarLocal mode
+          .hour(12)
+          .minute(0)
+          .second(0)
+          .tz(this.timeZoneToShow);
+      }
     },
     startMoment(): moment.Moment {
       return moment(this.selectedDateNoon).subtract(
@@ -389,7 +398,7 @@ export default Vue.extend({
       for (let [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
         for (let [height, props] of Object.entries(metadataObj.heightData)) {
           let o = { timestamp: +timestamp, height: +height };
-          dataArray.push({ ...o, ...props as VTPSDataRow });
+          dataArray.push({ ...o, ...(props as VTPSDataRow) });
         }
       }
       return dataArray;
@@ -398,12 +407,15 @@ export default Vue.extend({
       let integratedProfiles = [] as VPIEntry[];
       for (let [timestamp, treeEntry] of Object.entries(this.radarVtps)) {
         // VTPS values are stored in a tree per height, we need a flat array for integratedProfile
-        let dataToIntegrate = []
+        let dataToIntegrate = [];
         for (let [height, vtpsValues] of Object.entries(treeEntry.heightData)) {
-          let o = {height: +height}
-          dataToIntegrate.push({...vtpsValues as VTPSDataRowFromFile, ...o})
+          let o = { height: +height };
+          dataToIntegrate.push({
+            ...(vtpsValues as VTPSDataRowFromFile),
+            ...o
+          });
         }
-        
+
         integratedProfiles.push({
           moment: moment.utc(+timestamp),
           integratedProfiles: helpers.integrateProfile(dataToIntegrate)
