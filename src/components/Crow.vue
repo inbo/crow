@@ -14,10 +14,8 @@
                 <b-form-select
                   id="input-radar"
                   size="sm"
-                  v-model="selectedRadarODIMCode"
+                  v-model="selectedRadarValue"
                   :options="availableRadars"
-                  value-field="ODIMCode"
-                  text-field="location"
                 ></b-form-select>
               </b-form-group>
             </b-col>
@@ -156,7 +154,7 @@ import { VPIEntry } from "../VPIEntryInterface";
 import { VTPSDataRow } from "../VTPSDataRowInterface";
 import { VTPSDataRowFromFile } from "../VTPSDataRowFromFileInterface";
 import { Period } from "../PeriodInterface";
-import { RadarInterface } from "../RadarInterface";
+import { RadarInterface, GroupedRadarInterface } from "../RadarInterface";
 import { VTPSEntry } from "../VTPSEntryInterface";
 import { TimeInterval } from "../TimeIntervaInterface";
 
@@ -186,8 +184,8 @@ export default Vue.extend({
       selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours around selectedDate at noon, local (to the radar) time
       availableIntervals: config.availableTimeIntervals as TimeInterval[],
 
-      selectedRadarODIMCode: config.initialRadarODIMCode,
-      availableRadars: config.availableRadars as RadarInterface[],
+      selectedRadarValue: config.initialRadarValue,
+      availableRadars: config.availableRadars as GroupedRadarInterface[],
 
       timeDisplayedAs: "radarLocal", // 'radarLocal' | 'UTC'
 
@@ -261,7 +259,7 @@ export default Vue.extend({
 
       this.initializeEmptyData();
       this.populateDataFromCrowServer(
-        this.selectedRadarODIMCode,
+        this.selectedRadarValue,
         this.startMoment,
         this.endMoment
       );
@@ -373,10 +371,18 @@ export default Vue.extend({
       );
     },
     selectedRadarAsObject(): RadarInterface {
-      let found = this.availableRadars.find(
-        d => d.ODIMCode == this.selectedRadarODIMCode
-      );
-      return found || this.availableRadars[0];
+      let found = this.availableRadars[0].options[0];
+      
+      this.availableRadars.forEach(radarGroup => {
+        let groupFound = radarGroup.options.find(
+          d => d.value == this.selectedRadarValue
+        );
+        if (groupFound) {
+          found = groupFound;
+        }
+      });
+
+      return found;
     },
     selectedRadarLatitude(): number {
       return this.selectedRadarAsObject.latitude;
@@ -385,7 +391,7 @@ export default Vue.extend({
       return this.selectedRadarAsObject.longitude;
     },
     selectedRadarLocation(): string {
-      return this.selectedRadarAsObject.location;
+      return this.selectedRadarAsObject.text;
     },
     selectedRadarCountry(): string {
       return this.selectedRadarAsObject.country;
