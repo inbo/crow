@@ -191,6 +191,10 @@ export default Vue.extend({
         return d.moment.valueOf();
       }).left,
 
+      timestampBisector: d3.bisector(function(d: VPIEntryForPath) {
+        return d.timestamp;
+      }).left,
+
       innerWidth:
         this.styleConfig.width -
         this.styleConfig.margin.left -
@@ -215,27 +219,50 @@ export default Vue.extend({
 
     syncVPIDataForPath() {
       // We smoothly update each entry in vpiDataForPath, based on selectedModePropertyName and vpiData
-      // 1) Add new entries, if necessary (when populating vpiData for example)
-      // 2) Update .val, based on selectedModePropertyName
-      // TODO: if we want to support all possible transitions, we shoudl probably also implement deletion
-      // (values in vpiDataForPath that are no more in vpiData)
+      // 1. Remove outdated entries first, so the index don't change later on (tween's callbacks, ...)
+      // 2. Add new entries, if necessary (when populating vpiData for example)
+      // 3. Update .val, based on selectedModePropertyName
+      
+      // TODO: refactor this method.
+ 
+      // 1. Remove oudated entries
+      const timestampsInVPI = [] as number[];
+      for (let entry of this.vpiData) {
+        timestampsInVPI.push(entry.moment.valueOf());
+      }
+      const indexOfEntriesToRemove = [] as number[];
+      this.vpiDataForPath.forEach((entryForPath, index) => {
+        if (!timestampsInVPI.includes(entryForPath.timestamp)) {
+          indexOfEntriesToRemove.push(index);
+        }
+      });
+      
+      // Removal happens while iterating BACKWARDS so indexes stay valid all along the loop
+      for (var i = indexOfEntriesToRemove.length - 1; i >= 0; --i) {
+        this.vpiDataForPath.splice(indexOfEntriesToRemove[i], 1);
+      }
+    
       for (let entry of this.vpiData) {
         const timestamp = entry.moment.valueOf();
+        const foundIndex = this.vpiDataForPath.findIndex(element => { 
+          return element.timestamp === timestamp;
+        });
 
-        const foundIndex = this.vpiDataForPath.findIndex(
-          element => element.timestamp == timestamp
-        );
-
-        const rawValue =
-          entry.integratedProfiles[this.selectedModePropertyName];
+        const rawValue = entry.integratedProfiles[this.selectedModePropertyName];
         const newScaledValue = this.yScale(isNaN(rawValue) ? 0 : rawValue);
 
         if (foundIndex == -1) {
-          this.vpiDataForPath.push({
+          // 2. Add new data
+          const insertIndex = this.timestampBisector(this.vpiDataForPath, timestamp);
+
+          const newEntry = {
             timestamp: timestamp,
             val: newScaledValue
-          });
+          };
+
+          this.vpiDataForPath.splice(insertIndex, 0, newEntry);
         } else {
+          // 3. Update existing data (and tween it)
           let cloneElem = { ...this.vpiDataForPath[foundIndex] };
 
           var tween = new TWEEN.Tween(cloneElem)
@@ -247,6 +274,7 @@ export default Vue.extend({
             .start(); // Start the tween immediately.
         }
       }
+
     },
     mouseEnter() {
       this.tooltipVisible = true;
