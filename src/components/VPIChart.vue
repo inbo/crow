@@ -374,7 +374,7 @@ export default Vue.extend({
         return helpers.formatMoment(
           this.VPIEntryAtTimeX.moment,
           this.showTimeAs,
-          this.styleConfig.timeAxisFormat
+          this.styleConfig.tooltipTimeFormat
         );
       }
       return "";

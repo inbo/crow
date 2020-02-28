@@ -75,7 +75,7 @@ export default Vue.extend({
       return helpers.formatMoment(
           m,
           this.showTimeAs,
-          this.styleConfig.timeDisplayFormat
+          this.styleConfig.tooltipTimeFormat
         );
     },
     getPeriodClass(sunAltitude: number) {

@@ -27,7 +27,7 @@
             placement="top"
             :key="'popover-' + d.timestamp + '-' + d.height"
           >
-            <template v-slot:title>{{ formatTimestamp(d.timestamp) }}</template>
+            <template v-slot:title>{{ formatTimestampForTooltip(d.timestamp) }}</template>
             <b>Height</b>
               {{ d.height }}m <br/>
             <b>Density</b>
@@ -96,6 +96,9 @@ export default Vue.extend({
     };
   },
   methods: {
+    formatTimestampForTooltip: function(ts: number): string {
+      return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.tooltipTimeFormat);
+    },
     formatTimestamp: function(ts: number):string {
       return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.timeAxisFormat);
     },

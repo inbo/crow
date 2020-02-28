@@ -66,6 +66,7 @@ export default {
         noDataColor: 'white',
 
         timeAxisFormat: globalTimeAxisFormat,
+        tooltipTimeFormat: "MMM D - HH:mm z",
 
         yAxisLeftTicks: [0, 1000, 2000, 3000, 4000] // Let's not show all altitudes (too crowded)
     },
@@ -75,6 +76,7 @@ export default {
         height: 300,
 
         timeAxisFormat: " HH:mm z",
+        tooltipTimeFormat: "MMM D - HH:mm z",
 
         lineColor: 'steelblue',
 
@@ -86,7 +88,7 @@ export default {
         width: globalChartWidth - globalChartMarginLeft - globalChartMarginRight,
         height: 10,
 
-        timeDisplayFormat: globalTimeAxisFormat,
+        tooltipTimeFormat: "MMM D - HH:mm z",
 
         showTooltip: true,
     }
