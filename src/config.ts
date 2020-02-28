@@ -1,7 +1,7 @@
 import { TimeInterval } from './TimeIntervaInterface';
 import { GroupedRadarInterface } from './RadarInterface';
 
-const globalTimeAxisFormat = " D-M@HH:mm z";  // See: https://momentjs.com/docs/#/displaying/
+const globalAxisTimeFormat = " D-M@HH:mm z";  // See: https://momentjs.com/docs/#/displaying/
 
 const globalChartMarginLeft = 65;
 const globalChartMarginRight = 60;
@@ -65,7 +65,7 @@ export default {
         maxDensityColor: '#dc3545',
         noDataColor: 'white',
 
-        timeAxisFormat: globalTimeAxisFormat,
+        axisTimeFormat: globalAxisTimeFormat,
         tooltipTimeFormat: "MMM D - HH:mm z",
 
         yAxisLeftTicks: [0, 1000, 2000, 3000, 4000] // Let's not show all altitudes (too crowded)
@@ -75,7 +75,7 @@ export default {
         width: globalChartWidth,
         height: 300,
 
-        timeAxisFormat: " HH:mm z",
+        axisTimeFormat: " HH:mm z",
         tooltipTimeFormat: "MMM D - HH:mm z",
 
         lineColor: 'steelblue',

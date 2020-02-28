@@ -26,7 +26,7 @@
         <g :transform="`translate(0, ${this.innerHeight})`">
           <slot name="in-x-axis-group" />
           <g
-            v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}"
+            v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'axisTimeFormat': styleConfig.axisTimeFormat}"
           />
         </g>
 
@@ -316,14 +316,14 @@ export default Vue.extend({
       // TODO: code copy/pasted from VPChart. Possible to factorize (without mixins)? Or isn't it worth it?
       const scaleFunction = binding.value.scale;
       const showTimeAs = binding.value.timezone;
-      const timeAxisFormat = binding.value.timeAxisFormat;
+      const axisTimeFormat = binding.value.axisTimeFormat;
 
       let d3Axis = d3
         .axisBottom<number>(scaleFunction)
         .ticks(7)
         .tickSize(15)
         .tickFormat(d => {
-          return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
+          return helpers.formatTimestamp(d, showTimeAs, axisTimeFormat);
         });
 
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting

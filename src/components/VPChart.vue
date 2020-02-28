@@ -5,7 +5,7 @@
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <g :transform="`translate(0, ${this.innerHeight})`">
           <slot name="in-x-axis-group"></slot>
-          <g v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'timeAxisFormat': styleConfig.timeAxisFormat}" />
+          <g v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'axisTimeFormat': styleConfig.axisTimeFormat}" />
         </g>
         <g v-yaxis-left="{'scale': yScale, 'tickValues': styleConfig.yAxisLeftTicks}" />
 
@@ -100,7 +100,7 @@ export default Vue.extend({
       return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.tooltipTimeFormat);
     },
     formatTimestamp: function(ts: number):string {
-      return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.timeAxisFormat);
+      return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.axisTimeFormat);
     },
     getRectYValue: function(height: number): number {
       const scaledValue = this.yScale(height.toString());
@@ -144,14 +144,14 @@ export default Vue.extend({
     xaxis(el, binding, vnode) {
       const scaleFunction = binding.value.scale;
       const showTimeAs = binding.value.timezone;
-      const timeAxisFormat = binding.value.timeAxisFormat;
+      const axisTimeFormat = binding.value.axisTimeFormat;
 
       let d3Axis = d3
         .axisBottom<number>(scaleFunction)
         .ticks(7)
         .tickSize(15)
         .tickFormat(d => {
-          return helpers.formatTimestamp(d, showTimeAs, timeAxisFormat);
+          return helpers.formatTimestamp(d, showTimeAs, axisTimeFormat);
         });
 
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
