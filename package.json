@@ -11,11 +11,11 @@
   "dependencies": {
     "@tweenjs/tween.js": "^18.5.0",
     "@types/d3": "^5.7.2",
-    "@types/tween.js": "^18.5.0",
     "@types/moment-timezone": "^0.5.12",
     "@types/suncalc": "^1.8.0",
+    "@types/tween.js": "^18.5.0",
     "axios": "^0.19.2",
-    "bootstrap-vue": "^2.4.0",
+    "bootstrap-vue": "^2.5.0",
     "core-js": "^3.6.4",
     "d3": "^5.15.0",
     "moment": "^2.24.0",
