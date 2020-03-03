@@ -3,9 +3,9 @@ import { GroupedRadarInterface } from './RadarInterface';
 
 const globalAxisTimeFormat = " D-M@HH:mm z";  // See: https://momentjs.com/docs/#/displaying/
 
-const globalChartMarginLeft = 65;
-const globalChartMarginRight = 60;
-const globalChartWidth = 72 * 12 + globalChartMarginLeft + globalChartMarginRight; // 72 = max number of visible hours 
+const globalChartMarginLeft = 65; // In-SVG margin used for axis and legend
+const globalChartMarginRight = 60; // In-SVG margin used for axis and legend
+const globalChartWidth = 72 * (60/5) + globalChartMarginLeft + globalChartMarginRight; // 72 = max number of visible hours (see availableTimeIntervals). 5 = duration in minutes of a period (=vtpsData.temporalResolution)
 
 
 export default {
