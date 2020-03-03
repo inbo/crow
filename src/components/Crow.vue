@@ -5,18 +5,21 @@
         <b-col lg>
           <b-row>
             <b-col sm>
-              <b-form-group
-                id="input-radar-group"
-                label="Radar:"
-                label-for="input-radar"
-                :description="selectedRadarLocation + ' is located in ' + selectedRadarCountry + '.'"
-              >
+              <b-form-group id="input-radar-group" label="Radar:" label-for="input-radar">
                 <b-form-select
                   id="input-radar"
                   size="sm"
                   v-model="selectedRadarValue"
                   :options="availableRadars"
                 ></b-form-select>
+
+                <b-form-text>
+                  {{ selectedRadarLocation }} is located at
+                  <a
+                    :href="`http://www.openstreetmap.org/?mlat=${selectedRadarLatitude}&mlon=${selectedRadarLongitude}&zoom=12`"
+                    target="_blank"
+                  >{{ selectedRadarLatitude }}, {{selectedRadarLongitude}}</a>.
+                </b-form-text>
               </b-form-group>
             </b-col>
 
@@ -372,7 +375,7 @@ export default Vue.extend({
     },
     selectedRadarAsObject(): RadarInterface {
       let found = this.availableRadars[0].options[0];
-      
+
       this.availableRadars.forEach(radarGroup => {
         let groupFound = radarGroup.options.find(
           d => d.value == this.selectedRadarValue
@@ -392,9 +395,6 @@ export default Vue.extend({
     },
     selectedRadarLocation(): string {
       return this.selectedRadarAsObject.text;
-    },
-    selectedRadarCountry(): string {
-      return this.selectedRadarAsObject.country;
     },
     selectedRadarTimezone(): string {
       return this.selectedRadarAsObject.timezone;
