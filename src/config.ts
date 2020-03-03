@@ -5,40 +5,37 @@ const globalAxisTimeFormat = " D-M@HH:mm z";  // See: https://momentjs.com/docs/
 
 const globalChartMarginLeft = 65; // In-SVG margin used for axis and legend
 const globalChartMarginRight = 60; // In-SVG margin used for axis and legend
-const globalChartWidth = 72 * (60/5) + globalChartMarginLeft + globalChartMarginRight; // 72 = max number of visible hours (see availableTimeIntervals). 5 = duration in minutes of a period (=vtpsData.temporalResolution)
+const svgWidth = 72 * (60/5) + globalChartMarginLeft + globalChartMarginRight; // 72 = max number of visible hours (see availableTimeIntervals). 5 = duration in minutes of a period (=vtpsData.temporalResolution)
 
 
 export default {
-    dataBaseUrl: 'https://crow.weernet.be',
-    // TODO: remove the "country" property from individual radar entries and update the code so it gets that info from the group label instead
+    dataServerUrl: 'https://crow.weernet.be',
     availableRadars: [
         {
             label: 'Belgium',
             options: [
-                { value: "behel", text: "Helchteren", country: "Belgium", latitude: 51.069199, longitude: 5.406138, timezone: 'Europe/Brussels' },
-                { value: "bejab", text: "Jabbeke", country: "Belgium", latitude: 51.1919, longitude: 3.0641, timezone: 'Europe/Brussels' },
-                { value: "bewid", text: "Wideumont", country: "Belgium", latitude: 49.9135, longitude: 5.5044, timezone: 'Europe/Brussels' },
-                { value: "bezav", text: "Zaventem", country: "Belgium", latitude: 50.9054, longitude: 4.4579, timezone: 'Europe/Brussels' },
+                { value: "behel", text: "Helchteren", latitude: 51.069199, longitude: 5.406138, timezone: 'Europe/Brussels' },
+                { value: "bejab", text: "Jabbeke", latitude: 51.1919, longitude: 3.0641, timezone: 'Europe/Brussels' },
+                { value: "bewid", text: "Wideumont", latitude: 49.9135, longitude: 5.5044, timezone: 'Europe/Brussels' },
+                { value: "bezav", text: "Zaventem", latitude: 50.9054, longitude: 4.4579, timezone: 'Europe/Brussels' },
             ]
         },
         {
             label: 'Germany',
             options: [
-                { value: "deess", text: "Essen", country: "Germany", latitude: 51.4055, longitude: 6.9669, timezone: 'Europe/Berlin' },
-                { value: "denhb", text: "Neuheilenbach", country: "Germany", latitude: 50.1097, longitude: 6.5483, timezone: 'Europe/Berlin' }
+                { value: "deess", text: "Essen", latitude: 51.4055, longitude: 6.9669, timezone: 'Europe/Berlin' },
+                { value: "denhb", text: "Neuheilenbach", latitude: 50.1097, longitude: 6.5483, timezone: 'Europe/Berlin' }
             ]
         },
         {
             label: 'Netherlands',
             options: [
-                { value: "nlhrw", text: "Herwijnen", country: "the Netherlands", latitude: 51.83708, longitude: 5.13797, timezone: 'Europe/Amsterdam' },
+                { value: "nlhrw", text: "Herwijnen", latitude: 51.83708, longitude: 5.13797, timezone: 'Europe/Amsterdam' },
             ]
         }
     ] as GroupedRadarInterface[],
 
     initialRadarValue: 'behel',
-
-    localizedDateFormat: "YYYY/MM/DD", // As returned by the browser when READING data from the "input type=date" field. TODO: Make it autodetected based on the locale?
 
     availableTimeIntervals: [
         { text: '1d', value: 24 },
@@ -56,7 +53,7 @@ export default {
 
     VPChartStyle: {
         margin: { top: 20, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },
-        width: globalChartWidth, // TODO: rename to svgWidth so it's more clear (same for height and other charts)
+        width: svgWidth, // TODO: rename to svgWidth so it's more clear (same for height and other charts)
         height: 300,
 
         showTooltip: false, // BEWARE: useful for debugging, but performance is horrible
@@ -72,7 +69,7 @@ export default {
     },
     VPIChartStyle: {
         margin: { top: 15, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },
-        width: globalChartWidth,
+        width: svgWidth,
         height: 300,
 
         axisTimeFormat: " HH:mm z",
@@ -85,7 +82,7 @@ export default {
 
     TimelineChartStyle: {
         margin: { top: 0, right: 0, bottom: 0, left: 0 },
-        width: globalChartWidth - globalChartMarginLeft - globalChartMarginRight,
+        width: svgWidth - globalChartMarginLeft - globalChartMarginRight, // This chart is embedded into the main charts, and should be as long as the X axis
         height: 10,
 
         tooltipTimeFormat: "MMM D - HH:mm z",

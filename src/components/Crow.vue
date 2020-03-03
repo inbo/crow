@@ -175,7 +175,6 @@ interface RadarVtpsAsTree {
 }
 
 // TODO: Use moment objects everywhere (currently date in vtpsDataRow, and string for v-model link)
-// TODO: validation of date min <= max
 export default Vue.extend({
   name: "Crow",
   data: function() {
@@ -312,7 +311,7 @@ export default Vue.extend({
 
     /* Build the data URL for a given day and radar */
     buildDataUrl(radarName: string, selectedDate: moment.Moment) {
-      return `${config.dataBaseUrl}/${radarName}/${selectedDate.format(
+      return `${config.dataServerUrl}/${radarName}/${selectedDate.format(
         "YYYY"
       )}/${radarName}_vpts_${selectedDate.format("YYYYMMDD")}.txt`;
     }

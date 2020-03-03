@@ -82,7 +82,6 @@ export default Vue.extend({
       return helpers.makeSafeForCSS(this.getPeriodName(sunAltitude));
     },
     getPeriodName(sunAltitude: number) {
-      // TODO: move to helpers?
       if (sunAltitude >= 0) {
         return "day";
       } else if (sunAltitude < 0 && sunAltitude >= -18) {
