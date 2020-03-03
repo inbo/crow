@@ -70,7 +70,7 @@
           >
             <template v-slot:title>{{ formattedMomentAtTimeX }}</template>
             <div>
-              <b>{{ selectedModeLabel }}: {{ selectedValAtTimeX | round2decimals }}</b>
+              {{ selectedModeLabel }}: {{ selectedValAtTimeX | round2decimals }}
             </div>
           </b-popover>
         </template>
