@@ -5,7 +5,7 @@ const globalAxisTimeFormat = " D-M@HH:mm z";  // See: https://momentjs.com/docs/
 
 const globalChartMarginLeft = 65;
 const globalChartMarginRight = 60;
-const globalChartWidth = 1152 + globalChartMarginLeft + globalChartMarginRight;
+const globalChartWidth = 72 * 12 + globalChartMarginLeft + globalChartMarginRight; // 72 = max number of visible hours 
 
 
 export default {
@@ -42,7 +42,7 @@ export default {
 
     availableTimeIntervals: [
         { text: '1d', value: 24 },
-        { text: '4d', value: 96 },
+        { text: '3d', value: 72 },
         { text: '1h', value: 1} // Only for debugging: intervals that are not multiple of 24h won't work properly with the time navigation logic
     ] as TimeInterval[],
 
