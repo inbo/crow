@@ -86,7 +86,7 @@ test("Don't have popovers when asked in the config", () => {
 });
 
 
-// TOTO: check popover content
+// TODO: check popover content
 
 test('TimelineChart axis can be disabled', () => {
   let disabledAxisconfig = styleConfig;
