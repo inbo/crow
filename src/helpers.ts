@@ -44,7 +44,7 @@ function parseFloatOrZero(str: string): number {
     }
 }
 
-function readVtps(responseString: string): VTPSDataRowFromFile[] {
+function parseVtps(responseString: string): VTPSDataRowFromFile[] {
     let d = responseString.split("\n");
     d = d.splice(config.vtpsFormat.numHeaderLines); // Remove 4 header lines
     // The file is also terminated by a blank line, which cause issues.
@@ -136,4 +136,4 @@ function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infi
     return ({ "mtr": mtr, "rtr": rtr, "vid": vid, "vir": vir })
 }
 
-export default { readVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4 } 
+export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4 } 
