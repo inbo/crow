@@ -1,11 +1,19 @@
 <template>
   <b-container class="content">
-    <b-form form v-on:change="loadData" class="mb-4">
+    <b-form 
+      form
+      class="mb-4" 
+      @change="loadData" 
+    >
       <b-row>
         <b-col lg>
           <b-row>
             <b-col sm>
-              <b-form-group id="input-radar-group" label="Radar:" label-for="input-radar">
+              <b-form-group 
+                id="input-radar-group" 
+                label="Radar:" 
+                label-for="input-radar"
+              >
                 <b-form-select
                   id="input-radar"
                   size="sm"
@@ -178,7 +186,7 @@ interface RadarVtpsAsTree {
 export default Vue.extend({
   name: "Crow",
   data: function() {
-    let twoDaysAgo = moment().subtract(2, "days");
+    const twoDaysAgo = moment().subtract(2, "days");
 
     return {
       selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
@@ -214,14 +222,14 @@ export default Vue.extend({
       // Remove existing data
       this.radarVtps = {} as RadarVtpsAsTree;
 
-      let currentMoment = this.startMoment.clone();
+      const currentMoment = this.startMoment.clone();
       while (currentMoment.isBefore(this.endMoment)) {
-        let heightObj = {} as VTPSDataByHeight;
+        const heightObj = {} as VTPSDataByHeight;
         this.availableHeights.forEach(height => {
           heightObj[height] = { noData: true };
         });
 
-        let metadataObj = {
+        const metadataObj = {
           sunAltitude:
             SunCalc.getPosition(
               currentMoment.toDate(),
@@ -291,15 +299,15 @@ export default Vue.extend({
       startMoment: moment.Moment,
       endMoment: moment.Moment
     ) {
-      let startDay = moment.utc(startMoment, "YYYY-MM-DD");
-      let endDay = moment.utc(endMoment, "YYYY-MM-DD").add(1, "days");
+      const startDay = moment.utc(startMoment, "YYYY-MM-DD");
+      const endDay = moment.utc(endMoment, "YYYY-MM-DD").add(1, "days");
 
-      let currentDay = startDay.clone();
+      const currentDay = startDay.clone();
 
       while (currentDay.isBefore(endDay, "day")) {
-        let url = this.buildDataUrl(radarName, currentDay);
+        const url = this.buildDataUrl(radarName, currentDay);
         axios.get(url).then(response => {
-          let dayData = helpers.parseVtps(response.data);
+          const dayData = helpers.parseVtps(response.data);
 
           for (const val of dayData) {
             this.storeDataRow(val);
@@ -318,7 +326,7 @@ export default Vue.extend({
   },
   computed: {
     selectedIntervalLabel(): string {
-      let found = this.availableIntervals.find(
+      const found = this.availableIntervals.find(
         d => d.value == this.selectedIntervalInHours
       );
 
@@ -333,9 +341,9 @@ export default Vue.extend({
     },
     timePeriods(): Period[] {
       // An array of all time periods currently shown (derived from radarVtps) with metadata such as the sun's position.
-      let periods = [];
+      const periods = [];
 
-      for (let [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
+      for (const [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
         periods.push({
           moment: moment.utc(+timestamp),
           sunAltitude: metadataObj.sunAltitude
@@ -376,7 +384,7 @@ export default Vue.extend({
       let found = this.availableRadars[0].options[0];
 
       this.availableRadars.forEach(radarGroup => {
-        let groupFound = radarGroup.options.find(
+        const groupFound = radarGroup.options.find(
           d => d.value == this.selectedRadarValue
         );
         if (groupFound) {
@@ -399,22 +407,22 @@ export default Vue.extend({
       return this.selectedRadarAsObject.timezone;
     },
     radarVtpsAsArray(): VTPSDataRow[] {
-      let dataArray = [];
-      for (let [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
-        for (let [height, props] of Object.entries(metadataObj.heightData)) {
-          let o = { timestamp: +timestamp, height: +height };
+      const dataArray = [];
+      for (const [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
+        for (const [height, props] of Object.entries(metadataObj.heightData)) {
+          const o = { timestamp: +timestamp, height: +height };
           dataArray.push({ ...o, ...(props as VTPSDataRow) });
         }
       }
       return dataArray;
     },
     integratedProfiles(): VPIEntry[] {
-      let integratedProfiles = [] as VPIEntry[];
-      for (let [timestamp, treeEntry] of Object.entries(this.radarVtps)) {
+      const integratedProfiles = [] as VPIEntry[];
+      for (const [timestamp, treeEntry] of Object.entries(this.radarVtps)) {
         // VTPS values are stored in a tree per height, we need a flat array for integratedProfile
-        let dataToIntegrate = [];
-        for (let [height, vtpsValues] of Object.entries(treeEntry.heightData)) {
-          let o = { height: +height };
+        const dataToIntegrate = [];
+        for (const [height, vtpsValues] of Object.entries(treeEntry.heightData)) {
+          const o = { height: +height };
           dataToIntegrate.push({
             ...(vtpsValues as VTPSDataRowFromFile),
             ...o

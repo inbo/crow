@@ -120,7 +120,7 @@ export default Vue.extend({
         .asSeconds();
     },
     rectDivider: function(): number {
-      let duration = moment.duration(this.maxMoment.diff(this.minMoment));
+      const duration = moment.duration(this.maxMoment.diff(this.minMoment));
       return duration.asSeconds() / this.dataTemporalResolution + 1;
     },
     minMoment: function(): moment.Moment {

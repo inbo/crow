@@ -227,7 +227,7 @@ export default Vue.extend({
  
       // 1. Remove oudated entries
       const timestampsInVPI = [] as number[];
-      for (let entry of this.vpiData) {
+      for (const entry of this.vpiData) {
         timestampsInVPI.push(entry.moment.valueOf());
       }
       const indexOfEntriesToRemove = [] as number[];
@@ -238,11 +238,11 @@ export default Vue.extend({
       });
       
       // Removal happens while iterating BACKWARDS so indexes stay valid all along the loop
-      for (var i = indexOfEntriesToRemove.length - 1; i >= 0; --i) {
+      for (let i = indexOfEntriesToRemove.length - 1; i >= 0; --i) {
         this.vpiDataForPath.splice(indexOfEntriesToRemove[i], 1);
       }
     
-      for (let entry of this.vpiData) {
+      for (const entry of this.vpiData) {
         const timestamp = entry.moment.valueOf();
         const foundIndex = this.vpiDataForPath.findIndex(element => { 
           return element.timestamp === timestamp;
@@ -263,9 +263,9 @@ export default Vue.extend({
           this.vpiDataForPath.splice(insertIndex, 0, newEntry);
         } else {
           // 3. Update existing data (and tween it)
-          let cloneElem = { ...this.vpiDataForPath[foundIndex] };
+          const cloneElem = { ...this.vpiDataForPath[foundIndex] };
 
-          var tween = new TWEEN.Tween(cloneElem)
+          const tween = new TWEEN.Tween(cloneElem)
             .easing(TWEEN.Easing.Quadratic.Out)
             .to({ val: newScaledValue }, 300)
             .onUpdate(() => {
@@ -287,16 +287,16 @@ export default Vue.extend({
     mouseMove(event: MouseEvent) {
       // When mouse is moved over the chart, updates this.mouseXPosition and this.VPIEntryAtTimeX
       // 1. Get (and save in data) the mouse position
-      let target = event.target as HTMLElement;
-      let bounds = target.getBoundingClientRect();
-      let mouseX = event.clientX - bounds.left;
+      const target = event.target as HTMLElement;
+      const bounds = target.getBoundingClientRect();
+      const mouseX = event.clientX - bounds.left;
       this.mouseXPosition = mouseX;
 
       // 2. Find out (and save in data) the VPI data at the mouse position
-      let x0 = this.xScale.invert(this.mouseXPosition);
-      let i = this.momentBisector(this.vpiData, x0);
-      let d0 = this.vpiData[i - 1];
-      let d1 = this.vpiData[i];
+      const x0 = this.xScale.invert(this.mouseXPosition);
+      const i = this.momentBisector(this.vpiData, x0);
+      const d0 = this.vpiData[i - 1];
+      const d1 = this.vpiData[i];
       this.VPIEntryAtTimeX =
         x0.getTime() / 1000 - d0.moment.valueOf() >
         d1.moment.valueOf() - x0.getTime() / 1000
@@ -308,7 +308,7 @@ export default Vue.extend({
     yaxis(el, binding, vnode) {
       const scaleFunction = binding.value.scale;
 
-      let d3Axis = d3.axisLeft(scaleFunction).tickSizeOuter(0); // And we want to hide the last tick line
+      const d3Axis = d3.axisLeft(scaleFunction).tickSizeOuter(0); // And we want to hide the last tick line
 
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
     },
@@ -318,7 +318,7 @@ export default Vue.extend({
       const showTimeAs = binding.value.timezone;
       const axisTimeFormat = binding.value.axisTimeFormat;
 
-      let d3Axis = d3
+      const d3Axis = d3
         .axisBottom<number>(scaleFunction)
         .ticks(7)
         .tickSize(15)
@@ -400,25 +400,25 @@ export default Vue.extend({
       return null;
     },
     maxVID: function(): number {
-      let max = d3.max(this.vpiData, function(d) {
+      const max = d3.max(this.vpiData, function(d) {
         return d.integratedProfiles.vid;
       });
       return max || 0;
     },
     maxVIR: function(): number {
-      let max = d3.max(this.vpiData, function(d) {
+      const max = d3.max(this.vpiData, function(d) {
         return d.integratedProfiles.vir;
       });
       return max || 0;
     },
     maxMTR: function(): number {
-      let max = d3.max(this.vpiData, function(d) {
+      const max = d3.max(this.vpiData, function(d) {
         return d.integratedProfiles.mtr;
       });
       return max || 0;
     },
     maxRTR: function(): number {
-      let max = d3.max(this.vpiData, function(d) {
+      const max = d3.max(this.vpiData, function(d) {
         return d.integratedProfiles.rtr;
       });
       return max || 0;
@@ -441,19 +441,19 @@ export default Vue.extend({
       return this.selectedModeObject.label;
     },
     selectedModeObject: function(): DisplayMode {
-      let found = this.availableModes.find(
+      const found = this.availableModes.find(
         d => d.propertyName == this.selectedMode
       );
       return found || this.availableModes[0]; // Default: first entry
     },
     minMoment: function(): moment.Moment {
-      let foundMoment = d3.min(this.vpiData, function(d) {
+      const foundMoment = d3.min(this.vpiData, function(d) {
         return d.moment;
       });
       return foundMoment || moment();
     },
     maxMoment: function(): moment.Moment {
-      let foundMoment = d3.max(this.vpiData, function(d) {
+      const foundMoment = d3.max(this.vpiData, function(d) {
         return d.moment;
       });
       return foundMoment || moment();

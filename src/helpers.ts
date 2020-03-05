@@ -7,24 +7,24 @@ import { Profiles } from './ProfilesInterface';
 
 function uuidv4(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
 }
 
-function formatMoment(moment: moment.Moment, showTimeAs:string, timeAxisFormat:string): string {
+function formatMoment(moment: moment.Moment, showTimeAs: string, timeAxisFormat: string): string {
     // Format the timestamp passed as argument, according to timezone and timeAxisFormat
     return moment.tz(showTimeAs).format(timeAxisFormat);
 }
 
-function formatTimestamp(ts:number, showTimeAs:string, timeAxisFormat:string): string {
+function formatTimestamp(ts: number, showTimeAs: string, timeAxisFormat: string): string {
     // Format the timestamp passed as argument, according to timezone and timeAxisFormat
     return formatMoment(moment(ts), showTimeAs, timeAxisFormat);
 }
 
 function makeSafeForCSS(name: string): string {
     return name.replace(/[^a-z0-9]/g, function(s) {
-        var c = s.charCodeAt(0);
+        const c = s.charCodeAt(0);
         if (c == 32) return '-';
         if (c >= 65 && c <= 90) return '_' + s.toLowerCase();
         return '__' + ('000' + c.toString(16)).slice(-4);
@@ -36,7 +36,7 @@ function metersToFeet(meters: number): number {
 }
 
 function parseFloatOrZero(str: string): number {
-    let val = parseFloat(str);
+    const val = parseFloat(str);
     if (isNaN(val)) {
         return 0;
     } else {
@@ -50,7 +50,7 @@ function parseVtps(responseString: string): VTPSDataRowFromFile[] {
     // The file is also terminated by a blank line, which cause issues.
     d.pop()
 
-    let r = d.map(function (row) {
+    const r = d.map(function (row) {
         // There are NaN values everywhere in the data, D3 don't know how to interpret them
         // For now, we consider a non-numbers to mean 0
 
@@ -60,7 +60,7 @@ function parseVtps(responseString: string): VTPSDataRowFromFile[] {
             dd: parseFloat(row.substring(47, 52)),
             ff: parseFloat(row.substring(41, 46)),
             dens: parseFloatOrZero(row.substring(76, 82)),
-            sd_vvp: parseFloat(row.substring(53, 59)),
+            sd_vvp: parseFloat(row.substring(53, 59)), // eslint-disable-line @typescript-eslint/camelcase
             eta: parseFloatOrZero(row.substring(70, 75))
         };
     });
@@ -101,9 +101,9 @@ function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infi
     }
 
     // Extract dd, ff and dens values
-    let ff = data.map(x => x.ff);
-    let dens = data.map(x => x.dens);
-    let eta = data.map(x => x.eta);
+    const ff = data.map(x => x.ff);
+    const dens = data.map(x => x.dens);
+    const eta = data.map(x => x.eta);
 
     // Calculate the cosFactor
     let cosFactor = [];
@@ -114,22 +114,22 @@ function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infi
     }
 
     // Calculate mtr
-    let mtr = 0.001 * interval * cosFactor.map((e, i) => e * ff[i] * dens[i] * 3.6)
+    const mtr = 0.001 * interval * cosFactor.map((e, i) => e * ff[i] * dens[i] * 3.6)
         .filter(x => !Number.isNaN(x))
         .reduce((a, b) => a + b, 0);
 
     // Calculate rtr
-    let rtr = 0.001 * interval * cosFactor.map((e, i) => e * ff[i] * eta[i] * 3.6)
+    const rtr = 0.001 * interval * cosFactor.map((e, i) => e * ff[i] * eta[i] * 3.6)
         .filter(x => !Number.isNaN(x))
         .reduce((a, b) => a + b, 0);
 
     // Calculate vid
-    let vid = 0.001 * interval * dens
+    const vid = 0.001 * interval * dens
         .filter(x => !Number.isNaN(x))
         .reduce((a, b) => a + b, 0);
 
     // Calculate vir
-    let vir = 0.001 * interval * eta
+    const vir = 0.001 * interval * eta
         .filter(x => !Number.isNaN(x))
         .reduce((a, b) => a + b, 0);
 

@@ -99,7 +99,7 @@ export default Vue.extend({
     formatTimestampForTooltip: function(ts: number): string {
       return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.tooltipTimeFormat);
     },
-    formatTimestamp: function(ts: number):string {
+    formatTimestamp: function(ts: number): string {
       return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.axisTimeFormat);
     },
     getRectYValue: function(height: number): number {
@@ -123,7 +123,7 @@ export default Vue.extend({
     yaxisRight(el, binding, vnode) {
       const scaleFunction = binding.value.scale;
 
-      let d3Axis = 
+      const d3Axis = 
         d3.axisRight<number>(scaleFunction)
           .tickSizeOuter(0)
           .tickFormat(d3.format("d"));
@@ -134,7 +134,7 @@ export default Vue.extend({
       const scaleFunction = binding.value.scale;
       const tickValues = binding.value.tickValues;
 
-      let d3Axis = d3
+      const d3Axis = d3
         .axisLeft(scaleFunction)
         .tickValues(tickValues)
         .tickSizeOuter(0); // And we want to hide the last tick line
@@ -146,7 +146,7 @@ export default Vue.extend({
       const showTimeAs = binding.value.timezone;
       const axisTimeFormat = binding.value.axisTimeFormat;
 
-      let d3Axis = d3
+      const d3Axis = d3
         .axisBottom<number>(scaleFunction)
         .ticks(7)
         .tickSize(15)
@@ -165,23 +165,23 @@ export default Vue.extend({
       return Math.round(this.innerWidth / this.rectDivider);
     },
     rectDivider: function(): number {
-      let durationInMs = this.maxTimestamp - this.minTimestamp;
+      const durationInMs = this.maxTimestamp - this.minTimestamp;
       return durationInMs / 1000 / this.dataTemporalResolution + 1;
     },
     minTimestamp: function(): number {
-      let minVal = d3.min(this.vtpsData, function(d: VTPSEntry) {
+      const minVal = d3.min(this.vtpsData, function(d: VTPSEntry) {
         return d.timestamp;
       });
       return minVal || 0;
     },
     maxTimestamp: function(): number {
-      let maxVal = d3.max(this.vtpsData, function(d: VTPSEntry) {
+      const maxVal = d3.max(this.vtpsData, function(d: VTPSEntry) {
         return d.timestamp;
       });
       return maxVal || 0;
     },
     maxDensity: function(): number {
-      let maxVal = d3.max(this.vtpsData, function(d) {
+      const maxVal = d3.max(this.vtpsData, function(d) {
         return d.dens;
       });
       return maxVal || 0;
@@ -190,7 +190,7 @@ export default Vue.extend({
       return (this.vtpsData[26].timestamp - this.vtpsData[0].timestamp) / 1000; // TODO: replace 26 by dynamic value
     },
     distinctHeightsMeters: function(): number[] {
-      let heightsSet = new Set(this.vtpsData.map(row => row.height));
+      const heightsSet = new Set(this.vtpsData.map(row => row.height));
       return Array.from(heightsSet.values());
     },
     scale: function(): Scales {
