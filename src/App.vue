@@ -45,7 +45,9 @@ import PageNotFound from "./components/PageNotFound.vue";
 Vue.use(VueRouter);
 
 const routes = [
-  { path: "/", component: Crow },
+  // The main route accept the following parameters that will be passed to Crow:
+  // - radar
+  { path: "/", component: Crow, props: (route) => ({ radarValueProp: route.query.radar }) }, // Example URL: http://localhost:8080/#/?radar=bezav
   { path: "*", component: PageNotFound }
 ];
 

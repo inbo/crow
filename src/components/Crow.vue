@@ -121,6 +121,12 @@
       </b-row>
     </b-form>
 
+    <b-row>
+      <b-col>
+        <small><router-link :to="{ path: '/', query: { radar: this.selectedRadarValue }}">Link to this search</router-link></small>
+      </b-col>
+    </b-row>
+
     <div v-if="showCharts">
       <b-row>
         <b-col>
@@ -203,7 +209,6 @@ interface RadarVtpsAsTree {
   [key: number]: RadarVTPSTreeEntry;
 }
 
-// TODO: Use moment objects everywhere (currently date in vtpsDataRow, and string for v-model link)
 export default Vue.extend({
   name: "Crow",
   components: {
@@ -211,16 +216,22 @@ export default Vue.extend({
     VPIChart,
     TimelineChart
   },
+  props: {
+    radarValueProp: { 
+      type: String,
+      default: config.initialRadarValue
+    }
+  },
   data: function() {
     const twoDaysAgo = moment().subtract(2, "days");
 
     return {
       selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
 
-      selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours around selectedDate at noon, local (to the radar) time
+      selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours around selectedDate at noon
       availableIntervals: config.availableTimeIntervals as TimeInterval[],
 
-      selectedRadarValue: config.initialRadarValue,
+      selectedRadarValue: this.radarValueProp,
       availableRadars: config.availableRadars as GroupedRadarInterface[],
 
       timeDisplayedAs: "radarLocal", // 'radarLocal' | 'UTC'
@@ -240,6 +251,10 @@ export default Vue.extend({
     };
   },
   computed: {
+    /*permalinkUrl(): string {
+      return 'http://www.google.com'
+    },*/
+
     selectedIntervalLabel(): string {
       const found = this.availableIntervals.find(
         d => d.value == this.selectedIntervalInHours
