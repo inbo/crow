@@ -16,17 +16,17 @@
               >
                 <b-form-select
                   id="input-radar"
-                  size="sm"
                   v-model="selectedRadarValue"
+                  size="sm"
                   :options="availableRadars"
-                ></b-form-select>
+                />
 
                 <b-form-text>
                   {{ selectedRadarLocation }} is located at
                   <a
                     :href="`http://www.openstreetmap.org/?mlat=${selectedRadarLatitude}&mlon=${selectedRadarLongitude}&zoom=12`"
                     target="_blank"
-                  >{{ selectedRadarLatitude }}, {{selectedRadarLongitude}}</a>.
+                  >{{ selectedRadarLatitude }}, {{ selectedRadarLongitude }}</a>.
                 </b-form-text>
               </b-form-group>
             </b-col>
@@ -42,22 +42,26 @@
                   <b-input-group-prepend>
                     <b-button
                       variant="outline-secondary"
-                      v-on:click="decrementPeriod"
-                    >-{{ selectedIntervalLabel }}</b-button>
+                      @click="decrementPeriod"
+                    >
+                      -{{ selectedIntervalLabel }}
+                    </b-button>
                   </b-input-group-prepend>
 
                   <b-form-input
                     id="input-date"
+                    v-model="selectedDate"
                     type="date"
                     placeholder="Type a date..."
-                    v-model="selectedDate"
                   />
 
                   <b-input-group-append>
                     <b-button
                       variant="outline-secondary"
-                      v-on:click="incrementPeriod"
-                    >+{{ selectedIntervalLabel }}</b-button>
+                      @click="incrementPeriod"
+                    >
+                      +{{ selectedIntervalLabel }}
+                    </b-button>
                   </b-input-group-append>
                 </b-input-group>
               </b-form-group>
@@ -67,30 +71,48 @@
 
         <b-col lg>
           <b-row>
-            <b-col cols="6" sm="3">
-              <b-form-group id="input-interval-group" label="Interval:" label-for="input-interval">
+            <b-col 
+              cols="6" 
+              sm="3"
+            >
+              <b-form-group 
+                id="input-interval-group" 
+                label="Interval:" 
+                label-for="input-interval"
+              >
                 <b-form-radio-group
                   id="input-interval"
+                  v-model="selectedIntervalInHours"
                   size="sm"
                   buttons
                   button-variant="outline-secondary"
-                  v-model="selectedIntervalInHours"
                   :options="availableIntervals"
-                ></b-form-radio-group>
+                />
               </b-form-group>
             </b-col>
 
-            <b-col cols="6" sm="3">
-              <b-form-group id="input-timezone-group" label="Time zone:" label-for="input-timezone">
+            <b-col 
+              cols="6" 
+              sm="3"
+            >
+              <b-form-group 
+                id="input-timezone-group" 
+                label="Time zone:" 
+                label-for="input-timezone"
+              >
                 <b-form-radio-group
                   id="input-timezone"
+                  v-model="timeDisplayedAs"
                   size="sm"
                   buttons
                   button-variant="outline-secondary"
-                  v-model="timeDisplayedAs"
                 >
-                  <b-form-radio value="radarLocal">Radar</b-form-radio>
-                  <b-form-radio value="UTC">UTC</b-form-radio>
+                  <b-form-radio value="radarLocal">
+                    Radar
+                  </b-form-radio>
+                  <b-form-radio value="UTC">
+                    UTC  
+                  </b-form-radio>
                 </b-form-radio-group>
               </b-form-group>
             </b-col>
@@ -104,7 +126,7 @@
         <b-col>
           <v-p-chart
             :vtps-data="radarVtpsAsArray"
-            :showTimeAs="timeZoneToShow"
+            :show-time-as="timeZoneToShow"
             :style-config="VPChartStyle"
           >
             <template v-slot:title>
@@ -115,7 +137,7 @@
               <timeline-chart
                 :periods="timePeriods"
                 :style-config="TimelineChartStyle"
-                :showTimeAs="timeZoneToShow"
+                :show-time-as="timeZoneToShow"
               />
             </template>
           </v-p-chart>
@@ -127,7 +149,7 @@
           <v-p-i-chart
             :vpi-data="integratedProfiles"
             :style-config="VPIChartStyle"
-            :showTimeAs="timeZoneToShow"
+            :show-time-as="timeZoneToShow"
             :data-temporal-resolution="dataTemporalResolution"
           >
             <template v-slot:title>
@@ -138,7 +160,7 @@
               <timeline-chart
                 :periods="timePeriods"
                 :style-config="TimelineChartStyle"
-                :showTimeAs="timeZoneToShow"
+                :show-time-as="timeZoneToShow"
               />
             </template>
           </v-p-i-chart>
@@ -166,7 +188,6 @@ import { VTPSDataRow } from "../VTPSDataRowInterface";
 import { VTPSDataRowFromFile } from "../VTPSDataRowFromFileInterface";
 import { Period } from "../PeriodInterface";
 import { RadarInterface, GroupedRadarInterface } from "../RadarInterface";
-import { VTPSEntry } from "../VTPSEntryInterface";
 import { TimeInterval } from "../TimeIntervaInterface";
 
 interface VTPSDataByHeight {
@@ -185,6 +206,11 @@ interface RadarVtpsAsTree {
 // TODO: Use moment objects everywhere (currently date in vtpsDataRow, and string for v-model link)
 export default Vue.extend({
   name: "Crow",
+  components: {
+    VPChart,
+    VPIChart,
+    TimelineChart
+  },
   data: function() {
     const twoDaysAgo = moment().subtract(2, "days");
 
@@ -212,117 +238,6 @@ export default Vue.extend({
       // All timestamps are kept in UTC (transformed later, in the viz components)
       radarVtps: {} as RadarVtpsAsTree
     };
-  },
-  methods: {
-    /* Initialize radarVtps with empty data 
-       - The temporal range is [startMoment, endMoment] (resolution: dataTemporalResolution - in seconds)
-       - Heights follow availableHeights
-    */
-    initializeEmptyData() {
-      // Remove existing data
-      this.radarVtps = {} as RadarVtpsAsTree;
-
-      const currentMoment = this.startMoment.clone();
-      while (currentMoment.isBefore(this.endMoment)) {
-        const heightObj = {} as VTPSDataByHeight;
-        this.availableHeights.forEach(height => {
-          heightObj[height] = { noData: true };
-        });
-
-        const metadataObj = {
-          sunAltitude:
-            SunCalc.getPosition(
-              currentMoment.toDate(),
-              this.selectedRadarLatitude,
-              this.selectedRadarLongitude
-            ).altitude *
-            (180 / Math.PI), // In degrees
-          heightData: heightObj
-        };
-
-        this.$set(
-          this.radarVtps,
-          currentMoment.toDate().getTime(),
-          metadataObj
-        );
-
-        currentMoment.add(this.dataTemporalResolution, "seconds");
-      }
-    },
-
-    decrementPeriod() {
-      this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
-        .subtract(this.selectedIntervalInHours, "hours")
-        .format(moment.HTML5_FMT.DATE);
-      this.loadData();
-    },
-
-    incrementPeriod() {
-      this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
-        .add(this.selectedIntervalInHours, "hours")
-        .format(moment.HTML5_FMT.DATE);
-      this.loadData();
-    },
-
-    loadData() {
-      this.showCharts = true;
-
-      this.initializeEmptyData();
-      this.populateDataFromCrowServer(
-        this.selectedRadarValue,
-        this.startMoment,
-        this.endMoment
-      );
-    },
-
-    /* Store a Vtps data row originating in a file into vtpsData */
-    storeDataRow(vtpsDataRow: VTPSDataRowFromFile) {
-      const objToStore = { ...vtpsDataRow, ...{ noData: false } };
-
-      if (
-        Object.prototype.hasOwnProperty.call(
-          this.radarVtps,
-          vtpsDataRow.datetime
-        )
-      ) {
-        this.$set(
-          this.radarVtps[vtpsDataRow.datetime].heightData,
-          vtpsDataRow.height,
-          objToStore
-        );
-      }
-    },
-
-    /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */
-    populateDataFromCrowServer(
-      radarName: string,
-      startMoment: moment.Moment,
-      endMoment: moment.Moment
-    ) {
-      const startDay = moment.utc(startMoment, "YYYY-MM-DD");
-      const endDay = moment.utc(endMoment, "YYYY-MM-DD").add(1, "days");
-
-      const currentDay = startDay.clone();
-
-      while (currentDay.isBefore(endDay, "day")) {
-        const url = this.buildDataUrl(radarName, currentDay);
-        axios.get(url).then(response => {
-          const dayData = helpers.parseVtps(response.data);
-
-          for (const val of dayData) {
-            this.storeDataRow(val);
-          }
-        });
-        currentDay.add(1, "days");
-      }
-    },
-
-    /* Build the data URL for a given day and radar */
-    buildDataUrl(radarName: string, selectedDate: moment.Moment) {
-      return `${config.dataServerUrl}/${radarName}/${selectedDate.format(
-        "YYYY"
-      )}/${radarName}_vpts_${selectedDate.format("YYYYMMDD")}.txt`;
-    }
   },
   computed: {
     selectedIntervalLabel(): string {
@@ -437,16 +352,121 @@ export default Vue.extend({
       return integratedProfiles;
     }
   },
-
   mounted: function() {
     this.$nextTick(function() {
       this.loadData();
     });
   },
-  components: {
-    VPChart,
-    VPIChart,
-    TimelineChart
+  methods: {
+    /* Initialize radarVtps with empty data 
+       - The temporal range is [startMoment, endMoment] (resolution: dataTemporalResolution - in seconds)
+       - Heights follow availableHeights
+    */
+    initializeEmptyData(): void {
+      // Remove existing data
+      this.radarVtps = {} as RadarVtpsAsTree;
+
+      const currentMoment = this.startMoment.clone();
+      while (currentMoment.isBefore(this.endMoment)) {
+        const heightObj = {} as VTPSDataByHeight;
+        this.availableHeights.forEach(height => {
+          heightObj[height] = { noData: true };
+        });
+
+        const metadataObj = {
+          sunAltitude:
+            SunCalc.getPosition(
+              currentMoment.toDate(),
+              this.selectedRadarLatitude,
+              this.selectedRadarLongitude
+            ).altitude *
+            (180 / Math.PI), // In degrees
+          heightData: heightObj
+        };
+
+        this.$set(
+          this.radarVtps,
+          currentMoment.toDate().getTime(),
+          metadataObj
+        );
+
+        currentMoment.add(this.dataTemporalResolution, "seconds");
+      }
+    },
+
+    decrementPeriod(): void {
+      this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
+        .subtract(this.selectedIntervalInHours, "hours")
+        .format(moment.HTML5_FMT.DATE);
+      this.loadData();
+    },
+
+    incrementPeriod(): void {
+      this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
+        .add(this.selectedIntervalInHours, "hours")
+        .format(moment.HTML5_FMT.DATE);
+      this.loadData();
+    },
+
+    loadData(): void {
+      this.showCharts = true;
+
+      this.initializeEmptyData();
+      this.populateDataFromCrowServer(
+        this.selectedRadarValue,
+        this.startMoment,
+        this.endMoment
+      );
+    },
+
+    /* Store a Vtps data row originating in a file into vtpsData */
+    storeDataRow(vtpsDataRow: VTPSDataRowFromFile): void {
+      const objToStore = { ...vtpsDataRow, ...{ noData: false } };
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          this.radarVtps,
+          vtpsDataRow.datetime
+        )
+      ) {
+        this.$set(
+          this.radarVtps[vtpsDataRow.datetime].heightData,
+          vtpsDataRow.height,
+          objToStore
+        );
+      }
+    },
+
+    /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */
+    populateDataFromCrowServer(
+      radarName: string,
+      startMoment: moment.Moment,
+      endMoment: moment.Moment
+    ): void {
+      const startDay = moment.utc(startMoment, "YYYY-MM-DD");
+      const endDay = moment.utc(endMoment, "YYYY-MM-DD").add(1, "days");
+
+      const currentDay = startDay.clone();
+
+      while (currentDay.isBefore(endDay, "day")) {
+        const url = this.buildDataUrl(radarName, currentDay);
+        axios.get(url).then(response => {
+          const dayData = helpers.parseVtps(response.data);
+
+          for (const val of dayData) {
+            this.storeDataRow(val);
+          }
+        });
+        currentDay.add(1, "days");
+      }
+    },
+
+    /* Build the data URL for a given day and radar */
+    buildDataUrl(radarName: string, selectedDate: moment.Moment): string {
+      return `${config.dataServerUrl}/${radarName}/${selectedDate.format(
+        "YYYY"
+      )}/${radarName}_vpts_${selectedDate.format("YYYYMMDD")}.txt`;
+    }
   }
 });
 </script>
