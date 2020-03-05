@@ -1,77 +1,103 @@
 <template>
   <div id="app">
-    <b-navbar type="light" variant="light" toggleable="lg">
+    <b-navbar 
+      type="light" 
+      variant="light" 
+      toggleable="lg"
+    >
       <b-container>
         <b-navbar-brand>CROW</b-navbar-brand>
       </b-container>
     </b-navbar>
 
     <main>
-      <Crow/>
+      <router-view />
     </main>
-    
+
     <footer>
       <b-container>
         <b-row>
           <b-col lg>
-            Created by the <a href="https://oscibio.inbo.be">Open science lab for biodiversity</a>
+            Created by the
+            <a href="https://oscibio.inbo.be">Open science lab for biodiversity</a>
           </b-col>
-          <b-col lg class="text-right">
-            <a href="https://github.com/inbo/crow/">Source code</a> version <code><a :href="'https://github.com/inbo/crow/tree/' + commitHash()">{{ commitHash() }}</a></code>
+          <b-col 
+            lg 
+            class="text-right"
+          >
+            <a href="https://github.com/inbo/crow/">Source code</a> version
+            <code>
+              <a :href="'https://github.com/inbo/crow/tree/' + commitHash()">{{ commitHash() }}</a>
+            </code>
           </b-col>
         </b-row>
       </b-container>
     </footer>
-      </div>
+  </div>
 </template>
 
-<script>
-import Vue from 'vue';
-import Crow from './components/Crow.vue';
+<script lang="ts">
+import Vue from "vue";
+import VueRouter from "vue-router";
+import Crow from "./components/Crow.vue";
+import PageNotFound from "./components/PageNotFound.vue";
+
+Vue.use(VueRouter);
+
+const routes = [
+  { path: "/", component: Crow },
+  { path: "*", component: PageNotFound }
+];
+
+const router = new VueRouter({
+  routes
+});
+
+declare const __COMMIT_HASH__: string;
 
 export default Vue.extend({
-  name: 'app',
+  router,
+  name: "App",
   methods: {
-    commitHash: function() {
+    commitHash: function(): string {
       return __COMMIT_HASH__;
     }
-  },
-  components: {
-    Crow
   }
 });
 </script>
 
 <style>
 .navbar {
-  background-color: white!important;
+  background-color: white !important;
   border-bottom: 1px solid #e9ecef;
-  }
-  .navbar-brand {
-    font-weight: bold;
-    }
-    .navbar-brand img {
-      height: 30px;
-    }
+}
+.navbar-brand {
+  font-weight: bold;
+}
+.navbar-brand img {
+  height: 30px;
+}
 
 main {
-  min-height: calc(100vh - 54px); /* Viewport height minus medium screen navbar height, to push footer to bottom */
+  min-height: calc(
+    100vh - 54px
+  ); /* Viewport height minus medium screen navbar height, to push footer to bottom */
   padding-bottom: 30px; /* Don't stick to footer */
-  }
-  .content {
-    margin-top: 15px;
-    }
-    
+}
+.content {
+  margin-top: 15px;
+}
+
 footer {
   background-color: #3c3c3c;
   border-top: 5px solid #bcbcbc;
   color: #bcbcbc;
   font-size: 0.9rem;
   padding: 15px 0;
-  }
-  footer a,
-  footer a:hover,
-  footer a:visited {
-    color: white;
-  }
+}
+footer a,
+footer a:hover,
+footer a:visited {
+  color: white;
+}
 </style>
