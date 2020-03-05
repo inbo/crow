@@ -1,29 +1,40 @@
 <template>
   <div>
-    <slot name="title"></slot>
+    <slot name="title" />
     <b-form>
       <b-form-row>
         <b-col cols="3">
-          <b-form-group id="vpi-display-mode-group" label="Show:" label-for="vpi-display-mode">
+          <b-form-group 
+            id="vpi-display-mode-group" 
+            label="Show:" 
+            label-for="vpi-display-mode"
+          >
             <b-form-select
               id="vpi-display-mode"
-              size="sm"
               v-model="selectedMode"
+              size="sm"
               :options="availableModes"
               value-field="propertyName"
               text-field="label"
-            ></b-form-select>
+            />
           </b-form-group>
         </b-col>
       </b-form-row>
     </b-form>
 
-    <div id="ignore-mouse-events" style="pointer-events:none;"></div>
+    <div 
+      id="ignore-mouse-events" 
+      style="pointer-events:none;" 
+    />
 
-    <svg id="new-vpi-chart" :width="styleConfig.width" :height="styleConfig.height">
+    <svg 
+      id="new-vpi-chart" 
+      :width="styleConfig.width" 
+      :height="styleConfig.height"
+    >
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <!-- X axis -->
-        <g :transform="`translate(0, ${this.innerHeight})`">
+        <g :transform="`translate(0, ${innerHeight})`">
           <slot name="in-x-axis-group" />
           <g
             v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'axisTimeFormat': styleConfig.axisTimeFormat}"
@@ -46,16 +57,16 @@
           <rect
             style="visibility: hidden"
             pointer-events="all"
+            :width="innerWidth"
+            :height="innerHeight"
             @mousemove="mouseMove"
             @mouseenter="mouseEnter"
             @mouseleave="mouseLeave"
-            :width="innerWidth"
-            :height="innerHeight"
           />
           <circle
             v-show="tooltipVisible"
-            style="pointer-events:none;"
             id="tooltipCircle"
+            style="pointer-events:none;"
             :cx="closestMomentXPosition"
             :cy="YPositionAtTimeX"
             r="4"
@@ -86,9 +97,9 @@
 
         <!-- days separators -->
         <line
-          fill="none"
           v-for="day in daysCovered"
           :key="day.xPositionAtMidnight"
+          fill="none"
           :x1="day.xPositionAtMidnight"
           :x2="day.xPositionAtMidnight"
           pointer-events="none"
@@ -145,6 +156,36 @@ interface VPIEntryForPath {
 
 export default Vue.extend({
   name: "VPIChart",
+  directives: {
+    yaxis(el, binding): void {
+      const scaleFunction = binding.value.scale;
+
+      const d3Axis = d3.axisLeft(scaleFunction).tickSizeOuter(0); // And we want to hide the last tick line
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    },
+    xaxis(el, binding): void {
+      // TODO: code copy/pasted from VPChart. Possible to factorize (without mixins)? Or isn't it worth it?
+      const scaleFunction = binding.value.scale;
+      const showTimeAs = binding.value.timezone;
+      const axisTimeFormat = binding.value.axisTimeFormat;
+
+      const d3Axis = d3
+        .axisBottom<number>(scaleFunction)
+        .ticks(7)
+        .tickSize(15)
+        .tickFormat(d => {
+          return helpers.formatTimestamp(d, showTimeAs, axisTimeFormat);
+        });
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    }
+  },
+  filters: {
+    round2decimals: function(num: number): string {
+      return (Math.round(num * 100) / 100).toFixed(2);
+    }
+  },
   props: {
     vpiData: Array as () => VPIEntry[],
     styleConfig: Object,
@@ -204,146 +245,6 @@ export default Vue.extend({
         this.styleConfig.margin.top -
         this.styleConfig.margin.bottom
     };
-  },
-  filters: {
-    round2decimals: function(num: number): string {
-      return (Math.round(num * 100) / 100).toFixed(2);
-    }
-  },
-  methods: {
-    animate() {
-      if (TWEEN.update()) {
-        requestAnimationFrame(this.animate);
-      }
-    },
-
-    syncVPIDataForPath() {
-      // We smoothly update each entry in vpiDataForPath, based on selectedModePropertyName and vpiData
-      // 1. Remove outdated entries first, so the index don't change later on (tween's callbacks, ...)
-      // 2. Add new entries, if necessary (when populating vpiData for example)
-      // 3. Update .val, based on selectedModePropertyName
-      
-      // TODO: refactor this method.
- 
-      // 1. Remove oudated entries
-      const timestampsInVPI = [] as number[];
-      for (const entry of this.vpiData) {
-        timestampsInVPI.push(entry.moment.valueOf());
-      }
-      const indexOfEntriesToRemove = [] as number[];
-      this.vpiDataForPath.forEach((entryForPath, index) => {
-        if (!timestampsInVPI.includes(entryForPath.timestamp)) {
-          indexOfEntriesToRemove.push(index);
-        }
-      });
-      
-      // Removal happens while iterating BACKWARDS so indexes stay valid all along the loop
-      for (let i = indexOfEntriesToRemove.length - 1; i >= 0; --i) {
-        this.vpiDataForPath.splice(indexOfEntriesToRemove[i], 1);
-      }
-    
-      for (const entry of this.vpiData) {
-        const timestamp = entry.moment.valueOf();
-        const foundIndex = this.vpiDataForPath.findIndex(element => { 
-          return element.timestamp === timestamp;
-        });
-
-        const rawValue = entry.integratedProfiles[this.selectedModePropertyName];
-        const newScaledValue = this.yScale(isNaN(rawValue) ? 0 : rawValue);
-
-        if (foundIndex == -1) {
-          // 2. Add new data
-          const insertIndex = this.timestampBisector(this.vpiDataForPath, timestamp);
-
-          const newEntry = {
-            timestamp: timestamp,
-            val: newScaledValue
-          };
-
-          this.vpiDataForPath.splice(insertIndex, 0, newEntry);
-        } else {
-          // 3. Update existing data (and tween it)
-          const cloneElem = { ...this.vpiDataForPath[foundIndex] };
-
-          const tween = new TWEEN.Tween(cloneElem)
-            .easing(TWEEN.Easing.Quadratic.Out)
-            .to({ val: newScaledValue }, 300)
-            .onUpdate(() => {
-              this.$set(this.vpiDataForPath[foundIndex], "val", cloneElem.val);
-            })
-            .start(); // Start the tween immediately.
-        }
-      }
-
-    },
-    mouseEnter() {
-      this.tooltipVisible = true;
-      this.mouseXPosition = 0;
-    },
-    mouseLeave() {
-      this.tooltipVisible = false;
-      this.mouseXPosition = null;
-    },
-    mouseMove(event: MouseEvent) {
-      // When mouse is moved over the chart, updates this.mouseXPosition and this.VPIEntryAtTimeX
-      // 1. Get (and save in data) the mouse position
-      const target = event.target as HTMLElement;
-      const bounds = target.getBoundingClientRect();
-      const mouseX = event.clientX - bounds.left;
-      this.mouseXPosition = mouseX;
-
-      // 2. Find out (and save in data) the VPI data at the mouse position
-      const x0 = this.xScale.invert(this.mouseXPosition);
-      const i = this.momentBisector(this.vpiData, x0);
-      const d0 = this.vpiData[i - 1];
-      const d1 = this.vpiData[i];
-      this.VPIEntryAtTimeX =
-        x0.getTime() / 1000 - d0.moment.valueOf() >
-        d1.moment.valueOf() - x0.getTime() / 1000
-          ? d1
-          : d0;
-    }
-  },
-  directives: {
-    yaxis(el, binding, vnode) {
-      const scaleFunction = binding.value.scale;
-
-      const d3Axis = d3.axisLeft(scaleFunction).tickSizeOuter(0); // And we want to hide the last tick line
-
-      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
-    },
-    xaxis(el, binding, vnode) {
-      // TODO: code copy/pasted from VPChart. Possible to factorize (without mixins)? Or isn't it worth it?
-      const scaleFunction = binding.value.scale;
-      const showTimeAs = binding.value.timezone;
-      const axisTimeFormat = binding.value.axisTimeFormat;
-
-      const d3Axis = d3
-        .axisBottom<number>(scaleFunction)
-        .ticks(7)
-        .tickSize(15)
-        .tickFormat(d => {
-          return helpers.formatTimestamp(d, showTimeAs, axisTimeFormat);
-        });
-
-      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
-    }
-  },
-  watch: {
-    selectedMode: {
-      immediate: true,
-      handler: function(newMode: string, oldMode: string) {
-        this.syncVPIDataForPath();
-        this.animate();
-      }
-    },
-    vpiData: {
-      immediate: true,
-      handler: function() {
-        this.syncVPIDataForPath();
-        this.animate();
-      }
-    }
   },
   computed: {
     daysCovered: function(): DayData[] {
@@ -486,7 +387,117 @@ export default Vue.extend({
 
       return path(this.vpiDataForPath);
     }
-  }
+  },
+  watch: {
+    selectedMode: {
+      immediate: true,
+      handler: function(): void {
+        this.syncVPIDataForPath();
+        this.animate();
+      }
+    },
+    vpiData: {
+      immediate: true,
+      handler: function(): void {
+        this.syncVPIDataForPath();
+        this.animate();
+      }
+    }
+  },
+  methods: {
+    animate(): void {
+      if (TWEEN.update()) {
+        requestAnimationFrame(this.animate);
+      }
+    },
+
+    syncVPIDataForPath(): void {
+      // We smoothly update each entry in vpiDataForPath, based on selectedModePropertyName and vpiData
+      // 1. Remove outdated entries first, so the index don't change later on (tween's callbacks, ...)
+      // 2. Add new entries, if necessary (when populating vpiData for example)
+      // 3. Update .val, based on selectedModePropertyName
+      
+      // TODO: refactor this method.
+ 
+      // 1. Remove oudated entries
+      const timestampsInVPI = [] as number[];
+      for (const entry of this.vpiData) {
+        timestampsInVPI.push(entry.moment.valueOf());
+      }
+      const indexOfEntriesToRemove = [] as number[];
+      this.vpiDataForPath.forEach((entryForPath, index) => {
+        if (!timestampsInVPI.includes(entryForPath.timestamp)) {
+          indexOfEntriesToRemove.push(index);
+        }
+      });
+      
+      // Removal happens while iterating BACKWARDS so indexes stay valid all along the loop
+      for (let i = indexOfEntriesToRemove.length - 1; i >= 0; --i) {
+        this.vpiDataForPath.splice(indexOfEntriesToRemove[i], 1);
+      }
+    
+      for (const entry of this.vpiData) {
+        const timestamp = entry.moment.valueOf();
+        const foundIndex = this.vpiDataForPath.findIndex(element => { 
+          return element.timestamp === timestamp;
+        });
+
+        const rawValue = entry.integratedProfiles[this.selectedModePropertyName];
+        const newScaledValue = this.yScale(isNaN(rawValue) ? 0 : rawValue);
+
+        if (foundIndex == -1) {
+          // 2. Add new data
+          const insertIndex = this.timestampBisector(this.vpiDataForPath, timestamp);
+
+          const newEntry = {
+            timestamp: timestamp,
+            val: newScaledValue
+          };
+
+          this.vpiDataForPath.splice(insertIndex, 0, newEntry);
+        } else {
+          // 3. Update existing data (and tween it)
+          const cloneElem = { ...this.vpiDataForPath[foundIndex] };
+
+          new TWEEN.Tween(cloneElem)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .to({ val: newScaledValue }, 300)
+            .onUpdate(() => {
+              this.$set(this.vpiDataForPath[foundIndex], "val", cloneElem.val);
+            })
+            .start(); // Start the tween immediately.
+        }
+      }
+
+    },
+    mouseEnter(): void {
+      this.tooltipVisible = true;
+      this.mouseXPosition = 0;
+    },
+    mouseLeave(): void {
+      this.tooltipVisible = false;
+      this.mouseXPosition = null;
+    },
+    mouseMove(event: MouseEvent): void {
+      // When mouse is moved over the chart, updates this.mouseXPosition and this.VPIEntryAtTimeX
+      // 1. Get (and save in data) the mouse position
+      const target = event.target as HTMLElement;
+      const bounds = target.getBoundingClientRect();
+      const mouseX = event.clientX - bounds.left;
+      this.mouseXPosition = mouseX;
+
+      // 2. Find out (and save in data) the VPI data at the mouse position
+      const x0 = this.xScale.invert(this.mouseXPosition);
+      const i = this.momentBisector(this.vpiData, x0);
+      const d0 = this.vpiData[i - 1];
+      const d1 = this.vpiData[i];
+      this.VPIEntryAtTimeX =
+        x0.getTime() / 1000 - d0.moment.valueOf() >
+        d1.moment.valueOf() - x0.getTime() / 1000
+          ? d1
+          : d0;
+    }
+  },
 });
 </script>
 
