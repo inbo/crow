@@ -1,9 +1,8 @@
 <template>
   <b-container class="content">
     <b-form 
-      form
-      class="mb-4" 
-      @change="loadData" 
+      form 
+      @change="onFormChange" 
     >
       <b-row>
         <b-col lg>
@@ -121,9 +120,30 @@
       </b-row>
     </b-form>
 
-    <b-row>
-      <b-col>
-        <small><router-link :to="{ path: '/', query: { radar: selectedRadarValue }}">Link to this search</router-link></small>
+    <b-row
+      align-h="end"
+    >
+      <b-col
+        cols="2"
+        align-self="end"
+      >
+        <small>
+          <!-- TODO: refactor? extract copy button to its own component? Use https://stackoverflow.com/questions/41036009/vue-1-x-2-x-get-vue-router-path-url-from-a-route-object instead of the router-link directive and slot? -->
+
+          <router-link 
+            v-slot="{ href }" 
+            :to="{ path: '/', query: { radar: selectedRadarValue }}"
+          >
+            <b-button 
+              v-clipboard:copy="`${baseUrl}/${publicPath}${href}`"
+              v-clipboard:success="onCopyUrl"
+              variant="outline-primary"
+              size="sm" 
+            >
+              {{ copyUrlButtonText }}
+            </b-button>
+          </router-link>
+        </small>
       </b-col>
     </b-row>
 
@@ -209,6 +229,8 @@ interface RadarVtpsAsTree {
   [key: number]: RadarVTPSTreeEntry;
 }
 
+const initialCopyUrlText = "Copy URL!";
+
 export default Vue.extend({
   name: "Crow",
   components: {
@@ -247,14 +269,14 @@ export default Vue.extend({
 
       // Data is kept as an object for performance reasons, the "radarVtpsAsArray" computed property allows reading it as an array.
       // All timestamps are kept in UTC (transformed later, in the viz components)
-      radarVtps: {} as RadarVtpsAsTree
+      radarVtps: {} as RadarVtpsAsTree,
+
+      baseUrl: '',
+      publicPath: process.env.BASE_URL,
+      copyUrlButtonText: initialCopyUrlText
     };
   },
   computed: {
-    /*permalinkUrl(): string {
-      return 'http://www.google.com'
-    },*/
-
     selectedIntervalLabel(): string {
       const found = this.availableIntervals.find(
         d => d.value == this.selectedIntervalInHours
@@ -368,11 +390,16 @@ export default Vue.extend({
     }
   },
   mounted: function() {
+    this.baseUrl = window.location.origin;
+    
     this.$nextTick(function() {
       this.loadData();
     });
   },
   methods: {
+    onCopyUrl(): void {
+      this.copyUrlButtonText = 'Copied!';
+    },
     /* Initialize radarVtps with empty data 
        - The temporal range is [startMoment, endMoment] (resolution: dataTemporalResolution - in seconds)
        - Heights follow availableHeights
@@ -420,6 +447,11 @@ export default Vue.extend({
       this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
         .add(this.selectedIntervalInHours, "hours")
         .format(moment.HTML5_FMT.DATE);
+      this.loadData();
+    },
+
+    onFormChange(): void {
+      this.copyUrlButtonText = initialCopyUrlText;
       this.loadData();
     },
 

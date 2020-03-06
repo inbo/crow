@@ -42,7 +42,9 @@ import VueRouter from "vue-router";
 import { Route } from "vue-router";
 import Crow from "./components/Crow.vue";
 import PageNotFound from "./components/PageNotFound.vue";
-
+import VueClipboard from 'vue-clipboard2'
+ 
+Vue.use(VueClipboard);
 Vue.use(VueRouter);
 
 const routes = [
