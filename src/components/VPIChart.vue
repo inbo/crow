@@ -121,6 +121,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable vue/require-default-prop */
 import Vue from "vue";
 import * as d3 from "d3";
 import moment, { Moment } from "moment-timezone";
@@ -187,6 +188,7 @@ export default Vue.extend({
     }
   },
   props: {
+    // eslint-disable-next-line vue/require-default-prop
     vpiData: Array as () => VPIEntry[],
     styleConfig: Object,
     showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")

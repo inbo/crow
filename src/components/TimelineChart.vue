@@ -21,16 +21,15 @@
         <template v-slot:title>
           {{ formatMoment(period.moment) }}
         </template>
-        Sun altitude:
-        {{ period.sunAltitude | round2decimals }}°<br>
-        Period
-        : {{ period.name }}
+        {{ period.name | capitalize }} (solar elevation: {{ period.sunAltitude | round2decimals }}°)
       </b-popover>
     </template>
   </g>
 </template>
 
 <script lang="ts">
+/* eslint-disable vue/require-default-prop */
+
 // TODO: margin.top in the main SVG group seems different than with TimelineChart.vue
 import Vue from "vue";
 import * as d3 from "d3";
@@ -46,6 +45,12 @@ interface DisplayablePeriod extends Period {
 
 export default Vue.extend({
   filters: {
+    capitalize: function (value: string): string {
+      if (!value) return ''
+      value = value.toString()
+      return value.charAt(0).toUpperCase() + value.slice(1)
+    },
+
     round2decimals: function(num: number): string {
       return (Math.round(num * 100) / 100).toFixed(2);
     }

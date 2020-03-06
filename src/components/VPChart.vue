@@ -62,6 +62,8 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable vue/require-default-prop */
+
 // TODO: create a single popover for performance reasons?
 import Vue from "vue";
 import * as d3 from "d3";
