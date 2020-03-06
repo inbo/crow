@@ -1,6 +1,24 @@
 <template>
   <div>
     <slot name="title" />
+    <b-form>
+      <b-form-row>
+        <b-col cols="3">
+          <b-form-group 
+            id="vp-color-scheme-group" 
+            label="Color scheme:" 
+            label-for="vp-color-scheme"
+          >
+            <b-form-select
+              id="vp-color-scheme"
+              v-model="colorScheme"
+              size="sm"
+              :options="availableColorSchemes"
+            />
+          </b-form-group>
+        </b-col>
+      </b-form-row>
+    </b-form>
     <svg 
       id="vp-chart" 
       :width="styleConfig.width" 
@@ -134,6 +152,12 @@ export default Vue.extend({
       margin: this.styleConfig.margin,
 
       colorScheme: 'custom' as ColorScheme,
+
+      availableColorSchemes: [
+        { text: "CROW", value: "custom" },
+        //{ text: "BioRad", value: "biorad" },
+        { text: "BirdTAM", value: "birdtam" }
+      ],
 
       innerWidth:
         this.styleConfig.width -
