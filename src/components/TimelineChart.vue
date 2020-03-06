@@ -2,25 +2,27 @@
   <g :transform="`translate(${margin.left}, ${margin.top})`">
     <template v-for="period in populatedPeriods">
       <rect
+        :id="uuid + '-period-at-' + period.x"
         :key="'rect ' + period.x"
         :x="period.x"
         y="0"
         :width="periodWidth"
         :height="styleConfig.height"
         :class="period.class"
-        :id="uuid + '-period-at-' + period.x"
       />
 
       <b-popover
         v-if="styleConfig.showTooltip"
+        :key="'popover ' + period.x"
         :target="uuid + '-period-at-' + period.x"
         triggers="hover"
         placement="bottom"
-        :key="'popover ' + period.x"
       >
-        <template v-slot:title>{{ formatMoment(period.moment) }}</template>
+        <template v-slot:title>
+          {{ formatMoment(period.moment) }}
+        </template>
         Sun altitude:
-        {{ period.sunAltitude | round2decimals }}°<br/>
+        {{ period.sunAltitude | round2decimals }}°<br>
         Period
         : {{ period.name }}
       </b-popover>
@@ -43,6 +45,11 @@ interface DisplayablePeriod extends Period {
 }
 
 export default Vue.extend({
+  filters: {
+    round2decimals: function(num: number): string {
+      return (Math.round(num * 100) / 100).toFixed(2);
+    }
+  },
   props: {
     periods: Array as () => Period[], // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
     styleConfig: Object,
@@ -64,35 +71,6 @@ export default Vue.extend({
         this.styleConfig.margin.top -
         this.styleConfig.margin.bottom
     };
-  },
-  filters: {
-    round2decimals: function(num: number) {
-      return (Math.round(num * 100) / 100).toFixed(2);
-    }
-  },
-  methods: {
-    formatMoment(m: moment.Moment): string {
-      return helpers.formatMoment(
-          m,
-          this.showTimeAs,
-          this.styleConfig.tooltipTimeFormat
-        );
-    },
-    getPeriodClass(sunAltitude: number) {
-      return helpers.makeSafeForCSS(this.getPeriodName(sunAltitude));
-    },
-    getPeriodName(sunAltitude: number) {
-      if (sunAltitude >= 0) {
-        return "day";
-      } else if (sunAltitude < 0 && sunAltitude >= -18) {
-        return "twilight";
-      } else {
-        return "night";
-      }
-    }
-  },
-  mounted () {
-    this.uuid = helpers.uuidv4();
   },
   computed: {
     xScale: function(): d3.ScaleTime<number, number> {
@@ -132,6 +110,30 @@ export default Vue.extend({
     },
     maxMomentPlusOne: function(): moment.Moment {
       return this.maxMoment.clone().add(this.dataTemporalResolution, "seconds");
+    }
+  },
+  mounted () {
+    this.uuid = helpers.uuidv4();
+  },
+  methods: {
+    formatMoment(m: moment.Moment): string {
+      return helpers.formatMoment(
+          m,
+          this.showTimeAs,
+          this.styleConfig.tooltipTimeFormat
+        );
+    },
+    getPeriodClass(sunAltitude: number): string {
+      return helpers.makeSafeForCSS(this.getPeriodName(sunAltitude));
+    },
+    getPeriodName(sunAltitude: number): string {
+      if (sunAltitude >= 0) {
+        return "day";
+      } else if (sunAltitude < 0 && sunAltitude >= -18) {
+        return "twilight";
+      } else {
+        return "night";
+      }
     }
   }
 });

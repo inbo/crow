@@ -1,18 +1,22 @@
 <template>
   <div>
-    <slot name="title"></slot>
-    <svg id="vp-chart" :width="styleConfig.width" :height="styleConfig.height">
+    <slot name="title" />
+    <svg 
+      id="vp-chart" 
+      :width="styleConfig.width" 
+      :height="styleConfig.height"
+    >
       <g :transform="`translate(${margin.left}, ${margin.top})`">
-        <g :transform="`translate(0, ${this.innerHeight})`">
-          <slot name="in-x-axis-group"></slot>
+        <g :transform="`translate(0, ${innerHeight})`">
+          <slot name="in-x-axis-group" />
           <g v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'axisTimeFormat': styleConfig.axisTimeFormat}" />
         </g>
         <g v-yaxis-left="{'scale': yScale, 'tickValues': styleConfig.yAxisLeftTicks}" />
 
         <template v-for="d in vtpsDataPrepared">
           <rect
-            :key="'rect-' + d.timestamp + '-' + d.height"
             :id="'rect-' + d.timestamp + '-' + d.height"
+            :key="'rect-' + d.timestamp + '-' + d.height"
             :x="d.x"
             :y="d.y"
             :fill="d.fill"
@@ -22,32 +26,35 @@
 
           <b-popover
             v-if="styleConfig.showTooltip"
+            :key="'popover-' + d.timestamp + '-' + d.height"
             :target="'rect-' + d.timestamp + '-' + d.height"
             triggers="hover"
             placement="top"
-            :key="'popover-' + d.timestamp + '-' + d.height"
           >
             <template v-slot:title>{{ formatTimestampForTooltip(d.timestamp) }}</template>
             <b>Height</b>
-              {{ d.height }}m <br/>
+            {{ d.height }}m <br />
             <b>Density</b>
-              {{ d.dens }}
-        </b-popover>
+            {{ d.dens }}
+          </b-popover>
         </template>
 
-        <g v-yaxis-right="{'scale': yScaleFeet }" :transform="`translate(${this.innerWidth}, 0)`" />
+        <g 
+          v-yaxis-right="{'scale': yScaleFeet }" 
+          :transform="`translate(${innerWidth}, 0)`" 
+        />
 
         <text
           text-anchor="end"
           transform="rotate(-90)"
-          :y="-this.margin.left + 20"
-          :x="-this.margin.top - 70"
+          :y="-margin.left + 20"
+          :x="-margin.top - 70"
         >Height (meters)</text>
         <text
           text-anchor="end"
           transform="rotate(-90)"
-          :y="this.innerWidth + 55"
-          :x="-this.margin.top - 70"
+          :y="innerWidth + 55"
+          :x="margin.top - 70"
         >Height (feet)</text>
       </g>
     </svg>
@@ -75,6 +82,44 @@ interface VTPSEntryPrepared extends VTPSEntry {
 
 export default Vue.extend({
   name: "VPChart",
+  directives: {
+    yaxisRight(el, binding): void {
+      const scaleFunction = binding.value.scale;
+
+      const d3Axis = 
+        d3.axisRight<number>(scaleFunction)
+          .tickSizeOuter(0)
+          .tickFormat(d3.format("d"));
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    },
+    yaxisLeft(el, binding): void {
+      const scaleFunction = binding.value.scale;
+      const tickValues = binding.value.tickValues;
+
+      const d3Axis = d3
+        .axisLeft(scaleFunction)
+        .tickValues(tickValues)
+        .tickSizeOuter(0); // And we want to hide the last tick line
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    },
+    xaxis(el, binding): void {
+      const scaleFunction = binding.value.scale;
+      const showTimeAs = binding.value.timezone;
+      const axisTimeFormat = binding.value.axisTimeFormat;
+
+      const d3Axis = d3
+        .axisBottom<number>(scaleFunction)
+        .ticks(7)
+        .tickSize(15)
+        .tickFormat(d => {
+          return helpers.formatTimestamp(d, showTimeAs, axisTimeFormat);
+        });
+
+      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
+    }
+  },
   props: {
     vtpsData: Array as () => VTPSEntry[],
     styleConfig: Object,
@@ -94,68 +139,6 @@ export default Vue.extend({
         this.styleConfig.margin.top -
         this.styleConfig.margin.bottom
     };
-  },
-  methods: {
-    formatTimestampForTooltip: function(ts: number): string {
-      return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.tooltipTimeFormat);
-    },
-    formatTimestamp: function(ts: number): string {
-      return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.axisTimeFormat);
-    },
-    getRectYValue: function(height: number): number {
-      const scaledValue = this.yScale(height.toString());
-      if (scaledValue) {
-        return scaledValue - this.rectHeight;
-      } else {
-        // We've asked yScale for a value outside of the domain, log error?
-        return 0;
-      }
-    },
-    getRectColor: function(data: VTPSEntry): string {
-      if (data.noData) {
-        return this.styleConfig.noDataColor;
-      } else {
-        return this.colorScale(data.dens);
-      }
-    }
-  },
-  directives: {
-    yaxisRight(el, binding, vnode) {
-      const scaleFunction = binding.value.scale;
-
-      const d3Axis = 
-        d3.axisRight<number>(scaleFunction)
-          .tickSizeOuter(0)
-          .tickFormat(d3.format("d"));
-
-      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
-    },
-    yaxisLeft(el, binding, vnode) {
-      const scaleFunction = binding.value.scale;
-      const tickValues = binding.value.tickValues;
-
-      const d3Axis = d3
-        .axisLeft(scaleFunction)
-        .tickValues(tickValues)
-        .tickSizeOuter(0); // And we want to hide the last tick line
-
-      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
-    },
-    xaxis(el, binding, vnode) {
-      const scaleFunction = binding.value.scale;
-      const showTimeAs = binding.value.timezone;
-      const axisTimeFormat = binding.value.axisTimeFormat;
-
-      const d3Axis = d3
-        .axisBottom<number>(scaleFunction)
-        .ticks(7)
-        .tickSize(15)
-        .tickFormat(d => {
-          return helpers.formatTimestamp(d, showTimeAs, axisTimeFormat);
-        });
-
-      d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
-    }
   },
   computed: {
     rectHeight: function(): number {
@@ -236,6 +219,30 @@ export default Vue.extend({
         fill: this.getRectColor(data)
       }));
     }
-  }
+  },
+  methods: {
+    formatTimestampForTooltip: function(ts: number): string {
+      return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.tooltipTimeFormat);
+    },
+    formatTimestamp: function(ts: number): string {
+      return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.axisTimeFormat);
+    },
+    getRectYValue: function(height: number): number {
+      const scaledValue = this.yScale(height.toString());
+      if (scaledValue) {
+        return scaledValue - this.rectHeight;
+      } else {
+        // We've asked yScale for a value outside of the domain, log error?
+        return 0;
+      }
+    },
+    getRectColor: function(data: VTPSEntry): string {
+      if (data.noData) {
+        return this.styleConfig.noDataColor;
+      } else {
+        return this.colorScale(data.dens);
+      }
+    }
+  },
 });
 </script>
