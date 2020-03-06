@@ -123,7 +123,7 @@
 
     <b-row>
       <b-col>
-        <small><router-link :to="{ path: '/', query: { radar: this.selectedRadarValue }}">Link to this search</router-link></small>
+        <small><router-link :to="{ path: '/', query: { radar: selectedRadarValue }}">Link to this search</router-link></small>
       </b-col>
     </b-row>
 
