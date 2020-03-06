@@ -82,6 +82,8 @@ interface VTPSEntryPrepared extends VTPSEntry {
   fill: string;
 }
 
+type ColorScheme = "custom" | "biorad" | "birdtam";
+
 export default Vue.extend({
   name: "VPChart",
   directives: {
@@ -130,6 +132,8 @@ export default Vue.extend({
   data: function() {
     return {
       margin: this.styleConfig.margin,
+
+      colorScheme: 'custom' as ColorScheme,
 
       innerWidth:
         this.styleConfig.width -
@@ -203,7 +207,14 @@ export default Vue.extend({
         .range([this.innerHeight, 0])
         .domain([0, 15748.03]); // TODO: make dynamic
     },
-    colorScale: function(): d3.ScaleLinear<string, string> {
+    birdtamColorScale: function(): d3.ScaleOrdinal<number, string> {
+      return d3
+        .scaleOrdinal<number, string>()
+        // BIRDTAM RGB-kleuren = [1 1 1; .9 1 .9; .8 1 .8; .7 1 .7; .6 1 .6; 0 1 0; 1 1 0; 1 .7 .7; 1 0 0; .2 .2 .2;];
+        .range(["#ffffff", "#e5ffe5", "#ccffcc", "#b2ffb2", "#99ff99", "#00ff00", "#ffff00", "#ffb2b2", "#ff0000", "#333333"])
+        .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    },
+    customColorScale: function(): d3.ScaleLinear<string, string> {
       return d3
         .scaleLinear<string>()
         .range([
@@ -239,11 +250,18 @@ export default Vue.extend({
       }
     },
     getRectColor: function(data: VTPSEntry): string {
-      if (data.noData) {
-        return this.styleConfig.noDataColor;
-      } else {
-        return this.colorScale(data.dens);
+      let color;
+      const density = data.dens;
+
+      switch (this.colorScheme) {
+        case 'custom':
+          color = data.noData ? this.styleConfig.noDataColor : this.customColorScale(density);
+          break;
+        case 'birdtam':
+          color = this.birdtamColorScale(helpers.densityToBirdtam(density));
       }
+
+      return color;
     }
   },
 });

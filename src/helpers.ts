@@ -5,6 +5,22 @@ import moment from "moment-timezone";
 import { VTPSDataRowFromFile } from "./VTPSDataRowFromFileInterface";
 import { Profiles } from './ProfilesInterface';
 
+function densityToBirdtam(density: number): number {
+    // Takes a density (from VTPS data) and turn it to a BIRDTAM code.
+    // Implementation based on the following explanation from Hans van Gasteren (Dutch Air Force)
+    /* 
+    RGB codes van 0-4 in licht groen. BIRDTAM 5 is 100% groen en daarna 6 en hoger. Ik heb ook BIRDTAM 9 geintroduceerd om de extremen (en regen) weer te geven. Zo staan ze althans op dit moment op de FlySafe-pagina en in ons artikel
+
+    BIRDTAM RGB-kleuren = [1 1 1; .9 1 .9; .8 1 .8; .7 1 .7; .6 1 .6; 0 1 0; 1 1 0; 1 .7 .7; 1 0 0; .2 .2 .2;];
+
+    *Vanuit dichtheid (#/km^3) naar BIRDTAM: densitybirdtam = 1.4427.log(density+1)+1.6781
+    En dan de getallen naar beneden afronden om de juiste BIRDTAM te vinden: floor(densitybirdtam), (birdtam 5,6 wordt dus een 5!)
+
+    Overigens voor de vertical integrated densities (VID) gebruik ik dezelfde conversie. density == VID
+    */
+   return Math.floor(1.4427 * Math.log(density + 1) + 1.6781);
+}
+
 function uuidv4(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -136,4 +152,4 @@ function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infi
     return ({ "mtr": mtr, "rtr": rtr, "vid": vid, "vir": vir })
 }
 
-export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4 } 
+export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam } 
