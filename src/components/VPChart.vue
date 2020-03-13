@@ -156,7 +156,7 @@ export default Vue.extend({
       availableColorSchemes: [
         { text: "CROW", value: "custom" },
         //{ text: "BioRad", value: "biorad" },
-        { text: "BirdTAM", value: "birdtam" }
+        { text: "BIRDTAM", value: "birdtam" }
       ],
 
       innerWidth:

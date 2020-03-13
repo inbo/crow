@@ -1,8 +1,6 @@
 import { TimeInterval } from './TimeIntervaInterface';
 import { GroupedRadarInterface } from './RadarInterface';
 
-const globalAxisTimeFormat = " D-M@HH:mm z";  // See: https://momentjs.com/docs/#/displaying/
-
 const globalChartMarginLeft = 65; // In-SVG margin used for axis and legend
 const globalChartMarginRight = 60; // In-SVG margin used for axis and legend
 const svgWidth = 72 * (60/5) + globalChartMarginLeft + globalChartMarginRight; // 72 = max number of visible hours (see availableTimeIntervals). 5 = duration in minutes of a period (=vtpsData.temporalResolution)
@@ -62,7 +60,7 @@ export default {
         maxDensityColor: '#dc3545',
         noDataColor: 'white',
 
-        axisTimeFormat: globalAxisTimeFormat,
+        axisTimeFormat: " HH:mm z",
         tooltipTimeFormat: "MMM D - HH:mm z",
 
         yAxisLeftTicks: [0, 1000, 2000, 3000, 4000] // Let's not show all altitudes (too crowded)
