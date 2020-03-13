@@ -146,7 +146,7 @@ export default Vue.extend({
 
 <style scoped>
 rect.day {
-  fill: #afbbc0;
+  fill: #ffffff;
 }
 rect.twilight {
   fill: #486fa3;
