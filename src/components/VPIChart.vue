@@ -95,26 +95,10 @@
           :d="pathData"
         />
 
-        <!-- days separators -->
-        <line
-          v-for="day in daysCovered"
-          :key="day.xPositionAtMidnight"
-          fill="none"
-          :x1="day.xPositionAtMidnight"
-          :x2="day.xPositionAtMidnight"
-          pointer-events="none"
-          y1="0"
-          :y2="innerHeight"
-          class="day-separator"
-          style="stroke-width:1;pointer-events:none;"
+        <daily-lines 
+          :days="daysCovered" 
+          :height="innerHeight" 
         />
-        <text
-          v-for="day in daysCovered"
-          :key="'text-' + day.xPositionAtMidnight"
-          :x="day.xPositionAtMidnight + 5"
-          :y="15"
-          class="day-separator"
-        >{{ day.dayLabel }}</text>
       </g>
     </svg>
   </div>
@@ -126,9 +110,12 @@ import Vue from "vue";
 import * as d3 from "d3";
 import moment, { Moment } from "moment-timezone";
 
+import DailyLines from "./DailyLines.vue";
+
 import helpers from "../helpers";
 
 import { VPIEntry } from "../VPIEntryInterface";
+import { DayData } from '../DayDataInterface';
 
 import TWEEN from "@tweenjs/tween.js";
 
@@ -142,11 +129,6 @@ interface DisplayMode {
   yMaxValComputedName: "maxMTRWithMinimum" | "maxRTR" | "maxVID" | "maxVIR"; // the name of a computed property to get the max value for the Y Axis
 }
 
-interface DayData {
-  moment: Moment;
-  xPositionAtMidnight: number;
-}
-
 interface VPIEntryForPath {
   // "prepared" VPI data to draw path, derived from VPIEntry. Changes:
   // - time data stored as a timestamp (no further conversion needed)
@@ -157,6 +139,9 @@ interface VPIEntryForPath {
 
 export default Vue.extend({
   name: "VPIChart",
+  components: {
+    DailyLines
+  },
   directives: {
     yaxis(el, binding): void {
       const scaleFunction = binding.value.scale;
@@ -502,11 +487,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style scoped>
-.day-separator {
-  stroke: rgb(33, 37, 41); /* for line */
-  fill: rgb(33, 37, 41); /* For text */
-  font: 12px sans-serif;
-}
-</style>
