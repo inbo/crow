@@ -4,9 +4,9 @@
     <b-form>
       <b-form-row>
         <b-col cols="3">
-          <b-form-group 
-            id="vp-color-scheme-group" 
-            label="Color scheme:" 
+          <b-form-group
+            id="vp-color-scheme-group"
+            label="Color scheme:"
             label-for="vp-color-scheme"
           >
             <b-form-select
@@ -27,7 +27,9 @@
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <g :transform="`translate(0, ${innerHeight})`">
           <slot name="in-x-axis-group" />
-          <g v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'axisTimeFormat': styleConfig.axisTimeFormat}" />
+          <g
+            v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'axisTimeFormat': styleConfig.axisTimeFormat}"
+          />
         </g>
         <g v-yaxis-left="{'scale': yScale, 'tickValues': styleConfig.yAxisLeftTicks}" />
 
@@ -40,7 +42,7 @@
             :fill="d.fill"
             :height="rectHeight"
             :width="rectWidth"
-          /> 
+          />
 
           <b-popover
             v-if="styleConfig.showTooltip"
@@ -51,7 +53,8 @@
           >
             <template v-slot:title>{{ formatTimestampForTooltip(d.timestamp) }}</template>
             <b>Height</b>
-            {{ d.height }}m <br />
+            {{ d.height }}m
+            <br />
             <b>Density</b>
             {{ d.dens }}
           </b-popover>
@@ -74,6 +77,12 @@
           :y="innerWidth + 55"
           :x="margin.top - 70"
         >Height (feet)</text>
+      
+        <daily-lines 
+          :days="daysCovered" 
+          :height="innerHeight" 
+        />
+      
       </g>
     </svg>
   </div>
@@ -87,6 +96,9 @@ import Vue from "vue";
 import * as d3 from "d3";
 import helpers from "../helpers";
 import { VTPSEntry } from "../VTPSEntryInterface"
+import DailyLines from "./DailyLines.vue";
+import { DayData } from '../DayDataInterface';
+import moment, { Moment } from "moment-timezone";
 
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)
@@ -104,6 +116,9 @@ type ColorScheme = "custom" | "biorad" | "birdtam";
 
 export default Vue.extend({
   name: "VPChart",
+  components: {
+    DailyLines
+  },
   directives: {
     yaxisRight(el, binding): void {
       const scaleFunction = binding.value.scale;
@@ -171,6 +186,19 @@ export default Vue.extend({
     };
   },
   computed: {
+    daysCovered: function(): DayData[] {
+      const days = this.getDaysInRange(this.minTimestamp, this.maxTimestamp, this.showTimeAs);
+      console.log("days", days);
+
+      return days.map(mom => {
+        return {
+          moment: mom,
+          xPositionAtMidnight: this.xScale(mom.valueOf()),
+          dayLabel: mom.format("MMM DD")
+        };
+      });
+
+    },
     rectHeight: function(): number {
       return this.innerHeight / this.distinctHeightsMeters.length;
     },
@@ -258,6 +286,19 @@ export default Vue.extend({
     }
   },
   methods: {
+    getDaysInRange: function(startTimestamp: number, stopTimestamp: number, timezone: string): Moment[] {
+      const startDate = new Date(startTimestamp);
+      const stopDate = new Date(stopTimestamp);
+      
+      const momentArray = [];
+      let currentMoment = moment(startDate);
+      const stopMoment = moment(stopDate);
+      while (currentMoment <= stopMoment) {
+        momentArray.push(currentMoment.clone().tz(timezone).startOf('day'))
+        currentMoment = currentMoment.clone().add(1, 'days');
+    }
+    return momentArray;
+    },
     formatTimestampForTooltip: function(ts: number): string {
       return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.tooltipTimeFormat);
     },
