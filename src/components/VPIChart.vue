@@ -81,7 +81,7 @@
           >
             <template v-slot:title>{{ formattedMomentAtTimeX }}</template>
             <div>
-              {{ selectedModeLabel }}: {{ selectedValAtTimeX | round2decimals }}
+              {{ selectedModeLabel }}: {{ selectedValAtTimeX | rounddecimals(selectedModePrecision) }}
             </div>
           </b-popover>
         </template>
@@ -168,8 +168,9 @@ export default Vue.extend({
     }
   },
   filters: {
-    round2decimals: function(num: number): string {
-      return (Math.round(num * 100) / 100).toFixed(2);
+    rounddecimals: function(num: number, precision: number): string {
+      const multiplier = Math.pow(10, precision)
+      return (Math.round(num * multiplier) / multiplier).toFixed(precision);
     }
   },
   props: {
@@ -234,6 +235,12 @@ export default Vue.extend({
     };
   },
   computed: {
+    selectedModePrecision(): number {
+      switch(this.selectedMode) {
+        case 'vid': return 1; // all other modes currently don't need to display decimal digits
+        default: return 0;
+      }
+    },
     daysCovered: function(): DayData[] {
       // Find the day covered by each entry in vpiData
       const coveredDays = this.vpiData.map(vpiEntry => {

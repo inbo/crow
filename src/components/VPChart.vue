@@ -188,7 +188,6 @@ export default Vue.extend({
   computed: {
     daysCovered: function(): DayData[] {
       const days = this.getDaysInRange(this.minTimestamp, this.maxTimestamp, this.showTimeAs);
-      console.log("days", days);
 
       return days.map(mom => {
         return {
