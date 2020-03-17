@@ -1,6 +1,6 @@
 const webpack = require("webpack");
 
-let commitHash = require('child_process')
+const commitHash = require('child_process')
   .execSync('git rev-parse --short HEAD')
   .toString();
 

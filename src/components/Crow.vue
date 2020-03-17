@@ -132,10 +132,11 @@
 
           <router-link 
             v-slot="{ href }" 
+            append
             :to="{ path: '/', query: { radar: selectedRadarValue }}"
           >
             <b-button 
-              v-clipboard:copy="`${baseUrl}/${publicPath}${href}`"
+              v-clipboard:copy="`${baseUrl}${href}`"
               v-clipboard:success="onCopyUrl"
               variant="outline-primary"
               size="sm" 
@@ -272,7 +273,6 @@ export default Vue.extend({
       radarVtps: {} as RadarVtpsAsTree,
 
       baseUrl: '',
-      publicPath: process.env.BASE_URL,
       copyUrlButtonText: initialCopyUrlText
     };
   },
@@ -390,13 +390,16 @@ export default Vue.extend({
     }
   },
   mounted: function() {
-    this.baseUrl = window.location.origin;
+    this.baseUrl = this.trimLastSlash(window.location.origin);
     
     this.$nextTick(function() {
       this.loadData();
     });
   },
   methods: {
+    trimLastSlash(s: string): string {
+      return s.replace(/\/$/, "");
+    },
     onCopyUrl(): void {
       this.copyUrlButtonText = 'Copied!';
     },
