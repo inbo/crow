@@ -64,6 +64,13 @@ declare const __COMMIT_HASH__: string;
 export default Vue.extend({
   router,
   name: "App",
+  created () {
+    if (sessionStorage.redirect) {
+      const redirect = sessionStorage.redirect
+      delete sessionStorage.redirect
+      this.$router.push(redirect)
+    }
+  },
   methods: {
     commitHash: function(): string {
       return __COMMIT_HASH__;
