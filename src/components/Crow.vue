@@ -136,7 +136,7 @@
             :to="{ path: '/', query: { radar: selectedRadarValue }}"
           >
             <b-button 
-              v-clipboard:copy="`${baseUrl}${href}`"
+              v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
               v-clipboard:success="onCopyUrl"
               variant="outline-primary"
               size="sm" 
@@ -272,6 +272,7 @@ export default Vue.extend({
       // All timestamps are kept in UTC (transformed later, in the viz components)
       radarVtps: {} as RadarVtpsAsTree,
 
+      publicPath: process.env.BASE_URL,
       baseUrl: '',
       copyUrlButtonText: initialCopyUrlText
     };
