@@ -51,7 +51,7 @@ export default {
 
     VPChartStyle: {
         margin: { top: 20, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },
-        width: svgWidth, // TODO: rename to svgWidth so it's more clear (same for height and other charts)
+        width: svgWidth,
         height: 300,
 
         showTooltip: false, // BEWARE: useful for debugging, but performance is horrible
