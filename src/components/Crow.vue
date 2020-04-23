@@ -133,7 +133,7 @@
           <router-link 
             v-slot="{ href }" 
             append
-            :to="{ path: '/', query: { radar: selectedRadarValue }}"
+            :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs }}"
           >
             <b-button 
               v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
@@ -243,21 +243,31 @@ export default Vue.extend({
     radarValueProp: { 
       type: String,
       default: config.initialRadarValue
+    },
+    dateValueProp: {
+      type: String,
+      default: moment().subtract(2, "days").format(moment.HTML5_FMT.DATE)
+    },
+    intervalValueProp: {
+      type: Number,
+      default: config.initialTimeInterval
+    },
+    timeDisplayValueProp: {
+      type: String,
+      default: "radarLocal"
     }
   },
   data: function() {
-    const twoDaysAgo = moment().subtract(2, "days");
-
     return {
-      selectedDate: twoDaysAgo.format(moment.HTML5_FMT.DATE),
+      selectedDate: this.dateValueProp,
 
-      selectedIntervalInHours: config.initialTimeInterval, // The chart show this amount of hours around selectedDate at noon
+      selectedIntervalInHours: this.intervalValueProp, // The chart show this amount of hours around selectedDate at noon
       availableIntervals: config.availableTimeIntervals as TimeInterval[],
 
       selectedRadarValue: this.radarValueProp,
       availableRadars: config.availableRadars as GroupedRadarInterface[],
 
-      timeDisplayedAs: "radarLocal", // 'radarLocal' | 'UTC'
+      timeDisplayedAs: this.timeDisplayValueProp, // 'radarLocal' | 'UTC'
 
       showCharts: false,
 

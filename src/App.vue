@@ -42,20 +42,29 @@ import VueRouter from "vue-router";
 import { Route } from "vue-router";
 import Crow from "./components/Crow.vue";
 import PageNotFound from "./components/PageNotFound.vue";
-import VueClipboard from 'vue-clipboard2'
- 
+import VueClipboard from "vue-clipboard2";
+
 Vue.use(VueClipboard);
 Vue.use(VueRouter);
 
 const routes = [
   // The main route accept the following parameters that will be passed to Crow:
   // - radar
-  { path: "/", component: Crow, props: (route: Route): unknown => ({ radarValueProp: route.query.radar }) }, // Example URL: http://localhost:8080/#/?radar=bezav
+  {
+    path: "/",
+    component: Crow,
+    props: (route: Route): unknown => ({
+      radarValueProp: route.query.radar,
+      dateValueProp: route.query.date,
+      intervalValueProp: route.query.interval,
+      timeDisplayValueProp: route.query.timedisplay,
+    })
+  }, // Example URL: http://localhost:8080/#/?radar=bezav
   { path: "*", component: PageNotFound }
 ];
 
 const router = new VueRouter({
-  mode: 'hash',
+  mode: "hash",
   routes
 });
 
