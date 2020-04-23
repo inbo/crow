@@ -7,12 +7,12 @@ const commitHash = require('child_process')
 
 module.exports = {
     publicPath: process.env.NODE_ENV === 'production' ? '/crow/' : '/',
-    
     configureWebpack: {
       plugins: [
         new webpack.DefinePlugin({
           __COMMIT_HASH__: JSON.stringify(commitHash),
         })
       ]
-    }
+    },
+    outputDir: 'docs',
   }

@@ -19,7 +19,7 @@ $ npm run test:unit
 On [https://inbo.github.io/crow/](https://inbo.github.io/crow/)
 
 ```
-$ rm -rf ./docs && npm run build && mv ./dist ./docs
+$ npm run build
 ```
 
 Then commit and push, including the `docs` directory. GitHub pages does the rest. 
