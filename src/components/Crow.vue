@@ -454,14 +454,14 @@ export default Vue.extend({
       this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
         .subtract(this.selectedIntervalInHours, "hours")
         .format(moment.HTML5_FMT.DATE);
-      this.loadData();
+      this.onFormChange();
     },
 
     incrementPeriod(): void {
       this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
         .add(this.selectedIntervalInHours, "hours")
         .format(moment.HTML5_FMT.DATE);
-      this.loadData();
+      this.onFormChange();
     },
 
     onFormChange(): void {
