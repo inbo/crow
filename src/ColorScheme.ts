@@ -1,0 +1,1 @@
+export type ColorScheme = "custom" | "biorad" | "birdtam";

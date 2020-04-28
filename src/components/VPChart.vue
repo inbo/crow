@@ -99,6 +99,7 @@ import { VTPSEntry } from "../VTPSEntryInterface"
 import DailyLines from "./DailyLines.vue";
 import { DayData } from '../DayDataInterface';
 import moment, { Moment } from "moment-timezone";
+import { ColorScheme } from '../ColorScheme';
 
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)
@@ -111,8 +112,6 @@ interface VTPSEntryPrepared extends VTPSEntry {
   y: number | undefined;
   fill: string;
 }
-
-type ColorScheme = "custom" | "biorad" | "birdtam";
 
 export default Vue.extend({
   name: "VPChart",
@@ -160,13 +159,14 @@ export default Vue.extend({
   props: {
     vtpsData: Array as () => VTPSEntry[],
     styleConfig: Object,
+    scheme: String as () => ColorScheme,
     showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
   },
   data: function() {
     return {
       margin: this.styleConfig.margin,
 
-      colorScheme: 'custom' as ColorScheme,
+      colorScheme: this.scheme as ColorScheme,
 
       availableColorSchemes: [
         { text: "CROW", value: "custom" },
@@ -282,6 +282,11 @@ export default Vue.extend({
         y: this.getRectYValue(data.height),
         fill: this.getRectColor(data)
       }));
+    }
+  },
+  watch: {
+    colorScheme: function(newScheme): void {
+      this.$emit('colorSchemeChanged', newScheme);
     }
   },
   methods: {

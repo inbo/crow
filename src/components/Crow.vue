@@ -133,7 +133,7 @@
           <router-link 
             v-slot="{ href }" 
             append
-            :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs }}"
+            :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpColorScheme: VPChartSelectedScheme }}"
           >
             <b-button 
               v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
@@ -155,6 +155,8 @@
             :vtps-data="radarVtpsAsArray"
             :show-time-as="timeZoneToShow"
             :style-config="VPChartStyle"
+            :scheme="VPChartSelectedScheme"
+            @colorSchemeChanged="vpColorSchemeChanged"
           >
             <template v-slot:title>
               <h3>VP Chart</h3>
@@ -216,6 +218,7 @@ import { VTPSDataRowFromFile } from "../VTPSDataRowFromFileInterface";
 import { Period } from "../PeriodInterface";
 import { RadarInterface, GroupedRadarInterface } from "../RadarInterface";
 import { TimeInterval } from "../TimeIntervaInterface";
+import { ColorScheme } from '../ColorScheme';
 
 interface VTPSDataByHeight {
   [key: number]: VTPSDataRow;
@@ -255,6 +258,10 @@ export default Vue.extend({
     timeDisplayValueProp: {
       type: String,
       default: "radarLocal"
+    },
+    vpChartSelectedSchemeProp: {
+      type: Object as () => ColorScheme,
+      default: 'birdtam'
     }
   },
   data: function() {
@@ -272,6 +279,7 @@ export default Vue.extend({
       showCharts: false,
 
       VPChartStyle: config.VPChartStyle,
+      VPChartSelectedScheme: this.vpChartSelectedSchemeProp as ColorScheme,
       VPIChartStyle: config.VPIChartStyle,
       TimelineChartStyle: config.TimelineChartStyle,
 
@@ -408,6 +416,10 @@ export default Vue.extend({
     });
   },
   methods: {
+    vpColorSchemeChanged(schemeName: ColorScheme): void {
+      this.resetCopyUrlButtonText();
+      this.VPChartSelectedScheme = schemeName;
+    },
     trimLastSlash(s: string): string {
       return s.replace(/\/$/, "");
     },
@@ -465,8 +477,12 @@ export default Vue.extend({
     },
 
     onFormChange(): void {
-      this.copyUrlButtonText = initialCopyUrlText;
+      this.resetCopyUrlButtonText();
       this.loadData();
+    },
+
+    resetCopyUrlButtonText(): void {
+      this.copyUrlButtonText = initialCopyUrlText;
     },
 
     loadData(): void {
