@@ -2,7 +2,7 @@
   <b-container class="content">
     <b-form 
       form 
-      @change="onFormChange" 
+      @change="loadData" 
     >
       <b-row>
         <b-col lg>
@@ -408,6 +408,24 @@ export default Vue.extend({
       return integratedProfiles;
     }
   },
+  watch: {
+    // Any change on something that can be shared via URL will reset the button
+    selectedRadarValue: function(): void {
+      this.resetCopyUrlButtonText();
+    },
+    selectedDate: function(): void {
+      this.resetCopyUrlButtonText();
+    },
+    selectedIntervalInHours: function(): void {
+      this.resetCopyUrlButtonText();
+    },
+    timeDisplayedAs: function(): void {
+      this.resetCopyUrlButtonText();
+    },
+    VPChartSelectedScheme: function(): void {
+      this.resetCopyUrlButtonText();
+    },
+  },
   mounted: function() {
     this.baseUrl = this.trimLastSlash(window.location.origin);
     
@@ -417,7 +435,6 @@ export default Vue.extend({
   },
   methods: {
     vpColorSchemeChanged(schemeName: ColorScheme): void {
-      this.resetCopyUrlButtonText();
       this.VPChartSelectedScheme = schemeName;
     },
     trimLastSlash(s: string): string {
@@ -466,18 +483,13 @@ export default Vue.extend({
       this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
         .subtract(this.selectedIntervalInHours, "hours")
         .format(moment.HTML5_FMT.DATE);
-      this.onFormChange();
+      this.loadData();
     },
 
     incrementPeriod(): void {
       this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
         .add(this.selectedIntervalInHours, "hours")
         .format(moment.HTML5_FMT.DATE);
-      this.onFormChange();
-    },
-
-    onFormChange(): void {
-      this.resetCopyUrlButtonText();
       this.loadData();
     },
 
