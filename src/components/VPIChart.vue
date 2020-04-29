@@ -116,15 +116,15 @@ import helpers from "../helpers";
 
 import { VPIEntry } from "../VPIEntryInterface";
 import { DayData } from '../DayDataInterface';
+import { IntegratedPropertyName } from "../CrowTypes"
 
 import TWEEN from "@tweenjs/tween.js";
 
-type integratedPropertyName = "mtr" | "rtr" | "vid" | "vir";
 type NullableNumber = number | null;
 type NullableVPIEntry = VPIEntry | null;
 
 interface DisplayMode {
-  propertyName: integratedPropertyName; // the name of the property (on vpiData[].integratedProfiles) where data can be found. Can be used as an ID
+  propertyName: IntegratedPropertyName; // the name of the property (on vpiData[].integratedProfiles) where data can be found. Can be used as an ID
   label: string; // appears in <select> and as legend of the Y axis
   yMaxValComputedName: "maxMTRWithMinimum" | "maxRTR" | "maxVID" | "maxVIR"; // the name of a computed property to get the max value for the Y Axis
 }
@@ -178,12 +178,13 @@ export default Vue.extend({
     vpiData: Array as () => VPIEntry[],
     styleConfig: Object,
     showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")
-    dataTemporalResolution: Number
+    dataTemporalResolution: Number,
+    mode: String as () => IntegratedPropertyName
   },
   data: function() {
     return {
       vpiDataForPath: [] as VPIEntryForPath[],
-      selectedMode: "mtr" as integratedPropertyName,
+      selectedMode: this.mode,
       availableModes: [
         {
           label: "Migration Traffic Rate",
@@ -329,7 +330,7 @@ export default Vue.extend({
     yMaxVal: function(): number {
       return this[this.selectedModeObject.yMaxValComputedName];
     },
-    selectedModePropertyName: function(): integratedPropertyName {
+    selectedModePropertyName: function(): IntegratedPropertyName {
       return this.selectedModeObject.propertyName;
     },
     selectedModeLabel: function(): string {
@@ -385,9 +386,10 @@ export default Vue.extend({
   watch: {
     selectedMode: {
       immediate: true,
-      handler: function(): void {
+      handler: function(newMode): void {
         this.syncVPIDataForPath();
         this.animate();
+        this.$emit('modeChanged', newMode);
       }
     },
     vpiData: {

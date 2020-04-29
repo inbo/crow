@@ -99,7 +99,7 @@ import { VTPSEntry } from "../VTPSEntryInterface"
 import DailyLines from "./DailyLines.vue";
 import { DayData } from '../DayDataInterface';
 import moment, { Moment } from "moment-timezone";
-import { ColorScheme } from '../ColorScheme';
+import { ColorScheme } from '../CrowTypes';
 
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)

@@ -133,7 +133,7 @@
           <router-link 
             v-slot="{ href }" 
             append
-            :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpColorScheme: VPChartSelectedScheme }}"
+            :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpColorScheme: VPChartSelectedScheme, vpiMode: VPIChartMode }}"
           >
             <b-button 
               v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
@@ -180,6 +180,8 @@
             :style-config="VPIChartStyle"
             :show-time-as="timeZoneToShow"
             :data-temporal-resolution="dataTemporalResolution"
+            :mode="VPIChartMode"
+            @modeChanged="vpiModeChanged"
           >
             <template v-slot:title>
               <h3>VPI Chart</h3>
@@ -218,7 +220,7 @@ import { VTPSDataRowFromFile } from "../VTPSDataRowFromFileInterface";
 import { Period } from "../PeriodInterface";
 import { RadarInterface, GroupedRadarInterface } from "../RadarInterface";
 import { TimeInterval } from "../TimeIntervaInterface";
-import { ColorScheme } from '../ColorScheme';
+import { ColorScheme, IntegratedPropertyName } from '../CrowTypes';
 
 interface VTPSDataByHeight {
   [key: number]: VTPSDataRow;
@@ -261,7 +263,11 @@ export default Vue.extend({
     },
     vpChartSelectedSchemeProp: {
       type: Object as () => ColorScheme,
-      default: 'birdtam'
+      default: 'custom'
+    },
+    vpiChartModeProp: {
+      type: Object as () => IntegratedPropertyName,
+      default: 'mtr'
     }
   },
   data: function() {
@@ -281,6 +287,7 @@ export default Vue.extend({
       VPChartStyle: config.VPChartStyle,
       VPChartSelectedScheme: this.vpChartSelectedSchemeProp as ColorScheme,
       VPIChartStyle: config.VPIChartStyle,
+      VPIChartMode: this.vpiChartModeProp as IntegratedPropertyName,
       TimelineChartStyle: config.TimelineChartStyle,
 
       dataTemporalResolution: config.vtpsFormat.temporalResolution as number,
@@ -425,6 +432,9 @@ export default Vue.extend({
     VPChartSelectedScheme: function(): void {
       this.resetCopyUrlButtonText();
     },
+    VPIChartMode: function(): void {
+      this.resetCopyUrlButtonText();
+    }
   },
   mounted: function() {
     this.baseUrl = this.trimLastSlash(window.location.origin);
@@ -434,6 +444,9 @@ export default Vue.extend({
     });
   },
   methods: {
+    vpiModeChanged(mode: IntegratedPropertyName): void {
+      this.VPIChartMode = mode;
+    },
     vpColorSchemeChanged(schemeName: ColorScheme): void {
       this.VPChartSelectedScheme = schemeName;
     },

@@ -58,7 +58,8 @@ const routes = [
       dateValueProp: route.query.date,
       intervalValueProp: route.query.interval,
       timeDisplayValueProp: route.query.timedisplay,
-      vpChartSelectedSchemeProp: route.query.vpColorScheme
+      vpChartSelectedSchemeProp: route.query.vpColorScheme,
+      vpiChartModeProp: route.query.vpiMode
     })
   }, // Example URL: http://localhost:8080/#/?radar=bezav
   { path: "*", component: PageNotFound }
