@@ -2,8 +2,7 @@
 import config from "./config";
 import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only the "chart" modules need it
 import moment from "moment-timezone";
-import { VTPSDataRowFromFile } from "./VTPSDataRowFromFileInterface";
-import { Profiles } from './ProfilesInterface';
+import { Profiles, VTPSDataRowFromFile } from './CrowTypes';
 
 function densityToBirdtam(density: number): number {
     // Takes a density (from VTPS data) and turn it to a BIRDTAM code.
@@ -18,13 +17,13 @@ function densityToBirdtam(density: number): number {
 
     Overigens voor de vertical integrated densities (VID) gebruik ik dezelfde conversie. density == VID
     */
-   return Math.floor(1.4427 * Math.log(density + 1) + 1.6781);
+    return Math.floor(1.4427 * Math.log(density + 1) + 1.6781);
 }
 
 function uuidv4(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
     });
 }
 
@@ -39,7 +38,7 @@ function formatTimestamp(ts: number, showTimeAs: string, timeAxisFormat: string)
 }
 
 function makeSafeForCSS(name: string): string {
-    return name.replace(/[^a-z0-9]/g, function(s) {
+    return name.replace(/[^a-z0-9]/g, function (s) {
         const c = s.charCodeAt(0);
         if (c == 32) return '-';
         if (c >= 65 && c <= 90) return '_' + s.toLowerCase();
@@ -109,7 +108,7 @@ function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infi
         altMax = Math.min(altMax, altMinMaxFromData[1] + interval); // Interval added to get upper bound of height layer
         data = data.filter(d => d.height >= altMin && d.height <= altMax);
     }
-    
+
     // Filter data on sd_vvp values above sd_vvp threshold
     data = data.filter(d => d.sd_vvp >= vvpThresh);
     if (data.length == 0) {

@@ -1,8 +1,7 @@
-import { mount, createLocalVue } from '@vue/test-utils'
-import Crow from '../../src/components/Crow.vue'
+import { createLocalVue } from '@vue/test-utils'
 import { BootstrapVue } from 'bootstrap-vue'
 import helpers from '../../src/helpers'
-import { VTPSDataRowFromFile } from '@/VTPSDataRowFromFileInterface';
+import { VTPSDataRowFromFile } from '@/CrowTypes';
 import * as Papa from 'papaparse';
 const fs = require("fs");
 const path = require("path");
@@ -17,7 +16,7 @@ test('Crow component rendering', () => {
   expect(wrapper.contains('form')).toBe(true); // It contains a form*/
 });
 
-function round3decimals(num:number):number {
+function round3decimals(num: number): number {
   return Math.round((num + Number.EPSILON) * 1000) / 1000
 }
 
@@ -28,10 +27,10 @@ test('Profile integration code (compare to bioRad output)', () => {
   const VtpsData = helpers.parseVtps(sourceData);
   // 1.2 bioRad's output for comparison (behel_vpi_20200129.truncated.csv)
   interface BioRadProfile {
-    mtr: number
-    vid: number
-    vir: number
-    rtr: number
+    mtr: number;
+    vid: number;
+    vir: number;
+    rtr: number;
   }
   const bioradOutputString = fs.readFileSync(path.resolve(__dirname, "./data/behel_vpi_20200129.truncated.csv"), "utf-8");
   const integratedProfilesBiorad = Papa.parse(bioradOutputString, {
@@ -42,7 +41,7 @@ test('Profile integration code (compare to bioRad output)', () => {
   // 2. Group data by datetime (preparation for integrateProfile)
   let lastTimestamp = VtpsData[0].datetime;
   let tempDataToIntegrate = [] as VTPSDataRowFromFile[];
-  let groupedDataToIntegrate = [] as VTPSDataRowFromFile[][];
+  const groupedDataToIntegrate = [] as VTPSDataRowFromFile[][];
 
   VtpsData.forEach((element) => {
     if (element.datetime != lastTimestamp) {
@@ -69,8 +68,8 @@ test('Profile integration code (compare to bioRad output)', () => {
     const VirJs = round3decimals(integratedProfileJS.vir);
     const VirBiorad = round3decimals(integratedProfilesBiorad[index].vir);
 
-    const RtrJs = round3decimals(integratedProfileJS.rtr);
-    const RtrBiorad = round3decimals(integratedProfilesBiorad[index].rtr);
+    //const RtrJs = round3decimals(integratedProfileJS.rtr);
+    //const RtrBiorad = round3decimals(integratedProfilesBiorad[index].rtr);
 
     expect(MtrJs).toEqual(MtrBiorad);
     expect(VidJs).toEqual(VidBiorad);

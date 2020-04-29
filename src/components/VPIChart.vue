@@ -114,9 +114,7 @@ import DailyLines from "./DailyLines.vue";
 
 import helpers from "../helpers";
 
-import { VPIEntry } from "../VPIEntryInterface";
-import { DayData } from '../DayDataInterface';
-import { IntegratedPropertyName } from "../CrowTypes"
+import { DayData, VPIEntry, IntegratedPropertyName } from '../CrowTypes';
 
 import TWEEN from "@tweenjs/tween.js";
 

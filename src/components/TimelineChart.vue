@@ -34,7 +34,7 @@
 import Vue from "vue";
 import * as d3 from "d3";
 import moment, { Moment } from "moment-timezone";
-import { Period } from "../PeriodInterface";
+import { Period } from "../CrowTypes";
 import helpers from "../helpers";
 
 interface DisplayablePeriod extends Period {
