@@ -169,7 +169,8 @@ export default Vue.extend({
       availableColorSchemes: [
         { text: "CROW", value: "custom" },
         //{ text: "BioRad", value: "biorad" },
-        { text: "BIRDTAM", value: "birdtam" }
+        { text: "BIRDTAM", value: "birdtam" },
+        { text: "Viridis", value: "viridis" }
       ],
 
       innerWidth:
@@ -272,6 +273,11 @@ export default Vue.extend({
         ])
         .domain([0, this.maxDensity]);
     },
+    viridisColorScale: function(): d3.ScaleSequential<string> {
+      return d3
+        .scaleSequential<string>(d3.interpolateViridis)
+        .domain([0, this.maxDensity])
+    },
     vtpsDataPrepared: function(): VTPSEntryPrepared[] {
       return this.vtpsData.map(data => ({
         ...data,
@@ -326,6 +332,9 @@ export default Vue.extend({
           break;
         case 'birdtam':
           color = this.birdtamColorScale(helpers.densityToBirdtam(density));
+          break;
+        case 'viridis':
+          color = data.noData ? this.styleConfig.noDataColor : this.viridisColorScale(density);
       }
 
       return color;
