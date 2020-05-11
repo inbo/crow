@@ -15,9 +15,9 @@
       style="position: absolute; left: 0px; top: 0px;"
     >
       <g
-        v-axis="{'scale': legendScale, 'tickLabels': legendTickLabels}"
-        :transform="`translate(${styleDiv.margin.left}, ${styleDiv.margin.top + canvasHeight})`"
-        class="axis"
+        v-axis="{ 'scale': legendScale }"
+        :transform="`translate(${styleDiv.margin.left - 1}, ${styleDiv.margin.top + canvasHeight - 1})`"
+        style="stroke-width: 0.5px"
       /> 
     </svg>
   </div>
@@ -33,15 +33,9 @@ export default Vue.extend({
   directives: {
     axis(el, binding): void {
       const scaleFunction = binding.value.scale;
-
-      const tickLabels = binding.value.tickLabels; 
-
       const legendAxis = d3
         .axisBottom<number>(scaleFunction)
         .tickSize(6) 
-        .tickFormat((d, i) => tickLabels[i])
-        .ticks(tickLabels.length - 1);
-
       legendAxis(d3.select((el as unknown) as SVGGElement));
     }
   },
@@ -56,17 +50,14 @@ export default Vue.extend({
     };
   },
   computed: {
-    legendTickLabels: function(): string[] {
-      return [`0 - low ${this.topic}`, `1 - high ${this.topic}`]
-    },
     legendScale: function(): d3.ScaleLinear<number, number> {
       return d3
         .scaleLinear()
         .range([
+          1,  
           this.styleDiv.width -
             this.styleDiv.margin.left -
-            this.styleDiv.margin.right,
-          1
+            this.styleDiv.margin.right
         ])
         .domain(this.colorScale.domain());
     },
