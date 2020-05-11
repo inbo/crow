@@ -275,8 +275,9 @@ export default Vue.extend({
     },
     viridisColorScale: function(): d3.ScaleSequential<string> {
       return d3
-        .scaleSequential<string>(d3.interpolateViridis)
+        .scaleSequentialSymlog<string>(d3.interpolateViridis) // TODO: decide which exact sequential scale (linear, log, symlog, sqrt, ... ) is more appropriate: https://observablehq.com/@d3/sequential-scales 
         .domain([0, this.maxDensity])
+        .nice()
     },
     selectedColorScale: function(): d3.ScaleSequential<string> | d3.ScaleOrdinal<number, string> {
       switch (this.colorScheme) {
