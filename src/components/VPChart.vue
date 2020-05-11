@@ -19,6 +19,11 @@
         </b-col>
       </b-form-row>
     </b-form>
+    <color-legend 
+      :color-scale="viridisColorScale" 
+      opacity="1" 
+      topic="Density" 
+    />
     <svg 
       id="vp-chart" 
       :width="styleConfig.width" 
@@ -96,6 +101,7 @@ import Vue from "vue";
 import * as d3 from "d3";
 import helpers from "../helpers";
 import DailyLines from "./DailyLines.vue";
+import ColorLegend from "./ColorLegend.vue";
 import moment, { Moment } from "moment-timezone";
 import { ColorScheme,VTPSEntry, DayData } from '../CrowTypes';
 
@@ -114,7 +120,8 @@ interface VTPSEntryPrepared extends VTPSEntry {
 export default Vue.extend({
   name: "VPChart",
   components: {
-    DailyLines
+    DailyLines,
+    ColorLegend
   },
   directives: {
     yaxisRight(el, binding): void {
