@@ -42,9 +42,9 @@ export default Vue.extend({
   data: function() {
     return {
       styleDiv: {
-        height: 200,
-        width: 200,
-        margin: { top: 10, right: 10, bottom: 170, left: 2 }
+        height: 60,
+        width: 500,
+        margin: { top: 15, right: 10, bottom: 20, left: 2 }
       }
     };
   },
@@ -78,7 +78,6 @@ export default Vue.extend({
       return {
         display: "inline-block",
         position: "relative",
-        height: this.styleDiv.height + "px",
         width: this.styleDiv.width + "px"
       };
     },

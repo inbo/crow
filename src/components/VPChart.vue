@@ -17,14 +17,16 @@
             />
           </b-form-group>
         </b-col>
+        <b-col>
+          <color-legend 
+            :color-scale="selectedColorScale"
+            :color-scale-type="selectedColorScaleType"
+            opacity="1" 
+            topic="Density" 
+          />
+        </b-col>
       </b-form-row>
     </b-form>
-    <color-legend 
-      :color-scale="selectedColorScale"
-      :color-scale-type="selectedColorScaleType"
-      opacity="1" 
-      topic="Density" 
-    />
     <svg 
       id="vp-chart" 
       :width="styleConfig.width" 
