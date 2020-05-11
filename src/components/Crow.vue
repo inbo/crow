@@ -257,7 +257,7 @@ export default Vue.extend({
     },
     vpChartSelectedSchemeProp: {
       type: Object as () => ColorScheme,
-      default: 'custom'
+      default: 'viridis'
     },
     vpiChartModeProp: {
       type: Object as () => IntegratedPropertyName,

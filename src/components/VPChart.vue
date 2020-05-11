@@ -103,7 +103,7 @@ import helpers from "../helpers";
 import DailyLines from "./DailyLines.vue";
 import ColorLegend from "./ColorLegend.vue";
 import moment, { Moment } from "moment-timezone";
-import { ColorScheme,VTPSEntry, DayData } from '../CrowTypes';
+import { ColorScheme, VTPSEntry, DayData } from '../CrowTypes';
 
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)
@@ -174,7 +174,6 @@ export default Vue.extend({
       colorScheme: this.scheme as ColorScheme,
 
       availableColorSchemes: [
-        { text: "CROW", value: "custom" },
         //{ text: "BioRad", value: "biorad" },
         { text: "BIRDTAM", value: "birdtam" },
         { text: "Viridis", value: "viridis" }
@@ -271,15 +270,6 @@ export default Vue.extend({
         .range(["#ffffff", "#e5ffe5", "#ccffcc", "#b2ffb2", "#99ff99", "#00ff00", "#ffff00", "#ffb2b2", "#ff0000", "#333333"])
         .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     },
-    customColorScale: function(): d3.ScaleLinear<string, string> {
-      return d3
-        .scaleLinear<string>()
-        .range([
-          this.styleConfig.minDensityColor,
-          this.styleConfig.maxDensityColor
-        ])
-        .domain([0, this.maxDensity]);
-    },
     viridisColorScale: function(): d3.ScaleSequential<string> {
       return d3
         .scaleSequential<string>(d3.interpolateViridis)
@@ -334,9 +324,6 @@ export default Vue.extend({
       const density = data.dens;
 
       switch (this.colorScheme) {
-        case 'custom':
-          color = data.noData ? this.styleConfig.noDataColor : this.customColorScale(density);
-          break;
         case 'birdtam':
           color = this.birdtamColorScale(helpers.densityToBirdtam(density));
           break;

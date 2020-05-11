@@ -55,8 +55,6 @@ export default {
 
         showTooltip: false, // BEWARE: useful for debugging, but performance is horrible
 
-        minDensityColor: '#f0f0f0',
-        maxDensityColor: '#dc3545',
         noDataColor: 'white',
 
         axisTimeFormat: " HH:mm z",

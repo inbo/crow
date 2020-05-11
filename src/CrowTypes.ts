@@ -1,6 +1,6 @@
 import moment from "moment-timezone";
 
-export type ColorScheme = "custom" | "biorad" | "birdtam" | "viridis";
+export type ColorScheme = "biorad" | "birdtam" | "viridis";
 export type IntegratedPropertyName = "mtr" | "rtr" | "vid" | "vir";
 
 export interface DayData {
