@@ -15,7 +15,7 @@
       style="position: absolute; left: 0px; top: 0px;"
     >
       <g
-        v-axis="{ 'scale': legendScale }"
+        v-axis="{ 'scale': legendScaleSequential }"
         :transform="`translate(${styleDiv.margin.left - 1}, ${styleDiv.margin.top + canvasHeight - 1})`"
         style="stroke-width: 0.5px"
       /> 
@@ -35,11 +35,10 @@ export default Vue.extend({
       const scaleFunction = binding.value.scale;
       const legendAxis = d3
         .axisBottom<number>(scaleFunction)
-        .tickSize(6) 
       legendAxis(d3.select((el as unknown) as SVGGElement));
     }
   },
-  props: ["colorScale", "opacity", "topic"], // eslint-disable-line
+  props: ["colorScale", "colorScaleType", "opacity", "topic"], // eslint-disable-line
   data: function() {
     return {
       styleDiv: {
@@ -50,16 +49,27 @@ export default Vue.extend({
     };
   },
   computed: {
-    legendScale: function(): d3.ScaleLinear<number, number> {
+    legendScaleSequential: function(): d3.ScaleLinear<number, number> {
       return d3
         .scaleLinear()
+        .domain(this.colorScale.domain())
         .range([
           1,  
           this.styleDiv.width -
             this.styleDiv.margin.left -
             this.styleDiv.margin.right
+        ]);
+    },
+    legendScaleOrdinal: function(): d3.ScaleQuantize<number> {
+      return d3
+        .scaleQuantize()
+        .domain([
+          1,  
+          this.styleDiv.width -
+            this.styleDiv.margin.left -
+            this.styleDiv.margin.right
         ])
-        .domain(this.colorScale.domain());
+        .range(this.colorScale.range());
     },
     ctx: function(): CanvasRenderingContext2D | null {
       return (this.$refs.canvas as HTMLCanvasElement).getContext("2d");
@@ -109,6 +119,12 @@ export default Vue.extend({
         this.clearCanvas();
         this.renderColorRamp(this.opacity);
       },
+    },
+    colorScaleType: {
+      handler: function(): void {
+        this.clearCanvas();
+        this.renderColorRamp(this.opacity);
+      },
     }
   },
   mounted: function() {
@@ -129,7 +145,7 @@ export default Vue.extend({
         colorObj.opacity = opacity;
         return colorObj + "";
       } else {
-        throw "colorStr is not a correct CSS color specifier";
+        throw colorStr + "is not a correct CSS color specifier";
       }
       
     },
@@ -138,10 +154,20 @@ export default Vue.extend({
 
       if (ctx != null) {
         d3.range(this.styleDiv.width).forEach(i => {
-          ctx.fillStyle = this.addOpacityToColor(
-            this.colorScale(this.legendScale.invert(i)),
+          let col;
+          switch(this.colorScaleType) {
+              case 'sequential':
+                  col = this.colorScale(this.legendScaleSequential.invert(i));
+                  break;
+              case 'ordinal':
+                  col = this.colorScale(this.legendScaleOrdinal(i));
+          }
+
+          ctx.fillStyle = this.addOpacityToColor(  
+            col,
             opacity
           );
+        
         ctx.fillRect(i, 0, 1, this.canvasHeight);
         });
       } else {

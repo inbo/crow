@@ -20,7 +20,8 @@
       </b-form-row>
     </b-form>
     <color-legend 
-      :color-scale="viridisColorScale" 
+      :color-scale="selectedColorScale"
+      :color-scale-type="selectedColorScaleType"
       opacity="1" 
       topic="Density" 
     />
@@ -267,13 +268,29 @@ export default Vue.extend({
       return d3
         .scaleOrdinal<number, string>()
         // BIRDTAM RGB-kleuren = [1 1 1; .9 1 .9; .8 1 .8; .7 1 .7; .6 1 .6; 0 1 0; 1 1 0; 1 .7 .7; 1 0 0; .2 .2 .2;];
-        .range(["#ffffff", "#e5ffe5", "#ccffcc", "#b2ffb2", "#99ff99", "#00ff00", "#ffff00", "#ffb2b2", "#ff0000", "#333333"])
+        .range(["#ffffff", "#e5ffe5", "#ccffcc", "#b2ffb2", "#99ff99", "#00ff00", "#ffff00", "#ffb2b2", "#ff0000", "#333333"])   
         .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     },
     viridisColorScale: function(): d3.ScaleSequential<string> {
       return d3
         .scaleSequential<string>(d3.interpolateViridis)
         .domain([0, this.maxDensity])
+    },
+    selectedColorScale: function(): d3.ScaleSequential<string> | d3.ScaleOrdinal<number, string> {
+      switch (this.colorScheme) {
+        case 'birdtam':
+          return this.birdtamColorScale;
+        default:
+          return this.viridisColorScale;
+      }
+    },
+    selectedColorScaleType: function(): string { // TODO: improve this smelly code (seee also selectedColorScale)
+      switch (this.colorScheme) {
+        case 'birdtam':
+          return 'ordinal';
+        default:
+          return 'sequential';
+      }
     },
     vtpsDataPrepared: function(): VTPSEntryPrepared[] {
       return this.vtpsData.map(data => ({
@@ -325,7 +342,7 @@ export default Vue.extend({
 
       switch (this.colorScheme) {
         case 'birdtam':
-          color = this.birdtamColorScale(helpers.densityToBirdtam(density));
+          color = data.noData ? this.styleConfig.noDataColor : this.birdtamColorScale(helpers.densityToBirdtam(density));
           break;
         case 'viridis':
           color = data.noData ? this.styleConfig.noDataColor : this.viridisColorScale(density);
