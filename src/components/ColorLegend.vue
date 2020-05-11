@@ -14,11 +14,11 @@
       :width="styleDiv.width"
       style="position: absolute; left: 0px; top: 0px;"
     >
-      <!-- <g
+      <g
         v-axis="{'scale': legendScale, 'tickLabels': legendTickLabels}"
+        :transform="`translate(${styleDiv.margin.left}, ${styleDiv.margin.top + canvasHeight})`"
         class="axis"
-        :transform="`translate(${canvasWidth + 1}, ${styleDiv.margin.top})`"
-      /> -->
+      /> 
     </svg>
   </div>
 </template>
@@ -27,7 +27,7 @@
 // Implementation heavily inspired by http://bl.ocks.org/syntagmatic/e8ccca52559796be775553b467593a9fx
 import Vue from "vue";
 import * as d3 from "d3";
-
+ 
 export default Vue.extend({
   name: "ColorLegend",
   directives: {
@@ -37,8 +37,8 @@ export default Vue.extend({
       const tickLabels = binding.value.tickLabels; 
 
       const legendAxis = d3
-        .axisRight<number>(scaleFunction)
-        .tickSize(6)
+        .axisBottom<number>(scaleFunction)
+        .tickSize(6) 
         .tickFormat((d, i) => tickLabels[i])
         .ticks(tickLabels.length - 1);
 
@@ -51,7 +51,7 @@ export default Vue.extend({
       styleDiv: {
         height: 200,
         width: 200,
-        margin: { top: 10, right: 170, bottom: 10, left: 2 }
+        margin: { top: 10, right: 10, bottom: 170, left: 2 }
       }
     };
   },
@@ -63,9 +63,9 @@ export default Vue.extend({
       return d3
         .scaleLinear()
         .range([
-          this.styleDiv.height -
-            this.styleDiv.margin.top -
-            this.styleDiv.margin.bottom,
+          this.styleDiv.width -
+            this.styleDiv.margin.left -
+            this.styleDiv.margin.right,
           1
         ])
         .domain(this.colorScale.domain());
@@ -112,6 +112,12 @@ export default Vue.extend({
         this.clearCanvas();
         this.renderColorRamp(newOpacity);
       },
+    },
+    colorScale: {
+      handler: function(): void {
+        this.clearCanvas();
+        this.renderColorRamp(this.opacity);
+      },
     }
   },
   mounted: function() {
@@ -140,12 +146,12 @@ export default Vue.extend({
       const ctx = this.ctx;
 
       if (ctx != null) {
-        d3.range(this.styleDiv.height).forEach(i => {
+        d3.range(this.styleDiv.width).forEach(i => {
           ctx.fillStyle = this.addOpacityToColor(
             this.colorScale(this.legendScale.invert(i)),
             opacity
           );
-          ctx.fillRect(0, i, this.canvasWidth, 1);
+        ctx.fillRect(i, 0, 1, this.canvasHeight);
         });
       } else {
         throw "No canvas context found";
