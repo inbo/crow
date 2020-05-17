@@ -1,25 +1,31 @@
 # Crow
 
-Crow prototype, as a Vue.js SPA. Make uses of the [Vue CLI](https://cli.vuejs.org/) toolkit, [D3](https://d3js.org/) and [BootstrapVue](https://bootstrap-vue.js.org/).
+Crow is a single-page application to visualize bird migration as detected by weather radars. Makes use of the [Vue CLI](https://cli.vuejs.org/) toolkit, [D3](https://d3js.org/) and [BootstrapVue](https://bootstrap-vue.js.org/).
 
-## To run (development)
+## Installation and development
 
-```
-$ npm run serve
-```
-
-## Run unit tests
+Install with:
 
 ```
-$ npm run test:unit
+npm install
 ```
 
-## To deploy
-
-On [https://inbo.github.io/crow/](https://inbo.github.io/crow/)
+Run in development with:
 
 ```
-$ npm run build
+npm run serve
 ```
 
-Then commit and push, including the `docs` directory. GitHub pages does the rest. 
+Run unit tests with:
+
+```
+npm run test:unit
+```
+
+## Deployment
+
+```
+npm run build
+```
+
+Then commit and push, including the `docs` directory. GitHub pages will serve the site at <https://inbo.github.io/crow/>.
