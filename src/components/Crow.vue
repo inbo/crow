@@ -19,7 +19,6 @@
                   size="sm"
                   :options="availableRadars"
                 />
-
                 <b-form-text>
                   {{ selectedRadarLocation }} is located at
                   <a
@@ -46,14 +45,12 @@
                       -{{ selectedIntervalLabel }}
                     </b-button>
                   </b-input-group-prepend>
-
                   <b-form-input
                     id="input-date"
                     v-model="selectedDate"
                     type="date"
                     placeholder="Type a date..."
                   />
-
                   <b-input-group-append>
                     <b-button
                       variant="outline-secondary"
@@ -70,13 +67,10 @@
 
         <b-col lg>
           <b-row>
-            <b-col 
-              cols="6" 
-              sm="3"
-            >
+            <b-col cols="3">
               <b-form-group 
-                id="input-interval-group" 
-                label="Interval:" 
+                id="input-interval-group"
+                label="Interval:"
                 label-for="input-interval"
               >
                 <b-form-radio-group
@@ -90,13 +84,10 @@
               </b-form-group>
             </b-col>
 
-            <b-col 
-              cols="6" 
-              sm="3"
-            >
+            <b-col cols="3">
               <b-form-group 
-                id="input-timezone-group" 
-                label="Time zone:" 
+                id="input-timezone-group"
+                label="Time zone:"
                 label-for="input-timezone"
               >
                 <b-form-radio-group
@@ -106,47 +97,37 @@
                   buttons
                   button-variant="outline-secondary"
                 >
-                  <b-form-radio value="radarLocal">
-                    Radar
-                  </b-form-radio>
-                  <b-form-radio value="UTC">
-                    UTC  
-                  </b-form-radio>
+                  <b-form-radio value="radarLocal">Radar</b-form-radio>
+                  <b-form-radio value="UTC">UTC</b-form-radio>
                 </b-form-radio-group>
+              </b-form-group>
+            </b-col>
+
+            <b-col cols="6">
+              <b-form-group 
+                id="copy-url-group"
+                label="Share:"
+              >
+                <router-link
+                  v-slot="{ href }"
+                  append
+                  :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpColorScheme: VPChartSelectedScheme, vpiMode: VPIChartMode }}"
+                >
+                  <b-button 
+                    v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
+                    v-clipboard:success="onCopyUrl"
+                    size="sm"
+                    variant="outline-primary"
+                  >
+                    {{ copyUrlButtonText }}
+                  </b-button>
+                </router-link>
               </b-form-group>
             </b-col>
           </b-row>
         </b-col>
       </b-row>
     </b-form>
-
-    <b-row
-      align-h="end"
-    >
-      <b-col
-        cols="2"
-        align-self="end"
-      >
-        <small>
-          <!-- TODO: refactor? extract copy button to its own component? Use https://stackoverflow.com/questions/41036009/vue-1-x-2-x-get-vue-router-path-url-from-a-route-object instead of the router-link directive and slot? -->
-
-          <router-link 
-            v-slot="{ href }" 
-            append
-            :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpColorScheme: VPChartSelectedScheme, vpiMode: VPIChartMode }}"
-          >
-            <b-button 
-              v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
-              v-clipboard:success="onCopyUrl"
-              variant="outline-primary"
-              size="sm" 
-            >
-              {{ copyUrlButtonText }}
-            </b-button>
-          </router-link>
-        </small>
-      </b-col>
-    </b-row>
 
     <div v-if="showCharts">
       <b-row>
@@ -229,7 +210,7 @@ interface RadarVtpsAsTree {
   [key: number]: RadarVTPSTreeEntry;
 }
 
-const initialCopyUrlText = "Copy URL!";
+const initialCopyUrlText = "Copy URL";
 
 export default Vue.extend({
   name: "Crow",
@@ -448,7 +429,7 @@ export default Vue.extend({
       return s.replace(/\/$/, "");
     },
     onCopyUrl(): void {
-      this.copyUrlButtonText = 'Copied!';
+      this.copyUrlButtonText = 'URL copied';
     },
     /* Initialize radarVtps with empty data 
        - The temporal range is [startMoment, endMoment] (resolution: dataTemporalResolution - in seconds)
