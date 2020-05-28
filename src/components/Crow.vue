@@ -210,7 +210,7 @@ interface RadarVtpsAsTree {
   [key: number]: RadarVTPSTreeEntry;
 }
 
-const initialCopyUrlText = "Copy URL";
+const initialCopyUrlText = "Copy link";
 
 export default Vue.extend({
   name: "Crow",
@@ -429,7 +429,7 @@ export default Vue.extend({
       return s.replace(/\/$/, "");
     },
     onCopyUrl(): void {
-      this.copyUrlButtonText = 'URL copied';
+      this.copyUrlButtonText = 'Link copied';
     },
     /* Initialize radarVtps with empty data 
        - The temporal range is [startMoment, endMoment] (resolution: dataTemporalResolution - in seconds)
