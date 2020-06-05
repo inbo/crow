@@ -9,15 +9,14 @@
       pointer-events="none"
       y1="0"
       :y2="height"
-      class="day-separator"
-      style="stroke-width:1;pointer-events:none;"
+      :style="lineStyle"
     />
-    <text
+    <text   
       v-for="day in days"
       :key="'text-' + day.xPositionAtMidnight"
       :x="day.xPositionAtMidnight + 5"
       :y="15"
-      class="day-separator"
+      :style="textStyle"
     >
       {{ day.dayLabel }}
     </text>
@@ -39,15 +38,26 @@ export default Vue.extend({
         height: {
             type: Number,
             default: 100
+        },
+        color: {
+            type: String,
+            default: "rgb(33, 37, 41)"
         }
+    },
+    computed: {
+      lineStyle: function(): Record<string, unknown> {
+        return {
+          'stroke-width': 1,
+          'pointer-events': 'none',
+          'stroke': this.color
+        }
+      },
+      textStyle: function(): Record<string, unknown> {
+        return {
+          'font': '12px sans-serif',
+          'fill': this.color
+        }
+      }
     }
 });
 </script>
-
-<style scoped>
-.day-separator {
-  stroke: rgb(33, 37, 41); /* for line */
-  fill: rgb(33, 37, 41); /* For text */
-  font: 12px sans-serif;
-}
-</style>

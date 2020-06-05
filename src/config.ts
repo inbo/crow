@@ -55,7 +55,7 @@ export default {
 
         showTooltip: false, // BEWARE: useful for debugging, but performance is horrible
 
-        noDataColor: 'white',
+        noDataColor: 'grey',
 
         axisTimeFormat: " HH:mm z",
         tooltipTimeFormat: "MMM D - HH:mm z",

@@ -88,7 +88,8 @@
       
         <daily-lines 
           :days="daysCovered" 
-          :height="innerHeight" 
+          :height="innerHeight"
+          :color="dailyLinesColor" 
         />
       
       </g>
@@ -194,6 +195,14 @@ export default Vue.extend({
     };
   },
   computed: {
+    dailyLinesColor: function(): string {
+      switch (this.colorScheme) {
+        case 'viridis':
+          return 'white';
+        default:
+          return 'rgb(33, 37, 41)';
+      }
+    },
     daysCovered: function(): DayData[] {
       const days = this.getDaysInRange(this.minTimestamp, this.maxTimestamp, this.showTimeAs);
 
