@@ -21,7 +21,10 @@
             Created by the
             <a href="https://oscibio.inbo.be">Open science lab for biodiversity</a>
           </b-col>
-          <b-col lg class="text-right">
+          <b-col 
+            lg 
+            class="text-right"
+          >
             <a href="https://github.com/inbo/crow/">Source code</a> version
             <code>
               <a :href="'https://github.com/inbo/crow/tree/' + commitHash()">{{ commitHash() }}</a>

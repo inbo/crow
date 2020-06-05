@@ -97,8 +97,12 @@
                   buttons
                   button-variant="outline-secondary"
                 >
-                  <b-form-radio value="radarLocal">Radar</b-form-radio>
-                  <b-form-radio value="UTC">UTC</b-form-radio>
+                  <b-form-radio value="radarLocal">
+                    Radar
+                  </b-form-radio>
+                  <b-form-radio value="UTC">
+                    UTC
+                  </b-form-radio>
                 </b-form-radio-group>
               </b-form-group>
             </b-col>
