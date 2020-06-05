@@ -75,7 +75,7 @@ function parseVtps(responseString: string): VTPSDataRowFromFile[] {
             dd: parseFloat(row.substring(47, 52)),
             ff: parseFloat(row.substring(41, 46)),
             dens: parseFloatOrZero(row.substring(76, 82)),
-            sd_vvp: parseFloat(row.substring(53, 59)), // eslint-disable-line @typescript-eslint/camelcase
+            sd_vvp: parseFloat(row.substring(53, 59)),
             eta: parseFloatOrZero(row.substring(70, 75))
         };
     });
