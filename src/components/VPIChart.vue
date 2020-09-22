@@ -108,7 +108,7 @@
 /* eslint-disable vue/require-default-prop */
 import Vue from "vue";
 import * as d3 from "d3";
-import moment, { Moment } from "moment-timezone";
+import moment from "moment-timezone";
 
 import DailyLines from "./DailyLines.vue";
 
