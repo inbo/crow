@@ -178,9 +178,9 @@ export default Vue.extend({
       colorScheme: this.scheme as ColorScheme,
 
       availableColorSchemes: [
-        //{ text: "BioRad", value: "biorad" },
-        { text: "BIRDTAM", value: "birdtam" },
-        { text: "Viridis", value: "viridis" }
+        { text: "Viridis", value: "viridis" },
+        { text: "bioRad", value: "biorad" },
+        { text: "BIRDTAM", value: "birdtam" }
       ],
 
       innerWidth:
@@ -282,6 +282,17 @@ export default Vue.extend({
         .range(["#ffffff", "#e5ffe5", "#ccffcc", "#b2ffb2", "#99ff99", "#00ff00", "#ffff00", "#ffb2b2", "#ff0000", "#333333"])   
         .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
     },
+    bioRadColorScale: function(): d3.ScaleSequential<string> {
+      //console.log("interpolator custom", helpers.interpolateBioRad)
+      //console.log("interpolator D3", d3.interpolatePiYG)
+      return d3
+        .scaleSequentialSymlog(helpers.interpolateBioRad)
+        .domain([0, this.maxDensity])
+        .nice()
+        //.domain([0, this.maxDensity])
+        //.range(helpers.bioRadScheme);
+
+    },
     viridisColorScale: function(): d3.ScaleSequential<string> {
       return d3
         .scaleSequentialSymlog<string>(d3.interpolateViridis) // TODO: decide which exact sequential scale (linear, log, symlog, sqrt, ... ) is more appropriate: https://observablehq.com/@d3/sequential-scales 
@@ -292,6 +303,8 @@ export default Vue.extend({
       switch (this.colorScheme) {
         case 'birdtam':
           return this.birdtamColorScale;
+        case 'biorad':
+          return this.bioRadColorScale;
         default:
           return this.viridisColorScale;
       }
@@ -300,6 +313,8 @@ export default Vue.extend({
       switch (this.colorScheme) {
         case 'birdtam':
           return 'ordinal';
+        case 'biorad':
+          return 'sequential';
         default:
           return 'sequential';
       }
@@ -358,6 +373,10 @@ export default Vue.extend({
           break;
         case 'viridis':
           color = data.noData ? this.styleConfig.noDataColor : this.viridisColorScale(density);
+          break;
+        case 'biorad':
+          color = data.noData ? this.styleConfig.noDataColor : this.bioRadColorScale(density);
+          break;
       }
 
       return color;
