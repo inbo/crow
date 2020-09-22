@@ -400,7 +400,7 @@ export default Vue.extend({
   },
   methods: {
     animate(): void {
-      if (TWEEN.update()) {
+      if (TWEEN.update(TWEEN.now())) {
         requestAnimationFrame(this.animate);
       }
     },
@@ -459,7 +459,7 @@ export default Vue.extend({
             .onUpdate(() => {
               this.$set(this.vpiDataForPath[foundIndex], "val", cloneElem.val);
             })
-            .start(); // Start the tween immediately.
+            .start(TWEEN.now()); // Start the tween immediately.
         }
       }
 
