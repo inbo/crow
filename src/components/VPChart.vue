@@ -11,7 +11,7 @@
           >
             <b-form-select
               id="vp-color-scheme"
-              v-model="colorScheme"
+              v-model="selectedColorSchemeIdentifier"
               size="sm"
               :options="availableColorSchemes"
             />
@@ -19,8 +19,8 @@
         </b-col>
         <b-col>
           <color-legend 
-            :color-scale="selectedColorScale"
-            :color-scale-type="selectedColorScaleType"
+            :color-scale="selectedColorSchemeConfig.colorScale"
+            :color-scale-type="selectedColorSchemeConfig.colorScaleType"
             opacity="1" 
             topic="Density" 
           />
@@ -89,7 +89,7 @@
         <daily-lines 
           :days="daysCovered" 
           :height="innerHeight"
-          :color="dailyLinesColor" 
+          :color="selectedColorSchemeConfig.dailyLinesColor" 
         />
       
       </g>
@@ -107,7 +107,7 @@ import helpers from "../helpers";
 import DailyLines from "./DailyLines.vue";
 import ColorLegend from "./ColorLegend.vue";
 import moment, { Moment } from "moment-timezone";
-import { ColorScheme, VTPSEntry, DayData } from '../CrowTypes';
+import { ColorSchemeIdentifier, VTPSEntry, DayData, ColorSchemeConfigEntry } from '../CrowTypes';
 
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)
@@ -168,20 +168,47 @@ export default Vue.extend({
   props: {
     vtpsData: Array as () => VTPSEntry[],
     styleConfig: Object,
-    scheme: String as () => ColorScheme,
+    scheme: String as () => ColorSchemeIdentifier,
     showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
   },
   data: function() {
     return {
       margin: this.styleConfig.margin,
 
-      colorScheme: this.scheme as ColorScheme,
+      selectedColorSchemeIdentifier: this.scheme as ColorSchemeIdentifier,
 
       availableColorSchemes: [
-        { text: "Viridis", value: "viridis" },
-        { text: "bioRad", value: "biorad" },
-        { text: "BIRDTAM", value: "birdtam" }
-      ],
+        { 
+          text: "Viridis", 
+          value: "viridis", 
+          dailyLinesColor: 'white',
+          colorScale: d3.scaleSequentialSymlog(d3.interpolateViridis), // TODO: decide which exact sequential scale (linear, log, symlog, sqrt, ... ) is more appropriate: https://observablehq.com/@d3/sequential-scales 
+          dynamicDomain: true,
+          colorScaleType: "sequential"
+        },
+
+        { 
+          text: "bioRad", 
+          value: "biorad", 
+          dailyLinesColor: 'red',
+          colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad),
+          dynamicDomain: true,
+          colorScaleType: "sequential"
+        },
+            
+        { 
+          text: "BIRDTAM", 
+          value: "birdtam", 
+          dailyLinesColor: 'green',
+          colorScale: d3.scaleOrdinal<number, string>()
+            // BIRDTAM RGB-kleuren = [1 1 1; .9 1 .9; .8 1 .8; .7 1 .7; .6 1 .6; 0 1 0; 1 1 0; 1 .7 .7; 1 0 0; .2 .2 .2;];
+            .range(["#ffffff", "#e5ffe5", "#ccffcc", "#b2ffb2", "#99ff99", "#00ff00", "#ffff00", "#ffb2b2", "#ff0000", "#333333"])   
+            .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+          dynamicDomain: false,
+          dataPreprocessor: helpers.densityToBirdtam,
+          colorScaleType: "ordinal"
+        }
+      ] as ColorSchemeConfigEntry[],
 
       innerWidth:
         this.styleConfig.width -
@@ -195,13 +222,9 @@ export default Vue.extend({
     };
   },
   computed: {
-    dailyLinesColor: function(): string {
-      switch (this.colorScheme) {
-        case 'viridis':
-          return 'white';
-        default:
-          return 'rgb(33, 37, 41)';
-      }
+    selectedColorSchemeConfig: function(): ColorSchemeConfigEntry {
+      const found = this.availableColorSchemes.find(e => e.value === this.selectedColorSchemeIdentifier);
+      return found ? found: this.availableColorSchemes[0];
     },
     daysCovered: function(): DayData[] {
       const days = this.getDaysInRange(this.minTimestamp, this.maxTimestamp, this.showTimeAs);
@@ -275,50 +298,6 @@ export default Vue.extend({
         .range([this.innerHeight, 0])
         .domain([0, 15748.03]); // TODO: make dynamic
     },
-    birdtamColorScale: function(): d3.ScaleOrdinal<number, string> {
-      return d3
-        .scaleOrdinal<number, string>()
-        // BIRDTAM RGB-kleuren = [1 1 1; .9 1 .9; .8 1 .8; .7 1 .7; .6 1 .6; 0 1 0; 1 1 0; 1 .7 .7; 1 0 0; .2 .2 .2;];
-        .range(["#ffffff", "#e5ffe5", "#ccffcc", "#b2ffb2", "#99ff99", "#00ff00", "#ffff00", "#ffb2b2", "#ff0000", "#333333"])   
-        .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    },
-    bioRadColorScale: function(): d3.ScaleSequential<string> {
-      //console.log("interpolator custom", helpers.interpolateBioRad)
-      //console.log("interpolator D3", d3.interpolatePiYG)
-      return d3
-        .scaleSequentialSymlog(helpers.interpolateBioRad)
-        .domain([0, this.maxDensity])
-        .nice()
-        //.domain([0, this.maxDensity])
-        //.range(helpers.bioRadScheme);
-
-    },
-    viridisColorScale: function(): d3.ScaleSequential<string> {
-      return d3
-        .scaleSequentialSymlog<string>(d3.interpolateViridis) // TODO: decide which exact sequential scale (linear, log, symlog, sqrt, ... ) is more appropriate: https://observablehq.com/@d3/sequential-scales 
-        .domain([0, this.maxDensity])
-        .nice()
-    },
-    selectedColorScale: function(): d3.ScaleSequential<string> | d3.ScaleOrdinal<number, string> {
-      switch (this.colorScheme) {
-        case 'birdtam':
-          return this.birdtamColorScale;
-        case 'biorad':
-          return this.bioRadColorScale;
-        default:
-          return this.viridisColorScale;
-      }
-    },
-    selectedColorScaleType: function(): string { // TODO: improve this smelly code (seee also selectedColorScale)
-      switch (this.colorScheme) {
-        case 'birdtam':
-          return 'ordinal';
-        case 'biorad':
-          return 'sequential';
-        default:
-          return 'sequential';
-      }
-    },
     vtpsDataPrepared: function(): VTPSEntryPrepared[] {
       return this.vtpsData.map(data => ({
         ...data,
@@ -330,7 +309,7 @@ export default Vue.extend({
     }
   },
   watch: {
-    colorScheme: function(newScheme): void {
+    selectedColorSchemeIdentifier: function(newScheme): void {
       this.$emit('colorSchemeChanged', newScheme);
     }
   },
@@ -365,18 +344,19 @@ export default Vue.extend({
     },
     getRectColor: function(data: VTPSEntry): string {
       let color;
-      const density = data.dens;
-
-      switch (this.colorScheme) {
-        case 'birdtam':
-          color = data.noData ? this.styleConfig.noDataColor : this.birdtamColorScale(helpers.densityToBirdtam(density));
-          break;
-        case 'viridis':
-          color = data.noData ? this.styleConfig.noDataColor : this.viridisColorScale(density);
-          break;
-        case 'biorad':
-          color = data.noData ? this.styleConfig.noDataColor : this.bioRadColorScale(density);
-          break;
+      const config = this.selectedColorSchemeConfig;
+      
+      if (data.noData) {
+        color = this.styleConfig.noDataColor
+      } else { // We have proper data for this rectangle
+        // For some schemes, the density data has to be preprocessed:
+        const density = config.dataPreprocessor ? config.dataPreprocessor(data.dens) : data.dens
+      
+        let scale = config.colorScale;
+        if (config.dynamicDomain) {
+          scale = scale.domain([0, this.maxDensity]).nice()
+        }
+        return scale(density);
       }
 
       return color;
