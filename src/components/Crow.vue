@@ -199,7 +199,7 @@ import SunCalc from "suncalc";
 import config from "../config";
 import helpers from "../helpers";
 
-import { ColorScheme, IntegratedPropertyName, RadarInterface, GroupedRadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period } from '../CrowTypes';
+import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, GroupedRadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period } from '../CrowTypes';
 
 interface VTPSDataByHeight {
   [key: number]: VTPSDataRow;
@@ -241,7 +241,7 @@ export default Vue.extend({
       default: "radarLocal"
     },
     vpChartSelectedSchemeProp: {
-      type: Object as () => ColorScheme,
+      type: Object as () => ColorSchemeIdentifier,
       default: 'viridis'
     },
     vpiChartModeProp: {
@@ -264,7 +264,7 @@ export default Vue.extend({
       showCharts: false,
 
       VPChartStyle: config.VPChartStyle,
-      VPChartSelectedScheme: this.vpChartSelectedSchemeProp as ColorScheme,
+      VPChartSelectedScheme: this.vpChartSelectedSchemeProp as ColorSchemeIdentifier,
       VPIChartStyle: config.VPIChartStyle,
       VPIChartMode: this.vpiChartModeProp as IntegratedPropertyName,
       TimelineChartStyle: config.TimelineChartStyle,
@@ -426,7 +426,7 @@ export default Vue.extend({
     vpiModeChanged(mode: IntegratedPropertyName): void {
       this.VPIChartMode = mode;
     },
-    vpColorSchemeChanged(schemeName: ColorScheme): void {
+    vpColorSchemeChanged(schemeName: ColorSchemeIdentifier): void {
       this.VPChartSelectedScheme = schemeName;
     },
     trimLastSlash(s: string): string {

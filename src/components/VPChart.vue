@@ -18,11 +18,11 @@
           </b-form-group>
         </b-col>
         <b-col>
-          <color-legend 
+          <color-legend
             :color-scale="selectedColorSchemeConfig.colorScale"
             :color-scale-type="selectedColorSchemeConfig.colorScaleType"
-            opacity="1" 
-            topic="Density" 
+            opacity="1"
+            topic="Density"
           />
         </b-col>
       </b-form-row>
@@ -85,13 +85,12 @@
           :y="innerWidth + 55"
           :x="margin.top - 70"
         >Height (feet)</text>
-      
-        <daily-lines 
-          :days="daysCovered" 
+
+        <daily-lines
+          :days="daysCovered"
           :height="innerHeight"
-          :color="selectedColorSchemeConfig.dailyLinesColor" 
+          :color="selectedColorSchemeConfig.dailyLinesColor"
         />
-      
       </g>
     </svg>
   </div>
@@ -107,7 +106,12 @@ import helpers from "../helpers";
 import DailyLines from "./DailyLines.vue";
 import ColorLegend from "./ColorLegend.vue";
 import moment, { Moment } from "moment-timezone";
-import { ColorSchemeIdentifier, VTPSEntry, DayData, ColorSchemeConfigEntry } from '../CrowTypes';
+import {
+  ColorSchemeIdentifier,
+  VTPSEntry,
+  DayData,
+  ColorSchemeConfigEntry,
+} from "../CrowTypes";
 
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)
@@ -125,16 +129,16 @@ export default Vue.extend({
   name: "VPChart",
   components: {
     DailyLines,
-    ColorLegend
+    ColorLegend,
   },
   directives: {
     yaxisRight(el, binding): void {
       const scaleFunction = binding.value.scale;
 
-      const d3Axis = 
-        d3.axisRight<number>(scaleFunction)
-          .tickSizeOuter(0)
-          .tickFormat(d3.format("d"));
+      const d3Axis = d3
+        .axisRight<number>(scaleFunction)
+        .tickSizeOuter(0)
+        .tickFormat(d3.format("d"));
 
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
     },
@@ -158,56 +162,68 @@ export default Vue.extend({
         .axisBottom<number>(scaleFunction)
         .ticks(7)
         .tickSize(15)
-        .tickFormat(d => {
+        .tickFormat((d) => {
           return helpers.formatTimestamp(d, showTimeAs, axisTimeFormat);
         });
 
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
-    }
+    },
   },
   props: {
     vtpsData: Array as () => VTPSEntry[],
     styleConfig: Object,
     scheme: String as () => ColorSchemeIdentifier,
-    showTimeAs: String // "UTC" or a TZ database entry (such as "Europe/Brussels")
+    showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")
   },
-  data: function() {
+  data: function () {
     return {
       margin: this.styleConfig.margin,
 
       selectedColorSchemeIdentifier: this.scheme as ColorSchemeIdentifier,
 
       availableColorSchemes: [
-        { 
-          text: "Viridis", 
-          value: "viridis", 
-          dailyLinesColor: 'white',
-          colorScale: d3.scaleSequentialSymlog(d3.interpolateViridis), // TODO: decide which exact sequential scale (linear, log, symlog, sqrt, ... ) is more appropriate: https://observablehq.com/@d3/sequential-scales 
+        {
+          text: "Viridis",
+          value: "viridis",
+          dailyLinesColor: "white",
+          colorScale: d3.scaleSequentialSymlog(d3.interpolateViridis), // TODO: decide which exact sequential scale (linear, log, symlog, sqrt, ... ) is more appropriate: https://observablehq.com/@d3/sequential-scales
           dynamicDomain: true,
-          colorScaleType: "sequential"
+          colorScaleType: "sequential",
         },
 
-        { 
-          text: "bioRad", 
-          value: "biorad", 
-          dailyLinesColor: 'red',
+        {
+          text: "bioRad",
+          value: "biorad",
+          dailyLinesColor: "red",
           colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad),
           dynamicDomain: true,
-          colorScaleType: "sequential"
+          colorScaleType: "sequential",
         },
-            
-        { 
-          text: "BIRDTAM", 
-          value: "birdtam", 
-          dailyLinesColor: 'green',
-          colorScale: d3.scaleOrdinal<number, string>()
+
+        {
+          text: "BIRDTAM",
+          value: "birdtam",
+          dailyLinesColor: "green",
+          colorScale: d3
+            .scaleOrdinal<number, string>()
             // BIRDTAM RGB-kleuren = [1 1 1; .9 1 .9; .8 1 .8; .7 1 .7; .6 1 .6; 0 1 0; 1 1 0; 1 .7 .7; 1 0 0; .2 .2 .2;];
-            .range(["#ffffff", "#e5ffe5", "#ccffcc", "#b2ffb2", "#99ff99", "#00ff00", "#ffff00", "#ffb2b2", "#ff0000", "#333333"])   
+            .range([
+              "#ffffff",
+              "#e5ffe5",
+              "#ccffcc",
+              "#b2ffb2",
+              "#99ff99",
+              "#00ff00",
+              "#ffff00",
+              "#ffb2b2",
+              "#ff0000",
+              "#333333",
+            ])
             .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
           dynamicDomain: false,
           dataPreprocessor: helpers.densityToBirdtam,
-          colorScaleType: "ordinal"
-        }
+          colorScaleType: "ordinal",
+        },
       ] as ColorSchemeConfigEntry[],
 
       innerWidth:
@@ -218,122 +234,139 @@ export default Vue.extend({
       innerHeight:
         this.styleConfig.height -
         this.styleConfig.margin.top -
-        this.styleConfig.margin.bottom
+        this.styleConfig.margin.bottom,
     };
   },
   computed: {
-    selectedColorSchemeConfig: function(): ColorSchemeConfigEntry {
-      const found = this.availableColorSchemes.find(e => e.value === this.selectedColorSchemeIdentifier);
-      return found ? found: this.availableColorSchemes[0];
+    selectedColorSchemeConfig: function (): ColorSchemeConfigEntry {
+      const found = this.availableColorSchemes.find(
+        (e) => e.value === this.selectedColorSchemeIdentifier
+      );
+      return found ? found : this.availableColorSchemes[0];
     },
-    daysCovered: function(): DayData[] {
-      const days = this.getDaysInRange(this.minTimestamp, this.maxTimestamp, this.showTimeAs);
+    daysCovered: function (): DayData[] {
+      const days = this.getDaysInRange(
+        this.minTimestamp,
+        this.maxTimestamp,
+        this.showTimeAs
+      );
 
-      return days.map(mom => {
+      return days.map((mom) => {
         return {
           moment: mom,
           xPositionAtMidnight: this.xScale(mom.valueOf()),
-          dayLabel: mom.format("MMM DD")
+          dayLabel: mom.format("MMM DD"),
         };
       });
-
     },
-    rectHeight: function(): number {
+    rectHeight: function (): number {
       return this.innerHeight / this.distinctHeightsMeters.length;
     },
-    rectWidth: function(): number {
+    rectWidth: function (): number {
       return Math.round(this.innerWidth / this.rectDivider);
     },
-    rectDivider: function(): number {
+    rectDivider: function (): number {
       const durationInMs = this.maxTimestamp - this.minTimestamp;
       return durationInMs / 1000 / this.dataTemporalResolution + 1;
     },
-    minTimestamp: function(): number {
-      const minVal = d3.min(this.vtpsData, function(d: VTPSEntry) {
+    minTimestamp: function (): number {
+      const minVal = d3.min(this.vtpsData, function (d: VTPSEntry) {
         return d.timestamp;
       });
       return minVal || 0;
     },
-    maxTimestamp: function(): number {
-      const maxVal = d3.max(this.vtpsData, function(d: VTPSEntry) {
+    maxTimestamp: function (): number {
+      const maxVal = d3.max(this.vtpsData, function (d: VTPSEntry) {
         return d.timestamp;
       });
       return maxVal || 0;
     },
-    maxDensity: function(): number {
-      const maxVal = d3.max(this.vtpsData, function(d) {
+    maxDensity: function (): number {
+      const maxVal = d3.max(this.vtpsData, function (d) {
         return d.dens;
       });
       return maxVal || 0;
     },
-    dataTemporalResolution: function(): number {
+    dataTemporalResolution: function (): number {
       return (this.vtpsData[26].timestamp - this.vtpsData[0].timestamp) / 1000; // TODO: replace 26 by dynamic value
     },
-    distinctHeightsMeters: function(): number[] {
-      const heightsSet = new Set(this.vtpsData.map(row => row.height));
+    distinctHeightsMeters: function (): number[] {
+      const heightsSet = new Set(this.vtpsData.map((row) => row.height));
       return Array.from(heightsSet.values());
     },
-    scale: function(): Scales {
+    scale: function (): Scales {
       // Computed property created just so the "axis" directive can be more easily reused and shared
       return { x: this.xScale, y: null };
     },
-    xScale: function(): d3.ScaleTime<number, number> {
+    xScale: function (): d3.ScaleTime<number, number> {
       return d3
         .scaleTime()
         .domain([
           this.minTimestamp,
-          this.maxTimestamp + this.dataTemporalResolution * 1000
+          this.maxTimestamp + this.dataTemporalResolution * 1000,
         ])
         .range([0, this.innerWidth]);
     },
-    yScale: function(): d3.ScalePoint<string> {
+    yScale: function (): d3.ScalePoint<string> {
       return d3
         .scalePoint()
         .range([this.innerHeight, 0])
         .domain(this.distinctHeightsMeters.concat([5000]).map(String)); // The axis needs one more value so the line extends to the top...
     },
-    yScaleFeet: function(): d3.ScaleLinear<number, number> {
+    yScaleFeet: function (): d3.ScaleLinear<number, number> {
       return d3
         .scaleLinear()
         .range([this.innerHeight, 0])
         .domain([0, 15748.03]); // TODO: make dynamic
     },
-    vtpsDataPrepared: function(): VTPSEntryPrepared[] {
-      return this.vtpsData.map(data => ({
+    vtpsDataPrepared: function (): VTPSEntryPrepared[] {
+      return this.vtpsData.map((data) => ({
         ...data,
 
         x: Math.round(Math.round(this.xScale(data.timestamp)) + 1),
         y: this.getRectYValue(data.height),
-        fill: this.getRectColor(data)
+        fill: this.getRectColor(data),
       }));
-    }
+    },
   },
   watch: {
-    selectedColorSchemeIdentifier: function(newScheme): void {
-      this.$emit('colorSchemeChanged', newScheme);
-    }
+    selectedColorSchemeIdentifier: function (newScheme): void {
+      this.$emit("colorSchemeChanged", newScheme);
+    },
   },
   methods: {
-    getDaysInRange: function(startTimestamp: number, stopTimestamp: number, timezone: string): Moment[] {
+    getDaysInRange: function (
+      startTimestamp: number,
+      stopTimestamp: number,
+      timezone: string
+    ): Moment[] {
       const startDate = new Date(startTimestamp);
       const stopDate = new Date(stopTimestamp);
-      
+
       const momentArray = [];
       let currentMoment = moment(startDate);
       const stopMoment = moment(stopDate);
       while (currentMoment <= stopMoment) {
-        momentArray.push(currentMoment.clone().tz(timezone).startOf('day'))
-        currentMoment = currentMoment.clone().add(1, 'days');
-    }
-    return momentArray;
+        momentArray.push(currentMoment.clone().tz(timezone).startOf("day"));
+        currentMoment = currentMoment.clone().add(1, "days");
+      }
+      return momentArray;
     },
-    formatTimestampForTooltip: function(ts: number): string {
-      return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.tooltipTimeFormat);
+    formatTimestampForTooltip: function (ts: number): string {
+      return helpers.formatTimestamp(
+        ts,
+        this.showTimeAs,
+        this.styleConfig.tooltipTimeFormat
+      );
     },
-    formatTimestamp: function(ts: number): string {
-      return helpers.formatTimestamp(ts, this.showTimeAs, this.styleConfig.axisTimeFormat);
+    formatTimestamp: function (ts: number): string {
+      return helpers.formatTimestamp(
+        ts,
+        this.showTimeAs,
+        this.styleConfig.axisTimeFormat
+      );
     },
-    getRectYValue: function(height: number): number {
+    getRectYValue: function (height: number): number {
       const scaledValue = this.yScale(height.toString());
       if (scaledValue) {
         return scaledValue - this.rectHeight;
@@ -342,25 +375,28 @@ export default Vue.extend({
         return 0;
       }
     },
-    getRectColor: function(data: VTPSEntry): string {
+    getRectColor: function (data: VTPSEntry): string {
       let color;
       const config = this.selectedColorSchemeConfig;
-      
+
       if (data.noData) {
-        color = this.styleConfig.noDataColor
-      } else { // We have proper data for this rectangle
+        color = this.styleConfig.noDataColor;
+      } else {
+        // We have proper data for this rectangle
         // For some schemes, the density data has to be preprocessed:
-        const density = config.dataPreprocessor ? config.dataPreprocessor(data.dens) : data.dens
-      
+        const density = config.dataPreprocessor
+          ? config.dataPreprocessor(data.dens)
+          : data.dens;
+
         let scale = config.colorScale;
         if (config.dynamicDomain) {
-          scale = scale.domain([0, this.maxDensity]).nice()
+          scale = scale.domain([0, this.maxDensity]).nice();
         }
         return scale(density);
       }
 
       return color;
-    }
+    },
   },
 });
 </script>
