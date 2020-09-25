@@ -59,7 +59,7 @@
             triggers="hover"
             placement="top"
           >
-            <template v-slot:title>{{ formatTimestampForTooltip(d.timestamp) }}</template>
+            <template #title>{{ formatTimestampForTooltip(d.timestamp) }}</template>
             <b>Height</b>
             {{ d.height }}m
             <br />
@@ -183,19 +183,23 @@ export default Vue.extend({
 
       availableColorSchemes: [
         {
+          // TODO: decide which exact sequential scale (linear, log, symlog, sqrt, ... ) is more appropriate: https://observablehq.com/@d3/sequential-scales
           text: "Viridis",
           value: "viridis",
           dailyLinesColor: "white",
-          colorScale: d3.scaleSequentialSymlog(d3.interpolateViridis), // TODO: decide which exact sequential scale (linear, log, symlog, sqrt, ... ) is more appropriate: https://observablehq.com/@d3/sequential-scales
+          // @ts-ignore: to remove once D3 type definitions know about d3.scaleSequentialSymlog
+          colorScale: d3.scaleSequentialSymlog(d3.interpolateViridis),
           dynamicDomain: true,
           colorScaleType: "sequential",
         },
 
         {
+          // TODO: decide which exact sequential scale (linear, log, symlog, sqrt, ... ) is more appropriate: https://observablehq.com/@d3/sequential-scales
           text: "bioRad",
           value: "biorad",
           dailyLinesColor: "red",
-          colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad),
+          // @ts-ignore: to remove once D3 type definitions know about d3.scaleSequentialSymlog
+          colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad), 
           dynamicDomain: true,
           colorScaleType: "sequential",
         },
@@ -390,6 +394,7 @@ export default Vue.extend({
 
         let scale = config.colorScale;
         if (config.dynamicDomain) {
+          // @ts-ignore: several TS issues, we assume it's because outdated D3 definitions
           scale = scale.domain([0, this.maxDensity]).nice();
         }
         return scale(density);

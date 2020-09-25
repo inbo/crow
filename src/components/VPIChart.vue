@@ -4,9 +4,9 @@
     <b-form>
       <b-form-row>
         <b-col cols="3">
-          <b-form-group 
-            id="vpi-display-mode-group" 
-            label="Show:" 
+          <b-form-group
+            id="vpi-display-mode-group"
+            label="Show:"
             label-for="vpi-display-mode"
           >
             <b-form-select
@@ -22,14 +22,11 @@
       </b-form-row>
     </b-form>
 
-    <div 
-      id="ignore-mouse-events" 
-      style="pointer-events:none;" 
-    />
+    <div id="ignore-mouse-events" style="pointer-events: none" />
 
-    <svg 
-      id="new-vpi-chart" 
-      :width="styleConfig.width" 
+    <svg
+      id="new-vpi-chart"
+      :width="styleConfig.width"
       :height="styleConfig.height"
     >
       <g :transform="`translate(${margin.left}, ${margin.top})`">
@@ -37,12 +34,16 @@
         <g :transform="`translate(0, ${innerHeight})`">
           <slot name="in-x-axis-group" />
           <g
-            v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'axisTimeFormat': styleConfig.axisTimeFormat}"
+            v-xaxis="{
+              scale: xScale,
+              timezone: showTimeAs,
+              axisTimeFormat: styleConfig.axisTimeFormat,
+            }"
           />
         </g>
 
         <!-- Y axis -->
-        <g v-yaxis="{'scale': yScale}" />
+        <g v-yaxis="{ scale: yScale }" />
 
         <!-- Y axis legend -->
         <text
@@ -50,7 +51,9 @@
           transform="rotate(-90)"
           :y="-margin.left + 20"
           :x="-margin.top - 110"
-        >{{ selectedModeLabel }}</text>
+        >
+          {{ selectedModeLabel }}
+        </text>
 
         <!-- tooltip -->
         <template v-if="styleConfig.showTooltip">
@@ -66,7 +69,7 @@
           <circle
             v-show="tooltipVisible"
             id="tooltipCircle"
-            style="pointer-events:none;"
+            style="pointer-events: none"
             :cx="closestMomentXPosition"
             :cy="YPositionAtTimeX"
             r="4"
@@ -79,9 +82,10 @@
             target="tooltipCircle"
             placement="top"
           >
-            <template v-slot:title>{{ formattedMomentAtTimeX }}</template>
+            <template #title>{{ formattedMomentAtTimeX }}</template>
             <div>
-              {{ selectedModeLabel }}: {{ selectedValAtTimeX | rounddecimals(selectedModePrecision) }}
+              {{ selectedModeLabel }}:
+              {{ selectedValAtTimeX | rounddecimals(selectedModePrecision) }}
             </div>
           </b-popover>
         </template>
@@ -89,16 +93,13 @@
         <!-- finally, the chart line -->
         <path
           fill="none"
-          style="pointer-events:none;"
+          style="pointer-events: none"
           :stroke="styleConfig.lineColor"
           stroke-width="1.5"
           :d="pathData"
         />
 
-        <daily-lines 
-          :days="daysCovered" 
-          :height="innerHeight" 
-        />
+        <daily-lines :days="daysCovered" :height="innerHeight" />
       </g>
     </svg>
   </div>
@@ -114,7 +115,7 @@ import DailyLines from "./DailyLines.vue";
 
 import helpers from "../helpers";
 
-import { DayData, VPIEntry, IntegratedPropertyName } from '../CrowTypes';
+import { DayData, VPIEntry, IntegratedPropertyName } from "../CrowTypes";
 
 import TWEEN from "@tweenjs/tween.js";
 
@@ -138,7 +139,7 @@ interface VPIEntryForPath {
 export default Vue.extend({
   name: "VPIChart",
   components: {
-    DailyLines
+    DailyLines,
   },
   directives: {
     yaxis(el, binding): void {
@@ -158,18 +159,18 @@ export default Vue.extend({
         .axisBottom<number>(scaleFunction)
         .ticks(7)
         .tickSize(15)
-        .tickFormat(d => {
+        .tickFormat((d) => {
           return helpers.formatTimestamp(d, showTimeAs, axisTimeFormat);
         });
 
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
-    }
+    },
   },
   filters: {
-    rounddecimals: function(num: number, precision: number): string {
-      const multiplier = Math.pow(10, precision)
+    rounddecimals: function (num: number, precision: number): string {
+      const multiplier = Math.pow(10, precision);
       return (Math.round(num * multiplier) / multiplier).toFixed(precision);
-    }
+    },
   },
   props: {
     // eslint-disable-next-line vue/require-default-prop
@@ -177,9 +178,9 @@ export default Vue.extend({
     styleConfig: Object,
     showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")
     dataTemporalResolution: Number,
-    mode: String as () => IntegratedPropertyName
+    mode: String as () => IntegratedPropertyName,
   },
-  data: function() {
+  data: function () {
     return {
       vpiDataForPath: [] as VPIEntryForPath[],
       selectedMode: this.mode,
@@ -187,23 +188,23 @@ export default Vue.extend({
         {
           label: "Migration Traffic Rate",
           propertyName: "mtr",
-          yMaxValComputedName: "maxMTRWithMinimum"
+          yMaxValComputedName: "maxMTRWithMinimum",
         },
         {
           label: "Reflectivity traffic rate",
           propertyName: "rtr",
-          yMaxValComputedName: "maxRTR"
+          yMaxValComputedName: "maxRTR",
         },
         {
           label: "Vertically integrated density",
           propertyName: "vid",
-          yMaxValComputedName: "maxVID"
+          yMaxValComputedName: "maxVID",
         },
         {
           label: "Vertically integrated reflectivity",
           propertyName: "vir",
-          yMaxValComputedName: "maxVIR"
-        }
+          yMaxValComputedName: "maxVIR",
+        },
       ] as DisplayMode[],
 
       margin: this.styleConfig.margin,
@@ -215,11 +216,11 @@ export default Vue.extend({
       mouseXPosition: null as NullableNumber, // in pixels, 0 is left border of the graph
       VPIEntryAtTimeX: null as NullableVPIEntry,
 
-      momentBisector: d3.bisector(function(d: VPIEntry) {
+      momentBisector: d3.bisector(function (d: VPIEntry) {
         return d.moment.valueOf();
       }).left,
 
-      timestampBisector: d3.bisector(function(d: VPIEntryForPath) {
+      timestampBisector: d3.bisector(function (d: VPIEntryForPath) {
         return d.timestamp;
       }).left,
 
@@ -230,40 +231,39 @@ export default Vue.extend({
       innerHeight:
         this.styleConfig.height -
         this.styleConfig.margin.top -
-        this.styleConfig.margin.bottom
+        this.styleConfig.margin.bottom,
     };
   },
   computed: {
     selectedModePrecision(): number {
-      switch(this.selectedMode) {
-        case 'vid': return 1; // all other modes currently don't need to display decimal digits
-        default: return 0;
+      switch (this.selectedMode) {
+        case "vid":
+          return 1; // all other modes currently don't need to display decimal digits
+        default:
+          return 0;
       }
     },
-    daysCovered: function(): DayData[] {
+    daysCovered: function (): DayData[] {
       // Find the day covered by each entry in vpiData
-      const coveredDays = this.vpiData.map(vpiEntry => {
-        return vpiEntry.moment
-          .clone()
-          .tz(this.showTimeAs)
-          .startOf("day");
+      const coveredDays = this.vpiData.map((vpiEntry) => {
+        return vpiEntry.moment.clone().tz(this.showTimeAs).startOf("day");
       });
 
       // Remove duplicates
-      const comparisonValues = coveredDays.map(v => v.valueOf());
+      const comparisonValues = coveredDays.map((v) => v.valueOf());
       const uniqueCoveredDays = coveredDays.filter(
         (v, i) => comparisonValues.indexOf(v.valueOf()) == i
       );
 
-      return uniqueCoveredDays.map(mom => {
+      return uniqueCoveredDays.map((mom) => {
         return {
           moment: mom,
           xPositionAtMidnight: this.xScale(mom.valueOf()),
-          dayLabel: mom.format("MMM DD")
+          dayLabel: mom.format("MMM DD"),
         };
       });
     },
-    formattedMomentAtTimeX: function(): string {
+    formattedMomentAtTimeX: function (): string {
       if (this.VPIEntryAtTimeX) {
         return helpers.formatMoment(
           this.VPIEntryAtTimeX.moment,
@@ -273,13 +273,13 @@ export default Vue.extend({
       }
       return "";
     },
-    YPositionAtTimeX: function(): number {
+    YPositionAtTimeX: function (): number {
       if (this.selectedValAtTimeX) {
         return this.yScale(this.selectedValAtTimeX);
       }
       return this.innerHeight;
     },
-    selectedValAtTimeX: function(): number | null {
+    selectedValAtTimeX: function (): number | null {
       if (this.VPIEntryAtTimeX) {
         return this.VPIEntryAtTimeX.integratedProfiles[
           this.selectedModePropertyName
@@ -287,37 +287,37 @@ export default Vue.extend({
       }
       return null;
     },
-    closestMomentXPosition: function(): number | null {
+    closestMomentXPosition: function (): number | null {
       if (this.VPIEntryAtTimeX) {
         return this.xScale(this.VPIEntryAtTimeX.moment.valueOf());
       }
       return null;
     },
-    maxVID: function(): number {
-      const max = d3.max(this.vpiData, function(d) {
+    maxVID: function (): number {
+      const max = d3.max(this.vpiData, function (d) {
         return d.integratedProfiles.vid;
       });
       return max || 0;
     },
-    maxVIR: function(): number {
-      const max = d3.max(this.vpiData, function(d) {
+    maxVIR: function (): number {
+      const max = d3.max(this.vpiData, function (d) {
         return d.integratedProfiles.vir;
       });
       return max || 0;
     },
-    maxMTR: function(): number {
-      const max = d3.max(this.vpiData, function(d) {
+    maxMTR: function (): number {
+      const max = d3.max(this.vpiData, function (d) {
         return d.integratedProfiles.mtr;
       });
       return max || 0;
     },
-    maxRTR: function(): number {
-      const max = d3.max(this.vpiData, function(d) {
+    maxRTR: function (): number {
+      const max = d3.max(this.vpiData, function (d) {
         return d.integratedProfiles.rtr;
       });
       return max || 0;
     },
-    maxMTRWithMinimum: function(): number {
+    maxMTRWithMinimum: function (): number {
       // If the maximum MTR is small, we return 50 so a small peak on a very calm day doesn't seem huge
       if (this.maxMTR < 50) {
         return 50;
@@ -325,78 +325,78 @@ export default Vue.extend({
         return this.maxMTR;
       }
     },
-    yMaxVal: function(): number {
+    yMaxVal: function (): number {
       return this[this.selectedModeObject.yMaxValComputedName];
     },
-    selectedModePropertyName: function(): IntegratedPropertyName {
+    selectedModePropertyName: function (): IntegratedPropertyName {
       return this.selectedModeObject.propertyName;
     },
-    selectedModeLabel: function(): string {
+    selectedModeLabel: function (): string {
       return this.selectedModeObject.label;
     },
-    selectedModeObject: function(): DisplayMode {
+    selectedModeObject: function (): DisplayMode {
       const found = this.availableModes.find(
-        d => d.propertyName == this.selectedMode
+        (d) => d.propertyName == this.selectedMode
       );
       return found || this.availableModes[0]; // Default: first entry
     },
-    minMoment: function(): moment.Moment {
-      const foundMoment = d3.min(this.vpiData, function(d) {
+    minMoment: function (): moment.Moment {
+      const foundMoment = d3.min(this.vpiData, function (d) {
         return d.moment;
       });
       return foundMoment || moment();
     },
-    maxMoment: function(): moment.Moment {
-      const foundMoment = d3.max(this.vpiData, function(d) {
+    maxMoment: function (): moment.Moment {
+      const foundMoment = d3.max(this.vpiData, function (d) {
         return d.moment;
       });
       return foundMoment || moment();
     },
-    maxMomentPlusOne: function(): moment.Moment {
+    maxMomentPlusOne: function (): moment.Moment {
       // TODO: duplicate code in other charts ! Mixin? Helper?
       return this.maxMoment.clone().add(this.dataTemporalResolution, "seconds");
     },
-    xScale: function(): d3.ScaleTime<number, number> {
+    xScale: function (): d3.ScaleTime<number, number> {
       return d3
         .scaleTime()
         .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
         .range([0, this.innerWidth]);
     },
-    yScale: function(): d3.ScaleLinear<number, number> {
+    yScale: function (): d3.ScaleLinear<number, number> {
       return d3
         .scaleLinear()
         .range([this.innerHeight, 0])
         .domain([0, this.yMaxVal]);
     },
-    pathData: function(): string | null {
+    pathData: function (): string | null {
       const path = d3
         .line<VPIEntryForPath>()
-        .x(vpiEntryFP => {
+        .x((vpiEntryFP) => {
           return this.xScale(vpiEntryFP.timestamp);
         })
-        .y(vpiEntryFP => {
+        .y((vpiEntryFP) => {
           return vpiEntryFP.val;
         });
 
       return path(this.vpiDataForPath);
-    }
+    },
   },
   watch: {
     selectedMode: {
       immediate: true,
-      handler: function(newMode): void {
+      handler: function (newMode): void {
         this.syncVPIDataForPath();
         this.animate();
-        this.$emit('modeChanged', newMode);
-      }
+        this.$emit("modeChanged", newMode);
+      },
     },
     vpiData: {
       immediate: true,
-      handler: function(): void {
+      handler: function (): void {
         this.syncVPIDataForPath();
         this.animate();
-      }
-    }
+      },
+    },
   },
   methods: {
     animate(): void {
@@ -410,9 +410,9 @@ export default Vue.extend({
       // 1. Remove outdated entries first, so the index don't change later on (tween's callbacks, ...)
       // 2. Add new entries, if necessary (when populating vpiData for example)
       // 3. Update .val, based on selectedModePropertyName
-      
+
       // TODO: refactor this method.
- 
+
       // 1. Remove oudated entries
       const timestampsInVPI = [] as number[];
       for (const entry of this.vpiData) {
@@ -424,28 +424,32 @@ export default Vue.extend({
           indexOfEntriesToRemove.push(index);
         }
       });
-      
+
       // Removal happens while iterating BACKWARDS so indexes stay valid all along the loop
       for (let i = indexOfEntriesToRemove.length - 1; i >= 0; --i) {
         this.vpiDataForPath.splice(indexOfEntriesToRemove[i], 1);
       }
-    
+
       for (const entry of this.vpiData) {
         const timestamp = entry.moment.valueOf();
-        const foundIndex = this.vpiDataForPath.findIndex(element => { 
+        const foundIndex = this.vpiDataForPath.findIndex((element) => {
           return element.timestamp === timestamp;
         });
 
-        const rawValue = entry.integratedProfiles[this.selectedModePropertyName];
+        const rawValue =
+          entry.integratedProfiles[this.selectedModePropertyName];
         const newScaledValue = this.yScale(isNaN(rawValue) ? 0 : rawValue);
 
         if (foundIndex == -1) {
           // 2. Add new data
-          const insertIndex = this.timestampBisector(this.vpiDataForPath, timestamp);
+          const insertIndex = this.timestampBisector(
+            this.vpiDataForPath,
+            timestamp
+          );
 
           const newEntry = {
             timestamp: timestamp,
-            val: newScaledValue
+            val: newScaledValue,
           };
 
           this.vpiDataForPath.splice(insertIndex, 0, newEntry);
@@ -462,7 +466,6 @@ export default Vue.extend({
             .start(TWEEN.now()); // Start the tween immediately.
         }
       }
-
     },
     mouseEnter(): void {
       this.tooltipVisible = true;
@@ -490,7 +493,7 @@ export default Vue.extend({
         d1.moment.valueOf() - x0.getTime() / 1000
           ? d1
           : d0;
-    }
+    },
   },
 });
 </script>

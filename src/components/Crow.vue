@@ -143,11 +143,11 @@
             :scheme="VPChartSelectedScheme"
             @colorSchemeChanged="vpColorSchemeChanged"
           >
-            <template v-slot:title>
+            <template #title>
               <h3>VP Chart</h3>
             </template>
 
-            <template v-slot:in-x-axis-group>
+            <template #in-x-axis-group>
               <timeline-chart
                 :periods="timePeriods"
                 :style-config="TimelineChartStyle"
@@ -168,11 +168,11 @@
             :mode="VPIChartMode"
             @modeChanged="vpiModeChanged"
           >
-            <template v-slot:title>
+            <template #title>
               <h3>VPI Chart</h3>
             </template>
 
-            <template v-slot:in-x-axis-group>
+            <template #in-x-axis-group>
               <timeline-chart
                 :periods="timePeriods"
                 :style-config="TimelineChartStyle"

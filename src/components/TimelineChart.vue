@@ -18,7 +18,7 @@
         triggers="hover"
         placement="bottom"
       >
-        <template v-slot:title>
+        <template #title>
           {{ formatMoment(period.moment) }}
         </template>
         {{ period.name | capitalize }} (solar elevation: {{ period.sunAltitude | round2decimals }}°)

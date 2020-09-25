@@ -1,4 +1,5 @@
 import moment from "moment-timezone";
+import * as d3Scale from "d3-scale";
 
 export type ColorSchemeIdentifier = "biorad" | "birdtam" | "viridis";
 export type IntegratedPropertyName = "mtr" | "rtr" | "vid" | "vir";
@@ -9,7 +10,7 @@ export interface ColorSchemeConfigEntry {
     dailyLinesColor: string;
 
     // Color-scale related
-    colorScale(): any; // TODO: give a proper function signature
+    colorScale: d3Scale.ScaleSequential<string> | d3Scale.ScaleOrdinal<number, string> ; // TODO: give a proper function signature
     dynamicDomain: boolean; // Is the color scale domain fixed and preconfigured (false) or does it depend of the data (true)?
     dataPreprocessor?(d: number): number; // This optional function will be applied to the data before it's passed to the color scale
     colorScaleType: "ordinal" | "sequential";
