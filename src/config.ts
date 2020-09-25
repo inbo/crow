@@ -56,6 +56,20 @@ export default {
         showTooltip: false, // BEWARE: useful for debugging, but performance is horrible
 
         noDataColor: 'grey',
+        
+        // The BirdTAM color scale: code + associated color
+        birdtamColors: new Map([
+            [0, "#ffffff"],
+            [1, "#e5ffe5"],
+            [2, "#ccffcc"],
+            [3, "#b2ffb2"],
+            [4, "#99ff99"],
+            [5, "#00ff00"],
+            [6, "#ffff00"],
+            [7, "#ffb2b2"],
+            [8, "#ff0000"],
+            [9, "#333333"],
+          ]),
 
         axisTimeFormat: " HH:mm z",
         tooltipTimeFormat: "MMM D - HH:mm z",

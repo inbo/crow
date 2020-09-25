@@ -211,19 +211,8 @@ export default Vue.extend({
           colorScale: d3
             .scaleOrdinal<number, string>()
             // BIRDTAM RGB-kleuren = [1 1 1; .9 1 .9; .8 1 .8; .7 1 .7; .6 1 .6; 0 1 0; 1 1 0; 1 .7 .7; 1 0 0; .2 .2 .2;];
-            .range([
-              "#ffffff",
-              "#e5ffe5",
-              "#ccffcc",
-              "#b2ffb2",
-              "#99ff99",
-              "#00ff00",
-              "#ffff00",
-              "#ffb2b2",
-              "#ff0000",
-              "#333333",
-            ])
-            .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+            .range(this.styleConfig.birdtamColors.values())
+            .domain(this.styleConfig.birdtamColors.keys()),
           dynamicDomain: false,
           dataPreprocessor: helpers.densityToBirdtam,
           colorScaleType: "ordinal",
@@ -387,6 +376,7 @@ export default Vue.extend({
         color = this.styleConfig.noDataColor;
       } else {
         // We have proper data for this rectangle
+        
         // For some schemes, the density data has to be preprocessed:
         const density = config.dataPreprocessor
           ? config.dataPreprocessor(data.dens)
@@ -397,7 +387,7 @@ export default Vue.extend({
           // @ts-ignore: several TS issues, we assume it's because outdated D3 definitions
           scale = scale.domain([0, this.maxDensity]).nice();
         }
-        return scale(density);
+        color = scale(density);
       }
 
       return color;
