@@ -141,7 +141,7 @@
             :show-time-as="timeZoneToShow"
             :style-config="VPChartStyle"
             :scheme="VPChartSelectedScheme"
-            @colorSchemeChanged="vpColorSchemeChanged"
+            @color-scheme-changed="vpColorSchemeChanged"
           >
             <template #title>
               <h3>VP Chart</h3>

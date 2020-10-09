@@ -324,7 +324,7 @@ export default Vue.extend({
   },
   watch: {
     selectedColorSchemeIdentifier: function (newScheme): void {
-      this.$emit("colorSchemeChanged", newScheme);
+      this.$emit("color-scheme-changed", newScheme);
     },
   },
   methods: {
