@@ -166,7 +166,7 @@
             :show-time-as="timeZoneToShow"
             :data-temporal-resolution="dataTemporalResolution"
             :mode="VPIChartMode"
-            @modeChanged="vpiModeChanged"
+            @mode-changed="vpiModeChanged"
           >
             <template #title>
               <h3>VPI Chart</h3>

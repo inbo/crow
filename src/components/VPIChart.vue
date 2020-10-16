@@ -82,6 +82,7 @@
             target="tooltipCircle"
             placement="top"
           >
+            <!-- eslint-disable-next-line vue/valid-v-slot -->
             <template #title>{{ formattedMomentAtTimeX }}</template>
             <div>
               {{ selectedModeLabel }}:
@@ -387,7 +388,7 @@ export default Vue.extend({
       handler: function (newMode): void {
         this.syncVPIDataForPath();
         this.animate();
-        this.$emit("modeChanged", newMode);
+        this.$emit("mode-changed", newMode);
       },
     },
     vpiData: {

@@ -6,7 +6,7 @@ const svgWidth = 72 * (60 / 5) + globalChartMarginLeft + globalChartMarginRight;
 
 
 export default {
-    dataServerUrl: 'https://crow.weernet.be',
+    dataServerUrl: 'https://opendata.meteo.be/ftp/observations/radar/vbird',
     availableRadars: [
         {
             label: 'Belgium',
@@ -15,6 +15,13 @@ export default {
                 { value: "bejab", text: "Jabbeke", latitude: 51.1919, longitude: 3.0641, timezone: 'Europe/Brussels' },
                 { value: "bewid", text: "Wideumont", latitude: 49.9135, longitude: 5.5044, timezone: 'Europe/Brussels' },
                 { value: "bezav", text: "Zaventem", latitude: 50.9054, longitude: 4.4579, timezone: 'Europe/Brussels' },
+            ]
+        },
+        {
+            label: 'France',
+            options: [
+                { value: "frabb", text: "Abbeville", latitude: 50.1360, longitude: 1.8347, timezone: 'Europe/Paris'},
+                { value: "frave", text: "Avesnes", latitude: 50.1283, longitude: 3.8118, timezone: 'Europe/Paris'},
             ]
         },
         {

@@ -59,6 +59,7 @@
             triggers="hover"
             placement="top"
           >
+            <!-- eslint-disable-next-line vue/valid-v-slot -->
             <template #title>{{ formatTimestampForTooltip(d.timestamp) }}</template>
             <b>Height</b>
             {{ d.height }}m
