@@ -44,7 +44,7 @@ export default {
     availableTimeIntervals: [
         { text: '1d', value: 24 },
         { text: '3d', value: 72 },
-        { text: '1h', value: 1 } // Only for debugging: intervals that are not multiple of 24h won't work properly with the time navigation logic
+        //{ text: '1h', value: 1 } // Only for debugging: intervals that are not multiple of 24h won't work properly with the time navigation logic
     ] as TimeInterval[],
 
     initialTimeInterval: 24,
