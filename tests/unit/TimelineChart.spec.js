@@ -64,7 +64,7 @@ test("Have popovers when asked in the config", () => {
       }
     });
 
-    expect(wrapper.contains("b-popover")).toBe(true);
+    expect(wrapper.get("b-popover"));
     expect(wrapper.findAll('b-popover').length).toBe(12); // 1 per period
     // TODO: check popover content
 });
@@ -82,7 +82,7 @@ test("Don't have popovers when asked in the config", () => {
     }
   });
 
-  expect(wrapper.contains("b-popover")).toBe(false);
+  expect(wrapper.find("b-popover").exists()).toBe(false);
 });
 
 
@@ -100,5 +100,5 @@ test('TimelineChart axis can be disabled', () => {
       periods: testPeriods
     }
   });
-  expect(wrapper.contains('g.tick')).toBe(false)
+  expect(wrapper.find("g.tick").exists()).toBe(false);
 });

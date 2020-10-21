@@ -74,7 +74,7 @@ test('Profile integration code (compare to bioRad output)', () => {
     expect(MtrJs).toEqual(MtrBiorad);
     expect(VidJs).toEqual(VidBiorad);
     //expect(VirJs).toEqual(VirBiorad);
-    console.log(VirJs, VirBiorad);
+    //console.log(VirJs, VirBiorad);
     //console.log(RtrJs, RtrBiorad);
     //expect(RtrJs).toEqual(RtrBiorad);
   });
