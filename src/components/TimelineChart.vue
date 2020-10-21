@@ -33,6 +33,7 @@
 // TODO: margin.top in the main SVG group seems different than with TimelineChart.vue
 import Vue from "vue";
 import * as d3 from "d3";
+import * as d3Scale from 'd3-scale';
 import moment from "moment-timezone";
 import { Period } from "../CrowTypes";
 import helpers from "../helpers";
@@ -78,9 +79,9 @@ export default Vue.extend({
     };
   },
   computed: {
-    xScale: function(): d3.ScaleTime<number, number> {
+    xScale: function(): d3Scale.ScaleTime<number, number> {
       return d3
-        .scaleTime()
+        .scaleTime<number, number>()
         .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
         .range([0, this.innerWidth]);
     },
@@ -89,7 +90,7 @@ export default Vue.extend({
 
       return this.periods.map(period => ({
         ...period,
-        x: Math.round(scale(period.moment.valueOf())),
+        x: Math.round(scale(period.moment.valueOf()) as number), // cast necessary because https://github.com/DefinitelyTyped/DefinitelyTyped/issues/48299
         class: this.getPeriodClass(period.sunAltitude),
         name: this.getPeriodName(period.sunAltitude)
       }));

@@ -248,7 +248,7 @@ export default Vue.extend({
       return days.map((mom) => {
         return {
           moment: mom,
-          xPositionAtMidnight: this.xScale(mom.valueOf()),
+          xPositionAtMidnight: this.xScale(mom.valueOf()) as number,  // Cast because https://github.com/DefinitelyTyped/DefinitelyTyped/issues/48299
           dayLabel: mom.format("MMM DD"),
         };
       });
@@ -317,7 +317,7 @@ export default Vue.extend({
       return this.vtpsData.map((data) => ({
         ...data,
 
-        x: Math.round(Math.round(this.xScale(data.timestamp)) + 1),
+        x: Math.round(Math.round(this.xScale(data.timestamp) as number) + 1), // Cast necessary because: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/48299
         y: this.getRectYValue(data.height),
         fill: this.getRectColor(data),
       }));
