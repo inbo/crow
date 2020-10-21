@@ -10,7 +10,7 @@
             <b-col sm>
               <b-form-group 
                 id="input-radar-group" 
-                label="Radar:" 
+                label="At site:" 
                 label-for="input-radar"
               >
                 <b-form-select
@@ -34,7 +34,7 @@
                 id="input-date-group"
                 label="Date:"
                 label-for="input-date"
-                description="Charts will be centered on noon for selected date."
+                description="Charts will be centered on noon for the selected date."
               >
                 <b-input-group size="sm">
                   <b-input-group-prepend>
