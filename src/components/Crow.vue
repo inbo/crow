@@ -10,7 +10,7 @@
             <b-col sm>
               <b-form-group 
                 id="input-radar-group" 
-                label="Radar:" 
+                label="At site:" 
                 label-for="input-radar"
               >
                 <b-form-select
