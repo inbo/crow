@@ -241,11 +241,11 @@ export default Vue.extend({
       default: "radarLocal"
     },
     vpChartSelectedSchemeProp: {
-      type: Object as () => ColorSchemeIdentifier,
+      type: String as () => ColorSchemeIdentifier,
       default: 'viridis'
     },
     vpiChartModeProp: {
-      type: Object as () => IntegratedPropertyName,
+      type: String as () => IntegratedPropertyName,
       default: 'mtr'
     }
   },
