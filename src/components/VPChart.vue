@@ -21,6 +21,7 @@
           <color-legend
             :color-scale="selectedColorSchemeConfig.colorScale"
             :color-scale-type="selectedColorSchemeConfig.colorScaleType"
+            :max-density="maxDensity"
             opacity="1"
             topic="Density"
           />

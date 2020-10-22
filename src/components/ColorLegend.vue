@@ -38,7 +38,7 @@ export default Vue.extend({
       //console.log(scaleFunction.thresholds())
     }
   },
-  props: ["colorScale", "colorScaleType", "opacity", "topic"], // eslint-disable-line
+  props: ["colorScale", "colorScaleType", "opacity", "topic", "maxDensity"], // eslint-disable-line
   data: function() {
     return {
       styleDiv: {
@@ -67,7 +67,7 @@ export default Vue.extend({
     legendScaleSequential: function(): d3.ScaleLinear<number, number> {
       return d3
         .scaleLinear()
-        .domain(this.colorScale.domain())
+        .domain([0, this.maxDensity])
         .range([
           1,
           this.styleDiv.width -
@@ -135,6 +135,12 @@ export default Vue.extend({
       }
     },
     colorScaleType: {
+      handler: function(): void {
+        this.clearCanvas();
+        this.renderColorRamp(this.opacity);
+      }
+    },
+    maxDensity: {
       handler: function(): void {
         this.clearCanvas();
         this.renderColorRamp(this.opacity);
