@@ -207,7 +207,7 @@ export default Vue.extend({
         },
 
         {
-          text: "BIRDTAM",
+          text: "BirdTAM",
           value: "birdtam",
           dailyLinesColor: "green",
           colorScale: d3
@@ -237,6 +237,7 @@ export default Vue.extend({
       const found = this.availableColorSchemes.find(
         (e) => e.value === this.selectedColorSchemeIdentifier
       );
+      
       return found ? found : this.availableColorSchemes[0];
     },
     daysCovered: function (): DayData[] {

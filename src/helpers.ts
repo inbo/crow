@@ -42,50 +42,6 @@ function interpolateBioRad(val: number): RGBColor {
 
 }
 
-const bioRadScheme = ["#C8C8C8", "#FFFFFF", "#FFFFFB", "#FFFFF8", "#FFFFF5", "#FFFFF2",
-    "#FFFFEE", "#FFFFEB", "#FFFFE8", "#FFFFE5", "#FFFFE1", "#FFFFDE",
-    "#FFFFDB", "#FFFFD8", "#FFFFD4", "#FFFFD1", "#FFFFCE", "#FFFFCB",
-    "#FFFFC7", "#FFFFC4", "#FFFFC1", "#FFFFBE", "#FFFFBA", "#FFFFB7",
-    "#FFFFB4", "#FFFFB1", "#FFFFAD", "#FFFFAA", "#FFFFA7", "#FFFFA4",
-    "#FFFFA1", "#FFFF9D", "#FFFF9A", "#FFFF97", "#FFFF94", "#FFFF90",
-    "#FFFF8D", "#FFFF8A", "#FFFF87", "#FFFF83", "#FFFF80", "#FFFF7D",
-    "#FFFF7A", "#FFFF76", "#FFFF73", "#FFFF70", "#FFFF6D", "#FFFF69",
-    "#FFFF66", "#FFFF63", "#FFFF60", "#FFFF5C", "#FFFF59", "#FFFF56",
-    "#FFFF53", "#FFFF50", "#FFFF4C", "#FFFF49", "#FFFF46", "#FFFF43",
-    "#FFFF3F", "#FFFF3C", "#FFFF39", "#FDFF36", "#F8FF32", "#F4FD2F",
-    "#EFF72C", "#EAF129", "#E5EA25", "#E0E422", "#DBDE1F", "#D6D81C",
-    "#D2D218", "#CDCC15", "#C8C612", "#C3BF0F", "#BEB90B", "#B9B308",
-    "#B4AD05", "#B0A702", "#ABA300", "#A6A300", "#A5A300", "#ADA300",
-    "#B4A300", "#BCA300", "#C4A300", "#CBA300", "#D3A300", "#DBA300",
-    "#E3A300", "#EAA300", "#F2A300", "#FAA300", "#FFA300", "#FFA300",
-    "#FFA300", "#FFA302", "#FFA308", "#FFA30D", "#FFA313", "#FFA319",
-    "#FFA31F", "#FFA325", "#FFA32B", "#FFA331", "#FFA337", "#FFA33D",
-    "#FFA342", "#FFA348", "#FFA34E", "#FFA04F", "#FF9B4B", "#FF9646",
-    "#FF9141", "#FF8C3C", "#FF8737", "#FF8232", "#FF7C2E", "#FF7729",
-    "#FF7224", "#FF6D1F", "#FF681A", "#FF6315", "#FF5E10", "#FF590C",
-    "#FF5407", "#FF4E02", "#FF4900", "#FF4400", "#FF3F00", "#FF3A00",
-    "#FF3500", "#FF3000", "#FF2B00", "#FF2600", "#FF2000", "#FF1B00",
-    "#FF1600", "#FF1100", "#FF0C00", "#FF0700", "#FF0200", "#FF0000",
-    "#FF0000", "#FF0000", "#FB0000", "#F60000", "#F00000", "#EA0000",
-    "#E50000", "#DF0000", "#D90000", "#D40000", "#CE0000", "#C90000",
-    "#C30000", "#BD0000", "#B80000", "#B20000", "#AC0003", "#A70008",
-    "#A1000E", "#9C0013", "#960019", "#90001E", "#8B0024", "#850029",
-    "#7F002E", "#7A0034", "#740039", "#6E003F", "#690044", "#63004A",
-    "#5E004F", "#580055", "#52005A", "#51005F", "#510065", "#51006A",
-    "#510070", "#510075", "#51007B", "#510080", "#510086", "#51008B",
-    "#510091", "#510096", "#51009B", "#5100A1", "#5100A6", "#5100AC",
-    "#4D00B1", "#4800B7", "#4300BC", "#3F00C2", "#3A00C7", "#3500CC",
-    "#3000D2", "#2B00D7", "#2700DD", "#2200E2", "#1D00E8", "#1800ED",
-    "#1400F3", "#0F00F8", "#0A00FD", "#0500FA", "#0000F5", "#0000F0",
-    "#0000EB", "#0000E5", "#0000E0", "#0000DB", "#0000D6", "#0000D0",
-    "#0000CB", "#0000C6", "#0000C1", "#0000BC", "#0000B6", "#0000B1",
-    "#0000AC", "#0000A7", "#0000A1", "#00009C", "#000097", "#000092",
-    "#00008D", "#000087", "#000082", "#00007D", "#000078", "#000072",
-    "#00006D", "#000068", "#000063", "#00005E", "#000058", "#000053",
-    "#00004E", "#000049", "#000043", "#00003E", "#000039", "#000034",
-    "#00002F", "#000029", "#000024", "#00001F", "#00001A", "#000014",
-    "#00000F", "#00000A", "#000005", "#000000"]
-
 function densityToBirdtam(density: number): number {
     // Takes a density (from VTPS data) and turn it to a BIRDTAM code.
     // Implementation based on the following explanation from Hans van Gasteren (Dutch Air Force)
@@ -99,7 +55,11 @@ function densityToBirdtam(density: number): number {
 
     Overigens voor de vertical integrated densities (VID) gebruik ik dezelfde conversie. density == VID
     */
+
+    const logBase = (n: number, base: number) => Math.log(n) / Math.log(base);
+    // Unsure about the correct implementation
     return Math.floor(1.4427 * Math.log(density + 1) + 1.6781);
+    //return Math.floor(logBase(density + 1, 1.4427) + 1.6781);
 }
 
 function uuidv4(): string {
@@ -233,4 +193,4 @@ function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infi
     return ({ "mtr": mtr, "rtr": rtr, "vid": vid, "vir": vir })
 }
 
-export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, bioRadScheme, interpolateBioRad } 
+export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateBioRad } 

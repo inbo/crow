@@ -60,7 +60,7 @@ export default Vue.extend({
           break;
         default:
           // The axis cannot be build directly from a scaleQuantize, so we build a scaleBand instead
-          sc = d3.scaleBand().domain(['0', '1', '2', '3', '4', '5', '6', '7','8', '9']).range(this.legendScaleOrdinal.domain()) // FIXME: domain should not be hardcoded, but read from colorScale doamin....
+          sc = d3.scaleBand().domain(['0', '1', '2', '3', '4', '5', '6', '7','8', '> 8']).range(this.legendScaleOrdinal.domain()) // FIXME: domain should not be hardcoded, but read from colorScale doamin....
       }
       return sc;
     },
@@ -179,7 +179,7 @@ export default Vue.extend({
               col = this.colorScale(this.legendScaleSequential.invert(i));
               break;
             case "ordinal":
-              col = this.colorScale(this.legendScaleOrdinal(i));
+              col = this.legendScaleOrdinal(i);
           }
 
           ctx.fillStyle = this.addOpacityToColor(col, opacity);
