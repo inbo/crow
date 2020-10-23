@@ -417,10 +417,7 @@ export default Vue.extend({
   },
   mounted: function() {
     this.baseUrl = this.trimLastSlash(window.location.origin);
-    
-    this.$nextTick(function() {
-      this.loadData();
-    });
+    this.loadData();
   },
   methods: {
     vpiModeChanged(mode: IntegratedPropertyName): void {
@@ -490,14 +487,16 @@ export default Vue.extend({
     },
 
     loadData(): void {
-      this.showCharts = true;
+      this.$nextTick(() => {
+        this.showCharts = true;
 
-      this.initializeEmptyData();
-      this.populateDataFromCrowServer(
-        this.selectedRadarValue,
-        this.startMoment,
-        this.endMoment
-      );
+        this.initializeEmptyData();
+        this.populateDataFromCrowServer(
+          this.selectedRadarValue,
+          this.startMoment,
+          this.endMoment
+        );
+      });
     },
 
     /* Store a Vtps data row originating in a file into vtpsData */
