@@ -54,12 +54,10 @@ function densityToBirdtam(density: number): number {
     En dan de getallen naar beneden afronden om de juiste BIRDTAM te vinden: floor(densitybirdtam), (birdtam 5,6 wordt dus een 5!)
 
     Overigens voor de vertical integrated densities (VID) gebruik ik dezelfde conversie. density == VID
+    
+    More discussions at https://github.com/inbo/crow/issues/76
     */
-
-    const logBase = (n: number, base: number) => Math.log(n) / Math.log(base);
-    // Unsure about the correct implementation
-    return Math.floor(1.4427 * Math.log(density + 1) + 1.6781);
-    //return Math.floor(logBase(density + 1, 1.4427) + 1.6781);
+    return (density === 0 ? 0 : Math.floor(1.4427 * Math.log(density + 1) + 1.6781));
 }
 
 function uuidv4(): string {
