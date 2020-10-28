@@ -1,7 +1,7 @@
 <template>
   <g>
     <line
-      v-for="day in days"
+      v-for="day in daysWithMidnightInParetnChart"
       :key="day.xPositionAtMidnight"
       fill="none"
       :x1="day.xPositionAtMidnight"
@@ -12,7 +12,7 @@
       :style="lineStyle"
     />
     <text   
-      v-for="day in days"
+      v-for="day in daysWithMidnightInParetnChart"
       :key="'text-' + day.xPositionAtMidnight"
       :x="day.xPositionAtMidnight + 5"
       :y="15"
@@ -45,6 +45,9 @@ export default Vue.extend({
         }
     },
     computed: {
+      daysWithMidnightInParetnChart: function(): DayData[] {
+        return this.days.filter(dayData => {return dayData.xPositionAtMidnight >= 0})
+      },
       lineStyle: function(): Record<string, unknown> {
         return {
           'stroke-width': 1,
