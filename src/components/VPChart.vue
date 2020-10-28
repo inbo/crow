@@ -17,7 +17,7 @@
             />
           </b-form-group>
         </b-col>
-        <b-col>
+        <b-col style="overflow: auto">
           <color-legend
             :color-scale="selectedColorSchemeConfig.colorScale"
             :color-scale-type="selectedColorSchemeConfig.colorScaleType"
