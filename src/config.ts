@@ -34,6 +34,7 @@ export default {
         {
             label: 'Netherlands',
             options: [
+                { value: "nldhl", text: "Den Helder", latitude: 52.9533, longitude: 4.7899, timezone: 'Europe/Amsterdam' },
                 { value: "nlhrw", text: "Herwijnen", latitude: 51.83708, longitude: 5.13797, timezone: 'Europe/Amsterdam' },
             ]
         }
