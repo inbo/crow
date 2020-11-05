@@ -90,7 +90,7 @@ export default Vue.extend({
 
       return this.periods.map(period => ({
         ...period,
-        x: Math.round(scale(period.moment.valueOf()) as number), // cast necessary because https://github.com/DefinitelyTyped/DefinitelyTyped/issues/48299
+        x: Math.round(scale(period.moment.valueOf())),
         class: this.getPeriodClass(period.sunAltitude),
         name: this.getPeriodName(period.sunAltitude)
       }));

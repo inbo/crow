@@ -259,7 +259,7 @@ export default Vue.extend({
       return uniqueCoveredDays.map((mom) => {
         return {
           moment: mom,
-          xPositionAtMidnight: this.xScale(mom.valueOf()) as number,  // Cast because https://github.com/DefinitelyTyped/DefinitelyTyped/issues/48299
+          xPositionAtMidnight: this.xScale(mom.valueOf()), 
           dayLabel: mom.format("MMM DD"),
         };
       });
@@ -276,7 +276,7 @@ export default Vue.extend({
     },
     YPositionAtTimeX: function (): number {
       if (this.selectedValAtTimeX) {
-        return this.yScale(this.selectedValAtTimeX) as number;  // Cast because https://github.com/DefinitelyTyped/DefinitelyTyped/issues/48299
+        return this.yScale(this.selectedValAtTimeX);
       }
       return this.innerHeight;
     },
@@ -290,7 +290,7 @@ export default Vue.extend({
     },
     closestMomentXPosition: function (): number | null {
       if (this.VPIEntryAtTimeX) {
-        return this.xScale(this.VPIEntryAtTimeX.moment.valueOf()) as number; // Cast because https://github.com/DefinitelyTyped/DefinitelyTyped/issues/48299
+        return this.xScale(this.VPIEntryAtTimeX.moment.valueOf());
       }
       return null;
     },
@@ -373,7 +373,7 @@ export default Vue.extend({
       const path = d3
         .line<VPIEntryForPath>()
         .x((vpiEntryFP) => {
-          return this.xScale(vpiEntryFP.timestamp) as number;  // Cast because https://github.com/DefinitelyTyped/DefinitelyTyped/issues/48299
+          return this.xScale(vpiEntryFP.timestamp);
         })
         .y((vpiEntryFP) => {
           return vpiEntryFP.val;
