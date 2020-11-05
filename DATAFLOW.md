@@ -55,7 +55,6 @@ However for performance reasons, the Crow compoment holds this data in a `radarV
 3) this data is transformed via computed properties and passed to the child components (that are in charge of the visulization): VPChart receive a flattened version of radarVtps (`radarVtpsAsArray`, similar to the strcture of the initial data files), VPIChart receives vertically integrated profiles (see `integrateProfile` function in `helpers.ts`) and TimelineChart receive a simple arrays with the sun altitude for each shown time period.
 
 TODO: better description the various itnermediate functions and types.
-TODO: try to simplify types: VTPSEntry vs VTPSDataRow vs VTPSDataRowFromFile
 
 ## VPChart
 TODO: short description + screenshot 
