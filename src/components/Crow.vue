@@ -50,6 +50,7 @@
                     v-model="selectedDate"
                     type="date"
                     placeholder="Type a date..."
+                    :max="todayAsString"
                   />
                   <b-input-group-append>
                     <b-button
@@ -282,6 +283,9 @@ export default Vue.extend({
     };
   },
   computed: {
+    todayAsString(): string {
+      return new Date().toISOString().split("T")[0];
+    },
     selectedIntervalLabel(): string {
       const found = this.availableIntervals.find(
         d => d.value == this.selectedIntervalInHours
