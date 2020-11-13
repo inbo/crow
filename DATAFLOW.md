@@ -5,6 +5,7 @@ CROW is implemented as a hierarchy of Vue.js components that can be found in the
 
     App
         └── Crow
+            ├── SiteSelector
             ├── VPChart
             │   ├── DailyLines
             │   └── ColorLegend

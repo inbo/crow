@@ -8,25 +8,7 @@
         <b-col lg>
           <b-row>
             <b-col sm>
-              <b-form-group 
-                id="input-radar-group" 
-                label="At site:" 
-                label-for="input-radar"
-              >
-                <b-form-select
-                  id="input-radar"
-                  v-model="selectedRadarValue"
-                  size="sm"
-                  :options="availableRadars"
-                />
-                <b-form-text>
-                  {{ selectedRadarLocation }} is located at
-                  <a
-                    :href="`http://www.openstreetmap.org/?mlat=${selectedRadarLatitude}&mlon=${selectedRadarLongitude}&zoom=12`"
-                    target="_blank"
-                  >{{ selectedRadarLatitude }}, {{ selectedRadarLongitude }}</a>.
-                </b-form-text>
-              </b-form-group>
+              <site-selector v-model="selectedRadarValue" :available-radars="availableRadars" />
             </b-col>
 
             <b-col sm>
@@ -191,6 +173,7 @@
 import Vue from "vue";
 import VPChart from "./VPChart.vue";
 import VPIChart from "./VPIChart.vue";
+import SiteSelector from "./SiteSelector.vue";
 import TimelineChart from "./TimelineChart.vue";
 
 import moment from "moment-timezone";
@@ -220,6 +203,7 @@ const initialCopyUrlText = "Copy link";
 export default Vue.extend({
   name: "Crow",
   components: {
+    SiteSelector,
     VPChart,
     VPIChart,
     TimelineChart
@@ -360,9 +344,6 @@ export default Vue.extend({
     },
     selectedRadarLongitude(): number {
       return this.selectedRadarAsObject.longitude;
-    },
-    selectedRadarLocation(): string {
-      return this.selectedRadarAsObject.text;
     },
     selectedRadarTimezone(): string {
       return this.selectedRadarAsObject.timezone;
