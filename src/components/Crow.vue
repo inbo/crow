@@ -230,7 +230,7 @@ export default Vue.extend({
     },
     dateValueProp: {
       type: String,
-      default: moment().subtract(2, "days").format(moment.HTML5_FMT.DATE)
+      default: moment().subtract(1, "days").format(moment.HTML5_FMT.DATE)
     },
     intervalValueProp: {
       type: Number,
