@@ -25,49 +25,24 @@ import { GroupedRadarInterface, RadarInterface } from "../CrowTypes";
 
 export default Vue.extend({
   name: "SiteSelector",
-
-  props: {
-    availableRadars: {
-      type: Array as () => GroupedRadarInterface[],
-      default: () => [],
-    },
-  },
-
   data: function () {
     return {
     };
   },
-
   computed: {
-    // TODO: copy-pasted from Crow component, refactor (with VueX?)
-    selectedRadarAsObject(): RadarInterface {
-      let found = this.availableRadars[0].options[0];
-
-      this.availableRadars.forEach((radarGroup) => {
-        const groupFound = radarGroup.options.find(
-          (d) => d.value == this.selectedRadar
-        );
-        if (groupFound) {
-          found = groupFound;
-        }
-      });
-
-      return found;
-    },
-    // TODO: copy-pasted from Crow component, refactor (with VueX?)
+    availableRadars(): GroupedRadarInterface[] {
+        return this.$store.state.conf.availableRadars;
+    },  
     selectedRadarLatitude(): number {
-      return this.selectedRadarAsObject.latitude;
+      return this.$store.getters.selectedRadarAsObject.latitude;
     },
-    // TODO: copy-pasted from Crow component, refactor (with VueX?)
     selectedRadarLongitude(): number {
-      return this.selectedRadarAsObject.longitude;
+      return this.$store.getters.selectedRadarAsObject.longitude;
     },
-
     selectedRadarLocation(): string {
-      return this.selectedRadarAsObject.text;
+      return this.$store.getters.selectedRadarAsObject.text;;
     },
   },
-  
   methods: {
       ...mapMutations([
           'setSelectedRadarCode'

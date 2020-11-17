@@ -8,7 +8,7 @@
         <b-col lg>
           <b-row>
             <b-col sm>
-              <site-selector :available-radars="availableRadars" />
+              <site-selector />
             </b-col>
 
             <b-col sm>
@@ -241,8 +241,6 @@ export default Vue.extend({
       selectedIntervalInHours: this.intervalValueProp, // The chart show this amount of hours around selectedDate at noon
       availableIntervals: config.availableTimeIntervals as TimeInterval[],
 
-      availableRadars: config.availableRadars as GroupedRadarInterface[],
-
       timeDisplayedAs: this.timeDisplayValueProp, // 'radarLocal' | 'UTC'
 
       showCharts: false,
@@ -328,28 +326,14 @@ export default Vue.extend({
         "hours"
       );
     },
-    selectedRadarAsObject(): RadarInterface {
-      let found = this.availableRadars[0].options[0];
-
-      this.availableRadars.forEach(radarGroup => {
-        const groupFound = radarGroup.options.find(
-          d => d.value == this.selectedRadarValue
-        );
-        if (groupFound) {
-          found = groupFound;
-        }
-      });
-
-      return found;
-    },
     selectedRadarLatitude(): number {
-      return this.selectedRadarAsObject.latitude;
+      return this.$store.getters.selectedRadarAsObject.latitude;
     },
     selectedRadarLongitude(): number {
-      return this.selectedRadarAsObject.longitude;
+      return this.$store.getters.selectedRadarAsObject.longitude;
     },
     selectedRadarTimezone(): string {
-      return this.selectedRadarAsObject.timezone;
+      return this.$store.getters.selectedRadarAsObject.timezone;
     },
     radarVtpsAsArray(): VTPSDataRow[] {
       const dataArray = [];

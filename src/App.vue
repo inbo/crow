@@ -45,6 +45,8 @@ import { Route } from "vue-router";
 import Crow from "./components/Crow.vue";
 import PageNotFound from "./components/PageNotFound.vue";
 import VueClipboard from "vue-clipboard2";
+import { GroupedRadarInterface, RadarInterface } from "./CrowTypes";
+import config from "./config"
 
 Vue.use(VueClipboard);
 Vue.use(VueRouter);
@@ -74,10 +76,14 @@ const router = new VueRouter({
 });
 
 const configStore = {
-  state: () => ({}),
-  mutations: {},
+  state: () => ({
+    availableRadars: config.availableRadars as GroupedRadarInterface[]
+  }),
+  mutations: {
+  },
   actions: {},
-  getters: {}
+  getters: {
+  }
 }
 
 const userChoicesStore = {
@@ -90,7 +96,22 @@ const userChoicesStore = {
     }
   },
   actions: {},
-  getters: {}
+  getters: {
+    selectedRadarAsObject(state: any, getters: any, rootState: any): RadarInterface {
+      let found = rootState.conf.availableRadars[0].options[0];
+
+      rootState.conf.availableRadars.forEach((radarGroup: GroupedRadarInterface) => {
+        const groupFound = radarGroup.options.find(
+          (d) => d.value == state.selectedRadarCode
+        );
+        if (groupFound) {
+          found = groupFound;
+        }
+      });
+
+      return found;
+    }
+  }
 }
 
 
