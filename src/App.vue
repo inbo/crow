@@ -39,6 +39,8 @@
 <script lang="ts">
 import Vue from "vue";
 import VueRouter from "vue-router";
+import Vuex from "vuex"
+import 'es6-promise/auto'
 import { Route } from "vue-router";
 import Crow from "./components/Crow.vue";
 import PageNotFound from "./components/PageNotFound.vue";
@@ -46,6 +48,7 @@ import VueClipboard from "vue-clipboard2";
 
 Vue.use(VueClipboard);
 Vue.use(VueRouter);
+Vue.use(Vuex);
 
 const routes = [
   // The main route accept the following parameters that will be passed to Crow:
@@ -70,10 +73,23 @@ const router = new VueRouter({
   routes
 });
 
+const store = new Vuex.Store({
+  state: {
+    // 1. Main form elements
+    selectedRadarCode: ''
+  },
+  mutations: {
+    setSelectedRadarCode (state, code) {
+      state.selectedRadarCode = code;
+    }
+  }
+})
+
 declare const __COMMIT_HASH__: string;
 
 export default Vue.extend({
   router,
+  store,
   name: "App",
   methods: {
     commitHash: function(): string {

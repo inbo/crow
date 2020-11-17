@@ -2,9 +2,10 @@
   <b-form-group id="input-radar-group" label="At site:" label-for="input-radar">
     <b-form-select
       id="input-radar"
-      v-model="selectedRadar"
+      :value="this.$store.state.selectedRadarCode"
       size="sm"
       :options="availableRadars"
+      @change="setSelectedRadarCode"
     />
     <b-form-text>
       {{ selectedRadarLocation }} is located at
@@ -18,6 +19,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { mapMutations } from 'vuex';
 
 import { GroupedRadarInterface, RadarInterface } from "../CrowTypes";
 
@@ -29,15 +31,10 @@ export default Vue.extend({
       type: Array as () => GroupedRadarInterface[],
       default: () => [],
     },
-    value: {
-      type: String,
-      default: "",
-    },
   },
 
   data: function () {
     return {
-      selectedRadar: this.value,
     };
   },
 
@@ -70,10 +67,11 @@ export default Vue.extend({
       return this.selectedRadarAsObject.text;
     },
   },
-  watch: {
-      'selectedRadar': function(newVal, oldVal) {
-          this.$emit('input', newVal);
-      }
+  
+  methods: {
+      ...mapMutations([
+          'setSelectedRadarCode'
+      ])
   },
 });
 </script>

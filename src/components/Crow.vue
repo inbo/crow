@@ -8,7 +8,7 @@
         <b-col lg>
           <b-row>
             <b-col sm>
-              <site-selector v-model="selectedRadarValue" :available-radars="availableRadars" />
+              <site-selector :available-radars="availableRadars" />
             </b-col>
 
             <b-col sm>
@@ -241,7 +241,6 @@ export default Vue.extend({
       selectedIntervalInHours: this.intervalValueProp, // The chart show this amount of hours around selectedDate at noon
       availableIntervals: config.availableTimeIntervals as TimeInterval[],
 
-      selectedRadarValue: this.radarValueProp,
       availableRadars: config.availableRadars as GroupedRadarInterface[],
 
       timeDisplayedAs: this.timeDisplayValueProp, // 'radarLocal' | 'UTC'
@@ -267,6 +266,10 @@ export default Vue.extend({
     };
   },
   computed: {
+    selectedRadarValue(): string {
+      return this.$store.state.selectedRadarCode;
+    },
+
     todayAsString(): string {
       return new Date().toISOString().split("T")[0];
     },
@@ -401,6 +404,9 @@ export default Vue.extend({
     }
   },
   mounted: function() {
+    // Load initial values in store:
+    this.$store.commit('setSelectedRadarCode', this.radarValueProp);
+
     this.baseUrl = this.trimLastSlash(window.location.origin);
     this.loadData();
   },
