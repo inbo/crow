@@ -267,7 +267,7 @@ export default Vue.extend({
   },
   computed: {
     selectedRadarValue(): string {
-      return this.$store.state.selectedRadarCode;
+      return this.$store.state.userChoices.selectedRadarCode;
     },
 
     todayAsString(): string {

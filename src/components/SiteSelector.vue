@@ -2,7 +2,7 @@
   <b-form-group id="input-radar-group" label="At site:" label-for="input-radar">
     <b-form-select
       id="input-radar"
-      :value="this.$store.state.selectedRadarCode"
+      :value="this.$store.state.userChoices.selectedRadarCode"
       size="sm"
       :options="availableRadars"
       @change="setSelectedRadarCode"

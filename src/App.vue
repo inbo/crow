@@ -73,15 +73,31 @@ const router = new VueRouter({
   routes
 });
 
-const store = new Vuex.Store({
-  state: {
-    // 1. Main form elements
+const configStore = {
+  state: () => ({}),
+  mutations: {},
+  actions: {},
+  getters: {}
+}
+
+const userChoicesStore = {
+  state: () => ({
     selectedRadarCode: ''
-  },
+  }),
   mutations: {
-    setSelectedRadarCode (state, code) {
+    setSelectedRadarCode (state: any, code: String) {
       state.selectedRadarCode = code;
     }
+  },
+  actions: {},
+  getters: {}
+}
+
+
+const store = new Vuex.Store({
+  modules: {
+    conf: configStore,
+    userChoices: userChoicesStore
   }
 })
 
