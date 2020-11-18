@@ -45,8 +45,10 @@ import { Route } from "vue-router";
 import Crow from "./components/Crow.vue";
 import PageNotFound from "./components/PageNotFound.vue";
 import VueClipboard from "vue-clipboard2";
+import { Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { GroupedRadarInterface, RadarInterface } from "./CrowTypes";
 import config from "./config"
+import { ticks } from 'd3';
 
 Vue.use(VueClipboard);
 Vue.use(VueRouter);
@@ -75,34 +77,28 @@ const router = new VueRouter({
   routes
 });
 
-const configStore = {
-  state: () => ({
-    availableRadars: config.availableRadars as GroupedRadarInterface[]
-  }),
-  mutations: {
-  },
-  actions: {},
-  getters: {
-  }
+@Module
+class ConfigStore extends VuexModule {
+  availableRadars: GroupedRadarInterface[] = config.availableRadars
 }
 
-const userChoicesStore = {
-  state: () => ({
-    selectedRadarCode: ''
-  }),
-  mutations: {
-    setSelectedRadarCode (state: any, code: String) {
-      state.selectedRadarCode = code;
-    }
-  },
-  actions: {},
-  getters: {
-    selectedRadarAsObject(state: any, getters: any, rootState: any): RadarInterface {
-      let found = rootState.conf.availableRadars[0].options[0];
+@Module
+class UserChoicesStore extends VuexModule {
+  selectedRadarCode = ''
+
+  @Mutation
+  setSelectedRadarCode (code: string) {
+    this.selectedRadarCode = code;
+  }
+
+  get selectedRadarAsObject(): RadarInterface {
+    const rootState = this.context.rootState;
+    
+    let found = rootState.conf.availableRadars[0].options[0];
 
       rootState.conf.availableRadars.forEach((radarGroup: GroupedRadarInterface) => {
         const groupFound = radarGroup.options.find(
-          (d) => d.value == state.selectedRadarCode
+          (d) => d.value == this.selectedRadarCode
         );
         if (groupFound) {
           found = groupFound;
@@ -110,15 +106,13 @@ const userChoicesStore = {
       });
 
       return found;
-    }
   }
 }
 
-
 const store = new Vuex.Store({
   modules: {
-    conf: configStore,
-    userChoices: userChoicesStore
+    conf: ConfigStore,
+    userChoices: UserChoicesStore
   }
 })
 
