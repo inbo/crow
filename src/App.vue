@@ -39,20 +39,17 @@
 <script lang="ts">
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Vuex from "vuex"
 import 'es6-promise/auto'
 import { Route } from "vue-router";
 import Crow from "./components/Crow.vue";
 import PageNotFound from "./components/PageNotFound.vue";
 import VueClipboard from "vue-clipboard2";
-import { Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { GroupedRadarInterface, RadarInterface } from "./CrowTypes";
 import config from "./config"
 import { ticks } from 'd3';
-
 Vue.use(VueClipboard);
 Vue.use(VueRouter);
-Vue.use(Vuex);
+
+import store from './store'
 
 const routes = [
   // The main route accept the following parameters that will be passed to Crow:
@@ -76,45 +73,6 @@ const router = new VueRouter({
   mode: "hash",
   routes
 });
-
-@Module
-class ConfigStore extends VuexModule {
-  availableRadars: GroupedRadarInterface[] = config.availableRadars
-}
-
-@Module
-class UserChoicesStore extends VuexModule {
-  selectedRadarCode = ''
-
-  @Mutation
-  setSelectedRadarCode (code: string) {
-    this.selectedRadarCode = code;
-  }
-
-  get selectedRadarAsObject(): RadarInterface {
-    const rootState = this.context.rootState;
-    
-    let found = rootState.conf.availableRadars[0].options[0];
-
-      rootState.conf.availableRadars.forEach((radarGroup: GroupedRadarInterface) => {
-        const groupFound = radarGroup.options.find(
-          (d) => d.value == this.selectedRadarCode
-        );
-        if (groupFound) {
-          found = groupFound;
-        }
-      });
-
-      return found;
-  }
-}
-
-const store = new Vuex.Store({
-  modules: {
-    conf: ConfigStore,
-    userChoices: UserChoicesStore
-  }
-})
 
 declare const __COMMIT_HASH__: string;
 

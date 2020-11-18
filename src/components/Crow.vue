@@ -183,7 +183,7 @@ import SunCalc from "suncalc";
 import config from "../config";
 import helpers from "../helpers";
 
-import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, GroupedRadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period } from '../CrowTypes';
+import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period } from '../CrowTypes';
 
 interface VTPSDataByHeight {
   [key: number]: VTPSDataRow;
