@@ -259,7 +259,7 @@ export default Vue.extend({
       return uniqueCoveredDays.map((mom) => {
         return {
           moment: mom,
-          xPositionAtMidnight: this.xScale(mom.valueOf()), 
+          xPositionAtMidnight: this.xScale(mom.valueOf()),
           dayLabel: mom.format("MMM DD"),
         };
       });
@@ -491,7 +491,7 @@ export default Vue.extend({
       const d1 = this.vpiData[i];
       this.VPIEntryAtTimeX =
         x0.getTime() / 1000 - d0.moment.valueOf() >
-        d1.moment.valueOf() - x0.getTime() / 1000
+          d1.moment.valueOf() - x0.getTime() / 1000
           ? d1
           : d0;
     },

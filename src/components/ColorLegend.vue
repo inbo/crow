@@ -39,7 +39,7 @@ export default Vue.extend({
     }
   },
   props: ["colorScale", "colorScaleType", "opacity", "topic", "maxDensity"], // eslint-disable-line
-  data: function() {
+  data: function () {
     return {
       styleDiv: {
         height: 60,
@@ -49,7 +49,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    axisScale: function():
+    axisScale: function ():
       | d3.ScaleLinear<number, number>
       | d3.ScaleBand<string> {
       let sc;
@@ -60,43 +60,43 @@ export default Vue.extend({
           break;
         default:
           // The axis cannot be build directly from a scaleQuantize, so we build a scaleBand instead
-          sc = d3.scaleBand().domain(['0', '1', '2', '3', '4', '5', '6', '7','8', '> 8']).range(this.legendScaleOrdinal.domain()) // FIXME: domain should not be hardcoded, but read from colorScale doamin....
+          sc = d3.scaleBand().domain(['0', '1', '2', '3', '4', '5', '6', '7', '8', '> 8']).range(this.legendScaleOrdinal.domain()) // FIXME: domain should not be hardcoded, but read from colorScale doamin....
       }
       return sc;
     },
-    legendScaleSequential: function(): d3.ScaleLinear<number, number> {
+    legendScaleSequential: function (): d3.ScaleLinear<number, number> {
       return d3
         .scaleLinear()
         .domain([0, this.maxDensity])
         .range([
           1,
           this.styleDiv.width -
-            this.styleDiv.margin.left -
-            this.styleDiv.margin.right
+          this.styleDiv.margin.left -
+          this.styleDiv.margin.right
         ]);
     },
-    legendScaleOrdinal: function(): d3.ScaleQuantize<number> {
+    legendScaleOrdinal: function (): d3.ScaleQuantize<number> {
       return d3
         .scaleQuantize()
         .domain([
           1,
           this.styleDiv.width -
-            this.styleDiv.margin.left -
-            this.styleDiv.margin.right
+          this.styleDiv.margin.left -
+          this.styleDiv.margin.right
         ])
         .range(this.colorScale.range());
     },
-    ctx: function(): CanvasRenderingContext2D | null {
+    ctx: function (): CanvasRenderingContext2D | null {
       return (this.$refs.canvas as HTMLCanvasElement).getContext("2d");
     },
-    styleObjectDivPrepared: function(): Record<string, unknown> {
+    styleObjectDivPrepared: function (): Record<string, unknown> {
       return {
         display: "inline-block",
         position: "relative",
         width: this.styleDiv.width + "px"
       };
     },
-    styleCanvasPrepared: function(): Record<string, unknown> {
+    styleCanvasPrepared: function (): Record<string, unknown> {
       return {
         height: this.canvasHeight + "px",
         width: this.canvasWidth + "px",
@@ -106,14 +106,14 @@ export default Vue.extend({
         left: this.styleDiv.margin.left + "px"
       };
     },
-    canvasWidth: function(): number {
+    canvasWidth: function (): number {
       return (
         this.styleDiv.width -
         this.styleDiv.margin.left -
         this.styleDiv.margin.right
       );
     },
-    canvasHeight: function(): number {
+    canvasHeight: function (): number {
       return (
         this.styleDiv.height -
         this.styleDiv.margin.top -
@@ -123,42 +123,42 @@ export default Vue.extend({
   },
   watch: {
     opacity: {
-      handler: function(newOpacity): void {
+      handler: function (newOpacity): void {
         this.clearCanvas();
         this.renderColorRamp(newOpacity);
       }
     },
     colorScale: {
-      handler: function(): void {
+      handler: function (): void {
         this.clearCanvas();
         this.renderColorRamp(this.opacity);
       }
     },
     colorScaleType: {
-      handler: function(): void {
+      handler: function (): void {
         this.clearCanvas();
         this.renderColorRamp(this.opacity);
       }
     },
     maxDensity: {
-      handler: function(): void {
+      handler: function (): void {
         this.clearCanvas();
         this.renderColorRamp(this.opacity);
       }
     }
   },
-  mounted: function() {
+  mounted: function () {
     this.renderColorRamp(this.opacity);
   },
   methods: {
-    clearCanvas: function(): void {
+    clearCanvas: function (): void {
       const ctx = this.ctx;
 
       if (ctx != null) {
         ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
       }
     },
-    addOpacityToColor: function(colorStr: string, opacity: number): string {
+    addOpacityToColor: function (colorStr: string, opacity: number): string {
       const colorObj = d3.color(colorStr);
 
       if (colorObj != null) {
@@ -168,7 +168,7 @@ export default Vue.extend({
         throw colorStr + "is not a correct CSS color specifier";
       }
     },
-    renderColorRamp: function(opacity: number): void {
+    renderColorRamp: function (opacity: number): void {
       const ctx = this.ctx;
 
       if (ctx != null) {

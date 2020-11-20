@@ -20,8 +20,8 @@ export default {
         {
             label: 'France',
             options: [
-                { value: "frabb", text: "Abbeville", latitude: 50.1360, longitude: 1.8347, timezone: 'Europe/Paris'},
-                { value: "frave", text: "Avesnes", latitude: 50.1283, longitude: 3.8118, timezone: 'Europe/Paris'},
+                { value: "frabb", text: "Abbeville", latitude: 50.1360, longitude: 1.8347, timezone: 'Europe/Paris' },
+                { value: "frave", text: "Avesnes", latitude: 50.1283, longitude: 3.8118, timezone: 'Europe/Paris' },
             ]
         },
         {
@@ -64,7 +64,7 @@ export default {
         showTooltip: false, // BEWARE: useful for debugging, but performance is horrible
 
         noDataColor: 'grey',
-        
+
         // The BirdTAM color scale: code + associated color
         birdtamColors: new Map([
             [0, "#ffffff"],
@@ -77,7 +77,7 @@ export default {
             [7, "#ffb2b2"],
             [8, "#ff0000"],
             [9, "#333333"],
-          ]),
+        ]),
 
         axisTimeFormat: " HH:mm z",
         tooltipTimeFormat: "MMM D - HH:mm z",

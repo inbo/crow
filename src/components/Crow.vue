@@ -34,7 +34,7 @@
                     placeholder="Type a date..."
                     :max="todayAsString"
                   />
-                  <b-input-group-append>
+                  <b-input-group-append> 
                     <b-button
                       variant="outline-secondary"
                       @click="incrementPeriod"
@@ -120,7 +120,7 @@
       <b-row>
         <b-col>
           <v-p-chart
-            :vtps-data="radarVtpsAsArray"
+            :vtps-data="radarVtpsAsArray" 
             :show-time-as="timeZoneToShow"
             :style-config="VPChartStyle"
             :scheme="VPChartSelectedScheme"
@@ -212,7 +212,7 @@ export default Vue.extend({
     TimelineChart
   },
   props: {
-    radarValueProp: { 
+    radarValueProp: {
       type: String,
       default: config.initialRadarValue
     },
@@ -237,7 +237,7 @@ export default Vue.extend({
       default: 'mtr'
     }
   },
-  data: function() {
+  data: function () {
     return {
       selectedDate: this.dateValueProp,
 
@@ -269,10 +269,10 @@ export default Vue.extend({
     },
 
     selectedIntervalInHours: {
-      get: function(): number {
+      get: function (): number {
         return UserChoicesStoreModule.selectedIntervalInHours;
       },
-      set: function(newValue: number) {
+      set: function (newValue: number) {
         UserChoicesStoreModule.setSelectedIntervalInHours(newValue);
       }
     },
@@ -335,13 +335,13 @@ export default Vue.extend({
       );
     },
     selectedRadarLatitude(): number {
-      return this.$store.getters.selectedRadarAsObject.latitude;
+      return UserChoicesStoreModule.selectedRadarAsObject.latitude;
     },
     selectedRadarLongitude(): number {
-      return this.$store.getters.selectedRadarAsObject.longitude;
+      return UserChoicesStoreModule.selectedRadarAsObject.longitude;
     },
     selectedRadarTimezone(): string {
-      return this.$store.getters.selectedRadarAsObject.timezone;
+      return UserChoicesStoreModule.selectedRadarAsObject.timezone;
     },
     radarVtpsAsArray(): VTPSDataRow[] {
       const dataArray = [];
@@ -376,29 +376,29 @@ export default Vue.extend({
   },
   watch: {
     // Any change on something that can be shared via URL will reset the button
-    selectedRadarValue: function(): void {
+    selectedRadarValue: function (): void {
       this.resetCopyUrlButtonText();
     },
-    selectedDate: function(): void {
+    selectedDate: function (): void {
       this.resetCopyUrlButtonText();
     },
-    selectedIntervalInHours: function(): void {
+    selectedIntervalInHours: function (): void {
       this.resetCopyUrlButtonText();
     },
-    timeDisplayedAs: function(): void {
+    timeDisplayedAs: function (): void {
       this.resetCopyUrlButtonText();
     },
-    VPChartSelectedScheme: function(): void {
+    VPChartSelectedScheme: function (): void {
       this.resetCopyUrlButtonText();
     },
-    VPIChartMode: function(): void {
+    VPIChartMode: function (): void {
       this.resetCopyUrlButtonText();
     }
   },
-  mounted: function() {
+  mounted: function () {
     // Load initial values in store:
-    this.$store.commit('setSelectedRadarCode', this.radarValueProp);
-    this.$store.commit('setSelectedIntervalInHours', this.intervalValueProp);
+    UserChoicesStoreModule.setSelectedRadarCode(this.radarValueProp);
+    UserChoicesStoreModule.setSelectedIntervalInHours(this.intervalValueProp);
 
     this.baseUrl = this.trimLastSlash(window.location.origin);
     this.loadData();

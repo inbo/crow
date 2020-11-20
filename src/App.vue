@@ -81,7 +81,7 @@ export default Vue.extend({
   store,
   name: "App",
   methods: {
-    commitHash: function(): string {
+    commitHash: function (): string {
       return __COMMIT_HASH__;
     }
   }

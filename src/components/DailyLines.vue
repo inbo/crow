@@ -29,38 +29,38 @@ import Vue from "vue";
 import { DayData } from '../CrowTypes'
 
 export default Vue.extend({
-    name: 'DailyLine',
-    props: {
-        days: {
-            type: Array as () => DayData[],
-            default: []
-        } ,
-        height: {
-            type: Number,
-            default: 100
-        },
-        color: {
-            type: String,
-            default: "rgb(33, 37, 41)"
-        }
+  name: 'DailyLine',
+  props: {
+    days: {
+      type: Array as () => DayData[],
+      default: []
     },
-    computed: {
-      daysWithMidnightInParetnChart: function(): DayData[] {
-        return this.days.filter(dayData => {return dayData.xPositionAtMidnight >= 0})
-      },
-      lineStyle: function(): Record<string, unknown> {
-        return {
-          'stroke-width': 1,
-          'pointer-events': 'none',
-          'stroke': this.color
-        }
-      },
-      textStyle: function(): Record<string, unknown> {
-        return {
-          'font': '12px sans-serif',
-          'fill': this.color
-        }
+    height: {
+      type: Number,
+      default: 100
+    },
+    color: {
+      type: String,
+      default: "rgb(33, 37, 41)"
+    }
+  },
+  computed: {
+    daysWithMidnightInParetnChart: function (): DayData[] {
+      return this.days.filter(dayData => { return dayData.xPositionAtMidnight >= 0 })
+    },
+    lineStyle: function (): Record<string, unknown> {
+      return {
+        'stroke-width': 1,
+        'pointer-events': 'none',
+        'stroke': this.color
+      }
+    },
+    textStyle: function (): Record<string, unknown> {
+      return {
+        'font': '12px sans-serif',
+        'fill': this.color
       }
     }
+  }
 });
 </script>

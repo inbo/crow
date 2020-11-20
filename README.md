@@ -30,4 +30,7 @@ npm run build
 
 Then commit and push, including the `docs` directory. GitHub pages will serve the site at <https://inbo.github.io/crow/>.
 
-Next step: getModule doesn't work?
+Next step: 
+
+- Mutations in constants
+- Improve imports: understand @, look for unused imports, make style consistent, ..

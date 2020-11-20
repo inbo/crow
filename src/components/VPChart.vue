@@ -199,7 +199,7 @@ export default Vue.extend({
           text: "bioRad",
           value: "biorad",
           dailyLinesColor: "red",
-          colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad), 
+          colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad),
           dynamicDomain: true,
           colorScaleType: "sequential",
         },
@@ -235,7 +235,7 @@ export default Vue.extend({
       const found = this.availableColorSchemes.find(
         (e) => e.value === this.selectedColorSchemeIdentifier
       );
-      
+
       return found ? found : this.availableColorSchemes[0];
     },
     daysCovered: function (): DayData[] {
@@ -377,7 +377,7 @@ export default Vue.extend({
         color = this.styleConfig.noDataColor;
       } else {
         // We have proper data for this rectangle
-        
+
         // For some schemes, the density data has to be preprocessed:
         const density = config.dataPreprocessor
           ? config.dataPreprocessor(data.dens)

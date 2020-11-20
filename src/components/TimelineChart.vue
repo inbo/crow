@@ -52,7 +52,7 @@ export default Vue.extend({
       return value.charAt(0).toUpperCase() + value.slice(1)
     },
 
-    round2decimals: function(num: number): string {
+    round2decimals: function (num: number): string {
       return (Math.round(num * 100) / 100).toFixed(2);
     }
   },
@@ -61,7 +61,7 @@ export default Vue.extend({
     styleConfig: Object,
     showTimeAs: String
   },
-  data: function() {
+  data: function () {
     return {
       uuid: '',
 
@@ -79,13 +79,13 @@ export default Vue.extend({
     };
   },
   computed: {
-    xScale: function(): d3Scale.ScaleTime<number, number> {
+    xScale: function (): d3Scale.ScaleTime<number, number> {
       return d3
         .scaleTime<number, number>()
         .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])
         .range([0, this.innerWidth]);
     },
-    populatedPeriods: function(): DisplayablePeriod[] {
+    populatedPeriods: function (): DisplayablePeriod[] {
       const scale = this.xScale;
 
       return this.periods.map(period => ({
@@ -95,39 +95,39 @@ export default Vue.extend({
         name: this.getPeriodName(period.sunAltitude)
       }));
     },
-    periodWidth: function(): number {
+    periodWidth: function (): number {
       return Math.round(this.innerWidth / this.rectDivider);
     },
-    dataTemporalResolution: function(): number {
+    dataTemporalResolution: function (): number {
       return moment
         .duration(this.periods[1].moment.diff(this.periods[0].moment))
         .asSeconds();
     },
-    rectDivider: function(): number {
+    rectDivider: function (): number {
       const duration = moment.duration(this.maxMoment.diff(this.minMoment));
       return duration.asSeconds() / this.dataTemporalResolution + 1;
     },
-    minMoment: function(): moment.Moment {
+    minMoment: function (): moment.Moment {
       // Now returns a moment obj.
       return this.periods[0].moment;
     },
-    maxMoment: function(): moment.Moment {
+    maxMoment: function (): moment.Moment {
       return this.periods[this.periods.length - 1].moment;
     },
-    maxMomentPlusOne: function(): moment.Moment {
+    maxMomentPlusOne: function (): moment.Moment {
       return this.maxMoment.clone().add(this.dataTemporalResolution, "seconds");
     }
   },
-  mounted () {
+  mounted() {
     this.uuid = helpers.uuidv4();
   },
   methods: {
     formatMoment(m: moment.Moment): string {
       return helpers.formatMoment(
-          m,
-          this.showTimeAs,
-          this.styleConfig.tooltipTimeFormat
-        );
+        m,
+        this.showTimeAs,
+        this.styleConfig.tooltipTimeFormat
+      );
     },
     getPeriodClass(sunAltitude: number): string {
       return helpers.makeSafeForCSS(this.getPeriodName(sunAltitude));

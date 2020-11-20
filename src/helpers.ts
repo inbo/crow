@@ -4,12 +4,12 @@ import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only t
 import moment from "moment-timezone";
 import { Profiles, VTPSDataRowFromFile } from './CrowTypes';
 
-import {rgb as colorRgb, RGBColor} from "d3-color";
+import { rgb as colorRgb, RGBColor } from "d3-color";
 
 function interpolateBioRad(val: number): RGBColor {
     // Num: between 0 and 1 
-    
-    
+
+
     //console.log("val reçu", val);
     val = val * 255; // Constants below are taken from bioRad and have a 0-255 range
 
@@ -17,14 +17,14 @@ function interpolateBioRad(val: number): RGBColor {
 
     // Reimplementation of the IDL color scale; based on bioRad's implementation (https://github.com/adokter/bioRad/blob/e0ede427eb34007dc9985302d40cbdab158e0636/R/color_scale.R#L65-L85)
     // and the explanations at: https://github.com/inbo/crow/issues/38 
-    const redInflexionPoints = [  0,  62,  81,  93, 145, 176, 191, 208, 255];
-    const redIntensities     = [255, 255, 163, 255, 255,  81, 81,    0,   0];
+    const redInflexionPoints = [0, 62, 81, 93, 145, 176, 191, 208, 255];
+    const redIntensities = [255, 255, 163, 255, 255, 81, 81, 0, 0];
 
-    const greenInflexionPoints = [  0,  64,  79, 110, 142, 255];
-    const greenIntensities     = [255, 255, 163, 163,   0,   0];
+    const greenInflexionPoints = [0, 64, 79, 110, 142, 255];
+    const greenIntensities = [255, 255, 163, 163, 0, 0];
 
-    const blueInflexionPoints = [  0, 79, 96, 110, 127, 159, 206, 255]; 
-    const blueIntensities     = [255,  0,  0,  82,   0,   0, 255,   0];
+    const blueInflexionPoints = [0, 79, 96, 110, 127, 159, 206, 255];
+    const blueIntensities = [255, 0, 0, 82, 0, 0, 255, 0];
 
     const redPosition = d3.bisect(redInflexionPoints, val);
     //console.log("redPosition", redPosition);

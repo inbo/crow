@@ -2,7 +2,7 @@
   <b-form-group id="input-radar-group" label="At site:" label-for="input-radar">
     <b-form-select
       id="input-radar"
-      :value="this.$store.state.userChoices.selectedRadarCode"
+      :value="selectedRadarCode"
       size="sm"
       :options="availableRadars"
       @change="setSelectedRadarCode"
@@ -25,6 +25,7 @@ import { GroupedRadarInterface, RadarInterface } from "../CrowTypes";
 
 import { getModule } from 'vuex-module-decorators';
 import { ConfigStoreModule } from '../store/ConfigStore';
+import { UserChoicesStoreModule } from '@/store/UserChoicesStore';
 
 export default Vue.extend({
   name: "SiteSelector",
@@ -35,15 +36,18 @@ export default Vue.extend({
   computed: {
     availableRadars(): GroupedRadarInterface[] {
         return ConfigStoreModule.availableRadars;
+    },
+    selectedRadarCode(): string {
+      return UserChoicesStoreModule.selectedRadarCode;
     },  
     selectedRadarLatitude(): number {
-      return this.$store.getters.selectedRadarAsObject.latitude;
+      return UserChoicesStoreModule.selectedRadarAsObject.latitude;
     },
     selectedRadarLongitude(): number {
-      return this.$store.getters.selectedRadarAsObject.longitude;
+      return UserChoicesStoreModule.selectedRadarAsObject.longitude;
     },
     selectedRadarLocation(): string {
-      return this.$store.getters.selectedRadarAsObject.text;;
+      return UserChoicesStoreModule.selectedRadarAsObject.text;
     },
   },
   methods: {
