@@ -1,20 +1,8 @@
+import { GroupedRadarInterface, RadarInterface } from '@/CrowTypes';
+import { Module, Mutation, VuexModule } from "vuex-module-decorators";
 
-import { Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import config from './config';
-import { GroupedRadarInterface, RadarInterface } from './CrowTypes';
-
-import Vue from 'vue'
-import Vuex from "vuex"
-
-Vue.use(Vuex)
-
-@Module
-class ConfigStore extends VuexModule {
-  availableRadars: GroupedRadarInterface[] = config.availableRadars
-}
-
-@Module
-class UserChoicesStore extends VuexModule {
+@Module({name: 'userChoiceStore'})
+export default class UserChoicesStore extends VuexModule {
   selectedRadarCode = ''
 
   @Mutation
@@ -39,10 +27,3 @@ class UserChoicesStore extends VuexModule {
       return found;
   }
 }
-
-export default new Vuex.Store({
-  modules: {
-    conf: ConfigStore,
-    userChoices: UserChoicesStore
-  }
-})

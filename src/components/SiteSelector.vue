@@ -23,6 +23,9 @@ import { mapMutations } from 'vuex';
 
 import { GroupedRadarInterface, RadarInterface } from "../CrowTypes";
 
+import { getModule } from 'vuex-module-decorators';
+import ConfigStore from '../store/ConfigStore';
+
 export default Vue.extend({
   name: "SiteSelector",
   data: function () {
@@ -31,7 +34,9 @@ export default Vue.extend({
   },
   computed: {
     availableRadars(): GroupedRadarInterface[] {
-        return this.$store.state.conf.availableRadars;
+        let mod = getModule(ConfigStore, this.$store);
+        //console.log(this.$store);
+        return mod.availableRadars;
     },  
     selectedRadarLatitude(): number {
       return this.$store.getters.selectedRadarAsObject.latitude;

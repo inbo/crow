@@ -49,7 +49,7 @@ import { ticks } from 'd3';
 Vue.use(VueClipboard);
 Vue.use(VueRouter);
 
-import store from './store'
+import store from './store/index'
 
 const routes = [
   // The main route accept the following parameters that will be passed to Crow:
