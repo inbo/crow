@@ -20,9 +20,7 @@ export class UserChoicesStore extends VuexModule {
   }
 
   get selectedIntervalLabel(): string {
-    const availableIntervals = ConfigStoreModule.availableIntervals;
-
-    const found = availableIntervals.find(
+    const found = ConfigStoreModule.availableIntervals.find(
       d => d.value == this.selectedIntervalInHours
     );
 
@@ -30,11 +28,9 @@ export class UserChoicesStore extends VuexModule {
   }
 
   get selectedRadarAsObject(): RadarInterface {
-    const rootState = this.context.rootState;
+    let found = ConfigStoreModule.availableRadars[0].options[0];
 
-    let found = rootState.conf.availableRadars[0].options[0];
-
-    rootState.conf.availableRadars.forEach((radarGroup: GroupedRadarInterface) => {
+    ConfigStoreModule.availableRadars.forEach((radarGroup: GroupedRadarInterface) => {
       const groupFound = radarGroup.options.find(
         (d) => d.value == this.selectedRadarCode
       );
