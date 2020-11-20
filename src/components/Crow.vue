@@ -186,6 +186,7 @@ import helpers from "../helpers";
 import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period } from '../CrowTypes';
 import { UserChoicesStoreModule } from '@/store/UserChoicesStore';
 import { ConfigStoreModule } from '@/store/ConfigStore';
+import { mapMutations } from 'vuex';
 
 interface VTPSDataByHeight {
   [key: number]: VTPSDataRow;
@@ -240,8 +241,6 @@ export default Vue.extend({
     return {
       selectedDate: this.dateValueProp,
 
-      selectedIntervalInHours: this.intervalValueProp, // The chart show this amount of hours around selectedDate at noon
-
       timeDisplayedAs: this.timeDisplayValueProp, // 'radarLocal' | 'UTC'
 
       showCharts: false,
@@ -269,6 +268,14 @@ export default Vue.extend({
       return UserChoicesStoreModule.selectedRadarCode;
     },
 
+    selectedIntervalInHours: {
+      get: function(): number {
+        return UserChoicesStoreModule.selectedIntervalInHours;
+      },
+      set: function(newValue: number) {
+        UserChoicesStoreModule.setSelectedIntervalInHours(newValue);
+      }
+    },
     availableIntervals(): TimeInterval[] {
       return ConfigStoreModule.availableIntervals;
     },
@@ -277,11 +284,7 @@ export default Vue.extend({
       return new Date().toISOString().split("T")[0];
     },
     selectedIntervalLabel(): string {
-      const found = this.availableIntervals.find(
-        d => d.value == this.selectedIntervalInHours
-      );
-
-      return found ? found.text : "";
+      return UserChoicesStoreModule.selectedIntervalLabel;
     },
     timeZoneToShow(): string {
       if (this.timeDisplayedAs == "radarLocal") {
@@ -395,6 +398,7 @@ export default Vue.extend({
   mounted: function() {
     // Load initial values in store:
     this.$store.commit('setSelectedRadarCode', this.radarValueProp);
+    this.$store.commit('setSelectedIntervalInHours', this.intervalValueProp);
 
     this.baseUrl = this.trimLastSlash(window.location.origin);
     this.loadData();
@@ -526,7 +530,10 @@ export default Vue.extend({
       return `${config.dataServerUrl}/${radarName}/${selectedDate.format(
         "YYYY"
       )}/${radarName}_vpts_${selectedDate.format("YYYYMMDD")}.txt`;
-    }
+    },
+    ...mapMutations([
+      'setSelectedIntervalInHours'
+    ])
   }
 });
 </script>
