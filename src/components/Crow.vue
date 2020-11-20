@@ -185,6 +185,7 @@ import helpers from "../helpers";
 
 import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period } from '../CrowTypes';
 import { UserChoicesStoreModule } from '@/store/UserChoicesStore';
+import { ConfigStoreModule } from '@/store/ConfigStore';
 
 interface VTPSDataByHeight {
   [key: number]: VTPSDataRow;
@@ -240,7 +241,6 @@ export default Vue.extend({
       selectedDate: this.dateValueProp,
 
       selectedIntervalInHours: this.intervalValueProp, // The chart show this amount of hours around selectedDate at noon
-      availableIntervals: config.availableTimeIntervals as TimeInterval[],
 
       timeDisplayedAs: this.timeDisplayValueProp, // 'radarLocal' | 'UTC'
 
@@ -267,6 +267,10 @@ export default Vue.extend({
   computed: {
     selectedRadarValue(): string {
       return UserChoicesStoreModule.selectedRadarCode;
+    },
+
+    availableIntervals(): TimeInterval[] {
+      return ConfigStoreModule.availableIntervals;
     },
 
     todayAsString(): string {
