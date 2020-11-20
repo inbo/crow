@@ -1,8 +1,9 @@
 import { GroupedRadarInterface, RadarInterface } from '@/CrowTypes';
-import { Module, Mutation, VuexModule } from "vuex-module-decorators";
+import { getModule, Module, Mutation, VuexModule } from "vuex-module-decorators";
+import store from './index';
 
-@Module({name: 'userChoiceStore'})
-export default class UserChoicesStore extends VuexModule {
+@Module({dynamic: true, store, name: 'userChoices'})
+export class UserChoicesStore extends VuexModule {
   selectedRadarCode = ''
 
   @Mutation
@@ -27,3 +28,5 @@ export default class UserChoicesStore extends VuexModule {
       return found;
   }
 }
+
+export const UserChoicesStoreModule = getModule(UserChoicesStore);

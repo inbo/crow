@@ -184,6 +184,7 @@ import config from "../config";
 import helpers from "../helpers";
 
 import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period } from '../CrowTypes';
+import { UserChoicesStoreModule } from '@/store/UserChoicesStore';
 
 interface VTPSDataByHeight {
   [key: number]: VTPSDataRow;
@@ -265,7 +266,7 @@ export default Vue.extend({
   },
   computed: {
     selectedRadarValue(): string {
-      return this.$store.state.userChoices.selectedRadarCode;
+      return UserChoicesStoreModule.selectedRadarCode;
     },
 
     todayAsString(): string {

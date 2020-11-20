@@ -1,8 +1,11 @@
 import config from '@/config';
 import { GroupedRadarInterface } from '@/CrowTypes';
-import { Module, VuexModule } from "vuex-module-decorators";
+import { getModule, Module, VuexModule } from "vuex-module-decorators";
+import store from './index';
 
-@Module({name: 'configStore'})
-export default class ConfigStore extends VuexModule {
+@Module({dynamic: true, store, name: 'conf'})
+export class ConfigStore extends VuexModule {
   availableRadars: GroupedRadarInterface[] = config.availableRadars;
 }
+
+export const ConfigStoreModule = getModule(ConfigStore);
