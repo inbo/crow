@@ -116,7 +116,7 @@
       </b-row>
     </b-form>
 
-    <div v-if="showCharts">
+    <div>
       <b-row>
         <b-col>
           <v-p-chart
@@ -240,8 +240,6 @@ export default Vue.extend({
   data: function () {
     return {
       selectedDate: this.dateValueProp,
-
-      showCharts: false,
 
       VPChartStyle: config.VPChartStyle,
       VPChartSelectedScheme: this.vpChartSelectedSchemeProp as ColorSchemeIdentifier,
@@ -477,8 +475,6 @@ export default Vue.extend({
 
     loadData(): void {
       this.$nextTick(() => {
-        this.showCharts = true;
-
         this.initializeEmptyData();
         this.populateDataFromCrowServer(
           this.selectedRadarValue,
