@@ -116,7 +116,7 @@
       </b-row>
     </b-form>
 
-    <div>
+    <div v-if="readyForCharts">
       <b-row>
         <b-col>
           <v-p-chart
@@ -184,7 +184,7 @@ import config from "../config";
 import helpers from "../helpers";
 
 import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue } from '../CrowTypes';
-import { UserChoicesStoreModule } from '@/store/UserChoicesStore';
+import { UserChoicesStore, UserChoicesStoreModule } from '@/store/UserChoicesStore';
 import { ConfigStoreModule } from '@/store/ConfigStore';
 import { mapMutations } from 'vuex';
 
@@ -239,7 +239,7 @@ export default Vue.extend({
   },
   data: function () {
     return {
-      selectedDate: this.dateValueProp,
+      readyForCharts: false,
 
       VPChartStyle: config.VPChartStyle,
       VPChartSelectedScheme: this.vpChartSelectedSchemeProp as ColorSchemeIdentifier,
@@ -262,6 +262,15 @@ export default Vue.extend({
   computed: {
     selectedRadarValue(): string {
       return UserChoicesStoreModule.selectedRadarCode;
+    },
+
+    selectedDate: {
+      get: function(): string {
+        return UserChoicesStoreModule.selectedDate;
+      }, 
+      set: function(newValue: string) {
+        UserChoicesStoreModule.setSelectedDate(newValue);
+      }
     },
 
     timeDisplayedAs: {
@@ -406,6 +415,7 @@ export default Vue.extend({
       UserChoicesStoreModule.setSelectedRadarCode(this.radarValueProp);
       UserChoicesStoreModule.setSelectedIntervalInHours(this.intervalValueProp);
       UserChoicesStoreModule.setTimeDisplayedAs(this.timeDisplayValueProp);
+      UserChoicesStoreModule.setSelectedDate(this.dateValueProp);
     },
     vpiModeChanged(mode: IntegratedPropertyName): void {
       this.VPIChartMode = mode;
@@ -475,6 +485,7 @@ export default Vue.extend({
 
     loadData(): void {
       this.$nextTick(() => {
+        this.readyForCharts = true;
         this.initializeEmptyData();
         this.populateDataFromCrowServer(
           this.selectedRadarValue,

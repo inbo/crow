@@ -33,4 +33,5 @@ Then commit and push, including the `docs` directory. GitHub pages will serve th
 Next step: 
 
 - Mutations in constants
-- Improve imports: understand @, look for unused imports, make style consistent, ..
+- Improve imports: understand @, look for unused imports, make style consistent, ...
+- selectedDate in store: also move there related mutations, getters, ... Also convert selectedDate to something better than a string?
