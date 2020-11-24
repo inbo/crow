@@ -1,4 +1,4 @@
-import { GroupedRadarInterface, RadarInterface } from '@/CrowTypes';
+import { GroupedRadarInterface, RadarInterface, TimeDisplayedAsValue } from '@/CrowTypes';
 import { getModule, Module, Mutation, VuexModule } from "vuex-module-decorators";
 import { ConfigStoreModule } from "./ConfigStore";
 
@@ -8,6 +8,7 @@ import store from './index';
 export class UserChoicesStore extends VuexModule {
   selectedRadarCode = ''
   selectedIntervalInHours = 0;  // The chart show this amount of hours around selectedDate at noon
+  timeDisplayedAs: TimeDisplayedAsValue = 'radarLocal'
 
   @Mutation
   setSelectedRadarCode(code: string) {
@@ -17,6 +18,19 @@ export class UserChoicesStore extends VuexModule {
   @Mutation
   setSelectedIntervalInHours(interval: number) {
     this.selectedIntervalInHours = interval;
+  }
+
+  @Mutation
+  setTimeDisplayedAs(val: TimeDisplayedAsValue) {
+    this.timeDisplayedAs = val;
+  }
+
+  get timeZoneToShow(): string {
+    if (this.timeDisplayedAs == "radarLocal") {
+      return this.selectedRadarAsObject.timezone;
+    } else {
+      return "UTC";
+    }
   }
 
   get selectedIntervalLabel(): string {

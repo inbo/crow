@@ -3,6 +3,7 @@ import * as d3Scale from "d3-scale";
 
 export type ColorSchemeIdentifier = "biorad" | "birdtam" | "viridis";
 export type IntegratedPropertyName = "mtr" | "rtr" | "vid" | "vir";
+export type TimeDisplayedAsValue = "radarLocal" | "UTC";
 
 export interface ColorSchemeConfigEntry {
     text: string;

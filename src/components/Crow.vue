@@ -170,7 +170,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
 import VPChart from "./VPChart.vue";
 import VPIChart from "./VPIChart.vue";
 import SiteSelector from "./SiteSelector.vue";
@@ -183,7 +183,7 @@ import SunCalc from "suncalc";
 import config from "../config";
 import helpers from "../helpers";
 
-import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period } from '../CrowTypes';
+import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue } from '../CrowTypes';
 import { UserChoicesStoreModule } from '@/store/UserChoicesStore';
 import { ConfigStoreModule } from '@/store/ConfigStore';
 import { mapMutations } from 'vuex';
@@ -225,9 +225,9 @@ export default Vue.extend({
       default: config.initialTimeInterval
     },
     timeDisplayValueProp: {
-      type: String,
+      type: String as PropType<TimeDisplayedAsValue>,
       default: "radarLocal"
-    },
+    }, 
     vpChartSelectedSchemeProp: {
       type: String as () => ColorSchemeIdentifier,
       default: 'viridis'
@@ -240,8 +240,6 @@ export default Vue.extend({
   data: function () {
     return {
       selectedDate: this.dateValueProp,
-
-      timeDisplayedAs: this.timeDisplayValueProp, // 'radarLocal' | 'UTC'
 
       showCharts: false,
 
@@ -268,6 +266,15 @@ export default Vue.extend({
       return UserChoicesStoreModule.selectedRadarCode;
     },
 
+    timeDisplayedAs: {
+      get: function(): TimeDisplayedAsValue {
+        return UserChoicesStoreModule.timeDisplayedAs;
+      },
+      set: function (newValue: TimeDisplayedAsValue) {
+        UserChoicesStoreModule.setTimeDisplayedAs(newValue);
+      }
+    },
+
     selectedIntervalInHours: {
       get: function (): number {
         return UserChoicesStoreModule.selectedIntervalInHours;
@@ -287,11 +294,7 @@ export default Vue.extend({
       return UserChoicesStoreModule.selectedIntervalLabel;
     },
     timeZoneToShow(): string {
-      if (this.timeDisplayedAs == "radarLocal") {
-        return this.selectedRadarTimezone;
-      } else {
-        return "UTC";
-      }
+      return UserChoicesStoreModule.timeZoneToShow;
     },
     timePeriods(): Period[] {
       // An array of all time periods currently shown (derived from radarVtps) with metadata such as the sun's position.
@@ -339,9 +342,6 @@ export default Vue.extend({
     },
     selectedRadarLongitude(): number {
       return UserChoicesStoreModule.selectedRadarAsObject.longitude;
-    },
-    selectedRadarTimezone(): string {
-      return UserChoicesStoreModule.selectedRadarAsObject.timezone;
     },
     radarVtpsAsArray(): VTPSDataRow[] {
       const dataArray = [];
@@ -396,9 +396,12 @@ export default Vue.extend({
     }
   },
   mounted: function () {
+    // TODO: load initial config: can we do somethign simpler than that (IE loal default values directly from the store and only override if there's routing data?)
+
     // Load initial values in store:
     UserChoicesStoreModule.setSelectedRadarCode(this.radarValueProp);
     UserChoicesStoreModule.setSelectedIntervalInHours(this.intervalValueProp);
+    UserChoicesStoreModule.setTimeDisplayedAs(this.timeDisplayValueProp);
 
     this.baseUrl = this.trimLastSlash(window.location.origin);
     this.loadData();
