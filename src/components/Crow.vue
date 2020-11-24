@@ -218,7 +218,7 @@ export default Vue.extend({
     },
     dateValueProp: {
       type: String,
-      default: moment().subtract(1, "days").format(moment.HTML5_FMT.DATE)
+      default: config.initialDate
     },
     intervalValueProp: {
       type: Number,
@@ -226,15 +226,15 @@ export default Vue.extend({
     },
     timeDisplayValueProp: {
       type: String as PropType<TimeDisplayedAsValue>,
-      default: "radarLocal"
+      default: config.initialTimeDisplay
     }, 
     vpChartSelectedSchemeProp: {
       type: String as () => ColorSchemeIdentifier,
-      default: 'viridis'
+      default: config.VPChartStyle.initialColorScheme
     },
     vpiChartModeProp: {
       type: String as () => IntegratedPropertyName,
-      default: 'mtr'
+      default: config.VPIChartStyle.initialMode
     }
   },
   data: function () {
@@ -396,17 +396,19 @@ export default Vue.extend({
     }
   },
   mounted: function () {
-    // TODO: load initial config: can we do somethign simpler than that (IE loal default values directly from the store and only override if there's routing data?)
-
-    // Load initial values in store:
-    UserChoicesStoreModule.setSelectedRadarCode(this.radarValueProp);
-    UserChoicesStoreModule.setSelectedIntervalInHours(this.intervalValueProp);
-    UserChoicesStoreModule.setTimeDisplayedAs(this.timeDisplayValueProp);
+    this.initializeUserChoiceStore();
 
     this.baseUrl = this.trimLastSlash(window.location.origin);
     this.loadData();
   },
   methods: {
+    initializeUserChoiceStore(): void {
+      // Load initial values in the user choices store.
+      // Props contains either parameters from the route, or default values from the config file.
+      UserChoicesStoreModule.setSelectedRadarCode(this.radarValueProp);
+      UserChoicesStoreModule.setSelectedIntervalInHours(this.intervalValueProp);
+      UserChoicesStoreModule.setTimeDisplayedAs(this.timeDisplayValueProp);
+    },
     vpiModeChanged(mode: IntegratedPropertyName): void {
       this.VPIChartMode = mode;
     },

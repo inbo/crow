@@ -1,4 +1,5 @@
-import { GroupedRadarInterface, TimeInterval } from './CrowTypes';
+import moment from 'moment';
+import { ColorSchemeIdentifier, GroupedRadarInterface, IntegratedPropertyName, TimeDisplayedAsValue, TimeInterval } from './CrowTypes';
 
 const globalChartMarginLeft = 65; // In-SVG margin used for axis and legend
 const globalChartMarginRight = 60; // In-SVG margin used for axis and legend
@@ -49,6 +50,9 @@ export default {
     ] as TimeInterval[],
 
     initialTimeInterval: 24,
+    initialDate: moment().subtract(1, "days").format(moment.HTML5_FMT.DATE),
+
+    initialTimeDisplay: 'radarLocal' as TimeDisplayedAsValue,
 
     vtpsFormat: {
         availableHeights: [0, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400, 3600, 3800, 4000, 4200, 4400, 4600, 4800],
@@ -82,7 +86,8 @@ export default {
         axisTimeFormat: " HH:mm z",
         tooltipTimeFormat: "MMM D - HH:mm z",
 
-        yAxisLeftTicks: [0, 1000, 2000, 3000, 4000] // Let's not show all altitudes (too crowded)
+        yAxisLeftTicks: [0, 1000, 2000, 3000, 4000], // Let's not show all altitudes (too crowded)
+        initialColorScheme: 'viridis' as ColorSchemeIdentifier,
     },
     VPIChartStyle: {
         margin: { top: 15, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },
@@ -95,6 +100,7 @@ export default {
         lineColor: 'steelblue',
 
         showTooltip: true,
+        initialMode: 'mtr' as IntegratedPropertyName
     },
 
     TimelineChartStyle: {

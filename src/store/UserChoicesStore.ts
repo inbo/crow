@@ -6,6 +6,7 @@ import store from './index';
 
 @Module({ dynamic: true, store, name: 'userChoices' })
 export class UserChoicesStore extends VuexModule {
+  // Inital values are not really useful here except to make TS happy: they are all initialized (based on route OR config file) by the CROW component
   selectedRadarCode = ''
   selectedIntervalInHours = 0;  // The chart show this amount of hours around selectedDate at noon
   timeDisplayedAs: TimeDisplayedAsValue = 'radarLocal'
