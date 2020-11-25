@@ -15,7 +15,7 @@
       >{{ selectedRadarLatitude }}, {{ selectedRadarLongitude }}</a>.
     </b-form-text>
 
-    <site-selector-map />
+    <site-selector-map :sites="availableRadars" />
   </b-form-group>
 </template>
 
