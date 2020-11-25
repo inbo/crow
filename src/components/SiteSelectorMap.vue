@@ -1,47 +1,48 @@
 <template>
-  <svg id="selectorMapContainer" width="440" height="300"></svg>
+  <svg id="selectorMapContainer" :width="svgWidth" :height="svgHeight">
+    <g>
+      <path fill="grey" :d="countryPath" />
+    </g>
+  </svg>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import * as d3 from "d3";
 import axios from "axios";
+import { GeoPermissibleObjects } from 'd3';
 
 export default Vue.extend({
   name: "SiteSelectorMap",
+  data: function () {
+    return {
+      svgWidth: 440,
+      svgHeight: 300,
 
-  mounted: function () {
-    this.$nextTick(() => {
-      var svg = d3.select("#selectorMapContainer"),
-        width = +svg.attr("width"),
-        height = +svg.attr("height");
+      projectionScale: 3300,
+      projectionCenter: {
+        lon: 4.67,
+        lat: 50.63
+      },
+      
+      Countryfeature: { "type": "Feature", "properties": { "name": "Belgium" }, "geometry": { "type": "Polygon", "coordinates": [[[3.314971, 51.345781], [4.047071, 51.267259], [4.973991, 51.475024], [5.606976, 51.037298], [6.156658, 50.803721], [6.043073, 50.128052], [5.782417, 50.090328], [5.674052, 49.529484], [4.799222, 49.985373], [4.286023, 49.907497], [3.588184, 50.378992], [3.123252, 50.780363], [2.658422, 50.796848], [2.513573, 51.148506], [3.314971, 51.345781]]] }, "id": "BEL" } as GeoPermissibleObjects
+    }
+  },
+  computed: {
+    projection: function (): d3.GeoProjection {
+      return d3.geoMercator()
+        .center([this.projectionCenter.lon, this.projectionCenter.lat])
+        .scale(this.projectionScale)
+        .translate([this.svgWidth / 2, this.svgHeight / 2])
+    },
 
-      console.log("svg", svg);
+    pathGenerator: function (): d3.GeoPath {
+      return d3.geoPath().projection(this.projection);
+    },
 
-      // Map and projection
-      var projection = d3.geoMercator()
-        .center([4.67, 50.63])                // GPS of location to zoom on
-        .scale(3300)                       // This is like the zoom
-        .translate([width / 2, height / 2])
-
-      const url = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"
-      axios.get(url).then(response => {
-
-
-        let data = response.data;
-        data.features = data.features.filter(function (d) { return d.properties.name == "Belgium" })
-
-        svg.append("g")
-          .selectAll("path")
-          .data(data.features)
-          .enter()
-          .append("path")
-          .attr("fill", "grey")
-          .attr("d", d3.geoPath()
-            .projection(projection)
-          )
-      });
-    })
-  }
+    countryPath: function (): string | null{
+      return this.pathGenerator(this.Countryfeature)
+    }
+  },
 });
 </script>
