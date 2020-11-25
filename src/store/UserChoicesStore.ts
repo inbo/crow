@@ -1,4 +1,5 @@
 import { GroupedRadarInterface, RadarInterface, TimeDisplayedAsValue } from '@/CrowTypes';
+import moment from 'moment';
 import { getModule, Module, Mutation, VuexModule } from "vuex-module-decorators";
 import { ConfigStoreModule } from "./ConfigStore";
 
@@ -30,6 +31,37 @@ export class UserChoicesStore extends VuexModule {
   @Mutation
   setSelectedDate(val: string) {
     this.selectedDate = val;
+  }
+
+  get startMoment(): moment.Moment {
+    return moment(this.selectedDateNoon).subtract(
+      this.selectedIntervalInHours / 2,
+      "hours"
+    );
+  }
+
+  get endMoment(): moment.Moment {
+    return moment(this.selectedDateNoon).add(
+      this.selectedIntervalInHours / 2,
+      "hours"
+    );
+  }
+
+  get selectedDateNoon(): moment.Moment {
+    if (this.timeZoneToShow == "UTC") {
+      // Noon UTC, if we are in UTC mode
+      return moment
+        .utc(this.selectedDate, "YYYY-MM-DD")
+        .hour(12)
+        .minute(0)
+        .second(0);
+    } else {
+      return moment(this.selectedDate, "YYYY-MM-DD") // Noon at radar location, if we are in radarLocal mode
+        .hour(12)
+        .minute(0)
+        .second(0)
+        .tz(this.timeZoneToShow);
+    }
   }
 
   get timeZoneToShow(): string {

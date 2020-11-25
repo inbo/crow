@@ -260,6 +260,14 @@ export default Vue.extend({
     };
   },
   computed: {
+    startMoment(): moment.Moment {
+      return UserChoicesStoreModule.startMoment;
+    },
+
+    endMoment(): moment.Moment {
+      return UserChoicesStoreModule.endMoment;
+    },
+
     selectedRadarValue(): string {
       return UserChoicesStoreModule.selectedRadarCode;
     },
@@ -315,34 +323,6 @@ export default Vue.extend({
       }
 
       return periods;
-    },
-    selectedDateNoon(): moment.Moment {
-      if (this.timeZoneToShow == "UTC") {
-        // Noon UTC, if we are in UTC mode
-        return moment
-          .utc(this.selectedDate, "YYYY-MM-DD")
-          .hour(12)
-          .minute(0)
-          .second(0);
-      } else {
-        return moment(this.selectedDate, "YYYY-MM-DD") // Noon at radar, if we are in radarLocal mode
-          .hour(12)
-          .minute(0)
-          .second(0)
-          .tz(this.timeZoneToShow);
-      }
-    },
-    startMoment(): moment.Moment {
-      return moment(this.selectedDateNoon).subtract(
-        this.selectedIntervalInHours / 2,
-        "hours"
-      );
-    },
-    endMoment(): moment.Moment {
-      return moment(this.selectedDateNoon).add(
-        this.selectedIntervalInHours / 2,
-        "hours"
-      );
     },
     selectedRadarLatitude(): number {
       return UserChoicesStoreModule.selectedRadarAsObject.latitude;
