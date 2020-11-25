@@ -1,8 +1,7 @@
 <template>
   <b-container class="content">
     <b-form 
-      form 
-      @change="loadData" 
+      form  
     >
       <b-row>
         <b-col lg>
@@ -365,15 +364,19 @@ export default Vue.extend({
     // Any change on something that can be shared via URL will reset the button
     selectedRadarValue: function (): void {
       this.resetCopyUrlButtonText();
+      this.loadData();
     },
     selectedDate: function (): void {
       this.resetCopyUrlButtonText();
+      this.loadData();
     },
     selectedIntervalInHours: function (): void {
       this.resetCopyUrlButtonText();
+      this.loadData();
     },
     timeDisplayedAs: function (): void {
       this.resetCopyUrlButtonText();
+      this.loadData();
     },
     VPChartSelectedScheme: function (): void {
       this.resetCopyUrlButtonText();

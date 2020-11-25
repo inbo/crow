@@ -2,7 +2,7 @@
   <svg id="selectorMapContainer" :width="svgWidth" :height="svgHeight">
     <g>
       <path fill="grey" :d="countryPath" />
-      <circle v-for="radar in radars" :key="radar.value" r="3px" fill="red" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]">
+      <circle v-for="radar in radars" :key="radar.value" r="3px" :fill="getCircleFillColor(radar)" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.value)">
         <title>{{ radar.text }}</title>
       </circle>
     </g>
@@ -22,7 +22,11 @@ export default Vue.extend({
     sites: {
       type: Array as () => GroupedRadarInterface[],
       default: []
-    }, 
+    },
+    selectedRadarCode: {
+      type: String,
+      default: ''
+    } 
   },
   data: function () {
     return {
@@ -42,7 +46,6 @@ export default Vue.extend({
     radars: function(): RadarInterface[] {
       // Flat array of radars based on the "sites" prop
       let r: RadarInterface[] = []
-      console.log("passe");
       this.sites.forEach(e => {
           r = r.concat(e.options)
         }
@@ -68,6 +71,9 @@ export default Vue.extend({
   methods: {
     projectRadar(radar: RadarInterface): [number, number] | null {
       return this.projection([radar.longitude, radar.latitude])
+    },
+    getCircleFillColor(radar: RadarInterface): string {
+      return radar.value === this.selectedRadarCode? "red": "black"
     }
   },
 });

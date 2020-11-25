@@ -15,7 +15,7 @@
       >{{ selectedRadarLatitude }}, {{ selectedRadarLongitude }}</a>.
     </b-form-text>
 
-    <site-selector-map :sites="availableRadars" />
+    <site-selector-map :sites="availableRadars" :selected-radar-code="selectedRadarCode" @click-circle="setSelectedRadarCode($event)" />
   </b-form-group>
 </template>
 
@@ -36,17 +36,13 @@ export default Vue.extend({
   components: {
     SiteSelectorMap
   },
-  data: function () {
-    return {
-    };
-  },
   computed: {
     availableRadars(): GroupedRadarInterface[] {
         return ConfigStoreModule.availableRadars;
     },
     selectedRadarCode(): string {
       return UserChoicesStoreModule.selectedRadarCode;
-    },  
+    },
     selectedRadarLatitude(): number {
       return UserChoicesStoreModule.selectedRadarAsObject.latitude;
     },
