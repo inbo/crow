@@ -14,6 +14,8 @@
         target="_blank"
       >{{ selectedRadarLatitude }}, {{ selectedRadarLongitude }}</a>.
     </b-form-text>
+
+    <site-selector-map />
   </b-form-group>
 </template>
 
@@ -27,8 +29,13 @@ import { getModule } from 'vuex-module-decorators';
 import { ConfigStoreModule } from '../store/ConfigStore';
 import { UserChoicesStoreModule } from '@/store/UserChoicesStore';
 
+import SiteSelectorMap from "./SiteSelectorMap.vue";
+
 export default Vue.extend({
   name: "SiteSelector",
+  components: {
+    SiteSelectorMap
+  },
   data: function () {
     return {
     };
