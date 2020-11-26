@@ -29,11 +29,3 @@ npm run build
 ```
 
 Then commit and push, including the `docs` directory. GitHub pages will serve the site at <https://inbo.github.io/crow/>.
-
-// TODO SiteSelectorMap
-
-
-- better "title / popover" to show the radar name
-- country background in external file
-- toggle button
-- make things configurable (background geojson, viewport center, zoom level, svg size, ...)
