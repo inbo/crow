@@ -15,7 +15,7 @@
 import Vue from "vue";
 import * as d3 from "d3";
 import axios from "axios";
-import { GeoPermissibleObjects } from 'd3';
+import { ExtendedFeature, ExtendedFeatureCollection } from 'd3';
 import { GroupedRadarInterface, RadarInterface } from '@/CrowTypes';
 import belgiumGeoJSON from '../belgium.json';
 
@@ -33,19 +33,40 @@ export default Vue.extend({
   },
   data: function () {
     return {
-      svgWidth: 350,
-      svgHeight: 500,
+      svgWidth: 200,
+      svgHeight: 200,
 
-      projectionScale: 3300,
-      projectionCenter: {
-        lon: 4.67,
-        lat: 50.63
-      },
+      xPadding: 10,
+      yPadding: 10,
 
-      Countryfeature: belgiumGeoJSON as GeoPermissibleObjects
+      Countryfeature: belgiumGeoJSON as ExtendedFeature
     }
   },
   computed: {
+    EverythingAsGeoJSON: function (): ExtendedFeatureCollection {
+      // Return every geographic element (each radar + country shape) as GeoJSON
+      var geojson = {
+        "name": "NewFeatureType",
+        "type": "FeatureCollection",
+        "features": [] 
+      } as ExtendedFeatureCollection;
+
+      this.radars.forEach(r => {
+        let feature = {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [r.longitude, r.latitude]
+          },
+          "properties": null
+        } as ExtendedFeature;
+
+        geojson.features.push(feature);
+      })
+
+      geojson.features.push(this.Countryfeature);
+      return geojson
+    },
     radars: function (): RadarInterface[] {
       // Flat array of radars based on the "sites" prop
       let r: RadarInterface[] = []
@@ -57,9 +78,7 @@ export default Vue.extend({
     },
     projection: function (): d3.GeoProjection {
       return d3.geoMercator()
-        .center([this.projectionCenter.lon, this.projectionCenter.lat])
-        .scale(this.projectionScale)
-        .translate([this.svgWidth / 2, this.svgHeight / 2])
+        .fitExtent([[this.xPadding, this.yPadding], [this.svgWidth-this.xPadding, this.svgHeight-this.yPadding]], this.EverythingAsGeoJSON);
     },
 
     pathGenerator: function (): d3.GeoPath {
