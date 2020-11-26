@@ -34,5 +34,6 @@ Then commit and push, including the `docs` directory. GitHub pages will serve th
 
 
 - better "title / popover" to show the radar name
-- better country background
+- country background in external file
+- toggle button
 - make things configurable (background geojson, viewport center, zoom level, svg size, ...)
