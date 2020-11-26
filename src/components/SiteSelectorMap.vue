@@ -2,8 +2,10 @@
   <svg id="selectorMapContainer" :width="svgWidth" :height="svgHeight">
     <g>
       <path fill="lightgrey" :d="countryPath" />
-      <circle v-for="radar in radars" :key="radar.value" r="5px" :fill="getCircleFillColor(radar)" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.value)">
-        <title>{{ radar.text }}</title>
+      <circle v-for="radar in radars" :id="'circle-radar-' + radar.value" :key="radar.value" r="5px" :fill="getCircleFillColor(radar)" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.value)">
+        <b-popover :target="'circle-radar-' + radar.value" triggers="hover">
+          {{ radar.text }}
+        </b-popover>
       </circle>
     </g>
   </svg>
