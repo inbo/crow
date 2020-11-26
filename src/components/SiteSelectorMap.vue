@@ -1,8 +1,8 @@
 <template>
   <svg id="selectorMapContainer" :width="svgWidth" :height="svgHeight">
     <g>
-      <path fill="lightgrey" :d="countryPath" />
-      <circle v-for="radar in radars" :id="'circle-radar-' + radar.value" :key="radar.value" r="5px" :fill="getCircleFillColor(radar)" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.value)">
+      <path id="country" :d="countryPath" />
+      <circle v-for="radar in radars" :id="'circle-radar-' + radar.value" :key="radar.value" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.value)">
         <b-popover :target="'circle-radar-' + radar.value" triggers="hover">
           {{ radar.text }}
         </b-popover>
@@ -33,8 +33,8 @@ export default Vue.extend({
   },
   data: function () {
     return {
-      svgWidth: 300,
-      svgHeight: 200,
+      svgWidth: 350,
+      svgHeight: 500,
 
       projectionScale: 3300,
       projectionCenter: {
@@ -74,9 +74,28 @@ export default Vue.extend({
     projectRadar(radar: RadarInterface): [number, number] | null {
       return this.projection([radar.longitude, radar.latitude])
     },
-    getCircleFillColor(radar: RadarInterface): string {
-      return radar.value === this.selectedRadarCode ? "#007aff" : "grey"
+    getRadarExtraClass(radar: RadarInterface): string {
+      return radar.value === this.selectedRadarCode ? "radar-circle-selected" : "radar-circle-unselected"
     }
+
   },
 });
 </script>
+
+<style scoped>
+.radar-circle-unselected {
+  fill: grey;
+}
+
+.radar-circle-unselected:hover {
+  fill: black;
+}
+
+.radar-circle-selected {
+  fill: #007aff;
+}
+
+#country {
+  fill: rgb(201, 232, 252);
+}
+</style>
