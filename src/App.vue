@@ -2,10 +2,13 @@
   <div id="app">
     <main>
       <b-container class="mt-3">
-        <h1>Bird detection based on weather radar</h1>
+        <h1>Birds detected by weather radars</h1>
         <p>
-          <span class="lead text-muted">x birds were detected by radar over Belgium last night.</span>
-          A weather radar is not only able to detect precipitation, but it is also sensitive to the number of birds in the atmosphere. This application provides a visual representation of the number of birds in the atmosphere for ten weather radars, providing a mapping of the bird migration across the entire Benelux. Please note that the values shown here are only an estimate of the number of birds. This is certainly the case close to ground level, where bird signals are often mixed with ground echoes. In addition, the specific settings of the individual radars can also play a role.
+          <span class="lead text-muted">x birds were detected by weather radars over Belgium last night.</span>
+          Weather radars do not only detect rain, but also birds in the sky. By extracting these bird detections, researchers can study their migration. This is especially useful for studying songbirds, which migrate at night. In the visualizations below you can explore these data for 10 radars, covering the entire Benelux. 
+        </p>
+        <p class="small">
+          Note that the bird numbers are estimates. They are dependent on individual radar settings and are particularly unreliable close to the ground, where bird signals are often mixed with ground echoes.
         </p>
       </b-container>
 
