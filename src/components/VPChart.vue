@@ -4,7 +4,7 @@
     <b-form inline>
       <b-form-group
         id="vp-color-scheme-group"
-        label="Colour scheme:"
+        label="Colour scale:"
         label-for="vp-color-scheme"
       >
         <b-form-select

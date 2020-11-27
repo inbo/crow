@@ -121,7 +121,7 @@
           >
             <template #header>
               <p class="small">
-                The top visualisation is a representation of the bird density (colour scale) as a function of time (x-axis) and altitude in the atmosphere (y-axis). The "BirdTAM" scale is a colour scale tailored to aviation.
+                This chart shows <strong>bird density</strong> (colour) as a function of time (x-axis) and height above the ground (y-axis). The BirdTAM colour scale is tailored to aviation.
               </p>
             </template>
 
@@ -146,7 +146,7 @@
           >
             <template #header>
               <p class="small">
-                The graph at the bottom shows the same information, but integrated in the vertical direction, thus giving a rough idea of the total number of birds in the sky at any given moment.
+                This chart shows the same information, but sums bird densities over height, thus giving a rough idea of the <strong>total number of birds</strong> in the sky at any given moment.
               </p>
             </template>
 
