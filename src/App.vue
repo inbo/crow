@@ -1,16 +1,14 @@
 <template>
   <div id="app">
-    <b-navbar 
-      type="light" 
-      variant="light" 
-      toggleable="lg"
-    >
-      <b-container>
-        <b-navbar-brand>CROW</b-navbar-brand>
-      </b-container>
-    </b-navbar>
-
     <main>
+      <b-container class="mt-3">
+        <h1>Bird detection based on weather radar</h1>
+        <p>
+          <span class="lead text-muted">x birds were detected by radar over Belgium last night.</span>
+          A weather radar is not only able to detect precipitation, but it is also sensitive to the number of birds in the atmosphere. This application provides a visual representation of the number of birds in the atmosphere for ten weather radars, providing a mapping of the bird migration across the entire Benelux. Please note that the values shown here are only an estimate of the number of birds. This is certainly the case close to ground level, where bird signals are often mixed with ground echoes. In addition, the specific settings of the individual radars can also play a role.
+        </p>
+      </b-container>
+
       <router-view />
     </main>
 
@@ -89,17 +87,6 @@ export default Vue.extend({
 </script>
 
 <style>
-.navbar {
-  background-color: white !important;
-  border-bottom: 1px solid #e9ecef;
-}
-.navbar-brand {
-  font-weight: bold;
-}
-.navbar-brand img {
-  height: 30px;
-}
-
 main {
   min-height: calc(
     100vh - 54px
