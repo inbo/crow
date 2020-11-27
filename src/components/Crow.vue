@@ -1,16 +1,12 @@
 <template>
-  <b-container class="content">
-    <b-form 
-      form  
-    >
-      <b-row>
-        <b-col lg>
+  <b-container fluid>
+    <b-row>
+      <b-col lg="3" class="bg-dark text-light pt-3">
+        <b-form
+          form  
+        >
           <b-row>
-            <b-col sm>
-              <site-selector />
-            </b-col>
-
-            <b-col sm>
+            <b-col cols="12" sm="7" lg="12">
               <b-form-group
                 id="input-date-group"
                 label="Date:"
@@ -44,12 +40,8 @@
                 </b-input-group>
               </b-form-group>
             </b-col>
-          </b-row>
-        </b-col>
 
-        <b-col lg>
-          <b-row>
-            <b-col cols="3">
+            <b-col cols="7" sm="2" lg="6">
               <b-form-group 
                 id="input-interval-group"
                 label="Interval:"
@@ -66,7 +58,7 @@
               </b-form-group>
             </b-col>
 
-            <b-col cols="3">
+            <b-col cols="5" sm="3" lg="6">
               <b-form-group 
                 id="input-timezone-group"
                 label="Time zone:"
@@ -89,7 +81,11 @@
               </b-form-group>
             </b-col>
 
-            <b-col cols="6">
+            <b-col cols="7" lg="12">
+              <site-selector />
+            </b-col>
+
+            <b-col cols="5" lg="12">
               <b-form-group 
                 id="copy-url-group"
                 label="Share:"
@@ -111,13 +107,11 @@
               </b-form-group>
             </b-col>
           </b-row>
-        </b-col>
-      </b-row>
-    </b-form>
+        </b-form>
+      </b-col>
 
-    <div v-if="readyForCharts">
-      <b-row>
-        <b-col>
+      <b-col lg="9" class="bg-light pt-3">
+        <div v-if="readyForCharts">
           <v-p-chart
             :vtps-data="radarVtpsAsArray" 
             :show-time-as="timeZoneToShow"
@@ -139,11 +133,9 @@
               />
             </template>
           </v-p-chart>
-        </b-col>
-      </b-row>
 
-      <b-row>
-        <b-col>
+          <hr>
+
           <v-p-i-chart
             :vpi-data="integratedProfiles"
             :style-config="VPIChartStyle"
@@ -166,9 +158,9 @@
               />
             </template>
           </v-p-i-chart>
-        </b-col>
-      </b-row>
-    </div>
+        </div>
+      </b-col>
+    </b-row>
   </b-container>
 </template>
 
