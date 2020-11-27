@@ -184,22 +184,22 @@ export default Vue.extend({
       selectedMode: this.mode,
       availableModes: [
         {
-          label: "Migration Traffic Rate",
+          label: " Migration traffic rate (MTR): number of birds/km/h",
           propertyName: "mtr",
           yMaxValComputedName: "maxMTRWithMinimum",
         },
         {
-          label: "Reflectivity traffic rate",
+          label: "Reflectivity traffic rate (RTR): reflected bird square cm/km/h",
           propertyName: "rtr",
           yMaxValComputedName: "maxRTR",
         },
         {
-          label: "Vertically integrated density",
+          label: "Vertically integrated density (VID): number of birds/square km",
           propertyName: "vid",
           yMaxValComputedName: "maxVID",
         },
         {
-          label: "Vertically integrated reflectivity",
+          label: "Vertically integrated reflectivity (VIR): reflected bird square cm/square km",
           propertyName: "vir",
           yMaxValComputedName: "maxVIR",
         },
