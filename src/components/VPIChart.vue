@@ -184,26 +184,22 @@ export default Vue.extend({
       selectedMode: this.mode,
       availableModes: [
         {
-          label: "Migration traffic rate (MTR)",
-          unit: "number of birds/km/h",
+          label: "Migration traffic rate (MTR): number of birds/km/h",
           propertyName: "mtr",
           yMaxValComputedName: "maxMTRWithMinimum",
         },
         {
-          label: "Reflectivity traffic rate (RTR)",
-          unit: "reflected bird square cm/km/h",
+          label: "Reflectivity traffic rate (RTR): reflected bird square cm/km/h",
           propertyName: "rtr",
           yMaxValComputedName: "maxRTR",
         },
         {
-          label: "Vertically integrated density (VID)",
-          unit: "number of birds/square km",
+          label: "Vertically integrated density (VID): number of birds/square km",
           propertyName: "vid",
           yMaxValComputedName: "maxVID",
         },
         {
-          label: "Vertically integrated reflectivity (VIR)",
-          unit: "reflected bird square cm/square km",
+          label: "Vertically integrated reflectivity (VIR): reflected bird square cm/square km",
           propertyName: "vir",
           yMaxValComputedName: "maxVIR",
         },
