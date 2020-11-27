@@ -1,25 +1,22 @@
 <template>
   <div>
     <slot name="title" />
-    <b-form>
-      <b-form-row>
-        <b-col cols="3">
-          <b-form-group
-            id="vpi-display-mode-group"
-            label="Show:"
-            label-for="vpi-display-mode"
-          >
-            <b-form-select
-              id="vpi-display-mode"
-              v-model="selectedMode"
-              size="sm"
-              :options="availableModes"
-              value-field="propertyName"
-              text-field="label"
-            />
-          </b-form-group>
-        </b-col>
-      </b-form-row>
+    <b-form inline>
+      <b-form-group
+        id="vpi-display-mode-group"
+        label="Show:"
+        label-for="vpi-display-mode"
+      >
+        <b-form-select
+          id="vpi-display-mode"
+          v-model="selectedMode"
+          size="sm"
+          class="mx-3"
+          :options="availableModes"
+          value-field="propertyName"
+          text-field="label"
+        />
+      </b-form-group>
     </b-form>
 
     <div id="ignore-mouse-events" style="pointer-events: none" />
