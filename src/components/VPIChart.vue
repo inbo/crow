@@ -1,6 +1,6 @@
 <template>
   <div>
-    <slot name="title" />
+    <slot name="header" />
     <b-form inline>
       <b-form-group
         id="vpi-display-mode-group"

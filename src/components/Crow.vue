@@ -125,8 +125,10 @@
             :scheme="VPChartSelectedScheme"
             @color-scheme-changed="vpColorSchemeChanged"
           >
-            <template #title>
-              <h3>VP Chart</h3>
+            <template #header>
+              <p class="small">
+                The top visualisation is a representation of the bird density (colour scale) as a function of time (x-axis) and altitude in the atmosphere (y-axis). The "BirdTAM" scale is a colour scale tailored to aviation.
+              </p>
             </template>
 
             <template #in-x-axis-group>
@@ -150,8 +152,10 @@
             :mode="VPIChartMode"
             @mode-changed="vpiModeChanged"
           >
-            <template #title>
-              <h3>VPI Chart</h3>
+            <template #header>
+              <p class="small">
+                The graph at the bottom shows the same information, but integrated in the vertical direction, thus giving a rough idea of the total number of birds in the sky at any given moment.
+              </p>
             </template>
 
             <template #in-x-axis-group>
