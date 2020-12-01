@@ -1,25 +1,22 @@
 <template>
   <div>
-    <slot name="title" />
-    <b-form>
-      <b-form-row>
-        <b-col cols="3">
-          <b-form-group
-            id="vpi-display-mode-group"
-            label="Show:"
-            label-for="vpi-display-mode"
-          >
-            <b-form-select
-              id="vpi-display-mode"
-              v-model="selectedMode"
-              size="sm"
-              :options="availableModes"
-              value-field="propertyName"
-              text-field="label"
-            />
-          </b-form-group>
-        </b-col>
-      </b-form-row>
+    <slot name="header" />
+    <b-form inline>
+      <b-form-group
+        id="vpi-display-mode-group"
+        label="Show:"
+        label-for="vpi-display-mode"
+      >
+        <b-form-select
+          id="vpi-display-mode"
+          v-model="selectedMode"
+          size="sm"
+          class="mx-3"
+          :options="availableModes"
+          value-field="propertyName"
+          text-field="label"
+        />
+      </b-form-group>
     </b-form>
 
     <div id="ignore-mouse-events" style="pointer-events: none" />
@@ -187,22 +184,22 @@ export default Vue.extend({
       selectedMode: this.mode,
       availableModes: [
         {
-          label: "Migration Traffic Rate",
+          label: "Migration traffic rate (MTR): number of birds/km/h",
           propertyName: "mtr",
           yMaxValComputedName: "maxMTRWithMinimum",
         },
         {
-          label: "Reflectivity traffic rate",
+          label: "Reflectivity traffic rate (RTR): reflected bird square cm/km/h",
           propertyName: "rtr",
           yMaxValComputedName: "maxRTR",
         },
         {
-          label: "Vertically integrated density",
+          label: "Vertically integrated density (VID): number of birds/square km",
           propertyName: "vid",
           yMaxValComputedName: "maxVID",
         },
         {
-          label: "Vertically integrated reflectivity",
+          label: "Vertically integrated reflectivity (VIR): reflected bird square cm/square km",
           propertyName: "vir",
           yMaxValComputedName: "maxVIR",
         },

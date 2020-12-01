@@ -1,16 +1,17 @@
 <template>
   <div id="app">
-    <b-navbar 
-      type="light" 
-      variant="light" 
-      toggleable="lg"
-    >
-      <b-container>
-        <b-navbar-brand>CROW</b-navbar-brand>
-      </b-container>
-    </b-navbar>
-
     <main>
+      <b-container class="mt-3">
+        <h1>Birds detected by weather radars</h1>
+        <p>
+          <span class="lead text-muted">x birds were detected by weather radars over Belgium last night.</span>
+          Weather radars do not only detect rain, but also birds in the sky. By extracting these bird detections, researchers can study their migration. This is especially useful for studying songbirds, which migrate at night. In the visualizations below you can explore these data for 10 radars, covering the entire Benelux. 
+        </p>
+        <p class="small">
+          Note that the bird numbers are estimates. They are dependent on individual radar settings and are particularly unreliable close to the ground, where bird signals are often mixed with ground echoes.
+        </p>
+      </b-container>
+
       <router-view />
     </main>
 
@@ -89,25 +90,11 @@ export default Vue.extend({
 </script>
 
 <style>
-.navbar {
-  background-color: white !important;
-  border-bottom: 1px solid #e9ecef;
-}
-.navbar-brand {
-  font-weight: bold;
-}
-.navbar-brand img {
-  height: 30px;
-}
-
 main {
   min-height: calc(
     100vh - 54px
   ); /* Viewport height minus medium screen navbar height, to push footer to bottom */
   padding-bottom: 30px; /* Don't stick to footer */
-}
-.content {
-  margin-top: 15px;
 }
 
 footer {

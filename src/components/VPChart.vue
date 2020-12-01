@@ -1,33 +1,29 @@
 <template>
   <div>
-    <slot name="title" />
-    <b-form>
-      <b-form-row>
-        <b-col cols="3">
-          <b-form-group
-            id="vp-color-scheme-group"
-            label="Color scheme:"
-            label-for="vp-color-scheme"
-          >
-            <b-form-select
-              id="vp-color-scheme"
-              v-model="selectedColorSchemeIdentifier"
-              size="sm"
-              :options="availableColorSchemes"
-            />
-          </b-form-group>
-        </b-col>
-        <b-col style="overflow: auto">
-          <color-legend
-            :color-scale="selectedColorSchemeConfig.colorScale"
-            :color-scale-type="selectedColorSchemeConfig.colorScaleType"
-            :max-density="maxDensity"
-            opacity="1"
-            topic="Density"
-          />
-        </b-col>
-      </b-form-row>
+    <slot name="header" />
+    <b-form inline>
+      <b-form-group
+        id="vp-color-scheme-group"
+        label="Colour scale:"
+        label-for="vp-color-scheme"
+      >
+        <b-form-select
+          id="vp-color-scheme"
+          v-model="selectedColorSchemeIdentifier"
+          size="sm"
+          class="mx-3"
+          :options="availableColorSchemes"
+        />
+      </b-form-group>
+      <color-legend
+        :color-scale="selectedColorSchemeConfig.colorScale"
+        :color-scale-type="selectedColorSchemeConfig.colorScaleType"
+        :max-density="maxDensity"
+        opacity="1"
+        topic="Density"
+      />
     </b-form>
+
     <svg 
       id="vp-chart" 
       :width="styleConfig.width" 

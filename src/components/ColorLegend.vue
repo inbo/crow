@@ -12,7 +12,7 @@
     <svg
       :height="styleDiv.height"
       :width="styleDiv.width"
-      style="position: absolute; left: 0px; top: 0px;"
+      style="left: 0px; top: 0px;"
     >
       <g
         v-axis="{ 'scale': axisScale }"
