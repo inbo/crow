@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid class="mt-lg-5">
+  <b-container fluid="xl" class="mt-lg-5">
     <b-row>
       <b-col lg="3" class="bg-dark text-light pt-3">
         <b-form>
