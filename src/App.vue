@@ -97,6 +97,10 @@ main {
   padding-bottom: 30px; /* Don't stick to footer */
 }
 
+.container-xl {
+    max-width: 1400px; /* Increase from default 1140px to allow space for chart */
+}
+
 footer {
   background-color: #3c3c3c;
   border-top: 5px solid #bcbcbc;
