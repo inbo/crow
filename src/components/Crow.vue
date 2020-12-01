@@ -2,9 +2,7 @@
   <b-container fluid class="mt-lg-5">
     <b-row>
       <b-col lg="3" class="bg-dark text-light pt-3">
-        <b-form
-          form  
-        >
+        <b-form>
           <b-row>
             <b-col cols="12" sm="7" lg="12">
               <b-form-group
