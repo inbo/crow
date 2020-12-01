@@ -14,7 +14,7 @@
           class="mx-3"
           :options="availableModes"
           value-field="propertyName"
-          text-field="label"
+          text-field="longLabel"
         />
       </b-form-group>
     </b-form>
@@ -122,7 +122,8 @@ type NullableVPIEntry = VPIEntry | null;
 
 interface DisplayMode {
   propertyName: IntegratedPropertyName; // the name of the property (on vpiData[].integratedProfiles) where data can be found. Can be used as an ID
-  label: string; // appears in <select> and as legend of the Y axis
+  label: string; // appears as legend of the Y axis and in popover
+  longLabel: string; // appears in <select>
   yMaxValComputedName: "maxMTRWithMinimum" | "maxRTR" | "maxVID" | "maxVIR"; // the name of a computed property to get the max value for the Y Axis
 }
 
@@ -184,22 +185,26 @@ export default Vue.extend({
       selectedMode: this.mode,
       availableModes: [
         {
-          label: "Migration traffic rate (MTR): number of birds/km/h",
+          label: "Migration traffic rate (MTR)",
+          longLabel: "Migration traffic rate (MTR): number of birds/km/h",
           propertyName: "mtr",
           yMaxValComputedName: "maxMTRWithMinimum",
         },
         {
-          label: "Reflectivity traffic rate (RTR): reflected bird square cm/km/h",
+          label: "Reflectivity traffic rate (RTR)",
+          longLabel: "Reflectivity traffic rate (RTR): reflected bird square cm/km/h",
           propertyName: "rtr",
           yMaxValComputedName: "maxRTR",
         },
         {
-          label: "Vertically integrated density (VID): number of birds/square km",
+          label: "Vertically integrated density (VID)",
+          longLabel: "Vertically integrated density (VID): number of birds/square km",
           propertyName: "vid",
           yMaxValComputedName: "maxVID",
         },
         {
-          label: "Vertically integrated reflectivity (VIR): reflected bird square cm/square km",
+          label: "Vertically integrated reflectivity (VIR)",
+          longLabel: "Vertically integrated reflectivity (VIR): reflected bird square cm/square km",
           propertyName: "vir",
           yMaxValComputedName: "maxVIR",
         },

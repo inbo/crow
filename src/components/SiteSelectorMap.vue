@@ -1,5 +1,5 @@
 <template>
-  <svg class="d-none d-lg-block" id="selectorMapContainer" :width="svgWidth" :height="svgHeight">
+  <svg class="d-none d-lg-block" :width="svgWidth" :height="svgHeight">
     <g>
       <path id="country" :d="countryPath" />
       <circle v-for="radar in radars" :id="'circle-radar-' + radar.value" :key="radar.value" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.value)">
