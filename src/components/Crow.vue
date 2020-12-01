@@ -360,7 +360,7 @@ export default Vue.extend({
     // Any change on something that can be shared via URL will reset the button
     selectedRadarValue: function (): void {
       this.resetCopyUrlButtonText();
-      this.loadData();
+      this.loadData();    
     },
     selectedDate: function (): void {
       this.resetCopyUrlButtonText();
@@ -381,11 +381,11 @@ export default Vue.extend({
       this.resetCopyUrlButtonText();
     }
   },
-  mounted: function () {
+  created: function() {
     this.initializeUserChoiceStore();
-
+  },
+  mounted: function () {
     this.baseUrl = this.trimLastSlash(window.location.origin);
-    this.loadData();
   },
   methods: {
     initializeUserChoiceStore(): void {
@@ -448,14 +448,12 @@ export default Vue.extend({
       this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
         .subtract(this.selectedIntervalInHours, "hours")
         .format(moment.HTML5_FMT.DATE);
-      this.loadData();
     },
 
     incrementPeriod(): void {
       this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
         .add(this.selectedIntervalInHours, "hours")
         .format(moment.HTML5_FMT.DATE);
-      this.loadData();
     },
 
     resetCopyUrlButtonText(): void {
