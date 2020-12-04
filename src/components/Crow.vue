@@ -1,5 +1,6 @@
 <template>
   <b-container fluid="xl" class="mt-lg-5">
+    <language-selector />
     <b-row>
       <b-col lg="3" class="bg-dark text-light pt-3">
         <b-form>
@@ -9,7 +10,7 @@
                 id="input-date-group"
                 label="Date:"
                 label-for="input-date"
-                description="Charts will be centered on noon for the selected date."
+                :description="t('Charts will be centered on noon for the selected date.')"
               >
                 <b-input-group size="sm">
                   <b-input-group-prepend>
@@ -168,6 +169,7 @@ import VPChart from "./VPChart.vue";
 import VPIChart from "./VPIChart.vue";
 import SiteSelector from "./SiteSelector.vue";
 import TimelineChart from "./TimelineChart.vue";
+import LanguageSelector from "./LanguageSelector.vue";
 
 import moment from "moment-timezone";
 import axios from "axios";
@@ -176,7 +178,7 @@ import SunCalc from "suncalc";
 import config from "../config";
 import helpers from "../helpers";
 
-import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue } from '../CrowTypes';
+import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer } from '../CrowTypes';
 import { UserChoicesStore, UserChoicesStoreModule } from '@/store/UserChoicesStore';
 import { ConfigStoreModule } from '@/store/ConfigStore';
 import { mapMutations } from 'vuex';
@@ -199,6 +201,7 @@ const initialCopyUrlText = "Copy link";
 export default Vue.extend({
   name: "Crow",
   components: {
+    LanguageSelector,
     SiteSelector,
     VPChart,
     VPIChart,
@@ -263,6 +266,10 @@ export default Vue.extend({
 
     selectedRadarValue(): string {
       return UserChoicesStoreModule.selectedRadarCode;
+    },
+
+    selectedLanguageCode(): LangCode {
+      return UserChoicesStoreModule.selectedLanguageCode;
     },
 
     selectedDate: {
@@ -386,6 +393,18 @@ export default Vue.extend({
     this.baseUrl = this.trimLastSlash(window.location.origin);
   },
   methods: {
+    t(stringId: string): string {
+      // Returns a string of text in the current language
+      const texts:MultilanguageStringContainer = {
+        'Charts will be centered on noon for the selected date.': {
+          en: 'Charts will be centered on noon for the selected date.',
+          fr: 'Les graphiques seront centrés sur midi pour la date sélectionnée.',
+          nl: 'Grafieken worden gecentreerd op de middag voor de geselecteerde datum.'
+        }
+      } 
+
+      return texts[stringId][this.selectedLanguageCode];
+    },
     initializeUserChoiceStore(): void {
       // Load initial values in the user choices store.
       // Props contains either parameters from the route, or default values from the config file.

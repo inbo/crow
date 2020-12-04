@@ -1,4 +1,5 @@
-import { GroupedRadarInterface, RadarInterface, TimeDisplayedAsValue } from '@/CrowTypes';
+import config from '@/config';
+import { GroupedRadarInterface, LangCode, RadarInterface, TimeDisplayedAsValue } from '@/CrowTypes';
 import moment from 'moment';
 import { getModule, Module, Mutation, VuexModule } from "vuex-module-decorators";
 import { ConfigStoreModule } from "./ConfigStore";
@@ -8,10 +9,18 @@ import store from './index';
 @Module({ dynamic: true, store, name: 'userChoices' })
 export class UserChoicesStore extends VuexModule {
   // Inital values are not really useful here except to make TS happy: they are all initialized (based on route OR config file) by the CROW component
+  // (exception for selectedLanguageCode because it's not available in the router)
   selectedDate = ''
   selectedRadarCode = ''
   selectedIntervalInHours = 0;  // The chart show this amount of hours around selectedDate at noon
   timeDisplayedAs: TimeDisplayedAsValue = 'radarLocal'
+
+  selectedLanguageCode = config.initialLanguageCode;
+
+  @Mutation
+  setSelectedLanguageCode(code: LangCode) {
+    this.selectedLanguageCode = code;
+  }
 
   @Mutation
   setSelectedRadarCode(code: string) {

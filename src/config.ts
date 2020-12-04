@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { ColorSchemeIdentifier, GroupedRadarInterface, IntegratedPropertyName, TimeDisplayedAsValue, TimeInterval } from './CrowTypes';
+import { ColorSchemeIdentifier, GroupedRadarInterface, IntegratedPropertyName, LangCode, Language, TimeDisplayedAsValue, TimeInterval } from './CrowTypes';
 
 const globalChartMarginLeft = 65; // In-SVG margin used for axis and legend
 const globalChartMarginRight = 60; // In-SVG margin used for axis and legend
@@ -8,6 +8,12 @@ const svgWidth = 72 * (60 / 5) + globalChartMarginLeft + globalChartMarginRight;
 
 export default {
     dataServerUrl: 'https://opendata.meteo.be/ftp/observations/radar/vbird',
+    availableLanguages: [
+        { label: 'English', code: 'en' },
+        { label: 'Nederlands', code: 'nl' },
+        { label: 'Français', code: 'fr'}
+    ] as Language[],
+    initialLanguageCode: 'en' as LangCode,
     availableRadars: [
         {
             label: 'Belgium',

@@ -1,5 +1,5 @@
 import config from '@/config';
-import { GroupedRadarInterface, TimeInterval } from '@/CrowTypes';
+import { GroupedRadarInterface, Language, TimeInterval } from '@/CrowTypes';
 import { getModule, Module, VuexModule } from "vuex-module-decorators";
 import store from './index';
 
@@ -7,6 +7,7 @@ import store from './index';
 export class ConfigStore extends VuexModule {
   availableRadars: GroupedRadarInterface[] = config.availableRadars;
   availableIntervals: TimeInterval[] = config.availableTimeIntervals;
+  availableLanguages: Language[] = config.availableLanguages;
 }
 
 export const ConfigStoreModule = getModule(ConfigStore);

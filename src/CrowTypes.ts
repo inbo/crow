@@ -88,3 +88,17 @@ export interface VTPSEntry { // TODO: check: is it a duplicate of VTPSDataRow?
     sd_vvp: number;
     timestamp: number;
 }
+
+export type LangCode = "en" | "fr" | "nl"
+
+export interface Language {
+    label: string,
+    code: LangCode
+}
+
+type MultilanguageString={
+    [index in LangCode]: string;
+  };
+export interface MultilanguageStringContainer {
+    [index: string]: MultilanguageString;
+}
