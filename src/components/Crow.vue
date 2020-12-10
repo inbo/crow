@@ -1,166 +1,168 @@
 <template>
-  <b-container fluid="xl" class="mt-lg-5">
-    <language-selector />
-    <b-row>
-      <b-col lg="3" class="bg-dark text-light pt-3">
-        <b-form>
-          <b-row>
-            <b-col cols="12" sm="7" lg="12">
-              <b-form-group
-                id="input-date-group"
-                label="Date:"
-                label-for="input-date"
-                :description="t('Charts will be centered on noon for the selected date.')"
-              >
-                <b-input-group size="sm">
-                  <b-input-group-prepend>
-                    <b-button
-                      variant="outline-secondary"
-                      @click="decrementPeriod"
-                    >
-                      -{{ selectedIntervalLabel }}
-                    </b-button>
-                  </b-input-group-prepend>
-                  <b-form-input
-                    id="input-date"
-                    v-model="selectedDate"
-                    type="date"
-                    placeholder="Type a date..."
-                    :max="todayAsString"
-                  />
-                  <b-input-group-append> 
-                    <b-button
-                      variant="outline-secondary"
-                      @click="incrementPeriod"
-                    >
-                      +{{ selectedIntervalLabel }}
-                    </b-button>
-                  </b-input-group-append>
-                </b-input-group>
-              </b-form-group>
-            </b-col>
-
-            <b-col cols="7" sm="2" lg="6">
-              <b-form-group 
-                id="input-interval-group"
-                label="Interval:"
-                label-for="input-interval"
-              >
-                <b-form-radio-group
-                  id="input-interval"
-                  v-model="selectedIntervalInHours"
-                  size="sm"
-                  buttons
-                  button-variant="outline-secondary"
-                  :options="availableIntervals"
-                />
-              </b-form-group>
-            </b-col>
-
-            <b-col cols="5" sm="3" lg="6">
-              <b-form-group 
-                id="input-timezone-group"
-                label="Time zone:"
-                label-for="input-timezone"
-              >
-                <b-form-radio-group
-                  id="input-timezone"
-                  v-model="timeDisplayedAs"
-                  size="sm"
-                  buttons
-                  button-variant="outline-secondary"
+  <main>
+    <Introduction />
+    <b-container fluid="xl" class="mt-lg-5">
+      <b-row>
+        <b-col lg="3" class="bg-dark text-light pt-3">
+          <b-form>
+            <b-row>
+              <b-col cols="12" sm="7" lg="12">
+                <b-form-group
+                  id="input-date-group"
+                  label="Date:"
+                  label-for="input-date"
+                  :description="t('Charts will be centered on noon for the selected date.')"
                 >
-                  <b-form-radio value="radarLocal">
-                    Radar
-                  </b-form-radio>
-                  <b-form-radio value="UTC">
-                    UTC
-                  </b-form-radio>
-                </b-form-radio-group>
-              </b-form-group>
-            </b-col>
+                  <b-input-group size="sm">
+                    <b-input-group-prepend>
+                      <b-button
+                        variant="outline-secondary"
+                        @click="decrementPeriod"
+                      >
+                        -{{ selectedIntervalLabel }}
+                      </b-button>
+                    </b-input-group-prepend>
+                    <b-form-input
+                      id="input-date"
+                      v-model="selectedDate"
+                      type="date"
+                      placeholder="Type a date..."
+                      :max="todayAsString"
+                    />
+                    <b-input-group-append> 
+                      <b-button
+                        variant="outline-secondary"
+                        @click="incrementPeriod"
+                      >
+                        +{{ selectedIntervalLabel }}
+                      </b-button>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-form-group>
+              </b-col>
 
-            <b-col cols="7" lg="12">
-              <site-selector />
-            </b-col>
-
-            <b-col cols="5" lg="12">
-              <b-form-group 
-                id="copy-url-group"
-                label="Share:"
-              >
-                <router-link
-                  v-slot="{ href }"
-                  append
-                  :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpColorScheme: VPChartSelectedScheme, vpiMode: VPIChartMode }}"
+              <b-col cols="7" sm="2" lg="6">
+                <b-form-group 
+                  id="input-interval-group"
+                  label="Interval:"
+                  label-for="input-interval"
                 >
-                  <b-button 
-                    v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
-                    v-clipboard:success="onCopyUrl"
+                  <b-form-radio-group
+                    id="input-interval"
+                    v-model="selectedIntervalInHours"
                     size="sm"
-                    variant="outline-primary"
+                    buttons
+                    button-variant="outline-secondary"
+                    :options="availableIntervals"
+                  />
+                </b-form-group>
+              </b-col>
+
+              <b-col cols="5" sm="3" lg="6">
+                <b-form-group 
+                  id="input-timezone-group"
+                  label="Time zone:"
+                  label-for="input-timezone"
+                >
+                  <b-form-radio-group
+                    id="input-timezone"
+                    v-model="timeDisplayedAs"
+                    size="sm"
+                    buttons
+                    button-variant="outline-secondary"
                   >
-                    {{ copyUrlButtonText }}
-                  </b-button>
-                </router-link>
-              </b-form-group>
-            </b-col>
-          </b-row>
-        </b-form>
-      </b-col>
+                    <b-form-radio value="radarLocal">
+                      Radar
+                    </b-form-radio>
+                    <b-form-radio value="UTC">
+                      UTC
+                    </b-form-radio>
+                  </b-form-radio-group>
+                </b-form-group>
+              </b-col>
 
-      <b-col lg="9" class="bg-light pt-3">
-        <div v-if="readyForCharts">
-          <v-p-chart
-            :vtps-data="radarVtpsAsArray" 
-            :show-time-as="timeZoneToShow"
-            :style-config="VPChartStyle"
-            :scheme="VPChartSelectedScheme"
-            @color-scheme-changed="vpColorSchemeChanged"
-          >
-            <template #header>
-              <p class="small">
-                This chart shows <strong>bird density</strong> (colour) as a function of time (x-axis) and height above the ground (y-axis). The BirdTAM colour scale is tailored to aviation.
-              </p>
-            </template>
+              <b-col cols="7" lg="12">
+                <site-selector />
+              </b-col>
 
-            <template #in-x-axis-group>
-              <timeline-chart
-                :periods="timePeriods"
-                :style-config="TimelineChartStyle"
-                :show-time-as="timeZoneToShow"
-              />
-            </template>
-          </v-p-chart>
+              <b-col cols="5" lg="12">
+                <b-form-group 
+                  id="copy-url-group"
+                  label="Share:"
+                >
+                  <router-link
+                    v-slot="{ href }"
+                    append
+                    :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpColorScheme: VPChartSelectedScheme, vpiMode: VPIChartMode }}"
+                  >
+                    <b-button 
+                      v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
+                      v-clipboard:success="onCopyUrl"
+                      size="sm"
+                      variant="outline-primary"
+                    >
+                      {{ copyUrlButtonText }}
+                    </b-button>
+                  </router-link>
+                </b-form-group>
+              </b-col>
+            </b-row>
+          </b-form>
+        </b-col>
 
-          <hr>
+        <b-col lg="9" class="bg-light pt-3">
+          <div v-if="readyForCharts">
+            <v-p-chart
+              :vtps-data="radarVtpsAsArray" 
+              :show-time-as="timeZoneToShow"
+              :style-config="VPChartStyle"
+              :scheme="VPChartSelectedScheme"
+              @color-scheme-changed="vpColorSchemeChanged"
+            >
+              <template #header>
+                <p class="small">
+                  This chart shows <strong>bird density</strong> (colour) as a function of time (x-axis) and height above the ground (y-axis). The BirdTAM colour scale is tailored to aviation.
+                </p>
+              </template>
 
-          <v-p-i-chart
-            :vpi-data="integratedProfiles"
-            :style-config="VPIChartStyle"
-            :show-time-as="timeZoneToShow"
-            :data-temporal-resolution="dataTemporalResolution"
-            :mode="VPIChartMode"
-            @mode-changed="vpiModeChanged"
-          >
-            <template #header>
-              <p class="small">
-                This chart shows the same information, but sums bird densities over height, thus giving a rough idea of the <strong>total number of birds</strong> in the sky at any given moment.
-              </p>
-            </template>
+              <template #in-x-axis-group>
+                <timeline-chart
+                  :periods="timePeriods"
+                  :style-config="TimelineChartStyle"
+                  :show-time-as="timeZoneToShow"
+                />
+              </template>
+            </v-p-chart>
 
-            <template #in-x-axis-group>
-              <timeline-chart
-                :periods="timePeriods"
-                :style-config="TimelineChartStyle"
-                :show-time-as="timeZoneToShow"
-              />
-            </template>
-          </v-p-i-chart>
-        </div>
-      </b-col>
-    </b-row>
-  </b-container>
+            <hr>
+
+            <v-p-i-chart
+              :vpi-data="integratedProfiles"
+              :style-config="VPIChartStyle"
+              :show-time-as="timeZoneToShow"
+              :data-temporal-resolution="dataTemporalResolution"
+              :mode="VPIChartMode"
+              @mode-changed="vpiModeChanged"
+            >
+              <template #header>
+                <p class="small">
+                  This chart shows the same information, but sums bird densities over height, thus giving a rough idea of the <strong>total number of birds</strong> in the sky at any given moment.
+                </p>
+              </template>
+
+              <template #in-x-axis-group>
+                <timeline-chart
+                  :periods="timePeriods"
+                  :style-config="TimelineChartStyle"
+                  :show-time-as="timeZoneToShow"
+                />
+              </template>
+            </v-p-i-chart>
+          </div>
+        </b-col>
+      </b-row>
+    </b-container>
+  </main>
 </template>
 
 <script lang="ts">
@@ -169,7 +171,7 @@ import VPChart from "./VPChart.vue";
 import VPIChart from "./VPIChart.vue";
 import SiteSelector from "./SiteSelector.vue";
 import TimelineChart from "./TimelineChart.vue";
-import LanguageSelector from "./LanguageSelector.vue";
+import Introduction from "./Introduction.vue";
 
 import moment from "moment-timezone";
 import axios from "axios";
@@ -200,12 +202,12 @@ const initialCopyUrlText = "Copy link";
 
 export default Vue.extend({
   name: "Crow",
-  components: {
-    LanguageSelector,
+  components: {    
     SiteSelector,
     VPChart,
     VPIChart,
-    TimelineChart
+    TimelineChart,
+    Introduction
   },
   props: {
     radarValueProp: {
@@ -223,7 +225,7 @@ export default Vue.extend({
     timeDisplayValueProp: {
       type: String as PropType<TimeDisplayedAsValue>,
       default: config.initialTimeDisplay
-    }, 
+    },
     vpChartSelectedSchemeProp: {
       type: String as () => ColorSchemeIdentifier,
       default: config.VPChartStyle.initialColorScheme
@@ -273,16 +275,16 @@ export default Vue.extend({
     },
 
     selectedDate: {
-      get: function(): string {
+      get: function (): string {
         return UserChoicesStoreModule.selectedDate;
-      }, 
-      set: function(newValue: string) {
+      },
+      set: function (newValue: string) {
         UserChoicesStoreModule.setSelectedDate(newValue);
       }
     },
 
     timeDisplayedAs: {
-      get: function(): TimeDisplayedAsValue {
+      get: function (): TimeDisplayedAsValue {
         return UserChoicesStoreModule.timeDisplayedAs;
       },
       set: function (newValue: TimeDisplayedAsValue) {
@@ -365,7 +367,7 @@ export default Vue.extend({
     // Any change on something that can be shared via URL will reset the button
     selectedRadarValue: function (): void {
       this.resetCopyUrlButtonText();
-      this.loadData();    
+      this.loadData();
     },
     selectedDate: function (): void {
       this.resetCopyUrlButtonText();
@@ -386,7 +388,7 @@ export default Vue.extend({
       this.resetCopyUrlButtonText();
     }
   },
-  created: function() {
+  created: function () {
     this.initializeUserChoiceStore();
   },
   mounted: function () {
@@ -395,13 +397,13 @@ export default Vue.extend({
   methods: {
     t(stringId: string): string {
       // Returns a string of text in the current language
-      const texts:MultilanguageStringContainer = {
+      const texts: MultilanguageStringContainer = {
         'Charts will be centered on noon for the selected date.': {
           en: 'Charts will be centered on noon for the selected date.',
           fr: 'Les graphiques seront centrés sur midi pour la date sélectionnée.',
           nl: 'Grafieken worden gecentreerd op de middag voor de geselecteerde datum.'
         }
-      } 
+      }
 
       return texts[stringId][this.selectedLanguageCode];
     },

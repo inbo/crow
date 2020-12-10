@@ -1,11 +1,9 @@
 <template>
-  <div>
-    <b-list-group horizontal="md">
-      <b-list-group-item v-for="lang in availableLanguages" :key="lang.code" :active="lang.code === selectedLanguageCode" @click="selectedLanguageCode = lang.code">
-        <small>{{ lang.label }}</small>
-      </b-list-group-item>
-    </b-list-group>
-  </div>
+  <b-list-group horizontal="md">
+    <b-list-group-item v-for="lang in availableLanguages" :key="lang.code" :active="lang.code === selectedLanguageCode" @click="selectedLanguageCode = lang.code">
+      <small>{{ lang.label }}</small>
+    </b-list-group-item>
+  </b-list-group>
 </template>
 
 <script lang="ts">
