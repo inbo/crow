@@ -8,11 +8,16 @@ import store from './index';
 
 @Module({ dynamic: true, store, name: 'userChoices' })
 export class UserChoicesStore extends VuexModule {
-  // Inital values are not really useful here except to make TS happy: they are all initialized (based on route OR config file) by the CROW component
-  // (exception for selectedLanguageCode because it's not available in the router)
+  // The "real" variable initialization (based on the URL OR, by default, on the config file) happens in the CROW component
+  // We kinda duplicate part of this initialization here for two specific reasons:
+  //    - to make TS happy (so it nows about variable types)
+  //    - performance reasons: the data files will be loaded only once if the selected* variables actually not changed by the initialization code in CROW
+  //
+  // (selectedLanguageCode: the real initialization happens here because it's not available in the router)
+
   selectedDate = ''
-  selectedRadarCode = ''
-  selectedIntervalInHours = 0;  // The chart show this amount of hours around selectedDate at noon
+  selectedRadarCode = config.initialRadarValue;
+  selectedIntervalInHours = config.initialTimeInterval;  // The chart show this amount of hours around selectedDate at noon
   timeDisplayedAs: TimeDisplayedAsValue = 'radarLocal'
 
   selectedLanguageCode = config.initialLanguageCode;
