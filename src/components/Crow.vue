@@ -547,8 +547,6 @@ export default Vue.extend({
 
     /* Build the data URL for a given day and radar */
     buildDataUrl(radarName: string, selectedDate: moment.Moment): string {
-      console.log("Building data URL for ", selectedDate.format("YYYYMMDD"))
-
       return `${config.dataServerUrl}/${radarName}/${selectedDate.format(
         "YYYY"
       )}/${radarName}_vpts_${selectedDate.format("YYYYMMDD")}.txt`;

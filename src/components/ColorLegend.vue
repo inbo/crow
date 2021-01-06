@@ -35,7 +35,6 @@ export default Vue.extend({
       const scaleFunction = binding.value.scale;
       const legendAxis = d3.axisBottom<number>(scaleFunction);
       legendAxis(d3.select((el as unknown) as SVGGElement));
-      //console.log(scaleFunction.thresholds())
     }
   },
   props: ["colorScale", "colorScaleType", "opacity", "topic", "maxDensity"], // eslint-disable-line
