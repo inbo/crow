@@ -132,7 +132,8 @@ interface VPIEntryForPath {
   // - time data stored as a timestamp (no further conversion needed)
   // - only single value to display (allow to animate when the user switch between MTR and VID, for example)
   timestamp: number;
-  val: number;
+  val: number; // scaled value (Y coordinate)
+  sourceVal: number; // source data (no scaling - NaN if missing data)
 }
 
 export default Vue.extend({
@@ -374,6 +375,10 @@ export default Vue.extend({
     pathData: function (): string | null {
       const path = d3
         .line<VPIEntryForPath>()
+        .defined((vpiEntryFP) => {
+          //console.log(vpiEntryFP);
+          return !isNaN(vpiEntryFP.sourceVal);
+        })
         .x((vpiEntryFP) => {
           return this.xScale(vpiEntryFP.timestamp);
         })
@@ -441,7 +446,7 @@ export default Vue.extend({
 
         const rawValue =
           entry.integratedProfiles[this.selectedModePropertyName];
-        const newScaledValue = this.yScale(isNaN(rawValue) ? 0 : rawValue) as number; // Cast because https://github.com/DefinitelyTyped/DefinitelyTyped/issues/48299
+        const newScaledValue = this.yScale(isNaN(rawValue) ? 0 : rawValue); 
 
         if (foundIndex == -1) {
           // 2. Add new data
@@ -453,6 +458,7 @@ export default Vue.extend({
           const newEntry = {
             timestamp: timestamp,
             val: newScaledValue,
+            sourceVal: rawValue
           };
 
           this.vpiDataForPath.splice(insertIndex, 0, newEntry);
@@ -462,9 +468,10 @@ export default Vue.extend({
 
           new TWEEN.Tween(cloneElem)
             .easing(TWEEN.Easing.Quadratic.Out)
-            .to({ val: newScaledValue }, 300)
+            .to({ val: newScaledValue, sourceVal: rawValue }, 300)
             .onUpdate(() => {
               this.$set(this.vpiDataForPath[foundIndex], "val", cloneElem.val);
+              this.$set(this.vpiDataForPath[foundIndex], "sourceVal", cloneElem.sourceVal);
             })
             .start(TWEEN.now()); // Start the tween immediately.
         }
