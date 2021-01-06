@@ -503,6 +503,13 @@ export default Vue.extend({
           d1.moment.valueOf() - x0.getTime() / 1000
           ? d1
           : d0;
+
+      if (this.selectedValAtTimeX && !isNaN(this.selectedValAtTimeX)) {
+        this.tooltipVisible = true;
+      } else {
+        this.tooltipVisible = false;
+      }
+       
     },
   },
 });
