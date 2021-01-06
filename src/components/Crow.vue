@@ -509,19 +509,32 @@ export default Vue.extend({
       }
     },
 
+    getDatesForData(startMoment: moment.Moment, stopMoment: moment.Moment): string[] {
+      // List the dates for which we'll need to load the data (according to startMoment and stopMoment)
+      // Take into account the data temporal resolution and the upper limit (if resolution is 5 min and data shown until midgnight = data loaded until 23:55)
+      //
+      // Returns an array of strings in the 'YYYY-MM-DD' format
+      startMoment = startMoment.utc() // Data files are in UTC
+      stopMoment = stopMoment.subtract(this.dataTemporalResolution, "seconds").utc();
+      
+      var dateArray: Set<string> = new Set;
+      var currentDate = startMoment;
+
+      while (currentDate <= stopMoment) {
+        dateArray.add(moment(currentDate).format('YYYY-MM-DD'))        
+        currentDate = moment(currentDate).add(this.dataTemporalResolution, "seconds");
+      }
+    return Array.from(dateArray);
+    },
+
     /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */
     populateDataFromCrowServer(
       radarName: string,
       startMoment: moment.Moment,
       endMoment: moment.Moment
     ): void {
-      const startDay = moment.utc(startMoment, "YYYY-MM-DD");
-      const endDay = moment.utc(endMoment, "YYYY-MM-DD").add(1, "days");
-
-      const currentDay = startDay.clone();
-
-      while (currentDay.isBefore(endDay, "day")) {
-        const url = this.buildDataUrl(radarName, currentDay);
+      for (let currentDate of this.getDatesForData(startMoment, endMoment)) {
+        const url = this.buildDataUrl(radarName, moment(currentDate, 'YYYY-MM-DD'));
         axios.get(url).then(response => {
           const dayData = helpers.parseVtps(response.data);
 
@@ -529,12 +542,13 @@ export default Vue.extend({
             this.storeDataRow(val);
           }
         });
-        currentDay.add(1, "days");
       }
     },
 
     /* Build the data URL for a given day and radar */
     buildDataUrl(radarName: string, selectedDate: moment.Moment): string {
+      console.log("Building data URL for ", selectedDate.format("YYYYMMDD"))
+
       return `${config.dataServerUrl}/${radarName}/${selectedDate.format(
         "YYYY"
       )}/${radarName}_vpts_${selectedDate.format("YYYYMMDD")}.txt`;
