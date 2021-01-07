@@ -15,9 +15,8 @@
 import Vue from "vue";
 import * as d3 from "d3";
 import axios from "axios";
-import { ExtendedFeature, ExtendedFeatureCollection } from 'd3';
 import { GroupedRadarInterface, RadarInterface } from '@/CrowTypes';
-import belgiumGeoJSON from '../belgium.json';
+import belgiumGeoJSON from '@/belgium.json';
 
 export default Vue.extend({
   name: "SiteSelectorMap",
@@ -39,17 +38,17 @@ export default Vue.extend({
       xPadding: 10,
       yPadding: 10,
 
-      Countryfeature: belgiumGeoJSON as ExtendedFeature
+      Countryfeature: belgiumGeoJSON as d3.ExtendedFeature
     }
   },
   computed: {
-    EverythingAsGeoJSON: function (): ExtendedFeatureCollection {
+    EverythingAsGeoJSON: function (): d3.ExtendedFeatureCollection {
       // Return every geographic element (each radar + country shape) as GeoJSON
       var geojson = {
         "name": "NewFeatureType",
         "type": "FeatureCollection",
         "features": [] 
-      } as ExtendedFeatureCollection;
+      } as d3.ExtendedFeatureCollection;
 
       this.radars.forEach(r => {
         let feature = {
@@ -59,7 +58,7 @@ export default Vue.extend({
             "coordinates": [r.longitude, r.latitude]
           },
           "properties": null
-        } as ExtendedFeature;
+        } as d3.ExtendedFeature;
 
         geojson.features.push(feature);
       })

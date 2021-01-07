@@ -26,7 +26,7 @@
 <script lang="ts">
 import Vue from "vue";
 
-import { DayData } from '../CrowTypes'
+import { DayData } from '@/CrowTypes';
 
 export default Vue.extend({
   name: 'DailyLine',

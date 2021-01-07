@@ -100,19 +100,19 @@
 // TODO: create a single popover for performance reasons?
 import Vue from "vue";
 import * as d3 from "d3";
-import helpers from "../helpers";
-import DailyLines from "./DailyLines.vue";
-import ColorLegend from "./ColorLegend.vue";
+import helpers from "@/helpers";
+import DailyLines from "@/components/DailyLines.vue";
+import ColorLegend from "@/components/ColorLegend.vue";
 import moment, { Moment } from "moment-timezone";
 import {
   ColorSchemeIdentifier,
   VTPSEntry,
   DayData,
   ColorSchemeConfigEntry,
-} from "../CrowTypes";
+} from "@/CrowTypes";
 
 interface Scales {
-  x: d3.ScaleTime<number, number>; // TODO: check number number is correct (multiple generic types)
+  x: d3.ScaleTime<number, number>; // TODO: check <number, number> is correct (multiple generic types)
   y: null;
 }
 

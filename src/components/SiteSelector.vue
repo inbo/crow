@@ -23,13 +23,13 @@
 import Vue from "vue";
 import { mapMutations } from 'vuex';
 
-import { GroupedRadarInterface, RadarInterface } from "../CrowTypes";
+import { GroupedRadarInterface, RadarInterface } from "@/CrowTypes";
 
 import { getModule } from 'vuex-module-decorators';
-import { ConfigStoreModule } from '../store/ConfigStore';
+import { ConfigStoreModule } from '@/store/ConfigStore';
 import { UserChoicesStoreModule } from '@/store/UserChoicesStore';
 
-import SiteSelectorMap from "./SiteSelectorMap.vue";
+import SiteSelectorMap from "@/components/SiteSelectorMap.vue";
 
 export default Vue.extend({
   name: "SiteSelector",

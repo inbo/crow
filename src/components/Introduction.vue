@@ -18,7 +18,7 @@
 import { LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import Vue from "vue";
-import LanguageSelector from "./LanguageSelector.vue";
+import LanguageSelector from "@/components/LanguageSelector.vue";
 
 export default Vue.extend({
   name: "Introduction",

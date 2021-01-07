@@ -33,10 +33,9 @@
 // TODO: margin.top in the main SVG group seems different than with TimelineChart.vue
 import Vue from "vue";
 import * as d3 from "d3";
-import * as d3Scale from 'd3-scale';
 import moment from "moment-timezone";
-import { Period } from "../CrowTypes";
-import helpers from "../helpers";
+import { Period } from "@/CrowTypes";
+import helpers from "@/helpers";
 
 interface DisplayablePeriod extends Period {
   x: number;
@@ -79,7 +78,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    xScale: function (): d3Scale.ScaleTime<number, number> {
+    xScale: function (): d3.ScaleTime<number, number> {
       return d3
         .scaleTime<number, number>()
         .domain([this.minMoment.valueOf(), this.maxMomentPlusOne.valueOf()])

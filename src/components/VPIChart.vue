@@ -109,11 +109,11 @@ import Vue from "vue";
 import * as d3 from "d3";
 import moment from "moment-timezone";
 
-import DailyLines from "./DailyLines.vue";
+import DailyLines from "@/components/DailyLines.vue";
 
-import helpers from "../helpers";
+import helpers from "@/helpers";
 
-import { DayData, VPIEntry, IntegratedPropertyName } from "../CrowTypes";
+import { DayData, VPIEntry, IntegratedPropertyName } from "@/CrowTypes";
 
 import TWEEN from "@tweenjs/tween.js";
 

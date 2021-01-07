@@ -167,20 +167,20 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue";
-import VPChart from "./VPChart.vue";
-import VPIChart from "./VPIChart.vue";
-import SiteSelector from "./SiteSelector.vue";
-import TimelineChart from "./TimelineChart.vue";
-import Introduction from "./Introduction.vue";
+import VPChart from "@/components/VPChart.vue";
+import VPIChart from "@/components/VPIChart.vue";
+import SiteSelector from "@/components/SiteSelector.vue";
+import TimelineChart from "@/components/TimelineChart.vue";
+import Introduction from "@/components/Introduction.vue";
 
 import moment from "moment-timezone";
 import axios from "axios";
 import SunCalc from "suncalc";
 
-import config from "../config";
-import helpers from "../helpers";
+import config from "@/config";
+import helpers from "@/helpers";
 
-import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer } from '../CrowTypes';
+import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer } from '@/CrowTypes';
 import { UserChoicesStore, UserChoicesStoreModule } from '@/store/UserChoicesStore';
 import { ConfigStoreModule } from '@/store/ConfigStore';
 import { mapMutations } from 'vuex';
