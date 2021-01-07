@@ -90,10 +90,10 @@
 
         <!-- finally, the chart line -->
         <path
-          fill="none"
           style="pointer-events: none"
-          :stroke="styleConfig.lineColor"
-          stroke-width="1.5"
+          :stroke="styleConfig.strokeColor"
+          :fill="styleConfig.fillColor"
+          :stroke-width="styleConfig.strokeWidth"
           :d="pathData"
         />
 
@@ -374,7 +374,7 @@ export default Vue.extend({
     },
     pathData: function (): string | null {
       const path = d3
-        .line<VPIEntryForPath>()
+        .area<VPIEntryForPath>()
         .defined((vpiEntryFP) => {
           //console.log(vpiEntryFP);
           return !isNaN(vpiEntryFP.sourceVal);
@@ -382,9 +382,10 @@ export default Vue.extend({
         .x((vpiEntryFP) => {
           return this.xScale(vpiEntryFP.timestamp);
         })
-        .y((vpiEntryFP) => {
+        .y0((vpiEntryFP) => {
           return vpiEntryFP.val;
-        });
+        })
+        .y1(this.innerHeight);
 
       return path(this.vpiDataForPath);
     },

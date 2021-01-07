@@ -115,6 +115,6 @@ export default Vue.extend({
 }
 
 #country {
-  fill: rgb(201, 232, 252);
+  fill: #bdd3e5; /* TODO: move style config to config.ts + factorize (same blue than VPI area color) */
 }
 </style>

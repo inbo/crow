@@ -103,7 +103,9 @@ export default {
         axisTimeFormat: " HH:mm z",
         tooltipTimeFormat: "MMM D - HH:mm z",
 
-        lineColor: 'steelblue',
+        strokeColor: 'steelblue',
+        fillColor: '#bdd3e5',
+        strokeWidth: 1,
 
         showTooltip: true,
         initialMode: 'mtr' as IntegratedPropertyName
