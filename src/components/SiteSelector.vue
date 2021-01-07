@@ -38,7 +38,7 @@ export default Vue.extend({
   },
   computed: {
     availableRadars(): GroupedRadarInterface[] {
-        return ConfigStoreModule.availableRadars;
+      return ConfigStoreModule.availableRadars;
     },
     selectedRadarCode(): string {
       return UserChoicesStoreModule.selectedRadarCode;
@@ -54,9 +54,9 @@ export default Vue.extend({
     },
   },
   methods: {
-      ...mapMutations([
-          'setSelectedRadarCode'
-      ])
+    ...mapMutations([
+      'setSelectedRadarCode'
+    ])
   },
 });
 </script>

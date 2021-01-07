@@ -447,7 +447,7 @@ export default Vue.extend({
 
         const rawValue =
           entry.integratedProfiles[this.selectedModePropertyName];
-        const newScaledValue = this.yScale(isNaN(rawValue) ? 0 : rawValue); 
+        const newScaledValue = this.yScale(isNaN(rawValue) ? 0 : rawValue);
 
         if (foundIndex == -1) {
           // 2. Add new data
@@ -499,21 +499,21 @@ export default Vue.extend({
       const i = this.momentBisector(this.vpiData, x0);
       const d0 = this.vpiData[i - 1];
       const d1 = this.vpiData[i];
-      
+
       if (d0 && d1) { // Avoid errors at chart boundaries (undefined d0 left, undefined d1 right)
         this.VPIEntryAtTimeX =
-        x0.getTime() / 1000 - d0.moment.valueOf() >
-          d1.moment.valueOf() - x0.getTime() / 1000
-          ? d1
-          : d0;
+          x0.getTime() / 1000 - d0.moment.valueOf() >
+            d1.moment.valueOf() - x0.getTime() / 1000
+            ? d1
+            : d0;
       }
-      
+
       if (this.selectedValAtTimeX && !isNaN(this.selectedValAtTimeX)) {
         this.tooltipVisible = true;
       } else {
         this.tooltipVisible = false;
       }
-       
+
     },
   },
 });

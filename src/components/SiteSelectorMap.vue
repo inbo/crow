@@ -47,7 +47,7 @@ export default Vue.extend({
       var geojson = {
         "name": "NewFeatureType",
         "type": "FeatureCollection",
-        "features": [] 
+        "features": []
       } as d3.ExtendedFeatureCollection;
 
       this.radars.forEach(r => {
@@ -77,7 +77,7 @@ export default Vue.extend({
     },
     projection: function (): d3.GeoProjection {
       return d3.geoMercator()
-        .fitExtent([[this.xPadding, this.yPadding], [this.svgWidth-this.xPadding, this.svgHeight-this.yPadding]], this.EverythingAsGeoJSON);
+        .fitExtent([[this.xPadding, this.yPadding], [this.svgWidth - this.xPadding, this.svgHeight - this.yPadding]], this.EverythingAsGeoJSON);
     },
 
     pathGenerator: function (): d3.GeoPath {

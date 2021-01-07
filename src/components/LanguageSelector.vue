@@ -19,12 +19,12 @@ export default Vue.extend({
       return ConfigStoreModule.availableLanguages;
     },
     selectedLanguageCode: {
-        get: function(): LangCode {
-            return UserChoicesStoreModule.selectedLanguageCode;
-        },
-        set: function(code: LangCode) {
-            UserChoicesStoreModule.setSelectedLanguageCode(code);
-        }
+      get: function (): LangCode {
+        return UserChoicesStoreModule.selectedLanguageCode;
+      },
+      set: function (code: LangCode) {
+        UserChoicesStoreModule.setSelectedLanguageCode(code);
+      }
     }
   }
 });

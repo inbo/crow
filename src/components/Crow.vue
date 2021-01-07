@@ -202,7 +202,7 @@ const initialCopyUrlText = "Copy link";
 
 export default Vue.extend({
   name: "Crow",
-  components: {    
+  components: {
     SiteSelector,
     VPChart,
     VPIChart,
@@ -516,15 +516,15 @@ export default Vue.extend({
       // Returns an array of strings in the 'YYYY-MM-DD' format
       startMoment = startMoment.utc() // Data files are in UTC
       stopMoment = stopMoment.subtract(this.dataTemporalResolution, "seconds").utc();
-      
+
       var dateArray: Set<string> = new Set;
       var currentDate = startMoment;
 
       while (currentDate <= stopMoment) {
-        dateArray.add(moment(currentDate).format('YYYY-MM-DD'))        
+        dateArray.add(moment(currentDate).format('YYYY-MM-DD'))
         currentDate = moment(currentDate).add(this.dataTemporalResolution, "seconds");
       }
-    return Array.from(dateArray);
+      return Array.from(dateArray);
     },
 
     /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */

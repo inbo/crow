@@ -23,7 +23,7 @@ import LanguageSelector from "@/components/LanguageSelector.vue";
 export default Vue.extend({
   name: "Introduction",
   components: {
-      LanguageSelector
+    LanguageSelector
   },
   computed: {
     selectedLanguageCode(): LangCode {

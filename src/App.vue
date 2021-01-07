@@ -28,11 +28,10 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import 'es6-promise/auto'
 import { Route } from "vue-router";
-import Crow from "./components/Crow.vue";
-import PageNotFound from "./components/PageNotFound.vue";
+import Crow from "@/components/Crow.vue";
+import PageNotFound from "@/components/PageNotFound.vue";
 import VueClipboard from "vue-clipboard2";
-import config from "./config"
-import { ticks } from 'd3';
+import config from "@/config"
 Vue.use(VueClipboard);
 Vue.use(VueRouter);
 
@@ -84,7 +83,7 @@ main {
 }
 
 .container-xl {
-    max-width: 1400px; /* Increase from default 1140px to allow space for chart */
+  max-width: 1400px; /* Increase from default 1140px to allow space for chart */
 }
 
 footer {
