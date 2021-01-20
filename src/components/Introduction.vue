@@ -21,21 +21,16 @@ import { LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import Vue from "vue";
 import LanguageSelector from "@/components/LanguageSelector.vue";
+import helpers from "@/helpers";
 
 export default Vue.extend({
   name: "Introduction",
   components: {
     LanguageSelector
   },
-  computed: {
-    selectedLanguageCode(): LangCode {
-      return UserChoicesStoreModule.selectedLanguageCode;
-    },
-  },
-  methods: {
-    t(stringId: string): string | null { // TODO: Remove null here after it's also removed from the "MultilanguageString" type (temporary hack to trigger errors on missing translation)
-      // Returns a string of text in the current language
-      const texts: MultilanguageStringContainer = {
+  data: function () {
+    return {
+      texts: {
         'Birds detected by weather radars': {
           en: 'Birds detected by weather radars',
           fr: 'Détection des oiseaux via les radars météo',
@@ -66,14 +61,17 @@ export default Vue.extend({
           fr: "Vous pouvez explorer ces données (provenant de 10 radars sur l'entièreté du Benelux) grace aux graphiques ci-dessous.",
           nl: null
         }
-      }
-
-    if (texts.hasOwnProperty(stringId) && texts[stringId].hasOwnProperty(this.selectedLanguageCode) && texts[stringId][this.selectedLanguageCode] !== null) {
-      return texts[stringId][this.selectedLanguageCode];
-    } else {
-      return stringId;
+      } as MultilanguageStringContainer
     }
-      
+  },
+  computed: {
+    selectedLanguageCode(): LangCode {
+      return UserChoicesStoreModule.selectedLanguageCode;
+    },
+  },
+  methods: {
+    t(stringId: string) {
+      return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
     },
   }
 });

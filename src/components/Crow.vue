@@ -254,7 +254,15 @@ export default Vue.extend({
 
       publicPath: process.env.BASE_URL,
       baseUrl: '',
-      copyUrlButtonText: initialCopyUrlText
+      copyUrlButtonText: initialCopyUrlText,
+
+      texts: {
+        'Charts will be centered on noon for the selected date.': {
+          en: 'Charts will be centered on noon for the selected date.',
+          fr: 'Les graphiques seront centrés sur midi pour la date sélectionnée.',
+          nl: 'Grafieken worden gecentreerd op de middag voor de geselecteerde datum.'
+        }
+      } as MultilanguageStringContainer
     };
   },
   computed: {
@@ -395,21 +403,8 @@ export default Vue.extend({
     this.baseUrl = this.trimLastSlash(window.location.origin);
   },
   methods: {
-    t(stringId: string): string | null{
-      // Returns a string of text in the current language
-      const texts: MultilanguageStringContainer = {
-        'Charts will be centered on noon for the selected date.': {
-          en: 'Charts will be centered on noon for the selected date.',
-          fr: 'Les graphiques seront centrés sur midi pour la date sélectionnée.',
-          nl: 'Grafieken worden gecentreerd op de middag voor de geselecteerde datum.'
-        }
-      }
-
-      if (texts.hasOwnProperty(stringId) && texts[stringId].hasOwnProperty(this.selectedLanguageCode) && texts[stringId][this.selectedLanguageCode] !== null) {
-        return texts[stringId][this.selectedLanguageCode];
-      } else {
-        return stringId;
-      }
+    t(stringId: string) {
+      return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
     },
     initializeUserChoiceStore(): void {
       // Load initial values in the user choices store.

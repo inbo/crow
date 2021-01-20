@@ -2,7 +2,7 @@
 import config from "./config";
 import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only the "chart" modules need it
 import moment from "moment-timezone";
-import { Profiles, VTPSDataRowFromFile } from './CrowTypes';
+import { LangCode, MultilanguageStringContainer, Profiles, VTPSDataRowFromFile } from './CrowTypes';
 
 import { rgb as colorRgb, RGBColor } from "d3-color";
 
@@ -191,4 +191,12 @@ function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infi
     return ({ "mtr": mtr, "rtr": rtr, "vid": vid, "vir": vir })
 }
 
-export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateBioRad } 
+function translateString(stringId: string, selectedLanguageCode: LangCode, translations: MultilanguageStringContainer): string | null { // TODO: Remove null here after it's also removed from the "MultilanguageString" type (temporary hack to trigger errors on missing translation)
+if (translations.hasOwnProperty(stringId) && translations[stringId].hasOwnProperty(selectedLanguageCode) && translations[stringId][selectedLanguageCode] !== null) {
+    return translations[stringId][selectedLanguageCode];
+  } else {
+    return stringId;
+  }
+}
+
+export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateBioRad, translateString } 
