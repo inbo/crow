@@ -97,7 +97,7 @@ export interface Language {
 }
 
 type MultilanguageString={
-    [index in LangCode]: string;
+    [index in LangCode]: string | null;
   };
 export interface MultilanguageStringContainer {
     [index: string]: MultilanguageString;

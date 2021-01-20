@@ -395,7 +395,7 @@ export default Vue.extend({
     this.baseUrl = this.trimLastSlash(window.location.origin);
   },
   methods: {
-    t(stringId: string): string {
+    t(stringId: string): string | null{
       // Returns a string of text in the current language
       const texts: MultilanguageStringContainer = {
         'Charts will be centered on noon for the selected date.': {
@@ -405,7 +405,11 @@ export default Vue.extend({
         }
       }
 
-      return texts[stringId][this.selectedLanguageCode];
+      if (texts.hasOwnProperty(stringId) && texts[stringId].hasOwnProperty(this.selectedLanguageCode) && texts[stringId][this.selectedLanguageCode] !== null) {
+        return texts[stringId][this.selectedLanguageCode];
+      } else {
+        return stringId;
+      }
     },
     initializeUserChoiceStore(): void {
       // Load initial values in the user choices store.
