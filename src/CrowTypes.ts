@@ -55,8 +55,13 @@ export interface GroupedRadarInterface {
 }
 
 export interface TimeInterval {
-    text: string;
+    stringId: string;
     value: number; // in hours
+}
+
+export interface TimeIntervalForRadioGroup {
+    text: string;
+    value: number;
 }
 
 export interface VTPSDataRowFromFile {

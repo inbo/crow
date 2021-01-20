@@ -9,7 +9,7 @@
               <b-col cols="12" sm="7" lg="12">
                 <b-form-group
                   id="input-date-group"
-                  label="Date:"
+                  :label="t('Date:')"
                   label-for="input-date"
                   :description="t('Charts will be centered on noon for the selected date.')"
                 >
@@ -19,7 +19,7 @@
                         variant="outline-secondary"
                         @click="decrementPeriod"
                       >
-                        -{{ selectedIntervalLabel }}
+                        -{{ t(selectedIntervalStringId) }}
                       </b-button>
                     </b-input-group-prepend>
                     <b-form-input
@@ -34,7 +34,7 @@
                         variant="outline-secondary"
                         @click="incrementPeriod"
                       >
-                        +{{ selectedIntervalLabel }}
+                        +{{ t(selectedIntervalStringId) }}
                       </b-button>
                     </b-input-group-append>
                   </b-input-group>
@@ -44,7 +44,7 @@
               <b-col cols="7" sm="2" lg="6">
                 <b-form-group 
                   id="input-interval-group"
-                  label="Interval:"
+                  :label="t('Interval:')"
                   label-for="input-interval"
                 >
                   <b-form-radio-group
@@ -61,7 +61,7 @@
               <b-col cols="5" sm="3" lg="6">
                 <b-form-group 
                   id="input-timezone-group"
-                  label="Time zone:"
+                  :label="t('Time zone:')"
                   label-for="input-timezone"
                 >
                   <b-form-radio-group
@@ -72,10 +72,10 @@
                     button-variant="outline-secondary"
                   >
                     <b-form-radio value="radarLocal">
-                      Radar
+                      {{ t('Radar') }}
                     </b-form-radio>
                     <b-form-radio value="UTC">
-                      UTC
+                      {{ t('UTC') }}
                     </b-form-radio>
                   </b-form-radio-group>
                 </b-form-group>
@@ -88,7 +88,7 @@
               <b-col cols="5" lg="12">
                 <b-form-group 
                   id="copy-url-group"
-                  label="Share:"
+                  :label="t('Share:')"
                 >
                   <router-link
                     v-slot="{ href }"
@@ -101,7 +101,7 @@
                       size="sm"
                       variant="outline-primary"
                     >
-                      {{ copyUrlButtonText }}
+                      {{ t(copyUrlButtonText) }}
                     </b-button>
                   </router-link>
                 </b-form-group>
@@ -180,7 +180,7 @@ import SunCalc from "suncalc";
 import config from "@/config";
 import helpers from "@/helpers";
 
-import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer } from '@/CrowTypes';
+import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, TimeIntervalForRadioGroup, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer } from '@/CrowTypes';
 import { UserChoicesStore, UserChoicesStoreModule } from '@/store/UserChoicesStore';
 import { ConfigStoreModule } from '@/store/ConfigStore';
 import { mapMutations } from 'vuex';
@@ -255,13 +255,63 @@ export default Vue.extend({
       publicPath: process.env.BASE_URL,
       baseUrl: '',
       copyUrlButtonText: initialCopyUrlText,
-
       texts: {
+        'Date:': {
+          en: 'Date:',
+          fr: 'Date :',
+          nl: 'Datum:'
+        },
+        '1d': {
+          en: '1d',
+          fr: '1j',
+          nl: '1d'
+        },
+        '3d': {
+          en: '3d',
+          fr: '3j',
+          nl: '3d'
+        },
         'Charts will be centered on noon for the selected date.': {
           en: 'Charts will be centered on noon for the selected date.',
           fr: 'Les graphiques seront centrés sur midi pour la date sélectionnée.',
           nl: 'Grafieken worden gecentreerd op de middag voor de geselecteerde datum.'
+        },
+        'Interval:': {
+          en: 'Interval:',
+          fr: 'Intervalle :',
+          nl: null
+        },
+        'Time zone:': {
+          en: 'Time zone:',
+          fr: 'Fuseau horaire :',
+          nl: null
+        },
+        'Radar': {
+          en: 'Radar',
+          fr: 'Radar',
+          nl: null
+        },
+        'UTC': {
+          en: 'UTC',
+          fr: 'UTC',
+          nl: null
+        },
+        'Share:': {
+          en: 'Share:',
+          fr: 'Partager :',
+          nl: null
+        },
+        'Copy link': {
+          en: 'Copy link',
+          fr: 'Copier le lien',
+          nl: null
+        },
+        'Link copied': {
+          en: 'Link copied',
+          fr: 'Le lien a été copié',
+          nl: null
         }
+      
       } as MultilanguageStringContainer
     };
   },
@@ -308,15 +358,17 @@ export default Vue.extend({
         UserChoicesStoreModule.setSelectedIntervalInHours(newValue);
       }
     },
-    availableIntervals(): TimeInterval[] {
-      return ConfigStoreModule.availableIntervals;
+    availableIntervals(): TimeIntervalForRadioGroup[] {
+      return ConfigStoreModule.availableIntervals.map(i => {
+        return {text: this.t(i.stringId), value: i.value}
+      });
     },
 
     todayAsString(): string {
       return new Date().toISOString().split("T")[0];
     },
-    selectedIntervalLabel(): string {
-      return UserChoicesStoreModule.selectedIntervalLabel;
+    selectedIntervalStringId(): string {
+      return UserChoicesStoreModule.selectedIntervalStringId;
     },
     timeZoneToShow(): string {
       return UserChoicesStoreModule.timeZoneToShow;

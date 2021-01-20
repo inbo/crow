@@ -86,12 +86,12 @@ export class UserChoicesStore extends VuexModule {
     }
   }
 
-  get selectedIntervalLabel(): string {
+  get selectedIntervalStringId(): string {
     const found = ConfigStoreModule.availableIntervals.find(
       d => d.value == this.selectedIntervalInHours
     );
 
-    return found ? found.text : "";
+    return found ? found.stringId : "";
   }
 
   get selectedRadarAsObject(): RadarInterface {

@@ -191,7 +191,7 @@ function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infi
     return ({ "mtr": mtr, "rtr": rtr, "vid": vid, "vir": vir })
 }
 
-function translateString(stringId: string, selectedLanguageCode: LangCode, translations: MultilanguageStringContainer): string | null { // TODO: Remove null here after it's also removed from the "MultilanguageString" type (temporary hack to trigger errors on missing translation)
+function translateString(stringId: string, selectedLanguageCode: LangCode, translations: MultilanguageStringContainer): string { 
 if (translations.hasOwnProperty(stringId) && translations[stringId].hasOwnProperty(selectedLanguageCode) && translations[stringId][selectedLanguageCode] !== null) {
     return translations[stringId][selectedLanguageCode];
   } else {
