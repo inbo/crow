@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <navbar />
     <router-view />
     <page-footer />
   </div>
@@ -12,9 +13,10 @@ import 'es6-promise/auto'
 import { Route } from "vue-router";
 import Crow from "@/components/Crow.vue";
 import PageNotFound from "@/components/PageNotFound.vue";
+import Navbar from "@/components/Navbar.vue";
 import PageFooter from "@/components/PageFooter.vue";
 import VueClipboard from "vue-clipboard2";
-import config from "@/config"
+
 Vue.use(VueClipboard);
 Vue.use(VueRouter);
 
@@ -48,6 +50,7 @@ export default Vue.extend({
   store,
   name: "App",
   components: {
+    Navbar,
     PageFooter
   },
 });
