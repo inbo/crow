@@ -4,7 +4,7 @@
     <b-form inline>
       <b-form-group
         id="vp-color-scheme-group"
-        label="Colour scale:"
+        :label="t('Colour scale:')"
         label-for="vp-color-scheme"
       >
         <b-form-select
@@ -76,13 +76,13 @@
           transform="rotate(-90)"
           :y="-margin.left + 20"
           :x="-margin.top - 70"
-        >Height (meters)</text>
+        >{{ t('Height (meters)') }}</text>
         <text
           text-anchor="end"
           transform="rotate(-90)"
           :y="innerWidth + 55"
           :x="margin.top - 70"
-        >Height (feet)</text>
+        >{{ t('Height (feet)') }} </text>
 
         <daily-lines
           :days="daysCovered"
@@ -109,7 +109,10 @@ import {
   VTPSEntry,
   DayData,
   ColorSchemeConfigEntry,
+  LangCode,
+  MultilanguageStringContainer,
 } from "@/CrowTypes";
+import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check <number, number> is correct (multiple generic types)
@@ -224,9 +227,30 @@ export default Vue.extend({
         this.styleConfig.height -
         this.styleConfig.margin.top -
         this.styleConfig.margin.bottom,
+
+      texts: {
+        'Colour scale:': {
+          'en': 'Colour scale:',
+          'fr': 'Palette de couleurs :',
+          'nl': null
+        },
+        'Height (meters)': {
+          'en': 'Height (meters)',
+          'fr': 'Hauteur (mètres)',
+          'nl': null
+        }, 
+        'Height (feet)': {
+          'en': 'Height (feet)',
+          'fr': 'Hauteur (pieds)',
+          'nl': null
+        },
+      } as MultilanguageStringContainer
     };
   },
   computed: {
+    selectedLanguageCode(): LangCode {
+      return UserChoicesStoreModule.selectedLanguageCode;
+    },
     selectedColorSchemeConfig: function (): ColorSchemeConfigEntry {
       const found = this.availableColorSchemes.find(
         (e) => e.value === this.selectedColorSchemeIdentifier
@@ -325,6 +349,9 @@ export default Vue.extend({
     },
   },
   methods: {
+    t(stringId: string) {
+      return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
+    },
     getDaysInRange: function (
       startTimestamp: number,
       stopTimestamp: number,

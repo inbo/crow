@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { LangCode } from "@/CrowTypes";
+import { LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 import helpers from "@/helpers";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import Vue from "vue";
@@ -44,7 +44,7 @@ export default Vue.extend({
           fr: 'version',
           nl: null
         },
-      }
+      } as MultilanguageStringContainer
     }
   },
   computed: {

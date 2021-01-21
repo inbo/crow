@@ -120,9 +120,8 @@
               @color-scheme-changed="vpColorSchemeChanged"
             >
               <template #header>
-                <p class="small">
-                  This chart shows <strong>bird density</strong> (colour) as a function of time (x-axis) and height above the ground (y-axis). The BirdTAM colour scale is tailored to aviation.
-                </p>
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <p class="small" v-html="t('vp_chart_short_description')" />
               </template>
 
               <template #in-x-axis-group>
@@ -145,9 +144,8 @@
               @mode-changed="vpiModeChanged"
             >
               <template #header>
-                <p class="small">
-                  This chart shows the same information, but sums bird densities over height, thus giving a rough idea of the <strong>total number of birds</strong> in the sky at any given moment.
-                </p>
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <p class="small" v-html="t('vpi_chart_short_description')" />
               </template>
 
               <template #in-x-axis-group>
@@ -309,6 +307,16 @@ export default Vue.extend({
         'Link copied': {
           en: 'Link copied',
           fr: 'Le lien a été copié',
+          nl: null
+        },
+        'vp_chart_short_description': {
+          en: 'This chart shows <strong>bird density</strong> (colour) as a function of time (x-axis) and height above the ground (y-axis). The BirdTAM colour scale is tailored to aviation.',
+          fr: "Ce graphique montre la <strong>densité d'oiseaux</strong> en fonction du temps (axe x) et de la hauteur par rapport au sol (axe y). La palette de couleurs BirdTAM est conçue pour l'aviation.",
+          nl: null
+        },
+        'vpi_chart_short_description': {
+          en: 'This chart shows the same information, but sums bird densities over height, thus giving a rough idea of the <strong>total number of birds</strong> in the sky at any given moment.',
+          fr: "Ce graphique montre les mêmes informations, mais en additionant les densités par hauteur, ce qui donne une idée générale du <strong>nombre total d'oiseaux</strong> dans le ciel à un moment donné." ,
           nl: null
         }
       

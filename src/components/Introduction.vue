@@ -48,7 +48,7 @@ export default Vue.extend({
         },
         'Weather radars do not only detect rain, but also birds in the sky. By extracting these bird detections, researchers can study their migration.': {
           en: 'Weather radars do not only detect rain, but also birds in the sky. By extracting these bird detections, researchers can study their migration.',
-          fr: "Les radars météo sont capables de détecter non seulement la pluie, mais aussi les mouvements des oiseaux. En extrayant de ces données, les scientifiques peuvent etudier leurs migrations.",
+          fr: "Les radars météo sont capables de détecter non seulement la pluie, mais aussi les mouvements des oiseaux. Grace à ces données, les scientifiques peuvent etudier les migrations aviaires.",
           nl: null
         },
         'This is especially useful for studying songbirds, which migrate at night.': {
