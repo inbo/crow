@@ -1,25 +1,7 @@
 <template>
   <div id="app">
     <router-view />
-    <footer>
-      <b-container>
-        <b-row>
-          <b-col lg>
-            Created by the
-            <a href="https://oscibio.inbo.be">Open science lab for biodiversity</a>
-          </b-col>
-          <b-col 
-            lg 
-            class="text-right"
-          >
-            <a href="https://github.com/inbo/crow/">Source code</a> version
-            <code>
-              <a :href="'https://github.com/inbo/crow/tree/' + commitHash()">{{ commitHash() }}</a>
-            </code>
-          </b-col>
-        </b-row>
-      </b-container>
-    </footer>
+    <page-footer />
   </div>
 </template>
 
@@ -30,6 +12,7 @@ import 'es6-promise/auto'
 import { Route } from "vue-router";
 import Crow from "@/components/Crow.vue";
 import PageNotFound from "@/components/PageNotFound.vue";
+import PageFooter from "@/components/PageFooter.vue";
 import VueClipboard from "vue-clipboard2";
 import config from "@/config"
 Vue.use(VueClipboard);
@@ -60,17 +43,13 @@ const router = new VueRouter({
   routes
 });
 
-declare const __COMMIT_HASH__: string;
-
 export default Vue.extend({
   router,
   store,
   name: "App",
-  methods: {
-    commitHash: function (): string {
-      return __COMMIT_HASH__;
-    }
-  }
+  components: {
+    PageFooter
+  },
 });
 </script>
 
