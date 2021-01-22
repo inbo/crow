@@ -4,7 +4,7 @@
     <b-form inline>
       <b-form-group
         id="vpi-display-mode-group"
-        label="Show:"
+        :label="t('Variable:')"
         label-for="vpi-display-mode"
       >
         <b-form-select
@@ -12,9 +12,9 @@
           v-model="selectedMode"
           size="sm"
           class="mx-3"
-          :options="availableModes"
+          :options="availableModesTranslated"
           value-field="propertyName"
-          text-field="longLabel"
+          text-field="descriptionCurrentLanguage"
         />
       </b-form-group>
     </b-form>
@@ -113,18 +113,23 @@ import DailyLines from "@/components/DailyLines.vue";
 
 import helpers from "@/helpers";
 
-import { DayData, VPIEntry, IntegratedPropertyName } from "@/CrowTypes";
+import { DayData, VPIEntry, IntegratedPropertyName, LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 
 import TWEEN from "@tweenjs/tween.js";
+import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 
 type NullableNumber = number | null;
 type NullableVPIEntry = VPIEntry | null;
 
 interface DisplayMode {
   propertyName: IntegratedPropertyName; // the name of the property (on vpiData[].integratedProfiles) where data can be found. Can be used as an ID
-  label: string; // appears as legend of the Y axis and in popover
-  longLabel: string; // appears in <select>
+  variableName: string; // appears as legend of the Y axis and in popover
+  variableDescriptionId: string; // to appear in <select> (after i18n mechanism)
   yMaxValComputedName: "maxMTRWithMinimum" | "maxRTR" | "maxVID" | "maxVIR"; // the name of a computed property to get the max value for the Y Axis
+}
+
+interface DisplayModeTranslated extends DisplayMode {
+  descriptionCurrentLanguage: string
 }
 
 interface VPIEntryForPath {
@@ -186,30 +191,58 @@ export default Vue.extend({
       selectedMode: this.mode,
       availableModes: [
         {
-          label: "Migration traffic rate (MTR)",
-          longLabel: "Migration traffic rate (MTR): number of birds/km/h",
+          variableName: "Migration traffic rate (MTR)",
+          variableDescriptionId: "mtr_description",
           propertyName: "mtr",
           yMaxValComputedName: "maxMTRWithMinimum",
         },
         {
-          label: "Reflectivity traffic rate (RTR)",
-          longLabel: "Reflectivity traffic rate (RTR): reflected bird square cm/km/h",
+          variableName: "Reflectivity traffic rate (RTR)",
+          variableDescriptionId: "rtr_description",
           propertyName: "rtr",
           yMaxValComputedName: "maxRTR",
         },
         {
-          label: "Vertically integrated density (VID)",
-          longLabel: "Vertically integrated density (VID): number of birds/square km",
+          variableName: "Vertically integrated density (VID)",
+          variableDescriptionId: "vid_description",
           propertyName: "vid",
           yMaxValComputedName: "maxVID",
         },
         {
-          label: "Vertically integrated reflectivity (VIR)",
-          longLabel: "Vertically integrated reflectivity (VIR): reflected bird square cm/square km",
+          variableName: "Vertically integrated reflectivity (VIR)",
+          variableDescriptionId: "vir_description",
           propertyName: "vir",
           yMaxValComputedName: "maxVIR",
         },
       ] as DisplayMode[],
+
+      texts: {
+        'Variable:': {
+          en: 'Variable:',
+          fr: 'Variable :',
+          nl: null
+        },
+        'mtr_description': {
+          en: 'Migration traffic rate (MTR): number of birds/km/h',
+          fr: "Migration traffic rate (MTR): nombre d'oiseaux/km/h",
+          nl: null
+        },
+        'rtr_description': {
+          en: 'Reflectivity traffic rate (RTR): reflected bird square cm/km/h',
+          fr: 'Reflectivity traffic rate (RTR): rélexion des oiseaux - carré cm/km/h', // TODO: fix FR translation - I don't understand the (EN) description yet
+          nl: null
+        },
+        'vid_description': {
+          en: 'Vertically integrated density (VID): number of birds/square km',
+          fr: "Vertically integrated density (VID): nombre d'oiseaux/carré km", // TODO: fix FR translation - I don't understand the (EN) description yet
+          nl: null
+        },
+        'vir_description': {
+          en: 'Vertically integrated reflectivity (VIR): reflected bird square cm/square km',
+          fr: 'Vertically integrated reflectivity (VIR): rélexion des oiseaux carré cm/carré km', // TODO: fix FR translation - I don't understand the (EN) description yet
+          nl: null
+        }
+      } as MultilanguageStringContainer,
 
       margin: this.styleConfig.margin,
 
@@ -239,6 +272,12 @@ export default Vue.extend({
     };
   },
   computed: {
+    availableModesTranslated(): DisplayModeTranslated[] {
+      return this.availableModes.map(mode => ({...mode, descriptionCurrentLanguage: this.t(mode.variableDescriptionId)}))
+    },
+    selectedLanguageCode(): LangCode {
+      return UserChoicesStoreModule.selectedLanguageCode;
+    },
     selectedModePrecision(): number {
       switch (this.selectedMode) {
         case "vid":
@@ -336,7 +375,7 @@ export default Vue.extend({
       return this.selectedModeObject.propertyName;
     },
     selectedModeLabel: function (): string {
-      return this.selectedModeObject.label;
+      return this.selectedModeObject.variableName;
     },
     selectedModeObject: function (): DisplayMode {
       const found = this.availableModes.find(
@@ -408,12 +447,14 @@ export default Vue.extend({
     },
   },
   methods: {
+    t(stringId: string) {
+      return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
+    },
     animate(): void {
       if (TWEEN.update(TWEEN.now())) {
         requestAnimationFrame(this.animate);
       }
     },
-
     syncVPIDataForPath(): void {
       // We smoothly update each entry in vpiDataForPath, based on selectedModePropertyName and vpiData
       // 1. Remove outdated entries first, so the index don't change later on (tween's callbacks, ...)
