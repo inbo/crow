@@ -74,6 +74,10 @@ main {
   border-bottom: 1px solid #e9ecef;
 }
 
+.bg-dark {
+  background-color: #2c2c2c!important; /* Slightly darker than #343a4f to improve contrast with text */
+}
+
 footer {
   border-top: 5px solid #e9ecef;
   font-size: 0.9rem;
