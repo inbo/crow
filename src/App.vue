@@ -57,11 +57,6 @@ export default Vue.extend({
 </script>
 
 <style>
-.navbar {
-  background-color: white;
-  border-bottom: 1px solid #e9ecef;
-}
-
 main {
   min-height: calc(
     100vh - 54px
@@ -73,16 +68,20 @@ main {
   max-width: 1400px; /* Increase from default 1140px to allow space for chart */
 }
 
+/* Colours and style */
+.navbar {
+  background-color: white!important;
+  border-bottom: 1px solid #e9ecef;
+}
+
 footer {
-  background-color: #3c3c3c;
-  border-top: 5px solid #bcbcbc;
-  color: #bcbcbc;
+  border-top: 5px solid #e9ecef;
   font-size: 0.9rem;
   padding: 15px 0;
-}
-footer a,
-footer a:hover,
-footer a:visited {
-  color: white;
-}
+  }
+  footer a,
+  footer a:hover,
+  footer a:visited {
+    color: white;
+  }
 </style>
