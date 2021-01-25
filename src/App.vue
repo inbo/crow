@@ -57,6 +57,11 @@ export default Vue.extend({
 </script>
 
 <style>
+.navbar {
+  background-color: white;
+  border-bottom: 1px solid #e9ecef;
+}
+
 main {
   min-height: calc(
     100vh - 54px

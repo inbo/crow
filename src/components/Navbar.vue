@@ -1,15 +1,14 @@
 <template>
-  <b-container fluid>
-    <b-navbar variant="light">
-      <b-navbar-brand href="#">
-        <h2>{{ t("Birds detected by weather radars") }}</h2>
+  <b-navbar type="light">
+    <b-container>
+      <b-navbar-brand>
+        {{ t("Birds detected by weather radars") }}
       </b-navbar-brand>
-
       <b-navbar-nav class="ml-auto">
-        <language-selector />
+        <language-selector/>
       </b-navbar-nav>
-    </b-navbar>
-  </b-container>
+    </b-container>
+  </b-navbar>
 </template>
 
 <script lang="ts">
@@ -47,5 +46,4 @@ export default Vue.extend({
     },
   }
 });
-
 </script>
