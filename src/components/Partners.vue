@@ -8,16 +8,22 @@
         <p>
           The bird detection is based on the algorithm described in Dokter et al. (<a href="https://doi.org/10.1098/rsif.2010.0116">2011</a>, <a href="https://doi.org/10.1111/ecog.04028">2019</a>).
         </p>
+        <p class="logos">
+          <img src="logo/inbo.svg" width="30%">
+          <img src="logo/rmi.svg" width="15%">
+          <img src="logo/rbins.png" width="30%">
+          <img src="logo/belspo.png" width="15%">
+        </p>
       </b-col>
       <b-col lg>
         <p>Radar data provided by:</p>
         <ul>
-          <li><a href="https://www.meteo.be/">Royal Meteorological Institute of Belgium (RMI)</a> (Jabbeke, Wideumont)</li>
+          <li><a href="https://www.meteo.be/">Royal Meteorological Institute of Belgium (RMI)</a> (Jabbeke & Wideumont)</li>
           <li><a href="https://www.vmm.be/">Flemish Environment Agency (VMM)</a> (Helchteren)</li>
           <li><a href="https://www.skeyes.be/">Skeyes</a> (Zaventem)</li>
-          <li><a href="https://www.knmi.nl/">Royal Netherlands Meteorological Institute (KMNI)</a> (Herwijnen, Den Helder)</li>
-          <li><a href="https://www.dwd.de/">Deutscher Wetterdienst (DWD)</a> (Essen, Neuheilenbach)</li>
-          <li><a href="http://www.meteofrance.fr/">Météo-France</a> (Abbeville, Avesnois)</li>
+          <li><a href="https://www.knmi.nl/">Royal Netherlands Meteorological Institute (KMNI)</a> (Herwijnen & Den Helder)</li>
+          <li><a href="https://www.dwd.de/">Deutscher Wetterdienst (DWD)</a> (Essen & Neuheilenbach)</li>
+          <li><a href="http://www.meteofrance.fr/">Météo-France</a> (Abbeville & Avesnois)</li>
         </ul>
       </b-col>
     </b-row>
@@ -56,3 +62,8 @@ export default Vue.extend({
 });
 </script>
 
+<style>
+.logos img {
+  padding: 0 0.5em;
+}
+</style>
