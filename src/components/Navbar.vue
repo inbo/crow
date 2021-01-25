@@ -1,5 +1,5 @@
 <template>
-  <b-navbar type="light">
+  <b-navbar type="light" variant="light">
     <b-container>
       <b-navbar-brand>
         {{ t("Birds detected by weather radars") }}
