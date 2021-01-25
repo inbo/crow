@@ -1,9 +1,7 @@
 <template>
-  <b-list-group horizontal="md">
-    <b-list-group-item v-for="lang in availableLanguages" :key="lang.code" :active="lang.code === selectedLanguageCode" @click="selectedLanguageCode = lang.code">
-      <small>{{ lang.label }}</small>
-    </b-list-group-item>
-  </b-list-group>
+  <b-nav-item-dropdown text="Language">
+    <b-dropdown-item v-for="lang in availableLanguages" :key="lang.code" :active="lang.code === selectedLanguageCode" @click="selectedLanguageCode = lang.code">{{ lang.label }}</b-dropdown-item>
+  </b-nav-item-dropdown>
 </template>
 
 <script lang="ts">
