@@ -102,7 +102,7 @@ export default Vue.extend({
 
 <style scoped>
 .radar-circle-unselected {
-  fill: grey;
+  fill: #6c757d; /* cf. text-muted */
 }
 
 .radar-circle-unselected:hover {
