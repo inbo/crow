@@ -160,6 +160,7 @@
         </b-col>
       </b-row>
     </b-container>
+    <Partners />
   </main>
 </template>
 
@@ -170,6 +171,7 @@ import VPIChart from "@/components/VPIChart.vue";
 import SiteSelector from "@/components/SiteSelector.vue";
 import TimelineChart from "@/components/TimelineChart.vue";
 import Introduction from "@/components/Introduction.vue";
+import Partners from "@/components/Partners.vue";
 
 import moment from "moment-timezone";
 import axios from "axios";
@@ -205,7 +207,8 @@ export default Vue.extend({
     VPChart,
     VPIChart,
     TimelineChart,
-    Introduction
+    Introduction,
+    Partners
   },
   props: {
     radarValueProp: {
