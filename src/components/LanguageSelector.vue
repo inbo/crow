@@ -1,6 +1,8 @@
 <template>
   <b-nav-item-dropdown :text="t('Language')">
-    <b-dropdown-item v-for="lang in availableLanguages" :key="lang.code" :active="lang.code === selectedLanguageCode" @click="selectedLanguageCode = lang.code">{{ lang.label }}</b-dropdown-item>
+    <b-dropdown-item v-for="lang in availableLanguages" :key="lang.code" :active="lang.code === selectedLanguageCode" @click="selectedLanguageCode = lang.code">
+      {{ lang.label }}
+    </b-dropdown-item>
   </b-nav-item-dropdown>
 </template>
 

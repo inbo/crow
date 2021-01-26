@@ -5,7 +5,7 @@
         {{ t("Birds detected by weather radars") }}
       </b-navbar-brand>
       <b-navbar-nav class="ml-auto">
-        <language-selector/>
+        <language-selector />
       </b-navbar-nav>
     </b-container>
   </b-navbar>

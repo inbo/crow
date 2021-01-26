@@ -3,6 +3,7 @@
     <b-container>
       <b-row>
         <b-col lg>
+          <!-- eslint-disable-next-line vue/no-v-html -->
           <span v-html="t('created_message_with_link')" />
         </b-col>
         <b-col lg class="text-right">
