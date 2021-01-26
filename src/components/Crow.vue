@@ -139,7 +139,7 @@
               :vpi-data="integratedProfiles"
               :style-config="VPIChartStyle"
               :show-time-as="timeZoneToShow"
-              :data-temporal-resolution="dataTemporalResolution"
+              :app-temporal-resolution="appTemporalResolution"
               :mode="VPIChartMode"
               @mode-changed="vpiModeChanged"
             >
@@ -247,6 +247,7 @@ export default Vue.extend({
       TimelineChartStyle: config.TimelineChartStyle,
 
       dataTemporalResolution: config.vtpsFormat.temporalResolution as number,
+      appTemporalResolution: config.appTemporalResolution as number,
       availableHeights: config.vtpsFormat.availableHeights as number[],
 
       // Data is kept as an object for performance reasons, the "radarVtpsAsArray" computed property allows reading it as an array.
@@ -490,7 +491,7 @@ export default Vue.extend({
       this.copyUrlButtonText = 'Link copied';
     },
     /* Initialize radarVtps with empty data 
-       - The temporal range is [startMoment, endMoment] (resolution: dataTemporalResolution - in seconds)
+       - The temporal range is [startMoment, endMoment] (resolution: appTemporalResolution - in seconds)
        - Heights follow availableHeights
     */
     initializeEmptyData(): void {
@@ -521,7 +522,7 @@ export default Vue.extend({
           metadataObj
         );
 
-        currentMoment.add(this.dataTemporalResolution, "seconds");
+        currentMoment.add(this.appTemporalResolution, "seconds");
       }
     },
 
@@ -557,7 +558,7 @@ export default Vue.extend({
     storeDataRow(vtpsDataRow: VTPSDataRowFromFile): void {
       const objToStore = { ...vtpsDataRow, ...{ noData: false } };
 
-      if (
+      if ( // no (datetime) slot = data not copied. Allow automatic downsampling.
         Object.prototype.hasOwnProperty.call(
           this.radarVtps,
           vtpsDataRow.datetime
@@ -573,18 +574,18 @@ export default Vue.extend({
 
     getDatesForData(startMoment: moment.Moment, stopMoment: moment.Moment): string[] {
       // List the dates for which we'll need to load the data (according to startMoment and stopMoment)
-      // Take into account the data temporal resolution and the upper limit (if resolution is 5 min and data shown until midgnight = data loaded until 23:55)
+      // Take into account the app temporal resolution and the upper limit (if resolution is 5 min and data shown until midgnight = data loaded until 23:55)
       //
       // Returns an array of strings in the 'YYYY-MM-DD' format
       startMoment = startMoment.utc() // Data files are in UTC
-      stopMoment = stopMoment.subtract(this.dataTemporalResolution, "seconds").utc();
+      stopMoment = stopMoment.subtract(this.appTemporalResolution, "seconds").utc();
 
       var dateArray: Set<string> = new Set;
       var currentDate = startMoment;
 
       while (currentDate <= stopMoment) {
         dateArray.add(moment(currentDate).format('YYYY-MM-DD'))
-        currentDate = moment(currentDate).add(this.dataTemporalResolution, "seconds");
+        currentDate = moment(currentDate).add(this.appTemporalResolution, "seconds");
       }
       return Array.from(dateArray);
     },

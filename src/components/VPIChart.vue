@@ -182,7 +182,7 @@ export default Vue.extend({
     vpiData: Array as () => VPIEntry[],
     styleConfig: Object,
     showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")
-    dataTemporalResolution: Number,
+    appTemporalResolution: Number,
     mode: String as () => IntegratedPropertyName,
   },
   data: function () {
@@ -397,7 +397,7 @@ export default Vue.extend({
     },
     maxMomentPlusOne: function (): moment.Moment {
       // TODO: duplicate code in other charts ! Mixin? Helper?
-      return this.maxMoment.clone().add(this.dataTemporalResolution, "seconds");
+      return this.maxMoment.clone().add(this.appTemporalResolution, "seconds");
     },
     xScale: function (): d3.ScaleTime<number, number> {
       return d3
