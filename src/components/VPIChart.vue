@@ -25,6 +25,7 @@
       id="new-vpi-chart"
       :width="styleConfig.width"
       :height="styleConfig.height"
+      class="d-block mx-auto"
     >
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <!-- X axis -->

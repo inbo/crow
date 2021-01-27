@@ -28,6 +28,7 @@
       id="vp-chart" 
       :width="styleConfig.width" 
       :height="styleConfig.height"
+      class="d-block mx-auto"
     >
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <g :transform="`translate(0, ${innerHeight})`">
@@ -209,7 +210,7 @@ export default Vue.extend({
           dailyLinesColor: "green",
           colorScale: d3
             .scaleOrdinal<number, string>()
-            // BIRDTAM RGB-kleuren = [1 1 1; .9 1 .9; .8 1 .8; .7 1 .7; .6 1 .6; 0 1 0; 1 1 0; 1 .7 .7; 1 0 0; .2 .2 .2;];
+            // BIRDTAM RGB-colours = [1 1 1; .9 1 .9; .8 1 .8; .7 1 .7; .6 1 .6; 0 1 0; 1 1 0; 1 .7 .7; 1 0 0; .2 .2 .2;];
             .range(this.styleConfig.birdtamColors.values())
             .domain(this.styleConfig.birdtamColors.keys()),
           dynamicDomain: false,
