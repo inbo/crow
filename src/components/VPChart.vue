@@ -82,8 +82,8 @@
           text-anchor="end"
           transform="rotate(-90)"
           :y="innerWidth + 55"
-          :x="margin.top - 70"
-        >{{ t("Height (feet)") }} </text>
+          :x="-margin.top - 70"
+        >{{ t("Height (feet)") }}</text>
 
         <daily-lines
           :days="daysCovered"
