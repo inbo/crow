@@ -106,14 +106,14 @@ export default Vue.extend({
 }
 
 .radar-circle-unselected:hover {
-  fill: black;
+  fill: #007bff;
 }
 
 .radar-circle-selected {
-  fill: #007aff;
+  fill: #007bff;
 }
 
 #country {
-  fill: #bdd3e5; /* TODO: move style config to config.ts + factorize (same blue than VPI area color) */
+  fill: #cfe2ff; /* TODO: move style config to config.ts + is currently bootstrap primary background */
 }
 </style>
