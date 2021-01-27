@@ -2734,7 +2734,7 @@ const styleConfig = {
     [9, "#333333"],
   ]),
 
-  axisTimeFormat: " HH:mm z",
+  axisTimeFormat: "HH:mm z",
   tooltipTimeFormat: "MMM D - HH:mm z",
 
   yAxisLeftTicks: [0, 1000, 2000, 3000, 4000] // Let's not show all altitudes (too crowded)
