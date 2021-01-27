@@ -1,7 +1,13 @@
-const svgWidth = 72 * (60 / 5) + globalChartMarginLeft + globalChartMarginRight; // 72 = max number of visible hours (see availableTimeIntervals). 5 = duration in minutes of a period (=vtpsData.temporalResolution)
 import moment from "moment";
 import { ColorSchemeIdentifier, GroupedRadarInterface, IntegratedPropertyName, LangCode, Language, TimeDisplayedAsValue, TimeInterval } from "./CrowTypes";
 
+const globalChartMarginLeft = 65; // In-svg margin used for axis and legend
+const globalChartMarginRight = 60; // In-svg margin used for axis and legend
+const svgWidth = 72 * (60 / 10 * 1.5) + globalChartMarginLeft + globalChartMarginRight;
+// The chart width (svgWidth) should have enough pixels to display:
+// - max number of visible hours (72, see availableTimeIntervals)
+// - resolution per hour (60 / appTemporalResolution in minutes)
+// - an optional multiplier to scale up or down (1.5)
 
 export default {
   dataServerUrl: "https://opendata.meteo.be/ftp/observations/radar/vbird",
