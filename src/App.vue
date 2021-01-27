@@ -11,7 +11,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import "es6-promise/auto"
 import { Route } from "vue-router";
-import Crow from "@/components/Crow.vue";
+import Home from "@/components/Home.vue";
 import PageNotFound from "@/components/PageNotFound.vue";
 import Navbar from "@/components/Navbar.vue";
 import PageFooter from "@/components/PageFooter.vue";
@@ -23,11 +23,11 @@ Vue.use(VueRouter);
 import store from "./store/index";
 
 const routes = [
-  // The main route accept the following parameters that will be passed to Crow:
+  // The main route accept the following parameters that will be passed to Home:
   // - radar
   {
     path: "/",
-    component: Crow,
+    component: Home,
     props: (route: Route): unknown => ({
       radarValueProp: route.query.radar,
       dateValueProp: route.query.date,
