@@ -21,7 +21,7 @@
         <template #title>
           {{ formatMoment(period.moment) }}
         </template>
-        {{ period.name | capitalize }} (solar elevation: {{ period.sunAltitude | round2decimals }}°)
+        {{ period.localizedName | capitalize }} ({{ t('solar elevation angle') }} : {{ period.sunAltitude | round2decimals }}°)
       </b-popover>
     </template>
   </g>
@@ -34,13 +34,14 @@
 import Vue from "vue";
 import * as d3 from "d3";
 import moment from "moment-timezone";
-import { Period } from "@/CrowTypes";
+import { LangCode, MultilanguageStringContainer, Period } from "@/CrowTypes";
 import helpers from "@/helpers";
+import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 
 interface DisplayablePeriod extends Period {
   x: number;
   class: string;
-  name: string;
+  localizedName: string;
 }
 
 export default Vue.extend({
@@ -74,10 +75,36 @@ export default Vue.extend({
       innerHeight:
         this.styleConfig.height -
         this.styleConfig.margin.top -
-        this.styleConfig.margin.bottom
+        this.styleConfig.margin.bottom,
+
+      texts: {
+        'twilight': {
+          en: 'twilight',
+          fr: 'crépuscule',
+          nl: 'schemering'
+        },
+        'day': {
+          en: 'day',
+          fr: 'jour',
+          nl: 'dag'
+        },
+        'night': {
+          en: 'night',
+          fr: 'nuit',
+          nl: 'nacht'
+        },
+        'solar elevation angle': {
+          en: 'solar elevation angle',
+          fr: "angle d'élévation solaire",
+          nl: "zonnestand"
+        }
+      } as MultilanguageStringContainer
     };
   },
   computed: {
+    selectedLanguageCode(): LangCode {
+      return UserChoicesStoreModule.selectedLanguageCode;
+    },
     xScale: function (): d3.ScaleTime<number, number> {
       return d3
         .scaleTime<number, number>()
@@ -91,7 +118,7 @@ export default Vue.extend({
         ...period,
         x: Math.round(scale(period.moment.valueOf())),
         class: this.getPeriodClass(period.sunAltitude),
-        name: this.getPeriodName(period.sunAltitude)
+        localizedName: this.t(this.getPeriodNameId(period.sunAltitude))
       }));
     },
     periodWidth: function (): number {
@@ -121,6 +148,9 @@ export default Vue.extend({
     this.uuid = helpers.uuidv4();
   },
   methods: {
+    t(stringId: string) {
+      return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
+    },
     formatMoment(m: moment.Moment): string {
       return helpers.formatMoment(
         m,
@@ -129,9 +159,9 @@ export default Vue.extend({
       );
     },
     getPeriodClass(sunAltitude: number): string {
-      return helpers.makeSafeForCSS(this.getPeriodName(sunAltitude));
+      return helpers.makeSafeForCSS(this.getPeriodNameId(sunAltitude));
     },
-    getPeriodName(sunAltitude: number): string {
+    getPeriodNameId(sunAltitude: number): string {
       if (sunAltitude >= 0) {
         return "day";
       } else if (sunAltitude < 0 && sunAltitude >= -18) {
