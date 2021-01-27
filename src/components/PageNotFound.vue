@@ -1,9 +1,9 @@
 <template>
-  <b-container class="content">
-    <b-row>
-      <b-col>404: not found</b-col>
-    </b-row>
-  </b-container>
+  <main>
+    <b-container class="mt-3">
+      <p>404: page not found</p>
+    </b-container>
+  </main>
 </template>
 
 <script lang="ts">
