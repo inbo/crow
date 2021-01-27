@@ -17,11 +17,11 @@ export default Vue.extend({
   name: "LanguageSelector",
   data: function() {
     return {
-      'texts': {
-        'Language': {
-          en: 'Language',
-          fr: 'Langue',
-          nl: 'Taal'
+      "texts": {
+        "Language": {
+          en: "Language",
+          fr: "Langue",
+          nl: "Taal"
         }
       } as MultilanguageStringContainer
     }

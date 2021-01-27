@@ -28,19 +28,19 @@ export default Vue.extend({
   data: function () {
     return {
       texts: {
-        'created_message_with_link': {
+        "created_message_with_link": {
           en: 'Created by the <a href="https://oscibio.inbo.be">Open science lab for biodiversity</a>',
           fr: 'Créé par <a href="https://oscibio.inbo.be">Open science lab for biodiversity</a>',
           nl: null
         },
-        'Source code': {
-          en: 'Source code',
-          fr: 'Code source',
+        "Source code": {
+          en: "Source code",
+          fr: "Code source",
           nl: null
         },
-        'version': {
-          en: 'version',
-          fr: 'version',
+        "version": {
+          en: "version",
+          fr: "version",
           nl: null
         },
       } as MultilanguageStringContainer

@@ -1,8 +1,7 @@
+import { ConfigStore } from "./ConfigStore";
+import { UserChoicesStore } from "./UserChoicesStore";
 
-import { ConfigStore } from './ConfigStore';
-import { UserChoicesStore } from './UserChoicesStore';
-
-import Vue from 'vue'
+import Vue from "vue"
 import Vuex from "vuex"
 
 Vue.use(Vuex)

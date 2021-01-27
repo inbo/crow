@@ -1,12 +1,12 @@
-import config from '@/config';
-import { GroupedRadarInterface, LangCode, RadarInterface, TimeDisplayedAsValue } from '@/CrowTypes';
-import moment from 'moment';
+import config from "@/config";
+import { GroupedRadarInterface, LangCode, RadarInterface, TimeDisplayedAsValue } from "@/CrowTypes";
+import moment from "moment";
 import { getModule, Module, Mutation, VuexModule } from "vuex-module-decorators";
 import { ConfigStoreModule } from "./ConfigStore";
 
-import store from './index';
+import store from "./index";
 
-@Module({ dynamic: true, store, name: 'userChoices' })
+@Module({ dynamic: true, store, name: "userChoices" })
 export class UserChoicesStore extends VuexModule {
   // The "real" variable initialization (based on the URL OR, by default, on the config file) happens in the CROW component
   // We kinda duplicate part of this initialization here for two specific reasons:
@@ -15,10 +15,10 @@ export class UserChoicesStore extends VuexModule {
   //
   // (selectedLanguageCode: the real initialization happens here because it's not available in the router)
 
-  selectedDate = ''
+  selectedDate = ""
   selectedRadarCode = config.initialRadarValue;
   selectedIntervalInHours = config.initialTimeInterval;  // The chart show this amount of hours around selectedDate at noon
-  timeDisplayedAs: TimeDisplayedAsValue = 'radarLocal'
+  timeDisplayedAs: TimeDisplayedAsValue = "radarLocal"
 
   selectedLanguageCode = config.initialLanguageCode;
 

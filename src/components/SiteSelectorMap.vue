@@ -15,8 +15,8 @@
 import Vue from "vue";
 import * as d3 from "d3";
 import axios from "axios";
-import { GroupedRadarInterface, RadarInterface } from '@/CrowTypes';
-import belgiumGeoJSON from '@/belgium.json';
+import { GroupedRadarInterface, RadarInterface } from "@/CrowTypes";
+import belgiumGeoJSON from "@/belgium.json";
 
 export default Vue.extend({
   name: "SiteSelectorMap",
@@ -27,7 +27,7 @@ export default Vue.extend({
     },
     selectedRadarCode: {
       type: String,
-      default: ''
+      default: ""
     }
   },
   data: function () {

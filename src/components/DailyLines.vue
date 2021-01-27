@@ -26,10 +26,10 @@
 <script lang="ts">
 import Vue from "vue";
 
-import { DayData } from '@/CrowTypes';
+import { DayData } from "@/CrowTypes";
 
 export default Vue.extend({
-  name: 'DailyLine',
+  name: "DailyLine",
   props: {
     days: {
       type: Array as () => DayData[],
@@ -50,15 +50,15 @@ export default Vue.extend({
     },
     lineStyle: function (): Record<string, unknown> {
       return {
-        'stroke-width': 1,
-        'pointer-events': 'none',
-        'stroke': this.color
+        "stroke-width": 1,
+        "pointer-events": "none",
+        "stroke": this.color
       }
     },
     textStyle: function (): Record<string, unknown> {
       return {
-        'font': '12px sans-serif',
-        'fill': this.color
+        "font": "12px sans-serif",
+        "fill": this.color
       }
     }
   }

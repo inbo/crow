@@ -46,7 +46,7 @@ interface DisplayablePeriod extends Period {
 export default Vue.extend({
   filters: {
     capitalize: function (value: string): string {
-      if (!value) return ''
+      if (!value) return ""
       value = value.toString()
       return value.charAt(0).toUpperCase() + value.slice(1)
     },
@@ -62,7 +62,7 @@ export default Vue.extend({
   },
   data: function () {
     return {
-      uuid: '',
+      uuid: "",
 
       margin: this.styleConfig.margin,
 

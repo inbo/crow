@@ -218,29 +218,29 @@ export default Vue.extend({
       ] as DisplayMode[],
 
       texts: {
-        'Variable:': {
-          en: 'Variable:',
-          fr: 'Variable :',
+        "Variable:": {
+          en: "Variable:",
+          fr: "Variable :",
           nl: null
         },
-        'mtr_description': {
-          en: 'Migration traffic rate (MTR): number of birds/km/h',
+        "mtr_description": {
+          en: "Migration traffic rate (MTR): number of birds/km/h",
           fr: "Migration traffic rate (MTR): nombre d'oiseaux/km/h",
           nl: null
         },
-        'rtr_description': {
-          en: 'Reflectivity traffic rate (RTR): reflected bird square cm/km/h',
-          fr: 'Reflectivity traffic rate (RTR): rélexion des oiseaux - carré cm/km/h', // TODO: fix FR translation - I don't understand the (EN) description yet
+        "rtr_description": {
+          en: "Reflectivity traffic rate (RTR): reflected bird square cm/km/h",
+          fr: "Reflectivity traffic rate (RTR): rélexion des oiseaux - carré cm/km/h", // TODO: fix FR translation - I don't understand the (EN) description yet
           nl: null
         },
-        'vid_description': {
-          en: 'Vertically integrated density (VID): number of birds/square km',
+        "vid_description": {
+          en: "Vertically integrated density (VID): number of birds/square km",
           fr: "Vertically integrated density (VID): nombre d'oiseaux/carré km", // TODO: fix FR translation - I don't understand the (EN) description yet
           nl: null
         },
-        'vir_description': {
-          en: 'Vertically integrated reflectivity (VIR): reflected bird square cm/square km',
-          fr: 'Vertically integrated reflectivity (VIR): rélexion des oiseaux carré cm/carré km', // TODO: fix FR translation - I don't understand the (EN) description yet
+        "vir_description": {
+          en: "Vertically integrated reflectivity (VIR): reflected bird square cm/square km",
+          fr: "Vertically integrated reflectivity (VIR): rélexion des oiseaux carré cm/carré km", // TODO: fix FR translation - I don't understand the (EN) description yet
           nl: null
         }
       } as MultilanguageStringContainer,

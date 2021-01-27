@@ -9,7 +9,7 @@
 <script lang="ts">
 import Vue from "vue";
 import VueRouter from "vue-router";
-import 'es6-promise/auto'
+import "es6-promise/auto"
 import { Route } from "vue-router";
 import Crow from "@/components/Crow.vue";
 import PageNotFound from "@/components/PageNotFound.vue";
@@ -20,7 +20,7 @@ import VueClipboard from "vue-clipboard2";
 Vue.use(VueClipboard);
 Vue.use(VueRouter);
 
-import store from './store/index';
+import store from "./store/index";
 
 const routes = [
   // The main route accept the following parameters that will be passed to Crow:

@@ -27,10 +27,10 @@ export default Vue.extend({
   data: function () {
     return {
       texts: {
-        'Birds detected by weather radars': {
-          en: 'Birds detected by weather radars',
-          fr: 'Détection des oiseaux via les radars météo',
-          nl: 'Vogels gedetecteerd door weerradars'
+        "Birds detected by weather radars": {
+          en: "Birds detected by weather radars",
+          fr: "Détection des oiseaux via les radars météo",
+          nl: "Vogels gedetecteerd door weerradars"
         },
       } as MultilanguageStringContainer
     }

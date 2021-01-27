@@ -180,10 +180,10 @@ import SunCalc from "suncalc";
 import config from "@/config";
 import helpers from "@/helpers";
 
-import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, TimeIntervalForRadioGroup, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer } from '@/CrowTypes';
-import { UserChoicesStore, UserChoicesStoreModule } from '@/store/UserChoicesStore';
-import { ConfigStoreModule } from '@/store/ConfigStore';
-import { mapMutations } from 'vuex';
+import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, TimeIntervalForRadioGroup, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer } from "@/CrowTypes";
+import { UserChoicesStore, UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { ConfigStoreModule } from "@/store/ConfigStore";
+import { mapMutations } from "vuex";
 
 interface VTPSDataByHeight {
   [key: number]: VTPSDataRow;
@@ -255,71 +255,71 @@ export default Vue.extend({
       radarVtps: {} as RadarVtpsAsTree,
 
       publicPath: process.env.BASE_URL,
-      baseUrl: '',
+      baseUrl: "",
       copyUrlButtonText: initialCopyUrlText,
       texts: {
-        'Date:': {
-          en: 'Date:',
-          fr: 'Date :',
-          nl: 'Datum:'
+        "Date:": {
+          en: "Date:",
+          fr: "Date :",
+          nl: "Datum:"
         },
-        '1d': {
-          en: '1d',
-          fr: '1j',
-          nl: '1d'
+        "1d": {
+          en: "1d",
+          fr: "1j",
+          nl: "1d"
         },
-        '3d': {
-          en: '3d',
-          fr: '3j',
-          nl: '3d'
+        "3d": {
+          en: "3d",
+          fr: "3j",
+          nl: "3d"
         },
-        'Charts will be centered on noon for the selected date.': {
-          en: 'Charts will be centered on noon for the selected date.',
-          fr: 'Les graphiques seront centrés sur midi pour la date sélectionnée.',
-          nl: 'Grafieken worden gecentreerd op de middag voor de geselecteerde datum.'
+        "Charts will be centered on noon for the selected date.": {
+          en: "Charts will be centered on noon for the selected date.",
+          fr: "Les graphiques seront centrés sur midi pour la date sélectionnée.",
+          nl: "Grafieken worden gecentreerd op de middag voor de geselecteerde datum."
         },
-        'Interval:': {
-          en: 'Interval:',
-          fr: 'Intervalle :',
+        "Interval:": {
+          en: "Interval:",
+          fr: "Intervalle :",
           nl: null
         },
-        'Time zone:': {
-          en: 'Time zone:',
-          fr: 'Fuseau horaire :',
+        "Time zone:": {
+          en: "Time zone:",
+          fr: "Fuseau horaire :",
           nl: null
         },
-        'Radar': {
-          en: 'Radar',
-          fr: 'Radar',
+        "Radar": {
+          en: "Radar",
+          fr: "Radar",
           nl: null
         },
-        'UTC': {
-          en: 'UTC',
-          fr: 'UTC',
+        "UTC": {
+          en: "UTC",
+          fr: "UTC",
           nl: null
         },
-        'Share:': {
-          en: 'Share:',
-          fr: 'Partager :',
+        "Share:": {
+          en: "Share:",
+          fr: "Partager :",
           nl: null
         },
-        'Copy link': {
-          en: 'Copy link',
-          fr: 'Copier le lien',
+        "Copy link": {
+          en: "Copy link",
+          fr: "Copier le lien",
           nl: null
         },
-        'Link copied': {
-          en: 'Link copied',
-          fr: 'Le lien a été copié',
+        "Link copied": {
+          en: "Link copied",
+          fr: "Le lien a été copié",
           nl: null
         },
-        'vp_chart_short_description': {
-          en: 'This chart shows <strong>bird density</strong> (colour) as a function of time (x-axis) and height above the ground (y-axis). The BirdTAM colour scale is tailored to aviation.',
+        "vp_chart_short_description": {
+          en: "This chart shows <strong>bird density</strong> (colour) as a function of time (x-axis) and height above the ground (y-axis). The BirdTAM colour scale is tailored to aviation.",
           fr: "Ce graphique montre la <strong>densité d'oiseaux</strong> en fonction du temps (axe x) et de la hauteur par rapport au sol (axe y). La palette de couleurs BirdTAM est conçue pour l'aviation.",
           nl: null
         },
-        'vpi_chart_short_description': {
-          en: 'This chart shows the same information, but sums bird densities over height, thus giving a rough idea of the <strong>total number of birds</strong> in the sky at any given moment.',
+        "vpi_chart_short_description": {
+          en: "This chart shows the same information, but sums bird densities over height, thus giving a rough idea of the <strong>total number of birds</strong> in the sky at any given moment.",
           fr: "Ce graphique montre les mêmes informations, mais en additionant les densités par hauteur, ce qui donne une idée générale du <strong>nombre total d'oiseaux</strong> dans le ciel à un moment donné." ,
           nl: null
         }
@@ -488,7 +488,7 @@ export default Vue.extend({
       return s.replace(/\/$/, "");
     },
     onCopyUrl(): void {
-      this.copyUrlButtonText = 'Link copied';
+      this.copyUrlButtonText = "Link copied";
     },
     /* Initialize radarVtps with empty data 
        - The temporal range is [startMoment, endMoment] (resolution: appTemporalResolution - in seconds)
@@ -584,7 +584,7 @@ export default Vue.extend({
       var currentDate = startMoment;
 
       while (currentDate <= stopMoment) {
-        dateArray.add(moment(currentDate).format('YYYY-MM-DD'))
+        dateArray.add(moment(currentDate).format("YYYY-MM-DD"))
         currentDate = moment(currentDate).add(this.appTemporalResolution, "seconds");
       }
       return Array.from(dateArray);
@@ -597,7 +597,7 @@ export default Vue.extend({
       endMoment: moment.Moment
     ): void {
       for (let currentDate of this.getDatesForData(startMoment, endMoment)) {
-        const url = this.buildDataUrl(radarName, moment(currentDate, 'YYYY-MM-DD'));
+        const url = this.buildDataUrl(radarName, moment(currentDate, "YYYY-MM-DD"));
         axios.get(url).then(response => {
           const dayData = helpers.parseVtps(response.data);
 
@@ -615,7 +615,7 @@ export default Vue.extend({
       )}/${radarName}_vpts_${selectedDate.format("YYYYMMDD")}.txt`;
     },
     ...mapMutations([
-      'setSelectedIntervalInHours'
+      "setSelectedIntervalInHours"
     ])
   }
 });

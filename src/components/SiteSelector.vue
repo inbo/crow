@@ -8,7 +8,7 @@
       @change="setSelectedRadarCode"
     />
     <b-form-text>
-      {{ selectedRadarLocation }} {{ t('is located at') }}
+      {{ selectedRadarLocation }} {{ t("is located at") }}
       <a
         :href="`http://www.openstreetmap.org/?mlat=${selectedRadarLatitude}&mlon=${selectedRadarLongitude}&zoom=12`"
         target="_blank"
@@ -21,13 +21,13 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { mapMutations } from 'vuex';
+import { mapMutations } from "vuex";
 
 import { GroupedRadarInterface, LangCode, MultilanguageStringContainer, RadarInterface } from "@/CrowTypes";
 
-import { getModule } from 'vuex-module-decorators';
-import { ConfigStoreModule } from '@/store/ConfigStore';
-import { UserChoicesStoreModule } from '@/store/UserChoicesStore';
+import { getModule } from "vuex-module-decorators";
+import { ConfigStoreModule } from "@/store/ConfigStore";
+import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 
 import SiteSelectorMap from "@/components/SiteSelectorMap.vue";
 import helpers from "@/helpers";
@@ -40,14 +40,14 @@ export default Vue.extend({
   data: function() {
     return {
       texts: {
-        'At site:': {
-          en: 'At site:',
-          fr: 'Site :',
+        "At site:": {
+          en: "At site:",
+          fr: "Site :",
           nl: null
         },
-        'is located at': {
-          en: 'is located at:',
-          fr: 'est situé à :',
+        "is located at": {
+          en: "is located at:",
+          fr: "est situé à :",
           nl: null
         }
       } as MultilanguageStringContainer
@@ -78,7 +78,7 @@ export default Vue.extend({
       return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
     },
     ...mapMutations([
-      'setSelectedRadarCode'
+      "setSelectedRadarCode"
     ])
   },
 });

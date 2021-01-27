@@ -77,13 +77,13 @@
           transform="rotate(-90)"
           :y="-margin.left + 20"
           :x="-margin.top - 70"
-        >{{ t('Height (meters)') }}</text>
+        >{{ t("Height (meters)") }}</text>
         <text
           text-anchor="end"
           transform="rotate(-90)"
           :y="innerWidth + 55"
           :x="margin.top - 70"
-        >{{ t('Height (feet)') }} </text>
+        >{{ t("Height (feet)") }} </text>
 
         <daily-lines
           :days="daysCovered"
@@ -230,20 +230,20 @@ export default Vue.extend({
         this.styleConfig.margin.bottom,
 
       texts: {
-        'Colour scale:': {
-          'en': 'Colour scale:',
-          'fr': 'Palette de couleurs :',
-          'nl': null
+        "Colour scale:": {
+          en: "Colour scale:",
+          fr: "Palette de couleurs :",
+          nl: null
         },
-        'Height (meters)': {
-          'en': 'Height (meters)',
-          'fr': 'Hauteur (mètres)',
-          'nl': null
+        "Height (meters)": {
+          en: "Height (meters)",
+          fr: "Hauteur (mètres)",
+          nl: null
         }, 
-        'Height (feet)': {
-          'en': 'Height (feet)',
-          'fr': 'Hauteur (pieds)',
-          'nl': null
+        "Height (feet)": {
+          en: "Height (feet)",
+          fr: "Hauteur (pieds)",
+          nl: null
         },
       } as MultilanguageStringContainer
     };

@@ -76,4 +76,3 @@ TODO: short description + screenshot
 
 - config loaded from config.ts
 - typescript considerations
-

@@ -1,26 +1,26 @@
-import { createLocalVue } from '@vue/test-utils'
-import { BootstrapVue } from 'bootstrap-vue'
-import helpers from '../../src/helpers'
-import { VTPSDataRowFromFile } from '@/CrowTypes';
-import * as Papa from 'papaparse';
+import { createLocalVue } from "@vue/test-utils"
+import { BootstrapVue } from "bootstrap-vue"
+import helpers from "../../src/helpers"
+import { VTPSDataRowFromFile } from "@/CrowTypes";
+import * as Papa from "papaparse";
 const fs = require("fs");
 const path = require("path");
 
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
 
-test('Crow component rendering', () => {
+test("Crow component rendering", () => {
   // Temporary disabling cause it fails
 
   /*const wrapper = mount(Crow, {localVue});
-  expect(wrapper.contains('form')).toBe(true); // It contains a form*/
+  expect(wrapper.contains("form")).toBe(true); // It contains a form*/
 });
 
 function round3decimals(num: number): number {
   return Math.round((num + Number.EPSILON) * 1000) / 1000
 }
 
-test('Profile integration code (compare to bioRad output)', () => {
+test("Profile integration code (compare to bioRad output)", () => {
   // 1. Load and parse the data
   // 1.1 From VTPS file
   const sourceData = fs.readFileSync(path.resolve(__dirname, "./data/behel_vpts_20200129.truncated.txt"), "utf-8");
