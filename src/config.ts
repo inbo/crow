@@ -108,8 +108,8 @@ export default {
     axisTimeFormat: "HH:mm z",
     tooltipTimeFormat: "MMM D - HH:mm z",
 
-    strokeColor: "steelblue",
-    fillColor: "#bdd3e5",
+    strokeColor: "#007bff", // Bootstrap link colour
+    fillColor: "#cfe2ff", // Bootstrap primary background colour
     strokeWidth: 1,
 
     showTooltip: true,

@@ -114,6 +114,6 @@ export default Vue.extend({
 }
 
 #country {
-  fill: #cfe2ff; /* TODO: move style config to config.ts + is currently bootstrap primary background */
+  fill: #cfe2ff; /* Bootstrap primary background colour TODO: move style config to config.ts */
 }
 </style>
