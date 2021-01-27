@@ -233,17 +233,17 @@ export default Vue.extend({
         "Colour scale:": {
           en: "Colour scale:",
           fr: "Palette de couleurs :",
-          nl: null
+          nl: "Kleurenpalet"
         },
         "Height (meters)": {
           en: "Height (meters)",
           fr: "Hauteur (mètres)",
-          nl: null
+          nl: "Hoogte (meter)"
         }, 
         "Height (feet)": {
           en: "Height (feet)",
           fr: "Hauteur (pieds)",
-          nl: null
+          nl: "Hoogte (feet)"
         },
       } as MultilanguageStringContainer
     };

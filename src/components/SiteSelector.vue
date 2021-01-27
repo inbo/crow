@@ -1,5 +1,5 @@
 <template>
-  <b-form-group id="input-radar-group" :label="t('At site:')" label-for="input-radar">
+  <b-form-group id="input-radar-group" :label="t('Location:')" label-for="input-radar">
     <b-form-select
       id="input-radar"
       :value="selectedRadarCode"
@@ -40,15 +40,15 @@ export default Vue.extend({
   data: function() {
     return {
       texts: {
-        "At site:": {
-          en: "At site:",
+        "Location:": {
+          en: "Location:",
           fr: "Site :",
-          nl: null
+          nl: "Locatie"
         },
         "is located at": {
           en: "is located at:",
           fr: "est situé à :",
-          nl: null
+          nl: "bevindt zich te:"
         }
       } as MultilanguageStringContainer
     }

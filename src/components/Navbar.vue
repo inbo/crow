@@ -2,7 +2,7 @@
   <b-navbar type="light" variant="light">
     <b-container>
       <b-navbar-brand>
-        {{ t("Birds detected by weather radars") }}
+        {{ t("Title") }}
       </b-navbar-brand>
       <b-navbar-nav class="ml-auto">
         <language-selector />
@@ -27,7 +27,7 @@ export default Vue.extend({
   data: function () {
     return {
       texts: {
-        "Birds detected by weather radars": {
+        "Title": {
           en: "Birds detected by weather radars",
           fr: "Détection des oiseaux via les radars météo",
           nl: "Vogels gedetecteerd door weerradars"

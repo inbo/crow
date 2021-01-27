@@ -11,7 +11,7 @@
                   id="input-date-group"
                   :label="t('Date:')"
                   label-for="input-date"
-                  :description="t('Charts will be centered on noon for the selected date.')"
+                  :description="t('Charts are noon centered')"
                 >
                   <b-input-group size="sm">
                     <b-input-group-prepend>
@@ -121,7 +121,7 @@
             >
               <template #header>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="small" v-html="t('vp_chart_short_description')" />
+                <p class="small" v-html="t('VP chart description')" />
               </template>
 
               <template #in-x-axis-group>
@@ -145,7 +145,7 @@
             >
               <template #header>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="small" v-html="t('vpi_chart_short_description')" />
+                <p class="small" v-html="t('VPI chart description')" />
               </template>
 
               <template #in-x-axis-group>
@@ -273,10 +273,10 @@ export default Vue.extend({
           fr: "3j",
           nl: "3d"
         },
-        "Charts will be centered on noon for the selected date.": {
+        "Charts are noon centered": {
           en: "Charts will be centered on noon for the selected date.",
           fr: "Les graphiques seront centrés sur midi pour la date sélectionnée.",
-          nl: "Grafieken worden gecentreerd op de middag voor de geselecteerde datum."
+          nl: "Grafieken worden gecentreerd op de middag van de geselecteerde datum."
         },
         "Interval:": {
           en: "Interval:",
@@ -286,42 +286,42 @@ export default Vue.extend({
         "Time zone:": {
           en: "Time zone:",
           fr: "Fuseau horaire :",
-          nl: null
+          nl: "Tijdzone"
         },
         "Radar": {
           en: "Radar",
           fr: "Radar",
-          nl: null
+          nl: "Radar"
         },
         "UTC": {
           en: "UTC",
           fr: "UTC",
-          nl: null
+          nl: "UTC"
         },
         "Share:": {
           en: "Share:",
           fr: "Partager :",
-          nl: null
+          nl: "Delen:"
         },
         "Copy link": {
           en: "Copy link",
           fr: "Copier le lien",
-          nl: null
+          nl: "Kopieer link"
         },
         "Link copied": {
           en: "Link copied",
           fr: "Le lien a été copié",
-          nl: null
+          nl: "Link gekopieerd"
         },
-        "vp_chart_short_description": {
+        "VP chart description": {
           en: "This chart shows <strong>bird density</strong> (colour) as a function of time (x-axis) and height above the ground (y-axis). The BirdTAM colour scale is tailored to aviation.",
           fr: "Ce graphique montre la <strong>densité d'oiseaux</strong> en fonction du temps (axe x) et de la hauteur par rapport au sol (axe y). La palette de couleurs BirdTAM est conçue pour l'aviation.",
-          nl: null
+          nl: "Deze grafiek toont <strong>vogeldichtheid</strong> (kleur) in functie van de tijd (x-as) en hoogte boven de grond (y-as). Het BirdTAM kleurenpalet is ontworpen voor de luchtvaart."
         },
-        "vpi_chart_short_description": {
+        "VPI chart description": {
           en: "This chart shows the same information, but sums bird densities over height, thus giving a rough idea of the <strong>total number of birds</strong> in the sky at any given moment.",
           fr: "Ce graphique montre les mêmes informations, mais en additionant les densités par hauteur, ce qui donne une idée générale du <strong>nombre total d'oiseaux</strong> dans le ciel à un moment donné." ,
-          nl: null
+          nl: "Deze grafiek toont dezelfde informatie, waarbij de vogeldichtheden voor alle hoogtes worden opgeteld om zo een idee te geven van het <strong>totale aantal vogels</strong> in de lucht op een bepaald moment."
         }
       
       } as MultilanguageStringContainer

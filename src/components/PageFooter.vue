@@ -4,7 +4,7 @@
       <b-row>
         <b-col lg>
           <!-- eslint-disable-next-line vue/no-v-html -->
-          <span v-html="t('created_message_with_link')" />
+          <span v-html="t('Created by')" />
         </b-col>
         <b-col lg class="text-right">
           <a href="https://github.com/inbo/crow/">{{ t('Source code') }} </a> {{ t('version') }}
@@ -28,20 +28,20 @@ export default Vue.extend({
   data: function () {
     return {
       texts: {
-        "created_message_with_link": {
+        "Created by": {
           en: 'Created by the <a href="https://oscibio.inbo.be">Open science lab for biodiversity</a>',
           fr: 'Créé par <a href="https://oscibio.inbo.be">Open science lab for biodiversity</a>',
-          nl: null
+          nl: 'Gemaakt door het <a href="https://oscibio.inbo.be">Open science lab for biodiversity</a>'
         },
         "Source code": {
           en: "Source code",
           fr: "Code source",
-          nl: null
+          nl: "Broncode"
         },
         "version": {
           en: "version",
           fr: "version",
-          nl: null
+          nl: "versie"
         },
       } as MultilanguageStringContainer
     }

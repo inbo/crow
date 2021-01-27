@@ -193,25 +193,25 @@ export default Vue.extend({
       availableModes: [
         {
           variableName: "Migration traffic rate (MTR)",
-          variableDescriptionId: "mtr_description",
+          variableDescriptionId: "MTR description",
           propertyName: "mtr",
           yMaxValComputedName: "maxMTRWithMinimum",
         },
         {
           variableName: "Reflectivity traffic rate (RTR)",
-          variableDescriptionId: "rtr_description",
+          variableDescriptionId: "RTR description",
           propertyName: "rtr",
           yMaxValComputedName: "maxRTR",
         },
         {
           variableName: "Vertically integrated density (VID)",
-          variableDescriptionId: "vid_description",
+          variableDescriptionId: "VID description",
           propertyName: "vid",
           yMaxValComputedName: "maxVID",
         },
         {
           variableName: "Vertically integrated reflectivity (VIR)",
-          variableDescriptionId: "vir_description",
+          variableDescriptionId: "VIR description",
           propertyName: "vir",
           yMaxValComputedName: "maxVIR",
         },
@@ -221,27 +221,27 @@ export default Vue.extend({
         "Variable:": {
           en: "Variable:",
           fr: "Variable :",
-          nl: null
+          nl: "Variabele"
         },
-        "mtr_description": {
           en: "Migration traffic rate (MTR): number of birds/km/h",
           fr: "Migration traffic rate (MTR): nombre d'oiseaux/km/h",
           nl: null
+        "MTR description": {
         },
-        "rtr_description": {
           en: "Reflectivity traffic rate (RTR): reflected bird square cm/km/h",
           fr: "Reflectivity traffic rate (RTR): rélexion des oiseaux - carré cm/km/h", // TODO: fix FR translation - I don't understand the (EN) description yet
           nl: null
+        "RTR description": {
         },
-        "vid_description": {
           en: "Vertically integrated density (VID): number of birds/square km",
           fr: "Vertically integrated density (VID): nombre d'oiseaux/carré km", // TODO: fix FR translation - I don't understand the (EN) description yet
           nl: null
+        "VID description": {
         },
-        "vir_description": {
           en: "Vertically integrated reflectivity (VIR): reflected bird square cm/square km",
           fr: "Vertically integrated reflectivity (VIR): rélexion des oiseaux carré cm/carré km", // TODO: fix FR translation - I don't understand the (EN) description yet
           nl: null
+        "VIR description": {
         }
       } as MultilanguageStringContainer,
 
