@@ -43,7 +43,7 @@ export default Vue.extend({
         "Location:": {
           en: "Location:",
           fr: "Site :",
-          nl: "Locatie"
+          nl: "Locatie:"
         },
         "is located at": {
           en: "is located at:",
