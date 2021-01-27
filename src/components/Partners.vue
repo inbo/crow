@@ -2,7 +2,9 @@
   <b-container class="mt-5">
     <b-row>
       <b-col lg>
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <p v-html="t('Partner description')" />
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <p v-html="t('Algorithm description')" />
         <p class="logos">
           <img src="logo/inbo.svg" width="30%">
