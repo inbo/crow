@@ -9,10 +9,10 @@ const path = require("path");
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
 
-test("Crow component rendering", () => {
+test("Home component rendering", () => {
   // Temporary disabling cause it fails
 
-  /*const wrapper = mount(Crow, {localVue});
+  /*const wrapper = mount(Home, {localVue});
   expect(wrapper.contains("form")).toBe(true); // It contains a form*/
 });
 
