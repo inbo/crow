@@ -41,17 +41,17 @@ export default Vue.extend({
       texts: {
         "Partner description": {
           en: 'This application was jointly developed by the <a href="https://www.meteo.be/">Royal Meteorological Institute of Belgium (RMI)</a> and the <a href="https://www.inbo.be">Research Institute for Nature and Forest (INBO)</a> in collaboration with the <a href="https://www.naturalsciences.be/">Royal Belgian Institute for Natural Sciences (RBINS)</a>, with financial support from the <a href="https://www.belspo.be/">Belgian Science Policy Office</a> (<code>BelSPO valorisation project CROW</code>).',
-          fr: null,
+          fr: "Cette application a été développée conjointement par l'<a href=\"https://www.meteo.be/\">Institut Royal Météorologique de Belgique</a> et <a href=\"https://www.inbo.be\">INBO (Instituut voor Natuur- en Bosonderzoek)</a> en collaboration avec l'<a href=\"https://www.naturalsciences.be/\">Institut royal des sciences naturelles de Belgique</a>, avec le soutien financier de la <a href=\"https://www.belspo.be/\">Politique scientifique fédérale</a> (<code>BelSPO valorisation project CROW</code>).",
           nl: 'Deze applicatie werd gezamenlijk ontwikkeld door het <a href="https://www.meteo.be/">Koninklijk Meteorologisch Instituut van België (KMI)</a> en het <a href ="https://www.inbo.be ">Instituut voor Natuur- en Bosonderzoek (INBO)</a> in samenwerking met het <a href="https://www.naturalsciences.be/">Koninklijk Belgisch Instituut voor Natuurwetenschappen</a>, met financiële steun van <a href="https://www.belspo.be/">Federaal Wetenschapsbeleid</a> (<code>BelSPO valorisation project CROW</code>).'
         },
         "Algorithm description": {
           en: 'The bird detection is based on the algorithm described in Dokter et al. (<a href="https://doi.org/10.1098/rsif.2010.0116">2011</a>, <a href="https://doi.org/10.1111/ecog.04028">2019</a>).',
-          fr: null,
+          fr: 'La détection des oiseaux est basée sur l\'algorithme décrit dans Dokter et al. (<a href="https://doi.org/10.1098/rsif.2010.0116">2011</a>, <a href="https://doi.org/10.1111/ecog.04028">2019</a>).',
           nl: 'De vogeldetectie is gebaseerd op het algoritme beschreven in Dokter et al. (<a href="https://doi.org/10.1098/rsif.2010.0116">2011</a>, <a href="https://doi.org/10.1111/ecog.04028">2019</a>).'
         },
         "Radar data provided by:": {
           en: "Radar data provided by:",
-          fr: null,
+          fr: "Données radar fournies par : ",
           nl: "Radar data aangeleverd door:"
         }
       } as MultilanguageStringContainer

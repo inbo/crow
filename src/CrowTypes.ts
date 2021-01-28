@@ -101,8 +101,8 @@ export interface Language {
   code: LangCode
 }
 
-type MultilanguageString={
-  [index in LangCode]: string | null;
+type MultilanguageString = {
+  [index in LangCode]: string;
 };
 export interface MultilanguageStringContainer {
   [index: string]: MultilanguageString;
