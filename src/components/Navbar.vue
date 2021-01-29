@@ -1,9 +1,7 @@
 <template>
   <b-navbar type="light" variant="light">
     <b-container>
-      <b-navbar-brand>
-        {{ t("Title") }}
-      </b-navbar-brand>
+      <b-navbar-brand>{{ t("Title") }}</b-navbar-brand>
       <b-navbar-nav class="ml-auto">
         <language-selector />
       </b-navbar-nav>
