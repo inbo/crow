@@ -47,6 +47,14 @@ export class UserChoicesStore extends VuexModule {
     this.selectedDate = val;
   }
 
+  get selectedLanguageLabel(): string {
+    const found = ConfigStoreModule.availableLanguages.find(
+      d => d.code == this.selectedLanguageCode
+    );
+
+    return found ? found.label : config.initialLanguageCode;
+  }
+
   get startMoment(): moment.Moment {
     return moment(this.selectedDateNoon).subtract(
       this.selectedIntervalInHours / 2,
