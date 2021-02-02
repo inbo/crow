@@ -281,12 +281,12 @@ export default Vue.extend({
         "Interval:": {
           en: "Interval:",
           fr: "Intervalle :",
-          nl: null
+          nl: "Interval:"
         },
         "Time zone:": {
           en: "Time zone:",
           fr: "Fuseau horaire :",
-          nl: "Tijdzone"
+          nl: "Tijdzone:"
         },
         "Radar": {
           en: "Radar",
