@@ -25,7 +25,6 @@ import { mapMutations } from "vuex";
 
 import { GroupedRadarInterface, LangCode, MultilanguageStringContainer, RadarInterface } from "@/CrowTypes";
 
-import { getModule } from "vuex-module-decorators";
 import { ConfigStoreModule } from "@/store/ConfigStore";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 

@@ -181,7 +181,7 @@ import config from "@/config";
 import helpers from "@/helpers";
 
 import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, TimeIntervalForRadioGroup, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer } from "@/CrowTypes";
-import { UserChoicesStore, UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import { ConfigStoreModule } from "@/store/ConfigStore";
 import { mapMutations } from "vuex";
 
