@@ -1,5 +1,5 @@
 <template>
-  <b-container class="mt-5">
+  <b-container class="mt-5 small">
     <b-row>
       <b-col lg>
         <!-- eslint-disable-next-line vue/no-v-html -->
