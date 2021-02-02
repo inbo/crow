@@ -199,7 +199,7 @@ export default Vue.extend({
           text: "bioRad",
           value: "biorad",
           dailyLinesColor: "red",
-          colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad),
+          colorScale: d3.scaleSequential(helpers.interpolateBioRad),
           dynamicDomain: true,
           colorScaleType: "sequential",
         },

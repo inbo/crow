@@ -6,40 +6,35 @@ import { LangCode, MultilanguageStringContainer, Profiles, VTPSDataRowFromFile }
 
 import { rgb as colorRgb, RGBColor } from "d3-color";
 
+function getIntensity(val: number, inflexionPoints: number[], intensities: number[]) {
+  const i = inflexionPoints.findIndex(e => e === val)
+
+  if (i === -1) {
+    // Not found, we interpolate
+    const position = d3.bisect(inflexionPoints, val);
+    
+    let scale = d3.scaleLinear()
+                .domain([inflexionPoints[position - 1], inflexionPoints[position]])
+                .range([intensities[position - 1], intensities[position]])
+    
+    return scale(val);
+
+  } else {
+    return intensities[i];
+  }
+}
+
 function interpolateBioRad(val: number): RGBColor {
   // Num: between 0 and 1 
-
-
-  //console.log("val reçu", val);
   val = val * 255; // Constants below are taken from bioRad and have a 0-255 range
-
-  //console.log("val", val);
 
   // Reimplementation of the IDL color scale; based on bioRad's implementation (https://github.com/adokter/bioRad/blob/e0ede427eb34007dc9985302d40cbdab158e0636/R/color_scale.R#L65-L85)
   // and the explanations at: https://github.com/inbo/crow/issues/38 
-  const redInflexionPoints = [0, 62, 81, 93, 145, 176, 191, 208, 255];
-  const redIntensities = [255, 255, 163, 255, 255, 81, 81, 0, 0];
+  const redIntensity = getIntensity(val, [0, 62, 81, 93, 145, 176, 191, 208, 255], [255, 255, 163, 255, 255, 81, 81, 0, 0])
+  const greenIntensity = getIntensity(val, [0, 64, 79, 110, 142, 255], [255, 255, 163, 163, 0, 0]);
+  const blueIntensity = getIntensity(val, [0, 79, 96, 110, 127, 159, 206, 255], [255, 0, 0, 82, 0, 0, 255, 0]);
 
-  const greenInflexionPoints = [0, 64, 79, 110, 142, 255];
-  const greenIntensities = [255, 255, 163, 163, 0, 0];
-
-  const blueInflexionPoints = [0, 79, 96, 110, 127, 159, 206, 255];
-  const blueIntensities = [255, 0, 0, 82, 0, 0, 255, 0];
-
-  const redPosition = d3.bisect(redInflexionPoints, val);
-  //console.log("redPosition", redPosition);
-  const redIntensity = (redIntensities[redPosition - 1] + redIntensities[redPosition]) / 2;
-  //console.log("redIntensity", redIntensity);
-
-  const greenPosition = d3.bisect(greenInflexionPoints, val);
-  const greenIntensity = (greenIntensities[greenPosition - 1] + greenIntensities[greenPosition]) / 2;
-
-  const bluePosition = d3.bisect(blueInflexionPoints, val);
-  const blueIntensity = (blueIntensities[bluePosition - 1] + blueIntensities[bluePosition]) / 2;
-
-  //return `rgb(${redIntensity}, ${greenIntensity}, ${blueIntensity})`
   return colorRgb(redIntensity, greenIntensity, blueIntensity, 1)
-
 }
 
 function densityToBirdtam(density: number): number {
