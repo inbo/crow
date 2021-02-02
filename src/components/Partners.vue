@@ -8,7 +8,7 @@
         <p v-html="t('Algorithm description')" />
         <p class="logos">
           <img src="logo/inbo.svg" width="30%">
-          <img src="logo/rmi.svg" width="15%">
+          <img src="logo/kmi_irm.png" width="15%">
           <img src="logo/rbins.png" width="30%">
           <img src="logo/belspo.png" width="15%">
         </p>
