@@ -191,7 +191,7 @@ export default Vue.extend({
           dailyLinesColor: "white",
           colorScale: d3.scaleSequentialSymlog(d3.interpolateViridis),
           dynamicDomain: true,
-          colorScaleType: "sequential",
+          colorScaleType: "sequentialSymLog",
         },
 
         {
@@ -199,9 +199,9 @@ export default Vue.extend({
           text: "bioRad",
           value: "biorad",
           dailyLinesColor: "red",
-          colorScale: d3.scaleSequential(helpers.interpolateBioRad),
+          colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad),
           dynamicDomain: true,
-          colorScaleType: "sequential",
+          colorScaleType: "sequentialSymLog",
         },
 
         {
@@ -410,7 +410,7 @@ export default Vue.extend({
         let scale = config.colorScale;
         if (config.dynamicDomain) {
           // @ts-ignore: several TS issues, we assume it's because outdated D3 definitions
-          scale = scale.domain([0, this.maxDensity]).nice();
+          scale = scale.domain([0, this.maxDensity]).nice(); // We could clamp the scale and start the domain at a very small positive value, so log scales can be applied. Not necessary now because the data seems to be better reprensented with a symlog scale
         }
         color = scale(density);
       }
