@@ -1,7 +1,7 @@
 <template>
-  <svg class="d-none d-lg-block mx-auto" :width="svgWidth" :height="svgHeight">
+  <svg class="d-none d-lg-block mt-3 mx-auto" :width="svgWidth" :height="svgHeight">
     <g>
-      <path id="country" :d="countryPath" />
+      <path id="country" :d="countryPath" stroke="#fff" stroke-width="1" />
       <circle v-for="radar in radars" :id="'circle-radar-' + radar.value" :key="radar.value" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.value)">
         <b-popover :target="'circle-radar-' + radar.value" triggers="hover">
           {{ radar.text }}
@@ -15,7 +15,7 @@
 import Vue from "vue";
 import * as d3 from "d3";
 import { GroupedRadarInterface, RadarInterface } from "@/CrowTypes";
-import belgiumGeoJSON from "@/belgium.json";
+import beneluxGeoJSON from "@/geojson_crow.json";
 
 export default Vue.extend({
   name: "SiteSelectorMap",
@@ -31,23 +31,19 @@ export default Vue.extend({
   },
   data: function () {
     return {
-      svgWidth: 200,
+      svgWidth: 300,
       svgHeight: 200,
 
-      xPadding: 10,
-      yPadding: 10,
+      xPadding: 0,
+      yPadding: 0,
 
-      Countryfeature: belgiumGeoJSON as d3.ExtendedFeature
+      countries: beneluxGeoJSON as d3.ExtendedFeatureCollection
     }
   },
   computed: {
     EverythingAsGeoJSON: function (): d3.ExtendedFeatureCollection {
-      // Return every geographic element (each radar + country shape) as GeoJSON
-      var geojson = {
-        "name": "NewFeatureType",
-        "type": "FeatureCollection",
-        "features": []
-      } as d3.ExtendedFeatureCollection;
+      // Return every geographic element (each radar + countries shape) as GeoJSON
+      let geojson = { ...this.countries }
 
       this.radars.forEach(r => {
         let feature = {
@@ -62,7 +58,6 @@ export default Vue.extend({
         geojson.features.push(feature);
       })
 
-      geojson.features.push(this.Countryfeature);
       return geojson
     },
     radars: function (): RadarInterface[] {
@@ -84,7 +79,7 @@ export default Vue.extend({
     },
 
     countryPath: function (): string | null {
-      return this.pathGenerator(this.Countryfeature)
+      return this.pathGenerator(this.countries)
     }
   },
   methods: {
