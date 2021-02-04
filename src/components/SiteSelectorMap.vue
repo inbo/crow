@@ -34,16 +34,15 @@ export default Vue.extend({
       svgWidth: 300,
       svgHeight: 200,
 
-      xPadding: 0,
-      yPadding: 0,
+      xPadding: 15,
+      yPadding: 15,
 
-      countries: beneluxGeoJSON as d3.ExtendedFeatureCollection
+      countriesFeatures: beneluxGeoJSON as d3.ExtendedFeatureCollection
     }
   },
   computed: {
-    EverythingAsGeoJSON: function (): d3.ExtendedFeatureCollection {
-      // Return every geographic element (each radar + countries shape) as GeoJSON
-      let geojson = { ...this.countries }
+    radarsFeatures: function (): d3.ExtendedFeatureCollection {
+      let geojson = { type: "FeatureCollection", features: [] } as d3.ExtendedFeatureCollection
 
       this.radars.forEach(r => {
         let feature = {
@@ -71,7 +70,7 @@ export default Vue.extend({
     },
     projection: function (): d3.GeoProjection {
       return d3.geoMercator()
-        .fitExtent([[this.xPadding, this.yPadding], [this.svgWidth - this.xPadding, this.svgHeight - this.yPadding]], this.EverythingAsGeoJSON);
+        .fitExtent([[this.xPadding, this.yPadding], [this.svgWidth - this.xPadding, this.svgHeight - this.yPadding]], this.radarsFeatures);
     },
 
     pathGenerator: function (): d3.GeoPath {
@@ -79,7 +78,7 @@ export default Vue.extend({
     },
 
     countryPath: function (): string | null {
-      return this.pathGenerator(this.countries)
+      return this.pathGenerator(this.countriesFeatures)
     }
   },
   methods: {
