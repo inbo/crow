@@ -1,7 +1,7 @@
 <template>
   <svg class="d-none d-lg-block mt-3 mx-auto" :width="svgWidth" :height="svgHeight">
     <g>
-      <path id="country" :d="countryPath" stroke="#fff" stroke-width="1" />
+      <path id="country" :d="countryPath" stroke="#000" stroke-width="1" />
       <circle v-for="radar in radars" :id="'circle-radar-' + radar.value" :key="radar.value" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.value)">
         <b-popover :target="'circle-radar-' + radar.value" triggers="hover">
           {{ radar.text }}
@@ -95,7 +95,7 @@ export default Vue.extend({
 
 <style scoped>
 .radar-circle-unselected {
-  fill: #6c757d; /* cf. text-muted */
+  fill: white;
 }
 
 .radar-circle-unselected:hover {
@@ -107,6 +107,7 @@ export default Vue.extend({
 }
 
 #country {
-  fill: #cfe2ff; /* Bootstrap primary background colour TODO: move style config to config.ts */
+  stroke: #6c757d; /* cf. text-muted */
+  fill: transparent;
 }
 </style>
