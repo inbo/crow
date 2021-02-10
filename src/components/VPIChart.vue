@@ -224,24 +224,24 @@ export default Vue.extend({
           nl: "Variabele"
         },
         "MTR description": {
-          en: "MTR: number of birds passing over a transect of 1 km per hour",
-          fr: "MTR: nombre d'oiseaux passant sur un transect de 1 km, par heure",
-          nl: "MTR: aantal vogels dat passeert over een transect van 1 km per uur"
+          en: "MTR: hourly number of birds flying over a 1 km transect",
+          fr: "MTR: nombre horaire d'oiseaux survolant un transect de 1 km",
+          nl: "MTR: aantal vogels dat per uur over een transect van 1 km vliegt"
         },
         "RTR description": {
-          en: "RTR: reflected bird surface (cm²) passing over a transect of 1 km per hour",
-          fr: "RTR: surface refletée par les oiseaux (cm²) passant sur un transect de 1 km, par heure",
-          nl: "RTR: gereflecteerde vogeloppervlakte (cm²) dat passeert over een transect van 1 km per uur"
+          en: "RTR: hourly reflected bird surface (cm²) passing a 1 km transect",
+          fr: "RTR: surface horaire refletée par les oiseaux (cm²) passant un transect de 1 km",
+          nl: "RTR: gereflecteerde vogeloppervlakte (cm²) dat per uur over een transect van 1 km passeert"
         },
         "VID description": {
-          en: "VID: number of birds passing through a vertical square km",
-          fr: "VID: nombre d'oiseaux passant à travers 1 km carré vertical",
-          nl: "VID: aantal vogels dat passeert door een verticale vierkante km"
+          en: "VID: number of birds per square km",
+          fr: "VID: nombre d'oiseaux par km carré",
+          nl: "VID: aantal vogels per vierkante km"
         },
         "VIR description": {
-          en: "VIR: reflected surface of birds (cm²) passing through a vertical square km",
-          fr: "VIR: surface refletée par les oiseaux (cm²) passant à travers 1 km carré vertical",
-          nl: "VIR: gereflecteerde vogeloppervlakte (cm²) dat passeert door een verticale vierkante km"
+          en: "VIR: reflected bird surface (cm²) per square km",
+          fr: "VIR: surface refletée par les oiseaux (cm²) par km carré",
+          nl: "VIR: gereflecteerde vogeloppervlakte (cm²) per vierkante km"
         }
       } as MultilanguageStringContainer,
 
