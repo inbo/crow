@@ -1,0 +1,75 @@
+---
+title: "Comparison between CROW and bioRad plots"
+author: "Peter Desmet"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+This document is created to validate CROW plots by comparing these with [bioRad](https://github.com/adokter/bioRad) plots. The results are discussed in <https://github.com/inbo/crow/issues/45>.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load libraries:
+
+```{r}
+library(bioRad)
+library(tidyverse)
+```
+
+### Sample data
+
+The sample data are the nights of **12-14 October 2020 in Wideumont**, which shows intense noctural songbird migration (visible on all Belgian radars):
+
+```{r}
+repo <- "https://opendata.meteo.be/ftp/observations/radar/vbird/bewid/2020/"
+radar <- "bewid"
+vpts_file1 <- "bewid_vpts_20201012.txt"
+vpts_file2 <- "bewid_vpts_20201013.txt"
+vpts_file3 <- "bewid_vpts_20201014.txt"
+```
+
+Download and read data:
+
+```{r}
+download.file(paste0(repo, vpts_file1), vpts_file1)
+download.file(paste0(repo, vpts_file2), vpts_file2)
+download.file(paste0(repo, vpts_file3), vpts_file3)
+
+vpts1 <- read_vpts(vpts_file1, radar = radar)
+vpts2 <- read_vpts(vpts_file2, radar = radar)
+vpts3 <- read_vpts(vpts_file3, radar = radar)
+```
+
+Combine data into single vpts object and integrate to vpi as well:
+
+```{r}
+vpts <- bind_into_vpts(vpts1, vpts2, vpts3)
+vpts <- regularize_vpts(vpts)
+vpi <- integrate_profile(vpts)
+```
+
+### CROW plots
+
+CROW plots can be seen here: <https://inbo.github.io/crow/#/?radar=bewid&date=2020-10-13&interval=72&timedisplay=UTC&vpColorScheme=biorad&vpiMode=mtr>
+
+### bioRad plots
+
+The width & height dimensions of the plots are set so that the inner charts are the same as the CROW charts. Use chunk options `out.width = "800px", out.height = "380px"` if you want to knit the Rmd.
+
+VPTS plot:
+
+```{r}
+png("biorad_vpts.png", width = 800, height = 380, units = "px")
+plot(vpts, barbs = FALSE, log = TRUE)
+dev.off()
+```
+
+VPI plot:
+
+```{r}
+png("biorad_vpi.png", width = 737, height = 400, units = "px")
+plot(vpi, lat = 49.9135, lon = 5.5044)
+dev.off()
+```
