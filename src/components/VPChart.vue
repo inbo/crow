@@ -18,7 +18,9 @@
       <color-legend
         :color-scale="selectedColorSchemeConfig.colorScale"
         :color-scale-type="selectedColorSchemeConfig.colorScaleType"
-        :max-density="maxDensity"
+        :max-scale-density="maxColorLegendValue"
+        :tick-values="selectedColorSchemeConfig.tickValues"
+        :number-of-ticks="selectedColorSchemeConfig.numberOfTicks"
         opacity="1"
         topic="Density"
       />
@@ -185,23 +187,25 @@ export default Vue.extend({
 
       availableColorSchemes: [
         {
-          // TODO: decide which exact sequential scale (linear, log, symlog, sqrt, ... ) is more appropriate: https://observablehq.com/@d3/sequential-scales
           text: "Viridis",
           value: "viridis",
           dailyLinesColor: "white",
           colorScale: d3.scaleSequentialSymlog(d3.interpolateViridis),
           dynamicDomain: true,
           colorScaleType: "sequentialSymLog",
+          tickValues: null,
+          numberOfTicks: 4
         },
 
         {
-          // TODO: decide which exact sequential scale (linear, log, symlog, sqrt, ... ) is more appropriate: https://observablehq.com/@d3/sequential-scales
           text: "bioRad",
           value: "biorad",
           dailyLinesColor: "red",
-          colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad),
-          dynamicDomain: true,
+          colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad).domain([0, 1000]),
+          dynamicDomain: false,
           colorScaleType: "sequentialSymLog",
+          tickValues: [1, 2, 5, 10, 25, 50, 100, 200, 500, 1000],
+          numberOfTicks: null
         },
 
         {
@@ -216,6 +220,8 @@ export default Vue.extend({
           dynamicDomain: false,
           dataPreprocessor: helpers.densityToBirdtam,
           colorScaleType: "ordinal",
+          tickValues: null,
+          numberOfTicks: null
         },
       ] as ColorSchemeConfigEntry[],
 
@@ -295,6 +301,14 @@ export default Vue.extend({
         return d.timestamp;
       });
       return maxVal || 0;
+    },
+    maxColorLegendValue: function(): number {
+      // We need a prop for this so it gets updated when data is added to vtpsData (and maxDensity is subsequently changed)
+      if (this.selectedColorSchemeConfig.dynamicDomain === true) {
+        return this.maxDensity
+      } else {
+        return this.selectedColorSchemeConfig.colorScale.domain()[1] // This value is hardcoded in the config
+      }
     },
     maxDensity: function (): number {
       const maxVal = d3.max(this.vtpsData, function (d) {

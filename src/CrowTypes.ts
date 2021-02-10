@@ -14,7 +14,9 @@ export interface ColorSchemeConfigEntry {
   colorScale: d3Scale.ScaleSequential<string> | d3Scale.ScaleOrdinal<number, string>;
   dynamicDomain: boolean; // Is the color scale domain fixed and preconfigured (false) or does it depend of the data (true)?
   dataPreprocessor?(d: number): number; // This optional function will be applied to the data before it's passed to the color scale
-  colorScaleType: "ordinal" | "sequential";
+  colorScaleType: "ordinal" | "sequentialSymLog";
+  tickValues: null | Number[]  // null: let D3 decide
+  numberOfTicks: null | Number // null: let D3 decide
 }
 
 export interface DayData {

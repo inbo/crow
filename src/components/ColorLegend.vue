@@ -15,7 +15,7 @@
       style="left: 0px; top: 0px;"
     >
       <g
-        v-axis="{ 'scale': axisScale }"
+        v-axis="{ 'scale': axisScale, 'tickValues': tickValues, 'numberOfTicks': numberOfTicks }"
         :transform="`translate(${styleDiv.margin.left - 1}, ${styleDiv.margin.top + canvasHeight - 1})`"
         style="stroke-width: 0.5px"
       />
@@ -33,11 +33,21 @@ export default Vue.extend({
   directives: {
     axis(el, binding): void {
       const scaleFunction = binding.value.scale;
-      const legendAxis = d3.axisBottom<number>(scaleFunction).ticks(4);
+      const tickValues = binding.value.tickValues;
+      const numberOfTicks = binding.value.numberOfTicks;
+
+      let legendAxis = d3.axisBottom<number>(scaleFunction);
+      if (tickValues) {
+        legendAxis.tickValues(tickValues);
+      };
+      if (numberOfTicks) {
+        legendAxis.ticks(numberOfTicks);
+      }
+
       legendAxis(d3.select((el as unknown) as SVGGElement));
     }
   },
-  props: ["colorScale", "colorScaleType", "opacity", "topic", "maxDensity"], // eslint-disable-line
+  props: ["colorScale", "colorScaleType", "opacity", "topic", "maxScaleDensity", "tickValues", "numberOfTicks"], // eslint-disable-line 
   data: function () {
     return {
       styleDiv: {
@@ -66,7 +76,7 @@ export default Vue.extend({
     legendScaleSequentialSymLog: function (): d3.ScaleSymLog<number, number> {
       return d3
         .scaleSymlog()
-        .domain([0, this.maxDensity])
+        .domain([0, this.maxScaleDensity])
         .range([
           1,
           this.styleDiv.width -
@@ -139,7 +149,7 @@ export default Vue.extend({
         this.renderColorRamp(this.opacity);
       }
     },
-    maxDensity: {
+    maxScaleDensity: {
       handler: function (): void {
         this.clearCanvas();
         this.renderColorRamp(this.opacity);
