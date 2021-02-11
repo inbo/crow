@@ -23,8 +23,6 @@ Vue.use(VueRouter);
 import store from "./store/index";
 
 const routes = [
-  // The main route accept the following parameters that will be passed to Home:
-  // - radar
   {
     path: "/",
     component: Home,
@@ -34,7 +32,8 @@ const routes = [
       intervalValueProp: route.query.interval,
       timeDisplayValueProp: route.query.timedisplay,
       vpChartSelectedSchemeProp: route.query.vpColorScheme,
-      vpiChartModeProp: route.query.vpiMode
+      vpiChartModeProp: route.query.vpiMode,
+      langCodeProp: route.query.lang,
     })
   }, // Example URL: http://localhost:8080/#/?radar=bezav
   { path: "*", component: PageNotFound }

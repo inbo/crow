@@ -234,6 +234,10 @@ export default Vue.extend({
     vpiChartModeProp: {
       type: String as () => IntegratedPropertyName,
       default: config.VPIChartStyle.initialMode
+    },
+    langCodeProp: {
+      type: String as () => LangCode,
+      default: config.initialLanguageCode
     }
   },
   data: function () {
@@ -477,6 +481,7 @@ export default Vue.extend({
       UserChoicesStoreModule.setSelectedIntervalInHours(this.intervalValueProp);
       UserChoicesStoreModule.setTimeDisplayedAs(this.timeDisplayValueProp);
       UserChoicesStoreModule.setSelectedDate(this.dateValueProp);
+      UserChoicesStoreModule.setSelectedLanguageCode(this.langCodeProp);
     },
     vpiModeChanged(mode: IntegratedPropertyName): void {
       this.VPIChartMode = mode;
