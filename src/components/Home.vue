@@ -319,9 +319,9 @@ export default Vue.extend({
           nl: "Deze grafiek toont <strong>vogeldichtheid</strong> (kleur) in de tijd (x-as) en hoogte boven de grond (y-as). Het BirdTAM kleurenpalet is ontworpen voor de luchtvaart."
         },
         "VPI chart description": {
-          en: "This chart shows the same information, but sums bird densities over height, thus giving a rough idea of the <strong>total number of birds</strong> in the sky at any given moment.",
-          fr: "Ce graphique montre les mêmes informations, mais en additionant les densités par hauteur, ce qui donne une idée générale du <strong>nombre total d'oiseaux</strong> dans le ciel à un moment donné." ,
-          nl: "Deze grafiek toont dezelfde informatie, waarbij de vogeldichtheden voor alle hoogtes worden opgeteld om zo een idee te geven van het <strong>totale aantal vogels</strong> in de lucht op een bepaald moment."
+          en: "This chart shows the <strong>total number of birds</strong> (all heights) passing at any given moment. In total, about <strong>x birds</strong> flew over a 1 km transect during the time shown.",
+          fr: "Ce graphique montre le <strong>nombre total d'oiseaux</strong> (toutes hauteurs confondues) passant à un moment donné. Au total, environ <strong>x oiseaux</strong> ont survolé un transect de 1 km pendant la période affichée.",
+          nl: "Deze kaart toont het <strong>totale aantal vogels</strong> (alle hoogtes) dat op een bepaald moment passeert. In totaal vlogen ongeveer <strong>x vogels</strong> over een transect van 1 km in de weergegeven tijd."
         }
       
       } as MultilanguageStringContainer
