@@ -21,6 +21,7 @@
         :max-scale-density="maxColorLegendValue"
         :tick-values="selectedColorSchemeConfig.tickValues"
         :number-of-ticks="selectedColorSchemeConfig.numberOfTicks"
+        :last-tick-suffix="selectedColorSchemeConfig.units"
         opacity="1"
         topic="Density"
       />
@@ -194,7 +195,8 @@ export default Vue.extend({
           dynamicDomain: true,
           colorScaleType: "sequentialSymLog",
           tickValues: null,
-          numberOfTicks: 4
+          numberOfTicks: 3,
+          units: "birds/km³"
         },
 
         {
@@ -204,8 +206,9 @@ export default Vue.extend({
           colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad).domain([0, 1000]),
           dynamicDomain: false,
           colorScaleType: "sequentialSymLog",
-          tickValues: [1, 2, 5, 10, 25, 50, 100, 200, 500, 1000],
-          numberOfTicks: null
+          tickValues: [0, 1, 2, 5, 10, 25, 50, 100, 200, 500, 1000],
+          numberOfTicks: null,
+          units: "birds/km³"
         },
 
         {
@@ -221,7 +224,8 @@ export default Vue.extend({
           dataPreprocessor: helpers.densityToBirdtam,
           colorScaleType: "ordinal",
           tickValues: null,
-          numberOfTicks: null
+          numberOfTicks: null,
+          units: null
         },
       ] as ColorSchemeConfigEntry[],
 

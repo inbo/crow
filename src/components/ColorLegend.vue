@@ -15,8 +15,8 @@
       style="left: 0px; top: 0px;"
     >
       <g
-        v-axis="{ 'scale': axisScale, 'tickValues': tickValues, 'numberOfTicks': numberOfTicks }"
-        :transform="`translate(${styleDiv.margin.left - 1}, ${styleDiv.margin.top + canvasHeight - 1})`"
+        v-axis="{ 'scale': axisScale, 'tickValues': tickValues, 'numberOfTicks': numberOfTicks, 'lastTickSuffix': lastTickSuffix }"
+        :transform="`translate(${styleDiv.margin.left}, ${styleDiv.margin.top + canvasHeight - 1})`"
         style="stroke-width: 0.5px"
       />
     </svg>
@@ -35,6 +35,7 @@ export default Vue.extend({
       const scaleFunction = binding.value.scale;
       const tickValues = binding.value.tickValues;
       const numberOfTicks = binding.value.numberOfTicks;
+      const lastTickSuffix = binding.value.lastTickSuffix;
 
       let legendAxis = d3.axisBottom<number>(scaleFunction);
       if (tickValues) {
@@ -44,16 +45,23 @@ export default Vue.extend({
         legendAxis.ticks(numberOfTicks);
       }
 
+      if(lastTickSuffix) {
+        // @ts-ignore: outdated D3 type definitions for tickFormat
+        legendAxis.tickFormat(function(d, i, n){
+          return n[i + 1] ? d : d + " " + lastTickSuffix;
+        });
+      }
+
       legendAxis(d3.select((el as unknown) as SVGGElement));
     }
   },
-  props: ["colorScale", "colorScaleType", "opacity", "topic", "maxScaleDensity", "tickValues", "numberOfTicks"], // eslint-disable-line 
+  props: ["colorScale", "colorScaleType", "opacity", "topic", "maxScaleDensity", "tickValues", "numberOfTicks", "lastTickSuffix"], // eslint-disable-line 
   data: function () {
     return {
       styleDiv: {
         height: 60,
-        width: 500,
-        margin: { top: 15, right: 10, bottom: 20, left: 2 }
+        width: 620,
+        margin: { top: 15, right: 40, bottom: 20, left: 2 }
       }
     };
   },
@@ -78,20 +86,20 @@ export default Vue.extend({
         .scaleSymlog()
         .domain([0, this.maxScaleDensity])
         .range([
-          1,
+          0,
           this.styleDiv.width -
           this.styleDiv.margin.left -
-          this.styleDiv.margin.right
+          this.styleDiv.margin.right - 1
         ]);
     },
     legendScaleOrdinal: function (): d3.ScaleQuantize<number> {
       return d3
         .scaleQuantize()
         .domain([
-          1,
+          0,
           this.styleDiv.width -
           this.styleDiv.margin.left -
-          this.styleDiv.margin.right
+          this.styleDiv.margin.right - 1
         ])
         .range(this.colorScale.range());
     },
@@ -189,6 +197,7 @@ export default Vue.extend({
               break;
             case "ordinal":
               col = this.legendScaleOrdinal(i);
+              break;
           }
 
           ctx.fillStyle = this.addOpacityToColor(col, opacity);

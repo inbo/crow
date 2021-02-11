@@ -17,6 +17,7 @@ export interface ColorSchemeConfigEntry {
   colorScaleType: "ordinal" | "sequentialSymLog";
   tickValues: null | Number[]  // null: let D3 decide
   numberOfTicks: null | Number // null: let D3 decide
+  units: null | string // in ColorLegend: displayed next to the last tick
 }
 
 export interface DayData {
