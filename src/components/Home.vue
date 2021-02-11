@@ -314,9 +314,9 @@ export default Vue.extend({
           nl: "Link gekopieerd"
         },
         "VP chart description": {
-          en: "This chart shows <strong>bird density</strong> (colour) as a function of time (x-axis) and height above the ground (y-axis). The BirdTAM colour scale is tailored to aviation.",
+          en: "This chart shows <strong>bird density</strong> (colour) over time (x-axis) and height above the ground (y-axis). The BirdTAM colour scale is tailored to aviation.",
           fr: "Ce graphique montre la <strong>densité d'oiseaux</strong> en fonction du temps (axe x) et de la hauteur par rapport au sol (axe y). La palette de couleurs BirdTAM est conçue pour l'aviation.",
-          nl: "Deze grafiek toont <strong>vogeldichtheid</strong> (kleur) in functie van de tijd (x-as) en hoogte boven de grond (y-as). Het BirdTAM kleurenpalet is ontworpen voor de luchtvaart."
+          nl: "Deze grafiek toont <strong>vogeldichtheid</strong> (kleur) in de tijd (x-as) en hoogte boven de grond (y-as). Het BirdTAM kleurenpalet is ontworpen voor de luchtvaart."
         },
         "VPI chart description": {
           en: "This chart shows the same information, but sums bird densities over height, thus giving a rough idea of the <strong>total number of birds</strong> in the sky at any given moment.",
