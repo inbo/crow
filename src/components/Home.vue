@@ -93,7 +93,7 @@
                   <router-link
                     v-slot="{ href }"
                     append
-                    :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpColorScheme: VPChartSelectedScheme, vpiMode: VPIChartMode }}"
+                    :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpColorScheme: VPChartSelectedScheme, vpiMode: VPIChartMode, lang: selectedLanguageCode}}"
                   >
                     <b-button 
                       v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
@@ -180,7 +180,7 @@ import SunCalc from "suncalc";
 import config from "@/config";
 import helpers from "@/helpers";
 
-import { ColorSchemeIdentifier, IntegratedPropertyName, RadarInterface, VTPSDataRowFromFile, TimeInterval, TimeIntervalForRadioGroup, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer } from "@/CrowTypes";
+import { ColorSchemeIdentifier, IntegratedPropertyName, VTPSDataRowFromFile, TimeIntervalForRadioGroup, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import { ConfigStoreModule } from "@/store/ConfigStore";
 import { mapMutations } from "vuex";
@@ -461,6 +461,9 @@ export default Vue.extend({
       this.resetCopyUrlButtonText();
     },
     VPIChartMode: function (): void {
+      this.resetCopyUrlButtonText();
+    },
+    selectedLanguageCode: function (): void {
       this.resetCopyUrlButtonText();
     }
   },
