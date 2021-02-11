@@ -429,7 +429,7 @@ export default Vue.extend({
       // Process average
       const mtrArrayAverage = mtrArray.reduce((a,b) => a + b, 0) / mtrArray.length;
 
-      // Mutliply per number of hours, round to hundreds and return 
+      // Multiply per number of hours, round to hundreds and return 
       const roundHundred = (value:number) => Math.round(value/100)*100;
       return roundHundred(mtrArrayAverage * this.selectedIntervalInHours);
     },
