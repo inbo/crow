@@ -1,7 +1,7 @@
 <template>
   <b-container class="mt-3">
     <p>
-      <span class="lead text-muted">x {{ t("birds detected") }}</span>
+      <span class="lead text-muted">{{ t("Lead text") }}</span>
       {{ t("Introduction text") }}
     </p>
     <p class="small">
@@ -21,15 +21,15 @@ export default Vue.extend({
   data: function () {
     return {
       texts: {
-        "birds detected": {
-          en: "birds were detected by weather radars over Belgium last night.",
-          fr: "oiseaux ont été détectés par les radars météo au dessus de la Belgique la nuit dernière.",
-          nl: "vogels werden gisteren door weerradars boven België gedetecteerd."
+        "Lead text": {
+          en: "Weather radars do not only detect precipitation, but also birds in the sky.",
+          fr: "Les radars météo sont capables de détecter non seulement la pluie, mais aussi les mouvements des oiseaux.",
+          nl: "Weerradars detecteren niet alleen neerslag, maar ook vogels in de lucht."
         },
         "Introduction text": {
-          en: "Weather radars do not only detect rain, but also birds in the sky. By extracting these bird detections, researchers can study their migration. This is especially useful for studying songbirds, which migrate at night. In the visualizations below you can explore these data for 10 radars, covering the entire Benelux.",
-          fr: "Les radars météo sont capables de détecter non seulement la pluie, mais aussi les mouvements des oiseaux. Grace à ces données, les scientifiques peuvent etudier les migrations aviaires. Ceci est particulièrement utile pour les Passeri (oiseaux-chanteurs), qui migrent la nuit. Vous pouvez explorer ces données (provenant de 10 radars sur l'entièreté du Benelux) grace aux graphiques ci-dessous.",
-          nl: "Weerradars detecteren niet alleen neerslag, maar ook vogels in de lucht. Aan de hand van deze data kunnen onderzoekers hun migratie bestuderen. Dit is vooral handig voor het bestuderen van zangvogels, die 's nachts migreren. In onderstaande visualisaties kunt u deze data verkennen voor 10 radars, die de hele Benelux bestrijken."
+          en: "By extracting these bird detections, researchers can study their migration. This is especially useful for studying songbirds, which migrate at night. In the visualizations below you can explore these data for 10 radars, covering the entire Benelux.",
+          fr: "Grace à ces données, les scientifiques peuvent etudier les migrations aviaires. Ceci est particulièrement utile pour les Passeri (oiseaux-chanteurs), qui migrent la nuit. Vous pouvez explorer ces données (provenant de 10 radars sur l'entièreté du Benelux) grace aux graphiques ci-dessous.",
+          nl: "Aan de hand van deze data kunnen onderzoekers hun migratie bestuderen. Dit is vooral handig voor het bestuderen van zangvogels, die 's nachts migreren. In onderstaande visualisaties kunt u deze data verkennen voor 10 radars, die de hele Benelux bestrijken."
         },
         "Note regarding estimates": {
           en: "Note that the bird numbers are estimates. They are dependent on individual radar settings and are particularly unreliable close to the ground, where bird signals are often mixed with ground echoes.",
