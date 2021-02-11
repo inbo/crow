@@ -145,7 +145,7 @@
             >
               <template #header>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="small" v-html="t('VPI chart description')" />
+                <p class="small" v-html="t('VPI chart description').replace('{{ birdsCount }}', totalNumberOfBirds)" />
               </template>
 
               <template #in-x-axis-group>
@@ -323,9 +323,9 @@ export default Vue.extend({
           nl: "Deze grafiek toont <strong>vogeldichtheid</strong> (kleur) in de tijd (x-as) en hoogte boven zeeniveau (y-as). Het BirdTAM kleurenpalet is ontworpen voor de luchtvaart."
         },
         "VPI chart description": {
-          en: "This chart shows the <strong>total number of birds</strong> (all heights) passing at any given moment. In total, about <strong>x birds</strong> flew over a 1 km transect during the time shown.",
-          fr: "Ce graphique montre le <strong>nombre total d'oiseaux</strong> (toutes hauteurs confondues) passant à un moment donné. Au total, environ <strong>x oiseaux</strong> ont survolé un transect de 1 km pendant la période affichée.",
-          nl: "Deze kaart toont het <strong>totale aantal vogels</strong> (alle hoogtes) dat op een bepaald moment passeert. In totaal vlogen ongeveer <strong>x vogels</strong> over een transect van 1 km in de weergegeven tijd."
+          en: "This chart shows the <strong>total number of birds</strong> (all heights) passing at any given moment. In total, about <strong>{{ birdsCount }} birds</strong> flew over a 1 km transect during the time shown.",
+          fr: "Ce graphique montre le <strong>nombre total d'oiseaux</strong> (toutes hauteurs confondues) passant à un moment donné. Au total, environ <strong>{{ birdsCount }} oiseaux</strong> ont survolé un transect de 1 km pendant la période affichée.",
+          nl: "Deze kaart toont het <strong>totale aantal vogels</strong> (alle hoogtes) dat op een bepaald moment passeert. In totaal vlogen ongeveer <strong>{{ birdsCount }} vogels</strong> over een transect van 1 km in de weergegeven tijd."
         }
       
       } as MultilanguageStringContainer
@@ -418,6 +418,22 @@ export default Vue.extend({
       }
       return dataArray;
     },
+    totalNumberOfBirds(): number {
+      // see https://github.com/inbo/crow/issues/112
+      // Build an array of all MTRs for the selected period
+      let mtrArray = this.integratedProfiles.map(vpiEntry => { return vpiEntry.integratedProfiles.mtr })
+      
+      // Remove NaN values
+      mtrArray = mtrArray.filter(value => { return !Number.isNaN(value); });
+
+      // Process average
+      const mtrArrayAverage = mtrArray.reduce((a,b) => a + b, 0) / mtrArray.length;
+
+      // Mutliply per number of hours, round to hundreds and return 
+      const roundHundred = (value:number) => Math.round(value/100)*100;
+      return roundHundred(mtrArrayAverage * this.selectedIntervalInHours);
+    },
+  
     integratedProfiles(): VPIEntry[] {
       const integratedProfiles = [] as VPIEntry[];
       for (const [timestamp, treeEntry] of Object.entries(this.radarVtps)) {
