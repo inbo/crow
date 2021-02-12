@@ -93,7 +93,7 @@
                   <router-link
                     v-slot="{ href }"
                     append
-                    :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpColorScheme: VPChartSelectedScheme, vpiMode: VPIChartMode, lang: selectedLanguageCode}}"
+                    :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpiMode: VPIChartMode, vpColorScheme: VPChartSelectedScheme, lang: selectedLanguageCode}}"
                   >
                     <b-button 
                       v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
@@ -112,29 +112,6 @@
 
         <b-col lg="9" class="bg-light pt-3">
           <div v-if="readyForCharts">
-            <v-p-chart
-              :vtps-data="radarVtpsAsArray" 
-              :show-time-as="timeZoneToShow"
-              :style-config="VPChartStyle"
-              :scheme="VPChartSelectedScheme"
-              @color-scheme-changed="vpColorSchemeChanged"
-            >
-              <template #header>
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <p v-html="t('VP chart description')" />
-              </template>
-
-              <template #in-x-axis-group>
-                <timeline-chart
-                  :periods="timePeriods"
-                  :style-config="TimelineChartStyle"
-                  :show-time-as="timeZoneToShow"
-                />
-              </template>
-            </v-p-chart>
-
-            <hr>
-
             <v-p-i-chart
               :vpi-data="integratedProfiles"
               :style-config="VPIChartStyle"
@@ -156,6 +133,29 @@
                 />
               </template>
             </v-p-i-chart>
+
+            <hr>
+
+            <v-p-chart
+              :vtps-data="radarVtpsAsArray" 
+              :show-time-as="timeZoneToShow"
+              :style-config="VPChartStyle"
+              :scheme="VPChartSelectedScheme"
+              @color-scheme-changed="vpColorSchemeChanged"
+            >
+              <template #header>
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <p v-html="t('VP chart description')" />
+              </template>
+
+              <template #in-x-axis-group>
+                <timeline-chart
+                  :periods="timePeriods"
+                  :style-config="TimelineChartStyle"
+                  :show-time-as="timeZoneToShow"
+                />
+              </template>
+            </v-p-chart>
           </div>
         </b-col>
       </b-row>
@@ -166,8 +166,8 @@
 
 <script lang="ts">
 import Vue, { PropType } from "vue";
-import VPChart from "@/components/VPChart.vue";
 import VPIChart from "@/components/VPIChart.vue";
+import VPChart from "@/components/VPChart.vue";
 import SiteSelector from "@/components/SiteSelector.vue";
 import TimelineChart from "@/components/TimelineChart.vue";
 import Introduction from "@/components/Introduction.vue";
@@ -204,8 +204,8 @@ export default Vue.extend({
   name: "Crow",
   components: {
     SiteSelector,
-    VPChart,
     VPIChart,
+    VPChart,
     TimelineChart,
     Introduction,
     Partners
@@ -227,13 +227,13 @@ export default Vue.extend({
       type: String as PropType<TimeDisplayedAsValue>,
       default: config.initialTimeDisplay
     },
-    vpChartSelectedSchemeProp: {
-      type: String as () => ColorSchemeIdentifier,
-      default: config.VPChartStyle.initialColorScheme
-    },
     vpiChartModeProp: {
       type: String as () => IntegratedPropertyName,
       default: config.VPIChartStyle.initialMode
+    },
+    vpChartSelectedSchemeProp: {
+      type: String as () => ColorSchemeIdentifier,
+      default: config.VPChartStyle.initialColorScheme
     },
     langCodeProp: {
       type: String as () => LangCode,
@@ -244,10 +244,10 @@ export default Vue.extend({
     return {
       readyForCharts: false,
 
-      VPChartStyle: config.VPChartStyle,
-      VPChartSelectedScheme: this.vpChartSelectedSchemeProp as ColorSchemeIdentifier,
       VPIChartStyle: config.VPIChartStyle,
       VPIChartMode: this.vpiChartModeProp as IntegratedPropertyName,
+      VPChartStyle: config.VPChartStyle,
+      VPChartSelectedScheme: this.vpChartSelectedSchemeProp as ColorSchemeIdentifier,
       TimelineChartStyle: config.TimelineChartStyle,
 
       dataTemporalResolution: config.vtpsFormat.temporalResolution as number,
@@ -317,17 +317,16 @@ export default Vue.extend({
           fr: "Le lien a été copié",
           nl: "Link gekopieerd"
         },
-        "VP chart description": {
-          en: "This chart shows <strong>bird density</strong> (colour) over time (x-axis) and height above mean sea level (y-axis). The BirdTAM colour scale is tailored to aviation.",
-          fr: "Ce graphique montre la <strong>densité d'oiseaux</strong> en fonction du temps (axe x) et de la hauteur par rapport au niveau de la mer (axe y). La palette de couleurs BirdTAM est conçue pour l'aviation.",
-          nl: "Deze grafiek toont <strong>vogeldichtheid</strong> (kleur) in de tijd (x-as) en hoogte boven zeeniveau (y-as). Het BirdTAM kleurenpalet is ontworpen voor de luchtvaart."
-        },
         "VPI chart description": {
           en: "This chart shows the <strong>total number of birds</strong> (all heights) passing at any given moment. In total, about <strong>{{ birdsCount }} birds</strong> flew over a 1 km transect during the time shown.",
           fr: "Ce graphique montre le <strong>nombre total d'oiseaux</strong> (toutes hauteurs confondues) passant à un moment donné. Au total, environ <strong>{{ birdsCount }} oiseaux</strong> ont survolé un transect de 1 km pendant la période affichée.",
           nl: "Deze kaart toont het <strong>totale aantal vogels</strong> (alle hoogtes) dat op een bepaald moment passeert. In totaal vlogen ongeveer <strong>{{ birdsCount }} vogels</strong> over een transect van 1 km in de weergegeven tijd."
+        },
+        "VP chart description": {
+          en: "This chart shows <strong>bird density</strong> (colour) over time (x-axis) and height above mean sea level (y-axis). The BirdTAM colour scale is tailored to aviation.",
+          fr: "Ce graphique montre la <strong>densité d'oiseaux</strong> en fonction du temps (axe x) et de la hauteur par rapport au niveau de la mer (axe y). La palette de couleurs BirdTAM est conçue pour l'aviation.",
+          nl: "Deze grafiek toont <strong>vogeldichtheid</strong> (kleur) in de tijd (x-as) en hoogte boven zeeniveau (y-as). Het BirdTAM kleurenpalet is ontworpen voor de luchtvaart."
         }
-      
       } as MultilanguageStringContainer
     };
   },
@@ -473,10 +472,10 @@ export default Vue.extend({
       this.resetCopyUrlButtonText();
       this.loadData();
     },
-    VPChartSelectedScheme: function (): void {
+    VPIChartMode: function (): void {
       this.resetCopyUrlButtonText();
     },
-    VPIChartMode: function (): void {
+    VPChartSelectedScheme: function (): void {
       this.resetCopyUrlButtonText();
     },
     selectedLanguageCode: function (): void {
@@ -502,11 +501,11 @@ export default Vue.extend({
       UserChoicesStoreModule.setSelectedDate(this.dateValueProp);
       UserChoicesStoreModule.setSelectedLanguageCode(this.langCodeProp);
     },
-    vpiModeChanged(mode: IntegratedPropertyName): void {
-      this.VPIChartMode = mode;
-    },
     vpColorSchemeChanged(schemeName: ColorSchemeIdentifier): void {
       this.VPChartSelectedScheme = schemeName;
+    },
+    vpiModeChanged(mode: IntegratedPropertyName): void {
+      this.VPIChartMode = mode;
     },
     trimLastSlash(s: string): string {
       return s.replace(/\/$/, "");
