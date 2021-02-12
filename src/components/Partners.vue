@@ -16,10 +16,13 @@
       <b-col lg>
         <p>{{ t("Radar data provided by:") }}</p>
         <ul>
-          <li><a href="https://www.meteo.be/">Royal Meteorological Institute of Belgium (RMI)</a> (Jabbeke & Wideumont)</li>
-          <li><a href="https://www.vmm.be/">Flemish Environment Agency (VMM)</a> (Helchteren)</li>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <li v-html="t('RMI source')" />
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <li v-html="t('VMM source')" />
           <li><a href="https://www.skeyes.be/">Skeyes</a> (Zaventem)</li>
-          <li><a href="https://www.knmi.nl/">Royal Netherlands Meteorological Institute (KMNI)</a> (Herwijnen & Den Helder)</li>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <li v-html="t('KNMI source')" />
           <li><a href="https://www.dwd.de/">Deutscher Wetterdienst (DWD)</a> (Essen & Neuheilenbach)</li>
           <li><a href="http://www.meteofrance.fr/">Météo-France</a> (Abbeville & Avesnois)</li>
         </ul>
@@ -39,6 +42,21 @@ export default Vue.extend({
   data: function () {
     return {
       texts: {
+        "KNMI source": {
+          en: '<a href="https://www.knmi.nl/">Royal Netherlands Meteorological Institute (KMNI)</a> (Herwijnen & Den Helder)', 
+          fr: '<a href="https://www.knmi.nl/">Koninklijk Nederlands Meteorologisch Instituut (KNMI)</a> (Herwijnen & Den Helder)',
+          nl: '<a href="https://www.knmi.nl/">Koninklijk Nederlands Meteorologisch Instituut (KNMI)</a> (Herwijnen & Den Helder)'
+        },
+        "VMM source": {
+          en: '<a href="https://www.vmm.be/">Flemish Environment Agency (VMM)</a> (Helchteren)',
+          fr: '<a href="https://www.vmm.be/">Vlaamse Milieumaatschappij (VMM)</a> (Helchteren)',
+          nl: '<a href="https://www.vmm.be/">Vlaamse Milieumaatschappij (VMM)</a> (Helchteren)'
+        },
+        "RMI source": {
+          en: '<a href="https://www.meteo.be/">Royal Meteorological Institute of Belgium (RMI)</a> (Jabbeke & Wideumont)',
+          fr: '<a href="https://www.meteo.be/">Institut Royal Météorologique de Belgique (IRM)</a> (Jabbeke & Wideumont)',
+          nl: '<a href="https://www.meteo.be/">Koninklijk Meteorologisch Instituut van België (KMI)</a> (Jabbeke & Wideumont)'
+        },
         "Partner description": {
           en: "This application was jointly developed by the <a href=\"https://www.meteo.be/\">Royal Meteorological Institute of Belgium (RMI)</a> and the <a href=\"https://www.inbo.be\">Research Institute for Nature and Forest (INBO)</a> in collaboration with the <a href=\"https://www.naturalsciences.be/\">Royal Belgian Institute for Natural Sciences (RBINS)</a>, with financial support from the <a href=\"https://www.belspo.be/\">Belgian Science Policy Office</a> (<code>BelSPO valorisation project CROW</code>).",
           fr: "Cette application a été développée conjointement par l'<a href=\"https://www.meteo.be/\">Institut Royal Météorologique de Belgique</a> et <a href=\"https://www.inbo.be\">INBO (Instituut voor Natuur- en Bosonderzoek)</a> en collaboration avec l'<a href=\"https://www.naturalsciences.be/\">Institut royal des sciences naturelles de Belgique</a>, avec le soutien financier de la <a href=\"https://www.belspo.be/\">Politique scientifique fédérale</a> (<code>BelSPO valorisation project CROW</code>).",
