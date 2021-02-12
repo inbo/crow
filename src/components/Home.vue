@@ -121,7 +121,7 @@
             >
               <template #header>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="small" v-html="t('VP chart description')" />
+                <p v-html="t('VP chart description')" />
               </template>
 
               <template #in-x-axis-group>
@@ -145,7 +145,7 @@
             >
               <template #header>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="small" v-html="t('VPI chart description').replace('{{ birdsCount }}', totalNumberOfBirds)" />
+                <p v-html="t('VPI chart description').replace('{{ birdsCount }}', totalNumberOfBirds)" />
               </template>
 
               <template #in-x-axis-group>
