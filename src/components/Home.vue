@@ -318,14 +318,14 @@ export default Vue.extend({
           nl: "Link gekopieerd"
         },
         "VPI chart description": {
-          en: "This chart shows the <strong>total number of birds</strong> passing at any given moment. In total about <strong>{{ birdsCount }} birds</strong> flew across a 1 km line during the time shown.",
-          fr: "Ce graphique montre le <strong>nombre total d'oiseaux</strong> passant à un moment donné. Au total, environ <strong>{{ birdsCount }} oiseaux</strong> ont traversé une ligne d'un kilomètre de large pendant la période affichée.",
-          nl: "Deze kaart toont het <strong>totale aantal vogels</strong> dat op een bepaald moment passeert. In totaal vlogen ongeveer <strong>{{ birdsCount }} vogels</strong> over een breedte van 1 km in de weergegeven tijd."
+          en: "This chart shows the <strong>total number of birds</strong> passing at any given moment over the radar. In total about <strong>{{ birdsCount }} birds</strong> flew across a 1 km line during the time shown.",
+          fr: "Ce graphique montre le <strong>nombre total d'oiseaux</strong> passant à un moment donné au dessus du radar. Au total, environ <strong>{{ birdsCount }} oiseaux</strong> ont traversé une ligne d'un kilomètre de large pendant la période affichée.",
+          nl: "Deze grafiek toont het <strong>totale aantal vogels</strong> dat op een bepaald moment over de radar passeert. In totaal vlogen ongeveer <strong>{{ birdsCount }} vogels</strong> over een breedte van 1 km in de weergegeven tijd."
         },
         "VP chart description": {
           en: "This chart shows the measured <strong>bird density</strong> (colour: birds/km³) per height above mean sea level. The BirdTAM colour scale is tailored to aviation.",
           fr: "Ce graphique montre la <strong>densité mesurée d'oiseaux</strong> (couleur: nombre d'oiseaux/km³) en fonction de l'altitude (par rapport au niveau de la mer). La palette de couleurs BirdTAM est conçue pour l'aviation.",
-          nl: "Deze grafiek toont de gemeten <strong>vogeldichtheid</strong> (kleur: vogels/km³) per hoogte boven zeeniveau. Het BirdTAM kleurenpalet is ontworpen voor de luchtvaart."
+          nl: "Deze grafiek toont de gemeten <strong>vogeldichtheid</strong> (kleur: vogels/km³) in functie van hoogte boven zeeniveau. Het BirdTAM kleurenpalet is ontworpen voor de luchtvaart."
         }
       } as MultilanguageStringContainer
     };
