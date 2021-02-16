@@ -247,12 +247,12 @@ export default Vue.extend({
         },
         "Height (meters)": {
           en: "Height (meters)",
-          fr: "Hauteur (mètres)",
+          fr: "Altitude (mètres)",
           nl: "Hoogte (meter)"
         }, 
         "Height (feet)": {
           en: "Height (feet)",
-          fr: "Hauteur (pieds)",
+          fr: "Altitude (pieds)",
           nl: "Hoogte (feet)"
         },
         "birds/km³": {

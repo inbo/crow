@@ -319,12 +319,12 @@ export default Vue.extend({
         },
         "VPI chart description": {
           en: "This chart shows the <strong>total number of birds</strong> (all heights) passing at any given moment. In total, about <strong>{{ birdsCount }} birds</strong> flew over a 1 km transect during the time shown.",
-          fr: "Ce graphique montre le <strong>nombre total d'oiseaux</strong> (toutes hauteurs confondues) passant à un moment donné. Au total, environ <strong>{{ birdsCount }} oiseaux</strong> ont survolé un transect de 1 km pendant la période affichée.",
+          fr: "Ce graphique montre le <strong>nombre total d'oiseaux</strong> (toutes altitudes confondues) passant à un moment donné. Au total, environ <strong>{{ birdsCount }} oiseaux</strong> ont survolé un transect de 1 km pendant la période affichée.",
           nl: "Deze kaart toont het <strong>totale aantal vogels</strong> (alle hoogtes) dat op een bepaald moment passeert. In totaal vlogen ongeveer <strong>{{ birdsCount }} vogels</strong> over een transect van 1 km in de weergegeven tijd."
         },
         "VP chart description": {
           en: "This chart shows <strong>bird density</strong> (colour) over time (x-axis) and height above mean sea level (y-axis). The BirdTAM colour scale is tailored to aviation.",
-          fr: "Ce graphique montre la <strong>densité d'oiseaux</strong> en fonction du temps (axe x) et de la hauteur par rapport au niveau de la mer (axe y). La palette de couleurs BirdTAM est conçue pour l'aviation.",
+          fr: "Ce graphique montre la <strong>densité d'oiseaux</strong> en fonction du temps (axe x) et de l'altitude par rapport au niveau de la mer (axe y). La palette de couleurs BirdTAM est conçue pour l'aviation.",
           nl: "Deze grafiek toont <strong>vogeldichtheid</strong> (kleur) in de tijd (x-as) en hoogte boven zeeniveau (y-as). Het BirdTAM kleurenpalet is ontworpen voor de luchtvaart."
         }
       } as MultilanguageStringContainer
