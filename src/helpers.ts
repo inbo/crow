@@ -1,6 +1,6 @@
 // TODO: move field position (hardcoded constants) to config.js
 import config from "./config";
-import * as d3 from "d3"; // TODO: Remove D3 dependency from this file so only the "chart" modules need it
+import * as d3 from "d3";
 import moment from "moment-timezone";
 import { LangCode, MultilanguageStringContainer, Profiles, VTPSDataRowFromFile } from "./CrowTypes";
 

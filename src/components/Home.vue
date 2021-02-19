@@ -250,7 +250,6 @@ export default Vue.extend({
       VPChartSelectedScheme: this.vpChartSelectedSchemeProp as ColorSchemeIdentifier,
       TimelineChartStyle: config.TimelineChartStyle,
 
-      dataTemporalResolution: config.vtpsFormat.temporalResolution as number,
       appTemporalResolution: config.appTemporalResolution as number,
       availableHeights: config.vtpsFormat.availableHeights as number[],
 
