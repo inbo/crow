@@ -24,7 +24,7 @@ npm run test:unit
 
 ## Howto: deployment (to <https://inbo.github.io/crow/>)
 
-**This is now done automatically, each time code is pushed to GitHub on the `master` branch.**
+**This is now done automatically, each time code is pushed to GitHub on the `main` branch.**
 
 Manual procedure, if ever needed: build the code (`npm run build`), then move the (newly generated) content of the `docs` 
 directory to the root of the `gh-pages` branch, and push it to GitHub.
