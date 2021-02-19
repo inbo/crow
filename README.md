@@ -41,10 +41,7 @@ Build with:
 npm run build
 ```
 
-There is no need to build manually, as this is done automatically by GitHub Actions for every commit on the `main` branch. It will serve the site at <https://inbo.github.io/crow/>
-
-## How to cite
-
+There is no need to build manually, as this is done automatically by GitHub Actions for every commit pushed to the `main` branch. It will serve the site at <https://inbo.github.io/crow/>
 
 
 ## Architecture and data flow
