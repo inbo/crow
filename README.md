@@ -26,13 +26,8 @@ npm run test:unit
 
 **This is now done automatically, each time code is pushed to GitHub on the `master` branch.**
 
-Manual procedure, if ever needed
-
-```
-npm run build
-```
-
-Then move the (newly generated) content of the `docs` directory to the root of the `gh-pages` branch, and push it to GitHub.
+Manual procedure, if ever needed: build the code (`npm run build`), then move the (newly generated) content of the `docs` 
+directory to the root of the `gh-pages` branch, and push it to GitHub.
 
 ## Architecture and data flow
 
