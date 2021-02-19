@@ -1,8 +1,21 @@
-# Crow
+# CROW - Online tool to visualize birds detected by weather radars
 
-Crow is a single-page application to visualize bird migration as detected by weather radars. Implemented in [TypeScript](https://www.typescriptlang.org/), makes use of the [Vue CLI](https://cli.vuejs.org/) toolkit, [D3](https://d3js.org/) and [BootstrapVue](https://bootstrap-vue.js.org/).
+CROW is a single-page application to visualize birds detected by weather radars. It visualizes [`vpts`](https://adokter.github.io/bioRad/reference/summary.vpts.html#details) data from a public repository directly in the browser and can thus be hosted on a static file server.
 
-## Howto: installation and development
+CROW is implemented in [TypeScript](https://www.typescriptlang.org/) and makes use of the [Vue CLI toolkit](https://cli.vuejs.org/), [D3](https://d3js.org/) and [BootstrapVue](https://bootstrap-vue.js.org/).
+
+CROW was jointly developed by the [Research Institute for Nature and Forest (INBO)](https://www.inbo.be) and the [Royal Meteorological Institute of Belgium (RMI)](https://www.meteo.be) in collaboration with the [Royal Belgian Institute for Natural Sciences (RBINS)](https://www.naturalsciences.be), with financial support from the [Belgian Science Policy Office](https://www.belspo.be) (`BelSPO valorisation project CROW`).
+
+The application can be cited as:
+
+> Noé N, Reyniers M, Van Hoey S, Desmet P (2021) CROW - Online tool to visualize birds detected by weather radars. https://inbo.github.io/crow/
+
+## Running installations
+
+- [Demo](https://inbo.github.io/crow/)
+- [Meteo.be](https://www.meteo.be/birddetection/)
+
+## Installation and deployment
 
 Install with:
 
@@ -22,12 +35,17 @@ Run unit tests with:
 npm run test:unit
 ```
 
-## Howto: deployment (to <https://inbo.github.io/crow/>)
+Build with:
 
-**This is now done automatically, each time code is pushed to GitHub on the `master` branch.**
+```
+npm run build
+```
 
-Manual procedure, if ever needed: build the code (`npm run build`), then move the (newly generated) content of the `docs` 
-directory to the root of the `gh-pages` branch, and push it to GitHub.
+There is no need to build manually, as this is done automatically by GitHub Actions for every commit on the `main` branch. It will serve the site at <https://inbo.github.io/crow/>
+
+## How to cite
+
+
 
 ## Architecture and data flow
 
