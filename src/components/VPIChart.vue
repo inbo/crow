@@ -229,19 +229,19 @@ export default Vue.extend({
           nl: "MTR: aantal vogels dat per uur over een transect van 1 km vliegt"
         },
         "RTR description": {
-          en: "RTR: hourly reflected bird surface (cm²) passing a 1 km transect",
-          fr: "RTR: surface horaire refletée par les oiseaux (cm²) passant un transect de 1 km",
+          en: "RTR: hourly reflected bird surface (cm²) passing over a 1 km transect",
+          fr: "RTR: surface horaire réfléchie par les oiseaux (cm²) passant un transect de 1 km",
           nl: "RTR: gereflecteerde vogeloppervlakte (cm²) dat per uur over een transect van 1 km passeert"
         },
         "VID description": {
-          en: "VID: number of birds per square km",
-          fr: "VID: nombre d'oiseaux par km carré",
-          nl: "VID: aantal vogels per vierkante km"
+          en: "VID: number of birds per km²",
+          fr: "VID: nombre d'oiseaux par km²",
+          nl: "VID: aantal vogels per km²"
         },
         "VIR description": {
-          en: "VIR: reflected bird surface (cm²) per square km",
-          fr: "VIR: surface refletée par les oiseaux (cm²) par km carré",
-          nl: "VIR: gereflecteerde vogeloppervlakte (cm²) per vierkante km"
+          en: "VIR: reflected bird surface (cm²) per km²",
+          fr: "VIR: surface réfléchie par les oiseaux (cm²) par km²",
+          nl: "VIR: gereflecteerde vogeloppervlakte (cm²) per km²"
         }
       } as MultilanguageStringContainer,
 
