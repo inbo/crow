@@ -43,7 +43,6 @@ npm run build
 
 There is no need to build manually, as this is done automatically by GitHub Actions for every commit pushed to the `main` branch. It will serve the site at <https://inbo.github.io/crow/>
 
-
 ## Architecture and data flow
 
 CROW is implemented as a hierarchy of Vue.js components that can be found in the `src/components` directory. Understanding the role and interface of each component in the tree allows understanding the data flow:
@@ -66,7 +65,7 @@ App
 └── PageFooter
 ```
 
-_Note: Vuex is used as a centralized data store since many components act on the same data, and therefore share a common state. Since it was only introduced quite late during CROW's development, it is not yet used for all data that could be considered shared state (those live mainly in the `Home` component). Two Vuex data stores with explicit names are currently implemented: `ConfigStore` and `UserChoicesStore`._<!--TODO: update if fully implemented-->
+_Note: [Vuex](https://vuex.vuejs.org/) is used as a centralized data store since many components act on the same data, and therefore share a common state. Since it was only introduced quite late during CROW's development, it is not yet used for all data that could be considered shared state (those live mainly in the `Home` component). Two Vuex data stores with explicit names are currently implemented: `ConfigStore` and `UserChoicesStore`._<!--TODO: update if fully implemented-->
 
 CROW's configuration and initial selection (form state) is kept in `src/config.ts`.
 
