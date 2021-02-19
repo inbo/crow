@@ -201,7 +201,7 @@ interface RadarVtpsAsTree {
 const initialCopyUrlText = "Copy link";
 
 export default Vue.extend({
-  name: "Crow",
+  name: "Home",
   components: {
     SiteSelector,
     VPIChart,
