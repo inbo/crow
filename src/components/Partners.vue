@@ -14,7 +14,7 @@
         </p>
       </b-col>
       <b-col lg>
-        <p>{{ t("Radar data are provided by:") }}</p>
+        <p>{{ t("The radar data are provided by:") }}</p>
         <ul>
           <!-- eslint-disable-next-line vue/no-v-html -->
           <li v-html="t('RMI source')" />
@@ -67,10 +67,10 @@ export default Vue.extend({
           fr: "La détection des oiseaux est basée sur l\'algorithme décrit dans Dokter et al. (<a href=\"https://doi.org/10.1098/rsif.2010.0116\">2011</a>, <a href=\"https://doi.org/10.1111/ecog.04028\">2019</a>). Les données sources sont accessibles via le <a href=\"https://opendata.meteo.be/geonetwork/srv/eng/catalog.search#/metadata/RMI_DATASET_CROW\">portail \"open data\" de l'IRM</a>.",
           nl: "De vogeldetectie is gebaseerd op het algoritme beschreven in Dokter et al. (<a href=\"https://doi.org/10.1098/rsif.2010.0116\">2011</a>, <a href=\"https://doi.org/10.1111/ecog.04028\">2019</a>). De brondata zijn beschikbaar via het <a href=\"https://opendata.meteo.be/geonetwork/srv/eng/catalog.search#/metadata/RMI_DATASET_CROW\">KMI open data portaal</a>."
         },
-        "Radar data are provided by:": {
-          en: "Radar data are provided by:",
+        "The radar data are provided by:": {
+          en: "The radar data are provided by:",
           fr: "Les données radar sont fournies par :",
-          nl: "Radardata worden geleverd door:"
+          nl: "De radardata worden geleverd door:"
         }
       } as MultilanguageStringContainer
     }
