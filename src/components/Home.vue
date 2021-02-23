@@ -621,7 +621,7 @@ export default Vue.extend({
       for (let currentDate of this.getDatesForData(startMoment, endMoment)) {
         const url = this.buildDataUrl(radarName, moment(currentDate, "YYYY-MM-DD"));
         axios.get(url).then(response => {
-          const dayData = helpers.parseVtps(response.data);
+          const dayData = helpers.filterVtps(helpers.parseVtps(response.data));
 
           for (const val of dayData) {
             this.storeDataRow(val);
