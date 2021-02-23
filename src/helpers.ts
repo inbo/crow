@@ -6,6 +6,8 @@ import { LangCode, MultilanguageStringContainer, Profiles, VTPSDataRowFromFile }
 
 import { rgb as colorRgb, RGBColor } from "d3-color";
 
+const SD_VVP_THRESHOLD = 2; // VTPS data with sd_vvp < sdVpp_treshold are considered NOT birds (insects or rain)
+
 function getIntensity(val: number, inflexionPoints: number[], intensities: number[]) {
   const i = inflexionPoints.findIndex(e => e === val)
 
@@ -94,11 +96,18 @@ function parseFloatOrZero(str: string): number {
   }
 }
 
+function filterVtps(rows: VTPSDataRowFromFile[], sd_vvpThresh = SD_VVP_THRESHOLD): VTPSDataRowFromFile[] {
+  // Filter out data rows that are likely not birds, based on sd_vvp (https://github.com/inbo/crow/issues/122)
+  return rows.filter(function (row) { 
+    return !isNaN(row.sd_vvp) && row.sd_vvp >= sd_vvpThresh
+  })
+}
+
+
 function parseVtps(responseString: string): VTPSDataRowFromFile[] {
   let d = responseString.split("\n");
   d = d.splice(config.vtpsFormat.numHeaderLines); // Remove 4 header lines
-  // The file is also terminated by a blank line, which cause issues.
-  d.pop()
+  d.pop() // The file is also terminated by a blank line, which cause issues.
 
   const r = d.map(function (row) {
     // There are NaN values everywhere in the data, D3 don't know how to interpret them
@@ -118,7 +127,7 @@ function parseVtps(responseString: string): VTPSDataRowFromFile[] {
   return r;
 }
 
-function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infinity, interval = 200, vvpThresh = 2, alpha = NaN): Profiles {
+function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infinity, interval = 200, sd_vvpThresh = SD_VVP_THRESHOLD, alpha = NaN): Profiles {
   // TODO: interval and vvpThresh should actually be derived from data/metadata itself
   // TODO: extract the data - could be improved by using data itself as input
 
@@ -145,7 +154,7 @@ function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infi
   }
 
   // Filter data on sd_vvp values above sd_vvp threshold
-  data = data.filter(d => d.sd_vvp >= vvpThresh);
+  data = data.filter(d => d.sd_vvp >= sd_vvpThresh);
   if (data.length == 0) {
     return { "mtr": NaN, "rtr": NaN, "vid": NaN, "vir": NaN }
   }
@@ -194,4 +203,4 @@ function translateString(stringId: string, selectedLanguageCode: LangCode, trans
   }
 }
 
-export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateBioRad, translateString }
+export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateBioRad, translateString, filterVtps }
