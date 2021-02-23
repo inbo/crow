@@ -69,7 +69,7 @@ export default Vue.extend({
         },
         "Radar data are provided by:": {
           en: "Radar data are provided by:",
-          fr: "Données radar sont fournies par :",
+          fr: "Les données radar sont fournies par :",
           nl: "Radardata worden geleverd door:"
         }
       } as MultilanguageStringContainer
