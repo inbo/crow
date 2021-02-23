@@ -77,7 +77,7 @@ export default {
 
     showTooltip: false, // BEWARE: useful for debugging, but performance is horrible
 
-    noDataColor: "grey",
+    noDataColor: "#C0C0C0",
 
     // The BirdTAM color scale: code + associated color
     birdtamColors: new Map([
