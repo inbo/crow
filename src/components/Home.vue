@@ -180,7 +180,7 @@ import SunCalc from "suncalc";
 import config from "@/config";
 import helpers from "@/helpers";
 
-import { ColorSchemeIdentifier, IntegratedPropertyName, VTPSDataRowFromFile, TimeIntervalForRadioGroup, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer } from "@/CrowTypes";
+import { ColorSchemeIdentifier, IntegratedPropertyName, VTPSDataRowFromFile, TimeIntervalForRadioGroup, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer, Language } from "@/CrowTypes";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import { ConfigStoreModule } from "@/store/ConfigStore";
 import { mapMutations } from "vuex";
@@ -237,7 +237,7 @@ export default Vue.extend({
     },
     langCodeProp: {
       type: String as () => LangCode,
-      default: config.initialLanguageCode
+      default: null
     }
   },
   data: function () {
@@ -330,6 +330,10 @@ export default Vue.extend({
     };
   },
   computed: {
+    availableLanguages(): Language[] {
+      return ConfigStoreModule.availableLanguages;
+    },
+
     startMoment(): moment.Moment {
       return UserChoicesStoreModule.startMoment;
     },
@@ -491,6 +495,22 @@ export default Vue.extend({
     t(stringId: string) {
       return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
     },
+    chooseAppLanguage() : LangCode {
+      let selectedLangCode = config.initialLanguageCode as string; // Default/fallback choice
+      
+      if (this.langCodeProp) { // Override choice if we have an explicitly request in the URL
+        selectedLangCode = this.langCodeProp
+      } else { 
+        // Override according to the browser settings
+        const browserCode = helpers.getBrowserFirstLangCode()
+        if (browserCode) {
+          if (this.availableLanguages.map(l => l.code as string).includes(browserCode)) {    
+            selectedLangCode = browserCode;
+          }
+        }
+      }
+      return selectedLangCode as LangCode;
+    },
     initializeUserChoiceStore(): void {
       // Load initial values in the user choices store.
       // Props contains either parameters from the route, or default values from the config file.
@@ -498,7 +518,7 @@ export default Vue.extend({
       UserChoicesStoreModule.setSelectedIntervalInHours(this.intervalValueProp);
       UserChoicesStoreModule.setTimeDisplayedAs(this.timeDisplayValueProp);
       UserChoicesStoreModule.setSelectedDate(this.dateValueProp);
-      UserChoicesStoreModule.setSelectedLanguageCode(this.langCodeProp);
+      UserChoicesStoreModule.setSelectedLanguageCode(this.chooseAppLanguage());
     },
     vpColorSchemeChanged(schemeName: ColorSchemeIdentifier): void {
       this.VPChartSelectedScheme = schemeName;

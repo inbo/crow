@@ -203,4 +203,23 @@ function translateString(stringId: string, selectedLanguageCode: LangCode, trans
   }
 }
 
-export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateBioRad, translateString, filterVtps }
+function getBrowserFirstLangCode(): string | undefined {
+  let lang = window.navigator.languages ? window.navigator.languages[0] : null;
+  // @ts-ignore
+  lang = lang || window.navigator.language || window.navigator.browserLanguage || window.navigator['userLanguage'];
+
+  let shortLang = lang;
+  if (shortLang !== null) {
+    if (shortLang.indexOf('-') !== -1)
+      shortLang = shortLang.split('-')[0];
+
+    if (shortLang.indexOf('_') !== -1)
+      shortLang = shortLang.split('_')[0];
+
+    return shortLang;
+  }
+  
+}
+
+
+export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateBioRad, translateString, filterVtps, getBrowserFirstLangCode}
