@@ -79,6 +79,8 @@
             :show.sync="tooltipVisible"
             target="tooltipCircle"
             placement="top"
+            :no-fade="true"
+            :delay="0"
           >
             <!-- eslint-disable-next-line vue/valid-v-slot -->
             <template #title>{{ formattedMomentAtTimeX }}</template>
@@ -527,8 +529,15 @@ export default Vue.extend({
     mouseLeave(): void {
       this.tooltipVisible = false;
       this.mouseXPosition = null;
+      this.VPIEntryAtTimeX = null;
     },
     mouseMove(event: MouseEvent): void {
+      if (this.selectedValAtTimeX && !isNaN(this.selectedValAtTimeX)) {
+        this.tooltipVisible = true;
+      } else {
+        this.tooltipVisible = false;
+      }
+
       // When mouse is moved over the chart, updates this.mouseXPosition and this.VPIEntryAtTimeX
       // 1. Get (and save in data) the mouse position
       const target = event.target as HTMLElement;
@@ -548,12 +557,8 @@ export default Vue.extend({
             d1.moment.valueOf() - x0.getTime() / 1000
             ? d1
             : d0;
-      }
-
-      if (this.selectedValAtTimeX && !isNaN(this.selectedValAtTimeX)) {
-        this.tooltipVisible = true;
       } else {
-        this.tooltipVisible = false;
+        this.VPIEntryAtTimeX = null;
       }
 
     },
