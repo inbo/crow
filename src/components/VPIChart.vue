@@ -71,7 +71,7 @@
             :cx="closestMomentXPosition"
             :cy="YPositionAtTimeX"
             r="4"
-            :style="`fill: ${styleConfig.lineColor} `"
+            :style="`fill: ${styleConfig.strokeColor}`"
           />
 
           <b-popover
