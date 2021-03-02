@@ -1,4 +1,4 @@
-name: Deploy to GitHub pages
+name: Run tests and deploy to GitHub pages if successful
 
 on:
   push:
@@ -6,7 +6,21 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  run-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+
+      - name: Install 🔧
+        run: |
+          npm install
+
+      - name: Run unit tests
+        run: npm run test:unit
+
+  deploy-gh-pages:
+    needs: run-unit-tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
