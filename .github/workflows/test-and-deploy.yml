@@ -28,9 +28,9 @@ jobs:
 
       - name: Apply local settings
         uses: finnp/create-file-action@master
-          env:
-            FILE_NAME: ".env.local"
-            FILE_DATA: 'URL_PREFIX = "/crow/"'
+        env:
+          FILE_NAME: ".env.local"
+          FILE_DATA: 'URL_PREFIX = "/crow/"'
 
       - name: Install and build 🔧
         run: |
