@@ -6,7 +6,7 @@ const commitHash = require("child_process")
   .toString();
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === "production" ? "/crow/" : "/",
+  publicPath: process.env.URL_PREFIX,
   configureWebpack: {
     plugins: [
       new webpack.DefinePlugin({
