@@ -43,7 +43,7 @@ npm run build
 
 There is no need to build manually, as this is done automatically by GitHub Actions for every commit pushed to the `main` branch. It will serve the site at <https://inbo.github.io/crow/>.
 
-**If the app is to be deployed under an URL prefix (for example `https://inbo.github.io/crow`), please create a `env.local` file in the source tree root winth content: `URL_PREFIX = "/crow/"`.**
+If the app is to be deployed under a URL prefix (for example `https://inbo.github.io/crow`), create a `env.local` file in the source tree root with content: `URL_PREFIX = "/crow/"`.
 
 ## Architecture and data flow
 
