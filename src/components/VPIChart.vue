@@ -153,7 +153,10 @@ export default Vue.extend({
     yaxis(el, binding): void {
       const scaleFunction = binding.value.scale;
 
-      const d3Axis = d3.axisLeft(scaleFunction).tickSizeOuter(0); // And we want to hide the last tick line
+      const d3Axis = d3
+        .axisLeft<number>(scaleFunction)
+        .tickFormat(d3.format("d"))
+        .tickSizeOuter(0); // And we want to hide the last tick line
 
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
     },
