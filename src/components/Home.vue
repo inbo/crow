@@ -464,8 +464,10 @@ export default Vue.extend({
       this.loadData();
     },
     selectedDate: function (): void {
-      this.resetCopyUrlButtonText();
-      this.loadData();
+      if (moment(this.selectedDate, "YYYY-MM-DD").isValid() === true) { // Date can temporarily be incorrect while manually changing (typing in) the date field
+        this.resetCopyUrlButtonText();
+        this.loadData();
+      }
     },
     selectedIntervalInHours: function (): void {
       this.resetCopyUrlButtonText();
