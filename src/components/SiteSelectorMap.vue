@@ -22,7 +22,7 @@ export default Vue.extend({
   props: {
     sites: {
       type: Array as () => GroupedRadarInterface[],
-      default: []
+      default: () => []
     },
     selectedRadarCode: {
       type: String,
