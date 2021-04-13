@@ -1,5 +1,7 @@
 # CROW - Online tool to visualize birds detected by weather radars
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4629448.svg)](https://doi.org/10.5281/zenodo.4629448)
+
 CROW is a single-page application to visualize birds detected by weather radars. It visualizes [`vpts`](https://adokter.github.io/bioRad/reference/summary.vpts.html#details) data from a public repository directly in the browser and can thus be hosted on a static file server. As it only visualizes data from one radar at a time, it is easily scalable.
 
 CROW is implemented in [TypeScript](https://www.typescriptlang.org/) and makes use of the [Vue CLI toolkit](https://cli.vuejs.org/), [D3](https://d3js.org/) and [BootstrapVue](https://bootstrap-vue.js.org/).
@@ -8,7 +10,7 @@ CROW was jointly developed by the [Research Institute for Nature and Forest (INB
 
 The application can be cited as:
 
-> Noé N, Reyniers M, Van Hoey S, Desmet P (2021) CROW - Online tool to visualize birds detected by weather radars. https://inbo.github.io/crow/
+> Noé N, Reyniers M, Van Hoey S, Desmet P (2021) CROW - Online tool to visualize birds detected by weather radars. <http://doi.org/10.5281/zenodo.4629449>
 
 ## Running installations
 
