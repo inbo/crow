@@ -33,7 +33,7 @@ export default Vue.extend({
   props: {
     days: {
       type: Array as () => DayData[],
-      default: []
+      default: () => []
     },
     height: {
       type: Number,
