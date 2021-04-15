@@ -4,39 +4,23 @@ import * as d3 from "d3";
 import moment from "moment-timezone";
 import { LangCode, MultilanguageStringContainer, Profiles, VTPSDataRowFromFile } from "./CrowTypes";
 
-import { rgb as colorRgb, RGBColor } from "d3-color";
+import { rgb, RGBColor } from "d3-color";
 
 const SD_VVP_THRESHOLD = 2; // VTPS data with sd_vvp < sdVpp_treshold are considered NOT birds (insects or rain)
-
-function getIntensity(val: number, inflexionPoints: number[], intensities: number[]) {
-  const i = inflexionPoints.findIndex(e => e === val)
-
-  if (i === -1) {
-    // Not found, we interpolate
-    const position = d3.bisect(inflexionPoints, val);
-    
-    let scale = d3.scaleLinear()
-                .domain([inflexionPoints[position - 1], inflexionPoints[position]])
-                .range([intensities[position - 1], intensities[position]])
-    
-    return scale(val);
-
-  } else {
-    return intensities[i];
-  }
-}
 
 function interpolateBioRad(val: number): RGBColor {
   // Num: between 0 and 1 
   val = val * 255; // Constants below are taken from bioRad and have a 0-255 range
 
-  // Reimplementation of the IDL color scale; based on bioRad's implementation (https://github.com/adokter/bioRad/blob/e0ede427eb34007dc9985302d40cbdab158e0636/R/color_scale.R#L65-L85)
+  // Reimplementation of the IDL "STD Gamma II" color scale; based on bioRad's implementation (https://github.com/adokter/bioRad/blob/e0ede427eb34007dc9985302d40cbdab158e0636/R/color_scale.R#L65-L85)
   // and the explanations at: https://github.com/inbo/crow/issues/38 
-  const redIntensity = getIntensity(val, [0, 62, 81, 93, 145, 176, 191, 208, 255], [255, 255, 163, 255, 255, 81, 81, 0, 0])
-  const greenIntensity = getIntensity(val, [0, 64, 79, 110, 142, 255], [255, 255, 163, 163, 0, 0]);
-  const blueIntensity = getIntensity(val, [0, 79, 96, 110, 127, 159, 206, 255], [255, 0, 0, 82, 0, 0, 255, 0]);
-
-  return colorRgb(redIntensity, greenIntensity, blueIntensity, 1)
+  
+  return rgb(
+    d3.scaleLinear().domain([0, 62, 81, 93, 145, 176, 191, 208, 255]).range([255, 255, 163, 255, 255, 81, 81, 0, 0])(val), 
+    d3.scaleLinear().domain([0, 64, 79, 110, 142, 255]).range([255, 255, 163, 163, 0, 0])(val), 
+    d3.scaleLinear().domain([0, 79, 96, 110, 127, 159, 206, 255]).range([255, 0, 0, 82, 0, 0, 255, 0])(val), 
+    1
+  )
 }
 
 function densityToBirdtam(density: number): number {
