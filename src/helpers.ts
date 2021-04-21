@@ -8,9 +8,9 @@ import { rgb, RGBColor } from "d3-color";
 
 const SD_VVP_THRESHOLD = 2; // VTPS data with sd_vvp < sdVpp_treshold are considered NOT birds (insects or rain)
 
-function interpolateBioRad(val: number): RGBColor {
+function interpolateStdGammaII(val: number): RGBColor {
   // Num: between 0 and 1 
-  val = val * 255; // Constants below are taken from bioRad and have a 0-255 range
+  val = 255 - (val * 255); // Constants below are taken from bioRad and have a 0-255 range
 
   // Reimplementation of the IDL "STD Gamma II" color scale; based on bioRad's implementation (https://github.com/adokter/bioRad/blob/e0ede427eb34007dc9985302d40cbdab158e0636/R/color_scale.R#L65-L85)
   // and the explanations at: https://github.com/inbo/crow/issues/38 
@@ -206,4 +206,4 @@ function getBrowserFirstLangCode(): string | undefined {
 }
 
 
-export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateBioRad, translateString, filterVtps, getBrowserFirstLangCode}
+export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateStdGammaII, translateString, filterVtps, getBrowserFirstLangCode}

@@ -203,7 +203,7 @@ export default Vue.extend({
           text: "bioRad",
           value: "biorad",
           dailyLinesColor: "red",
-          colorScale: d3.scaleSequentialSymlog(helpers.interpolateBioRad).domain([0, 1000]),
+          colorScale: d3.scaleSequentialSymlog(helpers.interpolateStdGammaII).domain([1000, 0]),
           dynamicDomain: false,
           colorScaleType: "sequentialSymLog",
           tickValues: [0, 1, 2, 5, 10, 25, 50, 100, 200, 500, 1000],
@@ -316,7 +316,7 @@ export default Vue.extend({
       if (this.selectedColorSchemeConfig.dynamicDomain === true) {
         return this.maxDensity
       } else {
-        return this.selectedColorSchemeConfig.colorScale.domain()[1] // This value is hardcoded in the config
+        return this.selectedColorSchemeConfig.colorScale.domain().reduce(function (a, b) {return Math.max(a, b)}) // Get the highest value so we support inverted domains (to reverse color scales)
       }
     },
     maxDensity: function (): number {
