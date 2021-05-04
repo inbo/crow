@@ -40,7 +40,7 @@
             v-xaxis="{'scale': xScale, 'timezone': showTimeAs, 'axisTimeFormat': styleConfig.axisTimeFormat}"
           />
         </g>
-        <g v-yaxis-left="{'scale': yScale, 'tickValues': styleConfig.yAxisLeftTicks}" />
+        <g v-yaxis-left="{'scale': yScale}" />
 
         <template v-for="d in vtpsDataPrepared">
           <rect
@@ -149,11 +149,10 @@ export default Vue.extend({
     },
     yaxisLeft(el, binding): void {
       const scaleFunction = binding.value.scale;
-      const tickValues = binding.value.tickValues;
 
       const d3Axis = d3
-        .axisLeft(scaleFunction)
-        .tickValues(tickValues)
+        .axisLeft<number>(scaleFunction)
+        .tickFormat(alt => alt % 1000 === 0 ? alt.toString() : "")
         .tickSizeOuter(0); // And we want to hide the last tick line
 
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
@@ -326,11 +325,24 @@ export default Vue.extend({
       return maxVal || 0;
     },
     dataTemporalResolution: function (): number {
-      return (this.vtpsData[26].timestamp - this.vtpsData[0].timestamp) / 1000; // TODO: replace 26 by dynamic value
+      return (this.vtpsData[this.distinctHeightsMeters.length + 1].timestamp - this.vtpsData[0].timestamp) / 1000;
+    },
+    dataVerticalResolutionMeters: function(): number {
+      return this.distinctHeightsMeters[1] - this.distinctHeightsMeters[0];
     },
     distinctHeightsMeters: function (): number[] {
       const heightsSet = new Set(this.vtpsData.map((row) => row.height));
       return Array.from(heightsSet.values());
+    },
+    distinctHeightsMetersPlusOne: function (): number[] {
+      // If distinctHeightsMeters (from data) is [0, 200, ..., 4800], returns [0, 200, ..., 4800, 5000]
+      return this.distinctHeightsMeters.concat([this.maxHeightMeters + this.dataVerticalResolutionMeters])
+    },
+    maxHeightMeters: function(): number {
+      return this.distinctHeightsMeters[this.distinctHeightsMeters.length - 1]
+    },
+    maxHeightFeet: function(): number {
+      return 3.2808 * this.maxHeightMeters;
     },
     scale: function (): Scales {
       // Computed property created just so the "axis" directive can be more easily reused and shared
@@ -347,15 +359,15 @@ export default Vue.extend({
     },
     yScale: function (): d3.ScalePoint<string> {
       return d3
-        .scalePoint()
+        .scalePoint() 
         .range([this.innerHeight, 0])
-        .domain(this.distinctHeightsMeters.concat([5000]).map(String)); // The axis needs one more value so the line extends to the top...
+        .domain(this.distinctHeightsMetersPlusOne.map(String)) // ... PlusOne: for a nicer ais display
     },
     yScaleFeet: function (): d3.ScaleLinear<number, number> {
       return d3
         .scaleLinear()
         .range([this.innerHeight, 0])
-        .domain([0, 15748.03]); // TODO: make dynamic
+        .domain([0, this.maxHeightFeet]);
     },
     vtpsDataPrepared: function (): VTPSEntryPrepared[] {
       return this.vtpsData.map((data) => ({

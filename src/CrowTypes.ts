@@ -44,13 +44,18 @@ export interface VPIEntry {
 }
 
 export interface RadarInterface {
-  value: string; // Odim code
+  odimCode: string;
   text: string;  // Location name
   country: string;
   latitude: number;
   longitude: number;
   timezone: string;
+  endpoint: string; // URL template, some variables are interpolated. Example: 'https://opendata.meteo.be/ftp/observations/radar/vbird/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.txt'
+  vtpsFileFormat: VTPSFileFormat;
+  heights: number[]; // Data is available at the following heights
 }
+
+export type VTPSFileFormat = "VOL2BIRD" | "CSV";  // VOL2BIRD: fixed width column. CSV: Follow BioRad's output (see https://github.com/inbo/crow/issues/135)
 
 export interface GroupedRadarInterface {
   label: string;

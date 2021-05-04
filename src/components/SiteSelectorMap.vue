@@ -2,7 +2,7 @@
   <svg class="d-none d-lg-block mt-3 mx-auto" :width="svgWidth" :height="svgHeight">
     <g>
       <path id="country" :d="countryPath" stroke="#000" stroke-width="1" />
-      <circle v-for="radar in radars" :id="'circle-radar-' + radar.value" :key="radar.value" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.value)">
+      <circle v-for="radar in radars" :id="'circle-radar-' + radar.value" :key="radar.value" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.odimCode)">
         <b-popover :target="'circle-radar-' + radar.value" triggers="hover">
           {{ radar.text }}
         </b-popover>
@@ -86,7 +86,7 @@ export default Vue.extend({
       return this.projection([radar.longitude, radar.latitude])
     },
     getRadarExtraClass(radar: RadarInterface): string {
-      return radar.value === this.selectedRadarCode ? "radar-circle-selected" : "radar-circle-unselected"
+      return radar.odimCode === this.selectedRadarCode ? "radar-circle-selected" : "radar-circle-unselected"
     }
 
   },

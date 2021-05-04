@@ -16,7 +16,7 @@ export class UserChoicesStore extends VuexModule {
   // (selectedLanguageCode: the real initialization happens here because it's not available in the router)
 
   selectedDate = ""
-  selectedRadarCode = config.initialRadarValue;
+  selectedRadarCode = config.initialRadarCode;
   selectedIntervalInHours = config.initialTimeInterval;  // The chart show this amount of hours around selectedDate at noon
   timeDisplayedAs: TimeDisplayedAsValue = "radarLocal"
 
@@ -107,7 +107,7 @@ export class UserChoicesStore extends VuexModule {
 
     ConfigStoreModule.availableRadars.forEach((radarGroup: GroupedRadarInterface) => {
       const groupFound = radarGroup.options.find(
-        (d) => d.value == this.selectedRadarCode
+        (d) => d.odimCode == this.selectedRadarCode
       );
       if (groupFound) {
         found = groupFound;

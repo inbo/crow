@@ -24,7 +24,7 @@ test("Profile integration code (compare to bioRad output)", () => {
   // 1. Load and parse the data
   // 1.1 From VTPS file
   const sourceData = fs.readFileSync(path.resolve(__dirname, "./data/behel_vpts_20200129.truncated.txt"), "utf-8");
-  const VtpsData = helpers.parseVtps(sourceData);
+  const VtpsData = helpers.parseVtps(sourceData, 'VOL2BIRD');
   // 1.2 bioRad's output for comparison (behel_vpi_20200129.truncated.csv)
   interface BioRadProfile {
     mtr: number;

@@ -3,6 +3,7 @@
     <b-form-select
       id="input-radar"
       :value="selectedRadarCode"
+      value-field="odimCode"
       size="sm"
       :options="availableRadars"
       @change="setSelectedRadarCode"

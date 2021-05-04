@@ -93,7 +93,7 @@
                   <router-link
                     v-slot="{ href }"
                     append
-                    :to="{ path: '/', query: { radar: selectedRadarValue, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpiMode: VPIChartMode, vpColorScheme: VPChartSelectedScheme, lang: selectedLanguageCode}}"
+                    :to="{ path: '/', query: { radar: selectedRadarCode, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpiMode: VPIChartMode, vpColorScheme: VPChartSelectedScheme, lang: selectedLanguageCode}}"
                   >
                     <b-button 
                       v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
@@ -180,7 +180,7 @@ import SunCalc from "suncalc";
 import config from "@/config";
 import helpers from "@/helpers";
 
-import { ColorSchemeIdentifier, IntegratedPropertyName, VTPSDataRowFromFile, TimeIntervalForRadioGroup, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer, Language } from "@/CrowTypes";
+import { ColorSchemeIdentifier, IntegratedPropertyName, VTPSDataRowFromFile, TimeIntervalForRadioGroup, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer, Language, RadarInterface } from "@/CrowTypes";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import { ConfigStoreModule } from "@/store/ConfigStore";
 import { mapMutations } from "vuex";
@@ -213,7 +213,7 @@ export default Vue.extend({
   props: {
     radarValueProp: {
       type: String,
-      default: config.initialRadarValue
+      default: config.initialRadarCode
     },
     dateValueProp: {
       type: String,
@@ -251,7 +251,6 @@ export default Vue.extend({
       TimelineChartStyle: config.TimelineChartStyle,
 
       appTemporalResolution: config.appTemporalResolution as number,
-      availableHeights: config.vtpsFormat.availableHeights as number[],
 
       // Data is kept as an object for performance reasons, the "radarVtpsAsArray" computed property allows reading it as an array.
       // All timestamps are kept in UTC (transformed later, in the viz components)
@@ -342,8 +341,12 @@ export default Vue.extend({
       return UserChoicesStoreModule.endMoment;
     },
 
-    selectedRadarValue(): string {
-      return UserChoicesStoreModule.selectedRadarCode;
+    selectedRadarCode(): string {
+      return this.selectedRadar.odimCode;
+    },
+
+    selectedRadar(): RadarInterface {
+      return UserChoicesStoreModule.selectedRadarAsObject;
     },
 
     selectedLanguageCode(): LangCode {
@@ -404,12 +407,6 @@ export default Vue.extend({
 
       return periods;
     },
-    selectedRadarLatitude(): number {
-      return UserChoicesStoreModule.selectedRadarAsObject.latitude;
-    },
-    selectedRadarLongitude(): number {
-      return UserChoicesStoreModule.selectedRadarAsObject.longitude;
-    },
     radarVtpsAsArray(): VTPSDataRow[] {
       const dataArray = [];
       for (const [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
@@ -459,7 +456,7 @@ export default Vue.extend({
   },
   watch: {
     // Any change on something that can be shared via URL will reset the button
-    selectedRadarValue: function (): void {
+    selectedRadarCode: function (): void {
       this.resetCopyUrlButtonText();
       this.loadData();
     },
@@ -536,7 +533,7 @@ export default Vue.extend({
     },
     /* Initialize radarVtps with empty data 
        - The temporal range is [startMoment, endMoment] (resolution: appTemporalResolution - in seconds)
-       - Heights follow availableHeights
+       - Heights depend on the radar configuration
     */
     initializeEmptyData(): void {
       // Remove existing data
@@ -545,7 +542,7 @@ export default Vue.extend({
       const currentMoment = this.startMoment.clone();
       while (currentMoment.isBefore(this.endMoment)) {
         const heightObj = {} as VTPSDataByHeight;
-        this.availableHeights.forEach(height => {
+        this.selectedRadar.heights.forEach(height => {
           heightObj[height] = { noData: true };
         });
 
@@ -553,8 +550,8 @@ export default Vue.extend({
           sunAltitude:
             SunCalc.getPosition(
               currentMoment.toDate(),
-              this.selectedRadarLatitude,
-              this.selectedRadarLongitude
+              this.selectedRadar.latitude,
+              this.selectedRadar.longitude
             ).altitude *
             (180 / Math.PI), // In degrees
           heightData: heightObj
@@ -591,7 +588,7 @@ export default Vue.extend({
         this.readyForCharts = true;
         this.initializeEmptyData();
         this.populateDataFromCrowServer(
-          this.selectedRadarValue,
+          this.selectedRadar,
           this.startMoment,
           this.endMoment
         );
@@ -636,27 +633,20 @@ export default Vue.extend({
 
     /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */
     populateDataFromCrowServer(
-      radarName: string,
+      radar: RadarInterface,
       startMoment: moment.Moment,
       endMoment: moment.Moment
     ): void {
       for (let currentDate of this.getDatesForData(startMoment, endMoment)) {
-        const url = this.buildDataUrl(radarName, moment(currentDate, "YYYY-MM-DD"));
+        const url = helpers.buildVpTsDataUrl(radar, moment(currentDate, "YYYY-MM-DD"));
         axios.get(url).then(response => {
-          const dayData = helpers.filterVtps(helpers.parseVtps(response.data));
+          const dayData = helpers.filterVtps(helpers.parseVtps(response.data, radar.vtpsFileFormat));
 
           for (const val of dayData) {
             this.storeDataRow(val);
           }
         });
       }
-    },
-
-    /* Build the data URL for a given day and radar */
-    buildDataUrl(radarName: string, selectedDate: moment.Moment): string {
-      return `${config.dataServerUrl}/${radarName}/${selectedDate.format(
-        "YYYY"
-      )}/${radarName}_vpts_${selectedDate.format("YYYYMMDD")}.txt`;
     },
     ...mapMutations([
       "setSelectedIntervalInHours"

@@ -1,8 +1,7 @@
 // TODO: move field position (hardcoded constants) to config.js
-import config from "./config";
 import * as d3 from "d3";
 import moment from "moment-timezone";
-import { LangCode, MultilanguageStringContainer, Profiles, VTPSDataRowFromFile } from "./CrowTypes";
+import { LangCode, MultilanguageStringContainer, Profiles, RadarInterface, VTPSDataRowFromFile, VTPSFileFormat } from "./CrowTypes";
 
 import { rgb, RGBColor } from "d3-color";
 
@@ -87,10 +86,73 @@ function filterVtps(rows: VTPSDataRowFromFile[], sd_vvpThresh = SD_VVP_THRESHOLD
   })
 }
 
+interface csvDataRow { // An object whose key and values are both strings
+  [fieldName: string]: string
+}
 
-function parseVtps(responseString: string): VTPSDataRowFromFile[] {
+function csvStringToObjs(csvString: string, lineSeparator='\n', fieldSeparator=',', quotedHeaders=true): csvDataRow[] {
+  var arr = csvString.split(lineSeparator);
+    var r = [];
+    var headers = arr[0].split(fieldSeparator);
+
+    if (quotedHeaders) {
+      headers = headers.map(h => h.replace(/"/g,""))
+    }
+    
+    for(var i = 1; i < arr.length; i++) {
+      var data = arr[i].split(fieldSeparator);
+      var obj = {} as csvDataRow;
+      for(var j = 0; j < data.length; j++) {
+         obj[headers[j].trim()] = data[j].trim();
+      }
+      r.push(obj);
+    }
+
+    return r
+}
+
+function parseCSVVtps(responseString: string): VTPSDataRowFromFile[] {
+  // Data file sample: https://github.com/inbo/crow/issues/135#issuecomment-823844454
+  const lineSeparator = '\n';
+  const fieldSeparator = ',';
+  const dateTimeFormat = 'YYYY-MM-DD hh:mm:ss';
+  const quotedHeaders = true;
+  const trailingLine = true;
+
+  const d = csvStringToObjs(responseString, lineSeparator, fieldSeparator, quotedHeaders);
+  
+  if (trailingLine) {
+    d.pop()
+  }
+
+  const r = d.map(function (row) {
+    //console.log("Row.dd", row.dd)
+    return {
+      datetime: moment.utc(row.datetime, dateTimeFormat).valueOf(),
+      height: parseInt(row.height),
+      dd: parseFloat(row.dd),
+      ff: parseFloat(row.ff),
+      dens: parseFloatOrZero(row.dens),
+      sd_vvp: parseFloat(row.sd_vvp),
+      eta: parseFloatOrZero(row.eta)
+    }
+  });
+
+  return r
+}
+
+/* Build the data URL for a given day and radar */
+function buildVpTsDataUrl(radar: RadarInterface, selectedDate: moment.Moment): string {
+  return radar.endpoint.replaceAll('{odimCode}', radar.odimCode)
+                       .replaceAll('{yyyy}', selectedDate.format("YYYY"))
+                       .replaceAll('{yyyymmdd}', selectedDate.format("YYYYMMDD"))
+}
+
+function parseVol2birdVtps(responseString: string): VTPSDataRowFromFile[] {
+  const numHeaderLines = 4;
+
   let d = responseString.split("\n");
-  d = d.splice(config.vtpsFormat.numHeaderLines); // Remove 4 header lines
+  d = d.splice(numHeaderLines); // Remove 4 header lines
   d.pop() // The file is also terminated by a blank line, which cause issues.
 
   const r = d.map(function (row) {
@@ -108,7 +170,16 @@ function parseVtps(responseString: string): VTPSDataRowFromFile[] {
     };
   });
 
+  //console.log(r[0]);
   return r;
+}
+
+function parseVtps(responseString: string, format: VTPSFileFormat): VTPSDataRowFromFile[] {
+  if (format === 'VOL2BIRD') {
+    return parseVol2birdVtps(responseString);
+  } else {
+    return parseCSVVtps(responseString);
+  }
 }
 
 function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infinity, interval = 200, sd_vvpThresh = SD_VVP_THRESHOLD, alpha = NaN): Profiles {
@@ -206,4 +277,4 @@ function getBrowserFirstLangCode(): string | undefined {
 }
 
 
-export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateStdGammaII, translateString, filterVtps, getBrowserFirstLangCode}
+export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateStdGammaII, translateString, filterVtps, getBrowserFirstLangCode, buildVpTsDataUrl }
