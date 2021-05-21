@@ -58,8 +58,8 @@ export default {
           text: "Albis", 
           latitude: 47.2843, longitude: 8.512, 
           timezone: "Europe/Zurich", 
-          //endpoint: 'https://opendata.vogelwarte.ch/ftp/observations/radar/wr/bird.vpts/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.csv',
-          endpoint: 'http://localhost:8000/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.csv', 
+          endpoint: 'https://opendata.vogelwarte.ch/ftp/observations/radar/wr/bird.vpts/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.csv',
+          //endpoint: 'http://localhost:8000/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.csv', 
           heights: [0, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400, 3600, 3800, 4000, 4200, 4400, 4600, 4800, 5000, 5200, 5400, 5600, 5800], 
           vtpsFileFormat: 'CSV'
         }
