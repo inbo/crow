@@ -2,8 +2,8 @@
   <svg class="d-none d-lg-block mt-3 mx-auto" :width="svgWidth" :height="svgHeight">
     <g>
       <path id="country" :d="countryPath" stroke="#000" stroke-width="1" />
-      <circle v-for="radar in radars" :id="'circle-radar-' + radar.value" :key="radar.value" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.odimCode)">
-        <b-popover :target="'circle-radar-' + radar.value" triggers="hover">
+      <circle v-for="radar in radars" :id="'circle-radar-' + radar.odimCode" :key="radar.odimCode" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.odimCode)">
+        <b-popover :target="'circle-radar-' + radar.odimCode" triggers="hover">
           {{ radar.text }}
         </b-popover>
       </circle>
@@ -15,7 +15,7 @@
 import Vue from "vue";
 import * as d3 from "d3";
 import { GroupedRadarInterface, RadarInterface } from "@/CrowTypes";
-import beneluxGeoJSON from "@/geojson_crow.json";
+import basemap from "@/geojson_basemap.json";
 
 export default Vue.extend({
   name: "SiteSelectorMap",
@@ -37,7 +37,7 @@ export default Vue.extend({
       xPadding: 15,
       yPadding: 15,
 
-      countriesFeatures: beneluxGeoJSON as d3.ExtendedFeatureCollection
+      countriesFeatures: basemap as d3.ExtendedFeatureCollection
     }
   },
   computed: {
