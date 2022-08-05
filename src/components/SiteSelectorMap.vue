@@ -15,7 +15,7 @@
 import Vue from "vue";
 import * as d3 from "d3";
 import { GroupedRadarInterface, RadarInterface } from "@/CrowTypes";
-import beneluxGeoJSON from "@/geojson_crow.json";
+import beneluxGeoJSON from "@/geojson_basemap.json";
 
 export default Vue.extend({
   name: "SiteSelectorMap",
