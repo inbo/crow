@@ -1,9 +1,13 @@
 # Data
 data/*/*.vp
 
+# Mac OS
 .DS_Store
+
+# Node
 node_modules
-/dist
+dist
+docs
 
 # local env files
 .env.local
