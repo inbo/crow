@@ -1,11 +1,11 @@
 // TODO: move field position (hardcoded constants) to config.js
 import * as d3 from "d3";
 import moment from "moment-timezone";
-import { LangCode, MultilanguageStringContainer, Profiles, RadarInterface, VTPSDataRowFromFile, VTPSFileFormat } from "./CrowTypes";
+import { LangCode, MultilanguageStringContainer, Profiles, RadarInterface, VPTSDataRowFromFile, VPTSFileFormat } from "./CrowTypes";
 
 import { rgb, RGBColor } from "d3-color";
 
-const SD_VVP_THRESHOLD = 2; // VTPS data with sd_vvp < sdVpp_treshold are considered NOT birds (insects or rain)
+const SD_VVP_THRESHOLD = 2; // VPTS data with sd_vvp < sdVpp_treshold are considered NOT birds (insects or rain)
 
 function interpolateStdGammaII(val: number): RGBColor {
   // Num: between 0 and 1 
@@ -23,7 +23,7 @@ function interpolateStdGammaII(val: number): RGBColor {
 }
 
 function densityToBirdtam(density: number): number {
-  // Takes a density (from VTPS data) and turn it to a BIRDTAM code.
+  // Takes a density (from VPTS data) and turn it to a BIRDTAM code.
   // Implementation based on the following explanation from Hans van Gasteren (Dutch Air Force)
   /* 
   RGB codes van 0-4 in licht groen. BIRDTAM 5 is 100% groen en daarna 6 en hoger. Ik heb ook BIRDTAM 9 geintroduceerd om de extremen (en regen) weer te geven. Zo staan ze althans op dit moment op de FlySafe-pagina en in ons artikel
@@ -79,7 +79,7 @@ function parseFloatOrZero(str: string): number {
   }
 }
 
-function filterVtps(rows: VTPSDataRowFromFile[], sd_vvpThresh = SD_VVP_THRESHOLD): VTPSDataRowFromFile[] {
+function filterVpts(rows: VPTSDataRowFromFile[], sd_vvpThresh = SD_VVP_THRESHOLD): VPTSDataRowFromFile[] {
   // Filter out data rows that are likely not birds, based on sd_vvp (https://github.com/inbo/crow/issues/122)
   return rows.filter(function (row) { 
     return !isNaN(row.sd_vvp) && row.sd_vvp >= sd_vvpThresh
@@ -111,7 +111,7 @@ function csvStringToObjs(csvString: string, lineSeparator='\n', fieldSeparator='
     return r
 }
 
-function parseCSVVtps(responseString: string): VTPSDataRowFromFile[] {
+function parseCSVVpts(responseString: string): VPTSDataRowFromFile[] {
   // Data file sample: https://github.com/inbo/crow/issues/135#issuecomment-823844454
   const lineSeparator = '\n';
   const fieldSeparator = ',';
@@ -148,7 +148,7 @@ function buildVpTsDataUrl(radar: RadarInterface, selectedDate: moment.Moment): s
                        .replaceAll('{yyyymmdd}', selectedDate.format("YYYYMMDD"))
 }
 
-function parseVol2birdVtps(responseString: string): VTPSDataRowFromFile[] {
+function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
   const numHeaderLines = 4;
 
   let d = responseString.split("\n");
@@ -174,15 +174,15 @@ function parseVol2birdVtps(responseString: string): VTPSDataRowFromFile[] {
   return r;
 }
 
-function parseVtps(responseString: string, format: VTPSFileFormat): VTPSDataRowFromFile[] {
+function parseVpts(responseString: string, format: VPTSFileFormat): VPTSDataRowFromFile[] {
   if (format === 'VOL2BIRD') {
-    return parseVol2birdVtps(responseString);
+    return parseVol2birdVpts(responseString);
   } else {
-    return parseCSVVtps(responseString);
+    return parseCSVVpts(responseString);
   }
 }
 
-function integrateProfile(data: VTPSDataRowFromFile[], altMin = 0, altMax = Infinity, interval = 200, sd_vvpThresh = SD_VVP_THRESHOLD, alpha = NaN): Profiles {
+function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infinity, interval = 200, sd_vvpThresh = SD_VVP_THRESHOLD, alpha = NaN): Profiles {
   // TODO: interval and vvpThresh should actually be derived from data/metadata itself
   // TODO: extract the data - could be improved by using data itself as input
 
@@ -277,4 +277,4 @@ function getBrowserFirstLangCode(): string | undefined {
 }
 
 
-export default { parseVtps, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateStdGammaII, translateString, filterVtps, getBrowserFirstLangCode, buildVpTsDataUrl }
+export default { parseVpts, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateStdGammaII, translateString, filterVpts, getBrowserFirstLangCode, buildVpTsDataUrl }
