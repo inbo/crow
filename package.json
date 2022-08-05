@@ -44,15 +44,15 @@
     "@vue/test-utils": "^1.2.2",
     "babel-eslint": "^10.1.0",
     "bootstrap": "^4.6.0",
-    "eslint": "^7.32.0",
+    
     "eslint-plugin-vue": "^7.18.0",
     "jest-canvas-mock": "^2.3.1",
     "mutationobserver-shim": "^0.3.7",
-    "node-sass": "^5.0.0",
+    
     "papaparse": "^5.3.1",
     "popper.js": "^1.16.1",
     "portal-vue": "^2.1.7",
-    "sass-loader": "^11.0.1",
+    
     "typescript": "^4.4.3",
     "vue-cli-plugin-bootstrap-vue": "^0.7.0",
     "vue-template-compiler": "^2.6.14"
