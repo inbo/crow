@@ -23,31 +23,31 @@ export default {
     {
       label: "Belgium",
       options: [
-        { odimCode: "behel", text: "Helchteren", latitude: 51.069199, longitude: 5.406138, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vtpsFileFormat: 'VOL2BIRD' },
-        { odimCode: "bejab", text: "Jabbeke", latitude: 51.1919, longitude: 3.0641, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vtpsFileFormat: 'VOL2BIRD' },
-        { odimCode: "bewid", text: "Wideumont", latitude: 49.9135, longitude: 5.5044, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vtpsFileFormat: 'VOL2BIRD' },
-        { odimCode: "bezav", text: "Zaventem", latitude: 50.9054, longitude: 4.4579, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vtpsFileFormat: 'VOL2BIRD' },
+        { odimCode: "behel", text: "Helchteren", latitude: 51.069199, longitude: 5.406138, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
+        { odimCode: "bejab", text: "Jabbeke", latitude: 51.1919, longitude: 3.0641, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
+        { odimCode: "bewid", text: "Wideumont", latitude: 49.9135, longitude: 5.5044, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
+        { odimCode: "bezav", text: "Zaventem", latitude: 50.9054, longitude: 4.4579, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
       ]
     },
     {
       label: "France",
       options: [
-        { odimCode: "frabb", text: "Abbeville", latitude: 50.1360, longitude: 1.8347, timezone: "Europe/Paris", endpoint: meteoBeUrlTemplate, heights: availableHeights, vtpsFileFormat: 'VOL2BIRD' },
-        { odimCode: "frave", text: "Avesnes", latitude: 50.1283, longitude: 3.8118, timezone: "Europe/Paris", endpoint: meteoBeUrlTemplate, heights: availableHeights, vtpsFileFormat: 'VOL2BIRD' },
+        { odimCode: "frabb", text: "Abbeville", latitude: 50.1360, longitude: 1.8347, timezone: "Europe/Paris", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
+        { odimCode: "frave", text: "Avesnes", latitude: 50.1283, longitude: 3.8118, timezone: "Europe/Paris", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
       ]
     },
     {
       label: "Germany",
       options: [
-        { odimCode: "deess", text: "Essen", latitude: 51.4055, longitude: 6.9669, timezone: "Europe/Berlin", endpoint: meteoBeUrlTemplate, heights: availableHeights, vtpsFileFormat: 'VOL2BIRD' },
-        { odimCode: "denhb", text: "Neuheilenbach", latitude: 50.1097, longitude: 6.5483, timezone: "Europe/Berlin", endpoint: meteoBeUrlTemplate, heights: availableHeights, vtpsFileFormat: 'VOL2BIRD' }
+        { odimCode: "deess", text: "Essen", latitude: 51.4055, longitude: 6.9669, timezone: "Europe/Berlin", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
+        { odimCode: "denhb", text: "Neuheilenbach", latitude: 50.1097, longitude: 6.5483, timezone: "Europe/Berlin", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' }
       ]
     },
     {
       label: "Netherlands",
       options: [
-        { odimCode: "nldhl", text: "Den Helder", latitude: 52.9533, longitude: 4.7899, timezone: "Europe/Amsterdam", endpoint: meteoBeUrlTemplate, heights: availableHeights, vtpsFileFormat: 'VOL2BIRD' },
-        { odimCode: "nlhrw", text: "Herwijnen", latitude: 51.83708, longitude: 5.13797, timezone: "Europe/Amsterdam", endpoint: meteoBeUrlTemplate, heights: availableHeights, vtpsFileFormat: 'VOL2BIRD' },
+        { odimCode: "nldhl", text: "Den Helder", latitude: 52.9533, longitude: 4.7899, timezone: "Europe/Amsterdam", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
+        { odimCode: "nlhrw", text: "Herwijnen", latitude: 51.83708, longitude: 5.13797, timezone: "Europe/Amsterdam", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
       ]
     },
     {
@@ -61,7 +61,7 @@ export default {
           endpoint: 'https://opendata.vogelwarte.ch/ftp/observations/radar/wr/bird.vpts/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.csv',
           //endpoint: 'http://localhost:8000/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.csv', 
           heights: [0, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400, 3600, 3800, 4000, 4200, 4400, 4600, 4800, 5000, 5200, 5400, 5600, 5800], 
-          vtpsFileFormat: 'CSV'
+          vptsFileFormat: 'CSV'
         }
       ]
     }
@@ -80,7 +80,7 @@ export default {
 
   initialTimeDisplay: "radarLocal" as TimeDisplayedAsValue,
 
-  appTemporalResolution: 10 * 60, // seconds (this is the resolution we use for calculation and display) Should be a multiple of the data (vtps file) temporal resolution for downsampling, or equal if we want to show data at the highest resolution
+  appTemporalResolution: 10 * 60, // seconds (this is the resolution we use for calculation and display) Should be a multiple of the data (vpts file) temporal resolution for downsampling, or equal if we want to show data at the highest resolution
 
   VPChartStyle: {
     margin: { top: 20, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },

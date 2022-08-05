@@ -42,7 +42,7 @@
         </g>
         <g v-yaxis-left="{'scale': yScale}" />
 
-        <template v-for="d in vtpsDataPrepared">
+        <template v-for="d in vptsDataPrepared">
           <rect
             :id="'rect-' + d.timestamp + '-' + d.height"
             :key="'rect-' + d.timestamp + '-' + d.height"
@@ -110,7 +110,7 @@ import ColorLegend from "@/components/ColorLegend.vue";
 import moment, { Moment } from "moment-timezone";
 import {
   ColorSchemeIdentifier,
-  VTPSEntry,
+  VPTSEntry,
   DayData,
   ColorSchemeConfigEntry,
   LangCode,
@@ -123,7 +123,7 @@ interface Scales {
   y: null;
 }
 
-interface VTPSEntryPrepared extends VTPSEntry {
+interface VPTSEntryPrepared extends VPTSEntry {
   // Data, once ready for display
   x: number;
   y: number | undefined;
@@ -174,7 +174,7 @@ export default Vue.extend({
     },
   },
   props: {
-    vtpsData: Array as () => VTPSEntry[],
+    vptsData: Array as () => VPTSEntry[],
     styleConfig: Object,
     scheme: String as () => ColorSchemeIdentifier,
     showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")
@@ -299,19 +299,19 @@ export default Vue.extend({
       return durationInMs / 1000 / this.dataTemporalResolution + 1;
     },
     minTimestamp: function (): number {
-      const minVal = d3.min(this.vtpsData, function (d: VTPSEntry) {
+      const minVal = d3.min(this.vptsData, function (d: VPTSEntry) {
         return d.timestamp;
       });
       return minVal || 0;
     },
     maxTimestamp: function (): number {
-      const maxVal = d3.max(this.vtpsData, function (d: VTPSEntry) {
+      const maxVal = d3.max(this.vptsData, function (d: VPTSEntry) {
         return d.timestamp;
       });
       return maxVal || 0;
     },
     maxColorLegendValue: function(): number {
-      // We need a prop for this so it gets updated when data is added to vtpsData (and maxDensity is subsequently changed)
+      // We need a prop for this so it gets updated when data is added to vptsData (and maxDensity is subsequently changed)
       if (this.selectedColorSchemeConfig.dynamicDomain === true) {
         return this.maxDensity
       } else {
@@ -319,19 +319,19 @@ export default Vue.extend({
       }
     },
     maxDensity: function (): number {
-      const maxVal = d3.max(this.vtpsData, function (d) {
+      const maxVal = d3.max(this.vptsData, function (d) {
         return d.dens;
       });
       return maxVal || 0;
     },
     dataTemporalResolution: function (): number {
-      return (this.vtpsData[this.distinctHeightsMeters.length + 1].timestamp - this.vtpsData[0].timestamp) / 1000;
+      return (this.vptsData[this.distinctHeightsMeters.length + 1].timestamp - this.vptsData[0].timestamp) / 1000;
     },
     dataVerticalResolutionMeters: function(): number {
       return this.distinctHeightsMeters[1] - this.distinctHeightsMeters[0];
     },
     distinctHeightsMeters: function (): number[] {
-      const heightsSet = new Set(this.vtpsData.map((row) => row.height));
+      const heightsSet = new Set(this.vptsData.map((row) => row.height));
       return Array.from(heightsSet.values());
     },
     distinctHeightsMetersPlusOne: function (): number[] {
@@ -369,8 +369,8 @@ export default Vue.extend({
         .range([this.innerHeight, 0])
         .domain([0, this.maxHeightFeet]);
     },
-    vtpsDataPrepared: function (): VTPSEntryPrepared[] {
-      return this.vtpsData.map((data) => ({
+    vptsDataPrepared: function (): VPTSEntryPrepared[] {
+      return this.vptsData.map((data) => ({
         ...data,
 
         x: Math.round(Math.round(this.xScale(data.timestamp)) + 1),
@@ -428,7 +428,7 @@ export default Vue.extend({
         return 0;
       }
     },
-    getRectColor: function (data: VTPSEntry): string {
+    getRectColor: function (data: VPTSEntry): string {
       let color;
       const config = this.selectedColorSchemeConfig;
 

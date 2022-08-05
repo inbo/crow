@@ -51,11 +51,11 @@ export interface RadarInterface {
   longitude: number;
   timezone: string;
   endpoint: string; // URL template, some variables are interpolated. Example: 'https://opendata.meteo.be/ftp/observations/radar/vbird/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.txt'
-  vtpsFileFormat: VTPSFileFormat;
+  vptsFileFormat: VPTSFileFormat;
   heights: number[]; // Data is available at the following heights
 }
 
-export type VTPSFileFormat = "VOL2BIRD" | "CSV";  // VOL2BIRD: fixed width column. CSV: Follow BioRad's output (see https://github.com/inbo/crow/issues/135)
+export type VPTSFileFormat = "VOL2BIRD" | "CSV";  // VOL2BIRD: fixed width column. CSV: Follow BioRad's output (see https://github.com/inbo/crow/issues/135)
 
 export interface GroupedRadarInterface {
   label: string;
@@ -72,7 +72,7 @@ export interface TimeIntervalForRadioGroup {
   value: number;
 }
 
-export interface VTPSDataRowFromFile {
+export interface VPTSDataRowFromFile {
   datetime: number;
   height: number;
   dd: number;
@@ -82,7 +82,7 @@ export interface VTPSDataRowFromFile {
   eta: number;
 }
 
-export interface VTPSDataRow {
+export interface VPTSDataRow {
   datetime?: number;
   height?: number;
   dd?: number;
@@ -92,7 +92,7 @@ export interface VTPSDataRow {
   noData?: boolean; // Field not in original data, but used to know if we have data loaded for the given datetime/height combination
 }
 
-export interface VTPSEntry { // TODO: check: is it a duplicate of VTPSDataRow?
+export interface VPTSEntry { // TODO: check: is it a duplicate of VPTSDataRow?
   dd: number;
   dens: number;
   ff: number;

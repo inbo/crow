@@ -5,7 +5,7 @@ import { createLocalVue } from "@vue/test-utils"
 import { BootstrapVue } from "bootstrap-vue"
 
 // TODO: move test data to other file?
-const vtpsData = [ // 1 hr of Helchteren data (Feb 9, 2020, centered around noon local time)
+const vptsData = [ // 1 hr of Helchteren data (Feb 9, 2020, centered around noon local time)
   {
     "timestamp": 1581244200000,
     "height": 0,
@@ -2744,7 +2744,7 @@ test("General Chart component rendering & behaviour", () => {
   const wrapper = mount(VPChart, {
     localVue,
     propsData: {
-      vtpsData: vtpsData,
+      vptsData: vptsData,
       showTimeAs: "Europe/Brussels",
       styleConfig: styleConfig
     }

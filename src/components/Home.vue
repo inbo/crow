@@ -137,7 +137,7 @@
             <hr>
 
             <v-p-chart
-              :vtps-data="radarVtpsAsArray" 
+              :vpts-data="radarVptsAsArray" 
               :show-time-as="timeZoneToShow"
               :style-config="VPChartStyle"
               :scheme="VPChartSelectedScheme"
@@ -180,22 +180,22 @@ import SunCalc from "suncalc";
 import config from "@/config";
 import helpers from "@/helpers";
 
-import { ColorSchemeIdentifier, IntegratedPropertyName, VTPSDataRowFromFile, TimeIntervalForRadioGroup, VTPSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer, Language, RadarInterface } from "@/CrowTypes";
+import { ColorSchemeIdentifier, IntegratedPropertyName, VPTSDataRowFromFile, TimeIntervalForRadioGroup, VPTSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer, Language, RadarInterface } from "@/CrowTypes";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import { ConfigStoreModule } from "@/store/ConfigStore";
 import { mapMutations } from "vuex";
 
-interface VTPSDataByHeight {
-  [key: number]: VTPSDataRow;
+interface VPTSDataByHeight {
+  [key: number]: VPTSDataRow;
 }
 
-interface RadarVTPSTreeEntry {
-  heightData: VTPSDataByHeight;
+interface RadarVPTSTreeEntry {
+  heightData: VPTSDataByHeight;
   sunAltitude: number;
 }
 
-interface RadarVtpsAsTree {
-  [key: number]: RadarVTPSTreeEntry;
+interface RadarVptsAsTree {
+  [key: number]: RadarVPTSTreeEntry;
 }
 
 const initialCopyUrlText = "Copy link";
@@ -252,9 +252,9 @@ export default Vue.extend({
 
       appTemporalResolution: config.appTemporalResolution as number,
 
-      // Data is kept as an object for performance reasons, the "radarVtpsAsArray" computed property allows reading it as an array.
+      // Data is kept as an object for performance reasons, the "radarVptsAsArray" computed property allows reading it as an array.
       // All timestamps are kept in UTC (transformed later, in the viz components)
-      radarVtps: {} as RadarVtpsAsTree,
+      radarVpts: {} as RadarVptsAsTree,
 
       publicPath: process.env.BASE_URL,
       baseUrl: "",
@@ -395,10 +395,10 @@ export default Vue.extend({
       return UserChoicesStoreModule.timeZoneToShow;
     },
     timePeriods(): Period[] {
-      // An array of all time periods currently shown (derived from radarVtps) with metadata such as the sun's position.
+      // An array of all time periods currently shown (derived from radarVpts) with metadata such as the sun's position.
       const periods = [];
 
-      for (const [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
+      for (const [timestamp, metadataObj] of Object.entries(this.radarVpts)) {
         periods.push({
           moment: moment.utc(+timestamp),
           sunAltitude: metadataObj.sunAltitude
@@ -407,12 +407,12 @@ export default Vue.extend({
 
       return periods;
     },
-    radarVtpsAsArray(): VTPSDataRow[] {
+    radarVptsAsArray(): VPTSDataRow[] {
       const dataArray = [];
-      for (const [timestamp, metadataObj] of Object.entries(this.radarVtps)) {
+      for (const [timestamp, metadataObj] of Object.entries(this.radarVpts)) {
         for (const [height, props] of Object.entries(metadataObj.heightData)) {
           const o = { timestamp: +timestamp, height: +height };
-          dataArray.push({ ...o, ...(props as VTPSDataRow) });
+          dataArray.push({ ...o, ...(props as VPTSDataRow) });
         }
       }
       return dataArray;
@@ -435,13 +435,13 @@ export default Vue.extend({
   
     integratedProfiles(): VPIEntry[] {
       const integratedProfiles = [] as VPIEntry[];
-      for (const [timestamp, treeEntry] of Object.entries(this.radarVtps)) {
-        // VTPS values are stored in a tree per height, we need a flat array for integratedProfile
+      for (const [timestamp, treeEntry] of Object.entries(this.radarVpts)) {
+        // VPTS values are stored in a tree per height, we need a flat array for integratedProfile
         const dataToIntegrate = [];
-        for (const [height, vtpsValues] of Object.entries(treeEntry.heightData)) {
+        for (const [height, vptsValues] of Object.entries(treeEntry.heightData)) {
           const o = { height: +height };
           dataToIntegrate.push({
-            ...(vtpsValues as VTPSDataRowFromFile),
+            ...(vptsValues as VPTSDataRowFromFile),
             ...o
           });
         }
@@ -531,17 +531,17 @@ export default Vue.extend({
     onCopyUrl(): void {
       this.copyUrlButtonText = "Link copied";
     },
-    /* Initialize radarVtps with empty data 
+    /* Initialize radarVpts with empty data 
        - The temporal range is [startMoment, endMoment] (resolution: appTemporalResolution - in seconds)
        - Heights depend on the radar configuration
     */
     initializeEmptyData(): void {
       // Remove existing data
-      this.radarVtps = {} as RadarVtpsAsTree;
+      this.radarVpts = {} as RadarVptsAsTree;
 
       const currentMoment = this.startMoment.clone();
       while (currentMoment.isBefore(this.endMoment)) {
-        const heightObj = {} as VTPSDataByHeight;
+        const heightObj = {} as VPTSDataByHeight;
         this.selectedRadar.heights.forEach(height => {
           heightObj[height] = { noData: true };
         });
@@ -558,7 +558,7 @@ export default Vue.extend({
         };
 
         this.$set(
-          this.radarVtps,
+          this.radarVpts,
           currentMoment.toDate().getTime(),
           metadataObj
         );
@@ -595,19 +595,19 @@ export default Vue.extend({
       });
     },
 
-    /* Store a Vtps data row originating in a file into vtpsData */
-    storeDataRow(vtpsDataRow: VTPSDataRowFromFile): void {
-      const objToStore = { ...vtpsDataRow, ...{ noData: false } };
+    /* Store a Vpts data row originating in a file into vptsData */
+    storeDataRow(vptsDataRow: VPTSDataRowFromFile): void {
+      const objToStore = { ...vptsDataRow, ...{ noData: false } };
 
       if ( // no (datetime) slot = data not copied. Allow automatic downsampling.
         Object.prototype.hasOwnProperty.call(
-          this.radarVtps,
-          vtpsDataRow.datetime
+          this.radarVpts,
+          vptsDataRow.datetime
         )
       ) {
         this.$set(
-          this.radarVtps[vtpsDataRow.datetime].heightData,
-          vtpsDataRow.height,
+          this.radarVpts[vptsDataRow.datetime].heightData,
+          vptsDataRow.height,
           objToStore
         );
       }
@@ -640,7 +640,7 @@ export default Vue.extend({
       for (let currentDate of this.getDatesForData(startMoment, endMoment)) {
         const url = helpers.buildVpTsDataUrl(radar, moment(currentDate, "YYYY-MM-DD"));
         axios.get(url).then(response => {
-          const dayData = helpers.filterVtps(helpers.parseVtps(response.data, radar.vtpsFileFormat));
+          const dayData = helpers.filterVpts(helpers.parseVpts(response.data, radar.vptsFileFormat));
 
           for (const val of dayData) {
             this.storeDataRow(val);

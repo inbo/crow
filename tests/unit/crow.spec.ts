@@ -1,7 +1,7 @@
 import { createLocalVue } from "@vue/test-utils"
 import { BootstrapVue } from "bootstrap-vue"
 import helpers from "../../src/helpers"
-import { VTPSDataRowFromFile } from "@/CrowTypes";
+import { VPTSDataRowFromFile } from "@/CrowTypes";
 import * as Papa from "papaparse";
 const fs = require("fs");
 const path = require("path");
@@ -22,9 +22,9 @@ function round3decimals(num: number): number {
 
 test("Profile integration code (compare to bioRad output)", () => {
   // 1. Load and parse the data
-  // 1.1 From VTPS file
+  // 1.1 From VPTS file
   const sourceData = fs.readFileSync(path.resolve(__dirname, "./data/behel_vpts_20200129.truncated.txt"), "utf-8");
-  const VtpsData = helpers.parseVtps(sourceData, 'VOL2BIRD');
+  const VptsData = helpers.parseVpts(sourceData, 'VOL2BIRD');
   // 1.2 bioRad's output for comparison (behel_vpi_20200129.truncated.csv)
   interface BioRadProfile {
     mtr: number;
@@ -39,11 +39,11 @@ test("Profile integration code (compare to bioRad output)", () => {
   }).data as BioRadProfile[];
 
   // 2. Group data by datetime (preparation for integrateProfile)
-  let lastTimestamp = VtpsData[0].datetime;
-  let tempDataToIntegrate = [] as VTPSDataRowFromFile[];
-  const groupedDataToIntegrate = [] as VTPSDataRowFromFile[][];
+  let lastTimestamp = VptsData[0].datetime;
+  let tempDataToIntegrate = [] as VPTSDataRowFromFile[];
+  const groupedDataToIntegrate = [] as VPTSDataRowFromFile[][];
 
-  VtpsData.forEach((element) => {
+  VptsData.forEach((element) => {
     if (element.datetime != lastTimestamp) {
       groupedDataToIntegrate.push(tempDataToIntegrate);
       tempDataToIntegrate = []; // If needed, we create a new array for the new timestamp
