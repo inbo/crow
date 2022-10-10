@@ -8,16 +8,16 @@ import { rgb, RGBColor } from "d3-color";
 const SD_VVP_THRESHOLD = 2; // VPTS data with sd_vvp < sdVpp_treshold are considered NOT birds (insects or rain)
 
 function interpolateStdGammaII(val: number): RGBColor {
-  // Num: between 0 and 1 
+  // Num: between 0 and 1
   val = 255 - (val * 255); // Constants below are taken from bioRad and have a 0-255 range
 
   // Reimplementation of the IDL "STD Gamma II" color scale; based on bioRad's implementation (https://github.com/adokter/bioRad/blob/e0ede427eb34007dc9985302d40cbdab158e0636/R/color_scale.R#L65-L85)
-  // and the explanations at: https://github.com/inbo/crow/issues/38 
-  
+  // and the explanations at: https://github.com/inbo/crow/issues/38
+
   return rgb(
-    d3.scaleLinear().domain([0, 62, 81, 93, 145, 176, 191, 208, 255]).range([255, 255, 163, 255, 255, 81, 81, 0, 0])(val), 
-    d3.scaleLinear().domain([0, 64, 79, 110, 142, 255]).range([255, 255, 163, 163, 0, 0])(val), 
-    d3.scaleLinear().domain([0, 79, 96, 110, 127, 159, 206, 255]).range([255, 0, 0, 82, 0, 0, 255, 0])(val), 
+    d3.scaleLinear().domain([0, 62, 81, 93, 145, 176, 191, 208, 255]).range([255, 255, 163, 255, 255, 81, 81, 0, 0])(val),
+    d3.scaleLinear().domain([0, 64, 79, 110, 142, 255]).range([255, 255, 163, 163, 0, 0])(val),
+    d3.scaleLinear().domain([0, 79, 96, 110, 127, 159, 206, 255]).range([255, 0, 0, 82, 0, 0, 255, 0])(val),
     1
   )
 }
@@ -25,7 +25,7 @@ function interpolateStdGammaII(val: number): RGBColor {
 function densityToBirdtam(density: number): number {
   // Takes a density (from VPTS data) and turn it to a BIRDTAM code.
   // Implementation based on the following explanation from Hans van Gasteren (Dutch Air Force)
-  /* 
+  /*
   RGB codes van 0-4 in licht groen. BIRDTAM 5 is 100% groen en daarna 6 en hoger. Ik heb ook BIRDTAM 9 geintroduceerd om de extremen (en regen) weer te geven. Zo staan ze althans op dit moment op de FlySafe-pagina en in ons artikel
 
   BIRDTAM RGB-kleuren = [1 1 1; .9 1 .9; .8 1 .8; .7 1 .7; .6 1 .6; 0 1 0; 1 1 0; 1 .7 .7; 1 0 0; .2 .2 .2;];
@@ -34,7 +34,7 @@ function densityToBirdtam(density: number): number {
   En dan de getallen naar beneden afronden om de juiste BIRDTAM te vinden: floor(densitybirdtam), (birdtam 5,6 wordt dus een 5!)
 
   Overigens voor de vertical integrated densities (VID) gebruik ik dezelfde conversie. density == VID
-  
+
   More discussions at https://github.com/inbo/crow/issues/76
   */
   return (density === 0 ? 0 : Math.floor(1.4427 * Math.log(density + 1) + 1.6781));
@@ -81,7 +81,7 @@ function parseFloatOrZero(str: string): number {
 
 function filterVpts(rows: VPTSDataRowFromFile[], sd_vvpThresh = SD_VVP_THRESHOLD): VPTSDataRowFromFile[] {
   // Filter out data rows that are likely not birds, based on sd_vvp (https://github.com/inbo/crow/issues/122)
-  return rows.filter(function (row) { 
+  return rows.filter(function (row) {
     return !isNaN(row.sd_vvp) && row.sd_vvp >= sd_vvpThresh
   })
 }
@@ -98,7 +98,7 @@ function csvStringToObjs(csvString: string, lineSeparator='\n', fieldSeparator='
     if (quotedHeaders) {
       headers = headers.map(h => h.replace(/"/g,""))
     }
-    
+
     for(var i = 1; i < arr.length; i++) {
       var data = arr[i].split(fieldSeparator);
       var obj = {} as csvDataRow;
@@ -120,13 +120,12 @@ function parseCSVVpts(responseString: string): VPTSDataRowFromFile[] {
   const trailingLine = true;
 
   const d = csvStringToObjs(responseString, lineSeparator, fieldSeparator, quotedHeaders);
-  
+
   if (trailingLine) {
     d.pop()
   }
 
   const r = d.map(function (row) {
-    //console.log("Row.dd", row.dd)
     return {
       datetime: moment.utc(row.datetime, dateTimeFormat).valueOf(),
       height: parseInt(row.height),
@@ -148,6 +147,12 @@ function buildVpTsDataUrl(radar: RadarInterface, selectedDate: moment.Moment): s
                        .replaceAll('{yyyymmdd}', selectedDate.format("YYYYMMDD"))
 }
 
+function roundNearest(num: number, resolution: number) {
+  "Round to nearest integer value of the given resolution"
+  return Math.round(num / resolution) * resolution;
+}
+
+
 function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
   const numHeaderLines = 4;
 
@@ -160,7 +165,8 @@ function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
     // For now, we consider a non-numbers to mean 0
 
     return {
-      datetime: moment.utc(row.substring(0, 13), "YYYYMMDD HHmm").valueOf(),
+      // assume 5 min is the absolute minimum resolution of the incoming data
+      datetime: roundNearest(moment.utc(row.substring(0, 13), "YYYYMMDD HHmm").valueOf(), 5 * 60 * 1000),
       height: +parseInt(row.substring(14, 18)),
       dd: parseFloat(row.substring(47, 52)),
       ff: parseFloat(row.substring(41, 46)),
@@ -170,7 +176,6 @@ function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
     };
   });
 
-  //console.log(r[0]);
   return r;
 }
 
@@ -250,7 +255,7 @@ function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infi
   return ({ "mtr": mtr, "rtr": rtr, "vid": vid, "vir": vir })
 }
 
-function translateString(stringId: string, selectedLanguageCode: LangCode, translations: MultilanguageStringContainer): string { 
+function translateString(stringId: string, selectedLanguageCode: LangCode, translations: MultilanguageStringContainer): string {
   if (translations.hasOwnProperty(stringId) && translations[stringId].hasOwnProperty(selectedLanguageCode) && translations[stringId][selectedLanguageCode] !== null) {
     return translations[stringId][selectedLanguageCode];
   } else {
@@ -273,7 +278,7 @@ function getBrowserFirstLangCode(): string | undefined {
 
     return shortLang;
   }
-  
+
 }
 
 
