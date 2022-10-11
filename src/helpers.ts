@@ -149,7 +149,7 @@ function buildVpTsDataUrl(radar: RadarInterface, selectedDate: moment.Moment): s
 
 function roundNearest(num: number, resolution: number) {
   "Round to nearest integer value of the given resolution"
-  return Math.round(num / resolution) * resolution;
+  return Math.floor(num / resolution) * resolution;
 }
 
 
