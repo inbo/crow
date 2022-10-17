@@ -1,8 +1,12 @@
-import { createLocalVue } from "@vue/test-utils"
+import { createLocalVue, shallowMount } from "@vue/test-utils"
 import { BootstrapVue } from "bootstrap-vue"
 import helpers from "../../src/helpers"
+import Home from "../../src/components/Home.vue";
 import config from "@/config";
 import { VPTSDataRowFromFile } from "@/CrowTypes";
+import axios from 'axios';
+import moment from "moment";
+
 import * as Papa from "papaparse";
 const fs = require("fs");
 const path = require("path");
@@ -86,3 +90,37 @@ test("Profile integration code (compare to bioRad output)", () => {
     //expect(RtrJs).toEqual(RtrBiorad);
   });
 });
+
+
+// Tell Jest to mock any call to `axios.get` with test data
+jest.spyOn(axios, 'get').mockResolvedValue({"data": fs.readFileSync(path.resolve(__dirname, "./data/behel_vpts_20200129.truncated.txt"), "utf-8")})
+
+test("Raw data filtering by rounding datetime to app resolution and retain only first occurrence", async () => {
+
+  config.appTemporalResolution = 10 * 60
+
+  const sourceData = fs.readFileSync(path.resolve(__dirname, "./data/behel_vpts_20200129.truncated.txt"), "utf-8");
+  const VptsData = helpers.parseVpts(sourceData, 'VOL2BIRD');
+
+  const localVue = createLocalVue()
+  localVue.use(BootstrapVue)
+  const wrapper = shallowMount(Home, {
+    localVue,
+    propsData: {
+      dateValueProp: moment("2020-01-29 00:00:00").format(moment.HTML5_FMT.DATE),
+      startMoment: moment("2020-01-29 00:00:00"),
+      endMoment: moment("2020-01-29 00:23:50"),
+      selectedRadar: config.availableRadars[0].options[0]
+    },
+    stubs: ['router-link']
+    }
+  )
+
+  // Run the raw data processing
+  wrapper.vm.loadData()
+  await wrapper.vm.$nextTick()
+
+// TODO Stijn - add effective tests to check behavior
+  console.log(wrapper.vm.radarVpts)
+
+})
