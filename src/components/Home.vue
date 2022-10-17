@@ -605,15 +605,11 @@ export default Vue.extend({
           vptsDataRow.datetime
         )
       ) {
-        if ( // If data for this datetime/height slot is alreadye available, skip setting
-          this.radarVpts[vptsDataRow.datetime].heightData[vptsDataRow.height].noData === true
-          ) {
           this.$set(
             this.radarVpts[vptsDataRow.datetime].heightData,
             vptsDataRow.height,
             objToStore
           );
-        }
       }
     },
 
@@ -635,6 +631,7 @@ export default Vue.extend({
       return Array.from(dateArray);
     },
 
+
     /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */
     populateDataFromCrowServer(
       radar: RadarInterface,
@@ -644,8 +641,20 @@ export default Vue.extend({
       for (let currentDate of this.getDatesForData(startMoment, endMoment)) {
         const url = helpers.buildVpTsDataUrl(radar, moment(currentDate, "YYYY-MM-DD"));
         axios.get(url).then(response => {
-          const dayData = helpers.filterVpts(helpers.parseVpts(response.data, radar.vptsFileFormat));
-
+          // Data is floored to resolution of app (`parseVol2birdVpts`), which initiates multiple entries wit the same datetime index
+          // In this section:
+          //  1/ Data is grouped per datetime (e.g. 10min app resolution and 5min data resolution => all heights occure twice)
+          //  2/ For each datetime, first record of each height is taken
+          //  3/ Individual (datetime) groups (each with all unique heights) are flattened again into single Array
+          //  4/ Nan-values are filtered out from the flattened Array to pass to app
+          const dayData = helpers.filterVpts(
+            Object.entries(
+              helpers.groupBy(
+                helpers.parseVpts(response.data, radar.vptsFileFormat), x => x.datetime)
+            )
+            .map(x => x[1].slice(0, this.selectedRadar.heights.length))
+            .flat()
+          )
           for (const val of dayData) {
             this.storeDataRow(val);
           }

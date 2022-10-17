@@ -153,7 +153,6 @@ function roundNearest(num: number, resolution: number) {
   return Math.floor(num / resolution) * resolution;
 }
 
-
 function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
   const numHeaderLines = 4;
 
@@ -282,5 +281,11 @@ function getBrowserFirstLangCode(): string | undefined {
 
 }
 
+const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
+  // from https://stackoverflow.com/questions/42136098/array-groupby-in-typescript
+  arr.reduce((groups, item) => {
+    (groups[key(item)] ||= []).push(item);
+    return groups;
+  }, {} as Record<K, T[]>);
 
-export default { parseVpts, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateStdGammaII, translateString, filterVpts, getBrowserFirstLangCode, buildVpTsDataUrl }
+export default { parseVpts, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateStdGammaII, translateString, filterVpts, getBrowserFirstLangCode, buildVpTsDataUrl, groupBy }
