@@ -2,6 +2,7 @@
 import * as d3 from "d3";
 import moment from "moment-timezone";
 import { LangCode, MultilanguageStringContainer, Profiles, RadarInterface, VPTSDataRowFromFile, VPTSFileFormat } from "./CrowTypes";
+import config from "./config";
 
 import { rgb, RGBColor } from "d3-color";
 
@@ -166,7 +167,7 @@ function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
 
     return {
       // assume 5 min is the absolute minimum resolution of the incoming data
-      datetime: roundNearest(moment.utc(row.substring(0, 13), "YYYYMMDD HHmm").valueOf(), 5 * 60 * 1000),
+      datetime: roundNearest(moment.utc(row.substring(0, 13), "YYYYMMDD HHmm").valueOf(), config.appTemporalResolution * 1000),
       height: +parseInt(row.substring(14, 18)),
       dd: parseFloat(row.substring(47, 52)),
       ff: parseFloat(row.substring(41, 46)),
