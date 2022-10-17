@@ -25,7 +25,8 @@ function round3decimals(num: number): number {
 test("Profile integration code (compare to bioRad output)", () => {
 
   // Set appTemporalResolution to the data resolution to have a 1:1 comparison
-  config.appTemporalResolution = 5 * 60
+  // (unit test bypasses the `populateDataFromCrowServer` logic for filtering)
+  config.appTemporalResolution = 10 * 60
 
   // 1. Load and parse the data
   // 1.1 From VPTS file
@@ -44,7 +45,7 @@ test("Profile integration code (compare to bioRad output)", () => {
     dynamicTyping: true
   }).data as BioRadProfile[];
 
-  // 2. Group data by datetime (preparation for integrateProfile)
+  // 2. Group data by datetime (preparation for integrateProfile on 5min basis)
   let lastTimestamp = VptsData[0].datetime;
   let tempDataToIntegrate = [] as VPTSDataRowFromFile[];
   const groupedDataToIntegrate = [] as VPTSDataRowFromFile[][];
