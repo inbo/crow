@@ -1,6 +1,7 @@
 import { createLocalVue } from "@vue/test-utils"
 import { BootstrapVue } from "bootstrap-vue"
 import helpers from "../../src/helpers"
+import config from "@/config";
 import { VPTSDataRowFromFile } from "@/CrowTypes";
 import * as Papa from "papaparse";
 const fs = require("fs");
@@ -8,6 +9,7 @@ const path = require("path");
 
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
+
 
 test("Home component rendering", () => {
   // Temporary disabling cause it fails
@@ -21,6 +23,10 @@ function round3decimals(num: number): number {
 }
 
 test("Profile integration code (compare to bioRad output)", () => {
+
+  // Set appTemporalResolution to the data resolution to have a 1:1 comparison
+  config.appTemporalResolution = 5 * 60
+
   // 1. Load and parse the data
   // 1.1 From VPTS file
   const sourceData = fs.readFileSync(path.resolve(__dirname, "./data/behel_vpts_20200129.truncated.txt"), "utf-8");
@@ -49,12 +55,12 @@ test("Profile integration code (compare to bioRad output)", () => {
       tempDataToIntegrate = []; // If needed, we create a new array for the new timestamp
     }
 
-    tempDataToIntegrate.push(element); // In all cases, we push element    
+    tempDataToIntegrate.push(element); // In all cases, we push element
     lastTimestamp = element.datetime; // For the next loop
   });
   groupedDataToIntegrate.push(tempDataToIntegrate);
 
-  // 3. Integrate the profiles and compare result to bioRad's output 
+  // 3. Integrate the profiles and compare result to bioRad's output
   groupedDataToIntegrate.forEach((element, index) => {
     const integratedProfileJS = helpers.integrateProfile(element);
 
