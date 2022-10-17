@@ -26,7 +26,7 @@ test("Profile integration code (compare to bioRad output)", () => {
 
   // Set appTemporalResolution to the data resolution to have a 1:1 comparison
   // (unit test bypasses the `populateDataFromCrowServer` logic for filtering)
-  config.appTemporalResolution = 10 * 60
+  config.appTemporalResolution = 5 * 60
 
   // 1. Load and parse the data
   // 1.1 From VPTS file
