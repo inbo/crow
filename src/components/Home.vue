@@ -641,9 +641,9 @@ export default Vue.extend({
       for (let currentDate of this.getDatesForData(startMoment, endMoment)) {
         const url = helpers.buildVpTsDataUrl(radar, moment(currentDate, "YYYY-MM-DD"));
         axios.get(url).then(response => {
-          // Data is floored to resolution of app (`parseVol2birdVpts`), which initiates multiple entries wit the same datetime index
+          // Data are floored to resolution of app (`parseVol2birdVpts()`), which can create multiple entries with the same datetime index
           // In this section:
-          //  1/ Data is grouped per datetime (e.g. 10min app resolution and 5min data resolution => all heights occure twice)
+          //  1/ Data are grouped per datetime (e.g. 10min app resolution and 5min data resolution => all heights occur twice)
           //  2/ For each datetime, first record of each height is taken
           //  3/ Individual (datetime) groups (each with all unique heights) are flattened again into single Array
           //  4/ Nan-values are filtered out from the flattened Array to pass to app
