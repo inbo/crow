@@ -29,7 +29,7 @@
                       placeholder="Type a date..."
                       :max="todayAsString"
                     />
-                    <b-input-group-append> 
+                    <b-input-group-append>
                       <b-button
                         variant="outline-secondary"
                         @click="incrementPeriod"
@@ -42,7 +42,7 @@
               </b-col>
 
               <b-col cols="7" sm="2" lg="6">
-                <b-form-group 
+                <b-form-group
                   id="input-interval-group"
                   :label="t('Interval:')"
                   label-for="input-interval"
@@ -59,7 +59,7 @@
               </b-col>
 
               <b-col cols="5" sm="3" lg="6">
-                <b-form-group 
+                <b-form-group
                   id="input-timezone-group"
                   :label="t('Time zone:')"
                   label-for="input-timezone"
@@ -86,7 +86,7 @@
               </b-col>
 
               <b-col cols="5" lg="12">
-                <b-form-group 
+                <b-form-group
                   id="copy-url-group"
                   :label="t('Share:')"
                 >
@@ -95,7 +95,7 @@
                     append
                     :to="{ path: '/', query: { radar: selectedRadarCode, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpiMode: VPIChartMode, vpColorScheme: VPChartSelectedScheme, lang: selectedLanguageCode}}"
                   >
-                    <b-button 
+                    <b-button
                       v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
                       v-clipboard:success="onCopyUrl"
                       size="sm"
@@ -137,7 +137,7 @@
             <hr>
 
             <v-p-chart
-              :vpts-data="radarVptsAsArray" 
+              :vpts-data="radarVptsAsArray"
               :show-time-as="timeZoneToShow"
               :style-config="VPChartStyle"
               :scheme="VPChartSelectedScheme"
@@ -421,18 +421,18 @@ export default Vue.extend({
       // see https://github.com/inbo/crow/issues/112
       // Build an array of all MTRs for the selected period
       let mtrArray = this.integratedProfiles.map(vpiEntry => { return vpiEntry.integratedProfiles.mtr })
-      
+
       // Remove NaN values
       mtrArray = mtrArray.filter(value => { return !Number.isNaN(value); });
 
       // Process average
       const mtrArrayAverage = mtrArray.reduce((a,b) => a + b, 0) / mtrArray.length;
 
-      // Multiply per number of hours, round to hundreds and return 
+      // Multiply per number of hours, round to hundreds and return
       const roundHundred = (value:number) => Math.round(value/100)*100;
       return roundHundred(mtrArrayAverage * this.selectedIntervalInHours);
     },
-  
+
     integratedProfiles(): VPIEntry[] {
       const integratedProfiles = [] as VPIEntry[];
       for (const [timestamp, treeEntry] of Object.entries(this.radarVpts)) {
@@ -496,14 +496,14 @@ export default Vue.extend({
     },
     chooseAppLanguage() : LangCode {
       let selectedLangCode = config.initialLanguageCode as string; // Default/fallback choice
-      
+
       if (this.langCodeProp) { // Override choice if we have an explicitly request in the URL
         selectedLangCode = this.langCodeProp
-      } else { 
+      } else {
         // Override according to the browser settings
         const browserCode = helpers.getBrowserFirstLangCode()
         if (browserCode) {
-          if (this.availableLanguages.map(l => l.code as string).includes(browserCode)) {    
+          if (this.availableLanguages.map(l => l.code as string).includes(browserCode)) {
             selectedLangCode = browserCode;
           }
         }
@@ -531,7 +531,7 @@ export default Vue.extend({
     onCopyUrl(): void {
       this.copyUrlButtonText = "Link copied";
     },
-    /* Initialize radarVpts with empty data 
+    /* Initialize radarVpts with empty data
        - The temporal range is [startMoment, endMoment] (resolution: appTemporalResolution - in seconds)
        - Heights depend on the radar configuration
     */
@@ -605,11 +605,11 @@ export default Vue.extend({
           vptsDataRow.datetime
         )
       ) {
-        this.$set(
-          this.radarVpts[vptsDataRow.datetime].heightData,
-          vptsDataRow.height,
-          objToStore
-        );
+          this.$set(
+            this.radarVpts[vptsDataRow.datetime].heightData,
+            vptsDataRow.height,
+            objToStore
+          );
       }
     },
 
@@ -631,6 +631,7 @@ export default Vue.extend({
       return Array.from(dateArray);
     },
 
+
     /* for a given radar: iterate on days, load the data files from server and call storeDataRow() for each row */
     populateDataFromCrowServer(
       radar: RadarInterface,
@@ -640,8 +641,20 @@ export default Vue.extend({
       for (let currentDate of this.getDatesForData(startMoment, endMoment)) {
         const url = helpers.buildVpTsDataUrl(radar, moment(currentDate, "YYYY-MM-DD"));
         axios.get(url).then(response => {
-          const dayData = helpers.filterVpts(helpers.parseVpts(response.data, radar.vptsFileFormat));
-
+          // Data are floored to resolution of app (`parseVol2birdVpts()`), which can create multiple entries with the same datetime index
+          // In this section:
+          //  1/ Data are grouped per datetime (e.g. 10min app resolution and 5min data resolution => all heights occur twice)
+          //  2/ For each datetime, first record of each height is taken
+          //  3/ Individual (datetime) groups (each with all unique heights) are flattened again into single Array
+          //  4/ Nan-values are filtered out from the flattened Array to pass to app
+          const dayData = helpers.filterVpts(
+            Object.entries(
+              helpers.groupBy(
+                helpers.parseVpts(response.data, radar.vptsFileFormat), x => x.datetime)
+            )
+            .map(x => x[1].slice(0, this.selectedRadar.heights.length))
+            .flat()
+          )
           for (const val of dayData) {
             this.storeDataRow(val);
           }
