@@ -2,7 +2,6 @@
 
 <!-- badges: start -->
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4629448.svg)](https://doi.org/10.5281/zenodo.4629448)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Run tests and deploy to GitHub pages if successful](https://github.com/inbo/crow/actions/workflows/test-and-deploy.yml/badge.svg)](https://github.com/inbo/crow/actions/workflows/test-and-deploy.yml)
 <!-- badges: end -->
 
