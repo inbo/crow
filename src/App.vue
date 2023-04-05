@@ -56,35 +56,57 @@ export default Vue.extend({
 </script>
 
 <style>
+/* 
+Style aims to mimic aloftdata.eu, which is based on peterdesmet/petridish@3.0.
+Note that bootstrap-vue is based on Bootstrap v5, while petridish@3.0 is based on Bootstrap v5,
+so some style differences are to be expected.
+*/
+
 main {
-  min-height: calc(
-    100vh - 54px
-  ); /* Viewport height minus medium screen navbar height, to push footer to bottom */
-  padding-bottom: 30px; /* Don't stick to footer */
+  /* See https://github.com/peterdesmet/petridish/blob/3.0/_sass/_main.scss */
+  min-height: calc(100vh - 54px);
+  padding-bottom: 1.5rem;
 }
 
 .container-xl {
   max-width: 1400px; /* Increase from default 1140px to allow space for chart */
 }
 
-/* Colours and style */
 .navbar {
+  /* See https://github.com/peterdesmet/petridish/blob/3.0/_sass/_navbar.scss */
   background-color: white!important;
   border-bottom: 1px solid #e9ecef;
-}
+  }
 
-.bg-dark {
-  background-color: #2c2c2c!important; /* Slightly darker than #343a4f to improve contrast with text */
-}
+  .navbar .navbar-brand {
+    font-weight: bold;
+  }
+
 
 footer {
-  border-top: 5px solid #e9ecef;
+  /* See https://github.com/peterdesmet/petridish/blob/3.0/_sass/_footer.scss */
+  background-color: #0d1626;
+  border-top: 5px solid #678bcb;
+  color: #678bcb;
   font-size: 0.9rem;
-  padding: 15px 0;
+  padding: 0.75rem 0;
   }
+
+  footer .container {
+    margin-top: 1rem;
+  }
+
   footer a,
   footer a:hover,
   footer a:visited {
     color: white;
   }
+
+a {
+  color: #295cc9;
+}
+
+.bg-dark {
+  background-color: #282949!important; /* aloftdata.eu banner colour */
+}
 </style>

@@ -1,10 +1,10 @@
 <template>
-  <footer class="bg-dark text-muted">
+  <footer>
     <b-container>
       <b-row>
         <b-col lg>
           <!-- eslint-disable-next-line vue/no-v-html -->
-          <span v-html="t('Created by')" />
+          <p v-html="t('Created by')" />
         </b-col>
         <b-col lg class="text-right">
           <a href="https://github.com/inbo/crow/">{{ t('Source code') }}</a> {{ t('version') }}
