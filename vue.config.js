@@ -9,9 +9,6 @@ module.exports = {
   publicPath: process.env.URL_PREFIX,
   
   configureWebpack: {
-    output: {
-      hashFunction: 'sha256'
-    },
     plugins: [
       new webpack.DefinePlugin({
         __COMMIT_HASH__: JSON.stringify(commitHash),
