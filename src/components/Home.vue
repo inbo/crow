@@ -357,7 +357,7 @@ export default Vue.extend({
       get: function (): string {
         return UserChoicesStoreModule.selectedDate;
       },
-      set: function (newValue: string) {
+      set: function (newValue: string): void {
         UserChoicesStoreModule.setSelectedDate(newValue);
       }
     },
@@ -366,7 +366,7 @@ export default Vue.extend({
       get: function (): TimeDisplayedAsValue {
         return UserChoicesStoreModule.timeDisplayedAs;
       },
-      set: function (newValue: TimeDisplayedAsValue) {
+      set: function (newValue: TimeDisplayedAsValue): void {
         UserChoicesStoreModule.setTimeDisplayedAs(newValue);
       }
     },
@@ -375,7 +375,7 @@ export default Vue.extend({
       get: function (): number {
         return UserChoicesStoreModule.selectedIntervalInHours;
       },
-      set: function (newValue: number) {
+      set: function (newValue: number): void {
         UserChoicesStoreModule.setSelectedIntervalInHours(newValue);
       }
     },
@@ -491,7 +491,7 @@ export default Vue.extend({
     this.baseUrl = this.trimLastSlash(window.location.origin);
   },
   methods: {
-    t(stringId: string) {
+    t(stringId: string): string {
       return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
     },
     chooseAppLanguage() : LangCode {
