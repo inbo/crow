@@ -8,7 +8,7 @@
       :options="availableRadars"
       @change="setSelectedRadarCode"
     />
-    <b-form-text>
+    <b-form-text style="min-height: 45px;">
       {{ selectedRadarLocation }} {{ t("is located at") }}
       <a
         :href="`http://www.openstreetmap.org/?mlat=${selectedRadarLatitude}&mlon=${selectedRadarLongitude}&zoom=12`"
