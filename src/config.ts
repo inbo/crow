@@ -3,7 +3,7 @@ import { ColorSchemeIdentifier, GroupedRadarInterface, IntegratedPropertyName, L
 
 const globalChartMarginLeft = 65; // In-svg margin used for axis and legend
 const globalChartMarginRight = 60; // In-svg margin used for axis and legend
-const svgWidth = 72 * (60 / 10 * 1.5) + globalChartMarginLeft + globalChartMarginRight;
+const svgWidth = 72 * (60 / 15 * 2.5) + globalChartMarginLeft + globalChartMarginRight;
 // The chart width (svgWidth) should have enough pixels to display:
 // - max number of visible hours (72, see availableTimeIntervals)
 // - resolution per hour (60 / appTemporalResolution in minutes)
@@ -258,7 +258,7 @@ export default {
 
   initialTimeDisplay: "radarLocal" as TimeDisplayedAsValue,
 
-  appTemporalResolution: 10 * 60, // seconds (this is the resolution we use for calculation and display) Should be a multiple of the data (vpts file) temporal resolution for downsampling, or equal if we want to show data at the highest resolution
+  appTemporalResolution: 15 * 60, // seconds (this is the resolution we use for calculation and display) Should be a multiple of the data (vpts file) temporal resolution for downsampling, or equal if we want to show data at the highest resolution
 
   VPChartStyle: {
     margin: { top: 20, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },
