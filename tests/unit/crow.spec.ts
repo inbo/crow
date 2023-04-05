@@ -113,15 +113,15 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
     stubs: ['router-link']
     }
   )
-  await wrapper.vm.loadData()
+  await (wrapper.vm as any).loadData()
   await wrapper.vm.$nextTick()
-  let vptsAllRows = wrapper.vm.radarVpts
+  let vptsAllRows = (wrapper.vm as any).radarVpts
 
   // Only 30min resolution timestamps should be in the radarVptsobject
-  expect(Object.keys(wrapper.vm.radarVpts).map(x => parseInt(x))).toEqual(expect.arrayContaining(
+  expect(Object.keys((wrapper.vm as any).radarVpts).map(x => parseInt(x))).toEqual(expect.arrayContaining(
     [moment.utc("2020-01-29 10:30").valueOf(), moment.utc("2020-01-29 11:00").valueOf(),
     moment.utc("2020-01-29 11:30").valueOf(), moment.utc("2020-01-29 12:00").valueOf()]));
-  expect(Object.keys(wrapper.vm.radarVpts).map(x => parseInt(x))).toEqual(expect.not.arrayContaining(
+  expect(Object.keys((wrapper.vm as any).radarVpts).map(x => parseInt(x))).toEqual(expect.not.arrayContaining(
     [moment.utc("2020-01-29 10:05").valueOf(), moment.utc("2020-01-29 10:10").valueOf(),
     moment.utc("2020-01-29 10:15").valueOf(), moment.utc("2020-01-29 10:20").valueOf()]));
 
@@ -148,7 +148,7 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
   }).data as BioRadProfile[];
   ["2020-01-29 10:30:00", "2020-01-29 11:00:00", "2020-01-29 11:30:00"].forEach( timeStamp => {
     let bioradData = integratedProfilesBiorad.filter((x: BioRadProfile) => moment.utc(x.datetime).isSame(moment.utc(timeStamp)))
-    let jsData = wrapper.vm.integratedProfiles.filter((x: VPIEntry) => x.moment.isSame(moment.utc(timeStamp)))
+    let jsData = (wrapper.vm as any).integratedProfiles.filter((x: VPIEntry) => x.moment.isSame(moment.utc(timeStamp)))
     expect(round3decimals(bioradData[0].mtr)).toEqual(round3decimals(jsData[0].integratedProfiles.mtr));
 
   })
@@ -176,15 +176,15 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
     stubs: ['router-link']
     }
   )
-  await wrapper.vm.loadData()
+  await (wrapper.vm as any).loadData()
   await wrapper.vm.$nextTick()
-  let vptsAllRows = wrapper.vm.radarVpts
+  let vptsAllRows = (wrapper.vm as any).radarVpts
 
   // Only 30min resolution timestamps should be in the radarVptsobject
-  expect(Object.keys(wrapper.vm.radarVpts).map(x => parseInt(x))).toEqual(expect.arrayContaining(
+  expect(Object.keys((wrapper.vm as any).radarVpts).map(x => parseInt(x))).toEqual(expect.arrayContaining(
     [moment.utc("2020-01-29 10:30").valueOf(), moment.utc("2020-01-29 11:00").valueOf(),
     moment.utc("2020-01-29 11:30").valueOf(), moment.utc("2020-01-29 12:00").valueOf()]));
-  expect(Object.keys(wrapper.vm.radarVpts).map(x => parseInt(x))).toEqual(expect.not.arrayContaining(
+  expect(Object.keys((wrapper.vm as any).radarVpts).map(x => parseInt(x))).toEqual(expect.not.arrayContaining(
     [moment.utc("2020-01-29 10:05").valueOf(), moment.utc("2020-01-29 10:10").valueOf(),
     moment.utc("2020-01-29 10:15").valueOf(), moment.utc("2020-01-29 10:20").valueOf()]));
 
