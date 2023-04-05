@@ -6,7 +6,7 @@
       </b-navbar-brand>
       <span class="navbar-text">Visualize bird movement data from European weather radars</span>
       <b-navbar-nav class="ml-auto">
-        <language-selector />
+        <!-- <language-selector /> -->
       </b-navbar-nav>
     </b-container>
   </b-navbar>
@@ -23,7 +23,7 @@ import Vue from "vue";
 export default Vue.extend({
   name: "Navbar",
   components: {
-    LanguageSelector
+    // LanguageSelector
   },
   data: function () {
     return {

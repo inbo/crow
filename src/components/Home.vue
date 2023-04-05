@@ -1,7 +1,7 @@
 <template>
   <main>
-    <Introduction />
-    <b-container fluid="xl" class="mt-lg-5">
+    <!-- <Introduction /> -->
+    <b-container fluid="xl">
       <b-row>
         <b-col lg="3" class="bg-dark text-light pt-3">
           <b-form>
@@ -170,7 +170,7 @@ import VPIChart from "@/components/VPIChart.vue";
 import VPChart from "@/components/VPChart.vue";
 import SiteSelector from "@/components/SiteSelector.vue";
 import TimelineChart from "@/components/TimelineChart.vue";
-import Introduction from "@/components/Introduction.vue";
+// import Introduction from "@/components/Introduction.vue";
 import Partners from "@/components/Partners.vue";
 
 import moment from "moment-timezone";
@@ -207,7 +207,7 @@ export default Vue.extend({
     VPIChart,
     VPChart,
     TimelineChart,
-    Introduction,
+    // Introduction,
     Partners
   },
   props: {
