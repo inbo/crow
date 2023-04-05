@@ -7,8 +7,8 @@
           <p v-html="t('Created by')" />
         </b-col>
         <b-col lg class="text-right">
-          <a href="https://github.com/inbo/crow/">{{ t('Source code') }}</a> {{ t('version') }}
-          <code><a :href="'https://github.com/inbo/crow/tree/' + commitHash()">{{ commitHash() }}</a></code>
+          <a href="https://github.com/enram/crow/">{{ t('Source code') }}</a> {{ t('version') }}
+          <code><a :href="'https://github.com/enram/crow/tree/' + commitHash()">{{ commitHash() }}</a></code>
         </b-col>
       </b-row>
     </b-container>

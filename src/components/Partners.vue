@@ -2,30 +2,15 @@
   <b-container class="mt-5">
     <b-row>
       <b-col lg>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <p v-html="t('Partner description')" />
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <p v-html="t('Algorithm description')" />
-        <p class="logos">
-          <img src="logo/inbo.svg" width="30%">
-          <img src="logo/kmi_irm.png" width="15%">
-          <img src="logo/rbins.png" width="30%">
-          <img src="logo/belspo.png" width="15%">
-        </p>
+        <p>Weather radars do not only detect precipitation, but also birds in the sky. By extracting these bird detections, researchers can study their movements. This is especially useful for studying songbird migration, which takes place at night. In the visualizations above you can explore these data for a selection of European radars (i.e. the <a href="https://aloftdata.eu/baltrad/">BALTRAD dataset</a>).</p>
       </b-col>
       <b-col lg>
-        <p>{{ t("The radar data are provided by:") }}</p>
-        <ul>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <li v-html="t('RMI source')" />
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <li v-html="t('VMM source')" />
-          <li><a href="https://www.skeyes.be/">Skeyes</a> (Zaventem)</li>
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <li v-html="t('KNMI source')" />
-          <li><a href="https://www.dwd.de/">Deutscher Wetterdienst (DWD)</a> (Essen & Neuheilenbach)</li>
-          <li><a href="http://www.meteofrance.fr/">Météo-France</a> (Abbeville & Avesnois)</li>
-        </ul>
+        <p>Data go back to 2012, but contain numerous gaps for certain periods and radars. Note that the bird numbers are estimates and that the quality of the data varies between radars and time periods. The data is dependent on individual radar settings and is particularly unreliable close to the ground, where bird signals are often mixed with ground echoes. See also our <a href="https://aloftdata.eu/about/">FAQ</a>.</p>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <p>This webpage makes use of <a href="https://github.com/inbo/crow">CROW</a>, an open source tool to visualize birds detected by weather radars (<a href="https://doi.org/10.5281/zenodo.4629449">Noé et al. 2021</a>).</p>
       </b-col>
     </b-row>
   </b-container>
