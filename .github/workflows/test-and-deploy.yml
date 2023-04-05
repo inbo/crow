@@ -12,12 +12,12 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v2.3.1
 
-      - name: Install 🔧
-        run: |
-          npm install --force
-
-      - name: Run unit tests
-        run: npm run test:unit
+      - name: Install and run unit tests 🔧
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm install --force
+      - run: npm run test:unit
 
   deploy-gh-pages:
     needs: run-unit-tests
@@ -33,6 +33,9 @@ jobs:
           FILE_DATA: 'URL_PREFIX = "/crow/"'
 
       - name: Install and build 🔧
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
         run: |
           npm install --force
           npm run build
