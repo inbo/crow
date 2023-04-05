@@ -2,7 +2,7 @@
   <svg class="d-none d-lg-block mt-3 mx-auto" :width="svgWidth" :height="svgHeight">
     <g>
       <path id="country" :d="countryPath" stroke="#000" stroke-width="1" />
-      <circle v-for="radar in radars" :id="'circle-radar-' + radar.odimCode" :key="radar.odimCode" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.odimCode)">
+      <circle v-for="radar in radars" :id="'circle-radar-' + radar.odimCode" :key="radar.odimCode" :class="getRadarExtraClass(radar)" r="3px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.odimCode)">
         <b-popover :target="'circle-radar-' + radar.odimCode" triggers="hover">
           {{ radar.text }}
         </b-popover>
@@ -32,7 +32,7 @@ export default Vue.extend({
   data: function () {
     return {
       svgWidth: 300,
-      svgHeight: 200,
+      svgHeight: 400,
 
       xPadding: 15,
       yPadding: 15,
