@@ -83,3 +83,9 @@ export default Vue.extend({
   },
 });
 </script>
+<style scoped>
+a,
+a:hover {
+  color: #007bff;
+}
+</style>
