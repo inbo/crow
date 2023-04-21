@@ -27,7 +27,7 @@
       :height="styleConfig.height"
       class="d-block mx-auto"
     >
-      <text v-if="noData" x="50%" y="50%">No data found</text>
+      <text v-if="noData" x="50%" y="50%" text-anchor="middle" fill="#6c757d">No data found</text>
 
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <!-- X axis -->
