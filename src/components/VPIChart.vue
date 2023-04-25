@@ -27,7 +27,7 @@
       :height="styleConfig.height"
       class="d-block mx-auto"
     >
-      <text v-if="noData" x="50%" y="50%">No data found</text>
+      <text v-if="noData" x="50%" y="50%">{{ t("No data found") }}</text>
 
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <!-- X axis -->
@@ -251,6 +251,11 @@ export default Vue.extend({
           en: "VIR: reflected bird surface (cm²) per km²",
           fr: "VIR: surface réfléchie par les oiseaux (cm²) par km²",
           nl: "VIR: gereflecteerde vogeloppervlakte (cm²) per km²"
+        },
+        "No data found": {
+          en: "No data found",
+          fr: "Données introuvables",
+          nl: "Geen data gevonden"
         }
       } as MultilanguageStringContainer,
 
