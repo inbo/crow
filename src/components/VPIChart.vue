@@ -27,6 +27,8 @@
       :height="styleConfig.height"
       class="d-block mx-auto"
     >
+      <text v-if="noData" x="50%" y="50%" text-anchor="middle" fill="#6c757d">{{ t("No data found") }}</text>
+
       <g :transform="`translate(${margin.left}, ${margin.top})`">
         <!-- X axis -->
         <g :transform="`translate(0, ${innerHeight})`">
@@ -100,7 +102,7 @@
           :d="pathData"
         />
 
-        <daily-lines :days="daysCovered" :height="innerHeight" />
+        <daily-lines v-if="!noData" :days="daysCovered" :height="innerHeight" />
       </g>
     </svg>
   </div>
@@ -120,6 +122,8 @@ import { DayData, VPIEntry, IntegratedPropertyName, LangCode, MultilanguageStrin
 
 import TWEEN from "@tweenjs/tween.js";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+
+const MinRTRValueDisplay = 50;  // If the maximum MTR is small, we return 50 so a small peak on a very calm day doesn't seem huge on the chart
 
 type NullableNumber = number | null;
 type NullableVPIEntry = VPIEntry | null;
@@ -190,6 +194,7 @@ export default Vue.extend({
     showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")
     appTemporalResolution: Number,
     mode: String as () => IntegratedPropertyName,
+    loading: Boolean
   },
   data: function () {
     return {
@@ -247,6 +252,11 @@ export default Vue.extend({
           en: "VIR: reflected bird surface (cm²) per km²",
           fr: "VIR: surface réfléchie par les oiseaux (cm²) par km²",
           nl: "VIR: gereflecteerde vogeloppervlakte (cm²) per km²"
+        },
+        "No data found": {
+          en: "No data found",
+          fr: "Données introuvables",
+          nl: "Geen data gevonden"
         }
       } as MultilanguageStringContainer,
 
@@ -367,12 +377,15 @@ export default Vue.extend({
       return max || 0;
     },
     maxMTRWithMinimum: function (): number {
-      // If the maximum MTR is small, we return 50 so a small peak on a very calm day doesn't seem huge
-      if (this.maxMTR < 50) {
-        return 50;
+      if (this.maxMTR < MinRTRValueDisplay) {
+        return MinRTRValueDisplay;
       } else {
         return this.maxMTR;
       }
+    },
+    noData: function (): boolean {
+      const emptyMaxValue = this.selectedModeObject.yMaxValComputedName === 'maxMTRWithMinimum' ? MinRTRValueDisplay : 0;
+      return (this.yMaxVal === emptyMaxValue) && !this.loading;
     },
     yMaxVal: function (): number {
       return this[this.selectedModeObject.yMaxValComputedName];
@@ -421,7 +434,6 @@ export default Vue.extend({
       const path = d3
         .area<VPIEntryForPath>()
         .defined((vpiEntryFP) => {
-          //console.log(vpiEntryFP);
           return !isNaN(vpiEntryFP.sourceVal);
         })
         .x((vpiEntryFP) => {
