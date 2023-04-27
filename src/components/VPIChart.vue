@@ -194,6 +194,7 @@ export default Vue.extend({
     showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")
     appTemporalResolution: Number,
     mode: String as () => IntegratedPropertyName,
+    loading: Boolean
   },
   data: function () {
     return {
@@ -384,7 +385,7 @@ export default Vue.extend({
     },
     noData: function (): boolean {
       const emptyMaxValue = this.selectedModeObject.yMaxValComputedName === 'maxMTRWithMinimum' ? MinRTRValueDisplay : 0;
-      return this.yMaxVal === emptyMaxValue;
+      return (this.yMaxVal === emptyMaxValue) && !this.loading;
     },
     yMaxVal: function (): number {
       return this[this.selectedModeObject.yMaxValComputedName];

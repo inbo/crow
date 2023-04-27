@@ -118,6 +118,7 @@
               :show-time-as="timeZoneToShow"
               :app-temporal-resolution="appTemporalResolution"
               :mode="VPIChartMode"
+              :loading="filesLoadingCount > 0"
               @mode-changed="vpiModeChanged"
             >
               <template #header>
@@ -243,6 +244,7 @@ export default Vue.extend({
   data: function () {
     return {
       readyForCharts: false,
+      filesLoadingCount: 0,
 
       VPIChartStyle: config.VPIChartStyle,
       VPIChartMode: this.vpiChartModeProp as IntegratedPropertyName,
@@ -640,6 +642,7 @@ export default Vue.extend({
     ): void {
       for (let currentDate of this.getDatesForData(startMoment, endMoment)) {
         const url = helpers.buildVpTsDataUrl(radar, moment(currentDate, "YYYY-MM-DD"));
+        this.filesLoadingCount++;
         axios.get(url).then(response => {
           // Data are floored to resolution of app (`parseVol2birdVpts()`), which can create multiple entries with the same datetime index
           // In this section:
@@ -658,6 +661,8 @@ export default Vue.extend({
           for (const val of dayData) {
             this.storeDataRow(val);
           }
+        }).finally(() => {
+          this.filesLoadingCount--;
         });
       }
     },
