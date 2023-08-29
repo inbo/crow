@@ -46,6 +46,7 @@ export interface VPIEntry {
 export interface RadarInterface {
   odimCode: string;
   text: string;  // Location name
+  selectLabel: string // To be displayed in select. Either just the location, or the code and location (depending on configuration)
   country: string;
   latitude: number;
   longitude: number;

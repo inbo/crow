@@ -5,9 +5,27 @@ import store from "./index";
 
 @Module({ dynamic: true, store, name: "conf" })
 export class ConfigStore extends VuexModule {
-  availableRadars: GroupedRadarInterface[] = config.availableRadars;
   availableIntervals: TimeInterval[] = config.availableTimeIntervals;
   availableLanguages: Language[] = config.availableLanguages;
+
+  get availableRadars(): GroupedRadarInterface[] {
+    return config.availableRadars.map(radarGroup => {
+      return {
+        label: radarGroup.label,
+        options: radarGroup.options.map(radar => {
+          let displayLabel = radar.text;
+            if ('radarLabelIncludesCode' in config && config["radarLabelIncludesCode"] === true) {
+              displayLabel = radar.odimCode + " - " + radar.text;
+          }
+
+          return {
+            ...radar, selectLabel: displayLabel
+          }
+        })
+      }
+    
+    });
+  }
 }
 
 export const ConfigStoreModule = getModule(ConfigStore);
