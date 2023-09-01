@@ -4,7 +4,7 @@
       <path id="country" :d="countryPath" stroke="#000" stroke-width="1" />
       <circle v-for="radar in radars" :id="'circle-radar-' + radar.odimCode" :key="radar.odimCode" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.odimCode)">
         <b-popover :target="'circle-radar-' + radar.odimCode" triggers="hover">
-          {{ radar.text }}
+          {{ radar.displayLabel }}
         </b-popover>
       </circle>
     </g>
