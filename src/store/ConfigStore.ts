@@ -19,7 +19,7 @@ export class ConfigStore extends VuexModule {
           }
 
           return {
-            ...radar, selectLabel: displayLabel
+            ...radar, displayLabel: displayLabel
           }
         })
       }
