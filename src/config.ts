@@ -11,6 +11,7 @@ const svgWidth = 72 * (60 / 10 * 1.5) + globalChartMarginLeft + globalChartMargi
 
 const meteoBeUrlTemplate = 'https://opendata.meteo.be/ftp/observations/radar/vbird/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.txt'
 const availableHeights = [0, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200, 3400, 3600, 3800, 4000, 4200, 4400, 4600, 4800];
+const aloftBaltradUrl = "https://aloftdata.s3-eu-west-1.amazonaws.com/baltrad/daily/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.csv"
 
 export default {
   availableLanguages: [
@@ -35,6 +36,7 @@ export default {
       options: [
         { odimCode: "frabb", text: "Abbeville", latitude: 50.1360, longitude: 1.8347, timezone: "Europe/Paris", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
         { odimCode: "frave", text: "Avesnes", latitude: 50.1283, longitude: 3.8118, timezone: "Europe/Paris", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
+        { odimCode: "frnan", text: "Nancy", latitude: 48.7158, longitude: 6.5816, timezone: "Europe/Paris", endpoint: aloftBaltradUrl, heights: availableHeights, vptsFileFormat: "CSV" },
       ]
     },
     {
@@ -66,7 +68,7 @@ export default {
 
   initialTimeDisplay: "radarLocal" as TimeDisplayedAsValue,
 
-  appTemporalResolution: 10 * 60, // seconds (this is the resolution we use for calculation and display) Should be a multiple of the data (vpts file) temporal resolution for downsampling, or equal if we want to show data at the highest resolution
+  appTemporalResolution: 15 * 60, // seconds (this is the resolution we use for calculation and display) Should be a multiple of the data (vpts file) temporal resolution for downsampling, or equal if we want to show data at the highest resolution
 
   VPChartStyle: {
     margin: { top: 20, right: globalChartMarginRight, bottom: 30, left: globalChartMarginLeft },
