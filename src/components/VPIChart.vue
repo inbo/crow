@@ -384,8 +384,14 @@ export default Vue.extend({
       }
     },
     noData: function (): boolean {
-      const emptyMaxValue = this.selectedModeObject.yMaxValComputedName === 'maxMTRWithMinimum' ? MinRTRValueDisplay : 0;
-      return (this.yMaxVal === emptyMaxValue) && !this.loading;
+     return this.vpiData.every( (element) => {
+      const val = element.integratedProfiles[this.selectedModePropertyName]
+      if (!Number.isNaN(val) && val !==0) {
+        return false;
+      } else {
+        return true;
+      } 
+     }) 
     },
     yMaxVal: function (): number {
       return this[this.selectedModeObject.yMaxValComputedName];
