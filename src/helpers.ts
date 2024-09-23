@@ -126,7 +126,7 @@ function parseCSVVpts(responseString: string): VPTSDataRowFromFile[] {
     d.pop()
   }
 
-  const r = d.map(function (row) {
+  let r = d.map(function (row) {
     return {
       datetime: moment.utc(row.datetime, dateTimeFormat).valueOf(),
       height: parseInt(row.height),
@@ -138,7 +138,10 @@ function parseCSVVpts(responseString: string): VPTSDataRowFromFile[] {
     }
   });
 
-  return r
+  // We sometimes have duplicate data for the same datetime and height
+  // In those case, we only keep the first one
+  // See https://github.com/enram/crow/issues/16
+  return r.filter((value, index, self) => self.findIndex(t => t.datetime === value.datetime && t.height === value.height) === index);
 }
 
 /* Build the data URL for a given day and radar */
