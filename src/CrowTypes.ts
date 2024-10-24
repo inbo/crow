@@ -54,7 +54,7 @@ export interface RadarInterface {
   endpoint: string; // URL template, some variables are interpolated. Example: 'https://opendata.meteo.be/ftp/observations/radar/vbird/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.txt'
   vptsFileFormat: VPTSFileFormat;
   heights: number[]; // Data is available at the following heights
-  hideOnMap?: boolean; // If true, the radar will not be displayed on the map
+  showOnMap?: boolean; // If false, the radar will not be displayed on the map
 }
 
 export type VPTSFileFormat = "VOL2BIRD" | "CSV";  // VOL2BIRD: fixed width column. CSV: Follow BioRad's output (see https://github.com/inbo/crow/issues/135)

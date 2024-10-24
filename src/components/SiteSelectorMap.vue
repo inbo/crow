@@ -66,8 +66,8 @@ export default Vue.extend({
         r = r.concat(e.options)
       })
 
-      // Filter out radars that have a hideOnMap property set to true
-      return r.filter(r => r.hideOnMap !== true);
+      // Filter out radars that have a shownOnMap property set to false
+      return r.filter(r => r.showOnMap !== false);
     },
     projection: function (): d3.GeoProjection {
       return d3.geoMercator()
