@@ -2,7 +2,7 @@
   <svg class="d-none d-lg-block mt-3 mx-auto" :width="svgWidth" :height="svgHeight">
     <g>
       <path id="country" :d="countryPath" stroke="#000" stroke-width="1" />
-      <circle v-for="radar in radars" :id="'circle-radar-' + radar.odimCode" :key="radar.odimCode" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.odimCode)">
+      <circle v-for="radar in visibleRadars" :id="'circle-radar-' + radar.odimCode" :key="radar.odimCode" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.odimCode)">
         <b-popover :target="'circle-radar-' + radar.odimCode" triggers="hover">
           {{ radar.displayLabel }}
         </b-popover>
@@ -44,7 +44,7 @@ export default Vue.extend({
     radarsFeatures: function (): d3.ExtendedFeatureCollection {
       let geojson = { type: "FeatureCollection", features: [] } as d3.ExtendedFeatureCollection
 
-      this.radars.forEach(r => {
+      this.visibleRadars.forEach(r => {
         let feature = {
           "type": "Feature",
           "geometry": {
@@ -59,14 +59,15 @@ export default Vue.extend({
 
       return geojson
     },
-    radars: function (): RadarInterface[] {
+    visibleRadars: function (): RadarInterface[] {
       // Flat array of radars based on the "sites" prop
       let r: RadarInterface[] = []
       this.sites.forEach(e => {
         r = r.concat(e.options)
       })
 
-      return r;
+      // Filter out radars that have a shownOnMap property set to false
+      return r.filter(r => r.showOnMap !== false);
     },
     projection: function (): d3.GeoProjection {
       return d3.geoMercator()
