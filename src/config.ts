@@ -27,7 +27,7 @@ export default {
         { odimCode: "behel", text: "Helchteren", latitude: 51.069199, longitude: 5.406138, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
         { odimCode: "bejab", text: "Jabbeke", latitude: 51.1919, longitude: 3.0641, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
         { odimCode: "bewid", text: "Wideumont", latitude: 49.9135, longitude: 5.5044, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD' },
-        { odimCode: "bezav", text: "Zaventem", latitude: 50.9054, longitude: 4.4579, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD', showOnMap: true },
+        { odimCode: "bezav", text: "Zaventem", latitude: 50.9054, longitude: 4.4579, timezone: "Europe/Brussels", endpoint: meteoBeUrlTemplate, heights: availableHeights, vptsFileFormat: 'VOL2BIRD'},
       ]
     },
     {
