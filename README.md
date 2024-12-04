@@ -19,7 +19,7 @@ The application can be cited as:
 
 - [Demo](https://inbo.github.io/crow/)
 - [Meteo.be - Benelux](https://www.meteo.be/birddetection/)
-- [Aloft - Europe](https://enram.github.io/crow/)
+- [Aloft - Europe](https://alofdata.github.io/crow/)
 
 ## Installation and deployment
 

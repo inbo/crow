@@ -140,7 +140,7 @@ function parseCSVVpts(responseString: string): VPTSDataRowFromFile[] {
 
   // We sometimes have duplicate data for the same datetime and height
   // In those case, we only keep the first one
-  // See https://github.com/enram/crow/issues/16
+  // See https://github.com/aloftdata/crow/issues/16
   return r.filter((value, index, self) => self.findIndex(t => t.datetime === value.datetime && t.height === value.height) === index);
 }
 
