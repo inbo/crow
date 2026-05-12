@@ -29,6 +29,14 @@ Install with:
 npm install
 ```
 
+Update dependencies with:
+
+```
+npx npm-check-updates     # Show outdated dependencies
+npx npm-check-updates -i  # Update interactively
+npx npm-check-updates -u  # Write changes to package.json
+```
+
 Run in development with:
 
 ```
