@@ -13,7 +13,7 @@
     "@types/d3": "^6.7.8",
     "@types/papaparse": "^5.5.2",
     "@types/suncalc": "^1.9.2",
-    "axios": "^0.32.0",
+    "axios": "^0.33.0",
     "bootstrap-vue": "^2.23.1",
     "core-js": "^3.49.0",
     "d3": "^6.7.0",
