@@ -120,8 +120,12 @@ import helpers from "@/helpers";
 
 import { DayData, VPIEntry, IntegratedPropertyName, LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 
-import TWEEN from "@tweenjs/tween.js";
+import { Tween, Easing, Group, now as tweenNow } from "@tweenjs/tween.js";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+
+// Since tween.js v21 the global TWEEN group is deprecated and tweens are no longer
+// added to it automatically: they have to be registered with an explicit group.
+const tweenGroup = new Group();
 
 const MinRTRValueDisplay = 50;  // If the maximum MTR is small, we return 50 so a small peak on a very calm day doesn't seem huge on the chart
 
@@ -475,7 +479,10 @@ export default Vue.extend({
       return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
     },
     animate(): void {
-      if (TWEEN.update(TWEEN.now())) {
+      // preserve = false so finished tweens are dropped from the group, which is
+      // how we know when to stop asking for frames.
+      tweenGroup.update(tweenNow(), false);
+      if (tweenGroup.getAll().length > 0) {
         requestAnimationFrame(this.animate);
       }
     },
@@ -532,14 +539,14 @@ export default Vue.extend({
           // 3. Update existing data (and tween it)
           const cloneElem = { ...this.vpiDataForPath[foundIndex] };
 
-          new TWEEN.Tween(cloneElem)
-            .easing(TWEEN.Easing.Quadratic.Out)
+          new Tween(cloneElem, tweenGroup)
+            .easing(Easing.Quadratic.Out)
             .to({ val: newScaledValue, sourceVal: rawValue }, 300)
             .onUpdate(() => {
               this.$set(this.vpiDataForPath[foundIndex], "val", cloneElem.val);
               this.$set(this.vpiDataForPath[foundIndex], "sourceVal", cloneElem.sourceVal);
             })
-            .start(TWEEN.now()); // Start the tween immediately.
+            .start(tweenNow()); // Start the tween immediately.
         }
       }
     },

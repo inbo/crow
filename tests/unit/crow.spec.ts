@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount } from "@vue/test-utils"
 import { BootstrapVue } from "bootstrap-vue"
+import VueClipboard from "vue-clipboard2"
 import helpers from "../../src/helpers"
 import Home from "../../src/components/Home.vue";
 import config from "@/config";
@@ -14,6 +15,7 @@ const path = require("path");
 
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
+localVue.use(VueClipboard)
 
 
 test("Home component rendering", () => {
@@ -102,6 +104,7 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
 
   const localVue = createLocalVue()
   localVue.use(BootstrapVue)
+  localVue.use(VueClipboard)
   const wrapper = shallowMount(Home, {
     localVue,
     propsData: {
@@ -165,6 +168,7 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
 
   const localVue = createLocalVue()
   localVue.use(BootstrapVue)
+  localVue.use(VueClipboard)
   const wrapper = shallowMount(Home, {
     localVue,
     propsData: {

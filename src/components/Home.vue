@@ -176,7 +176,7 @@ import Partners from "@/components/Partners.vue";
 
 import moment from "moment-timezone";
 import axios from "axios";
-import SunCalc from "suncalc";
+import * as SunCalc from "suncalc";
 
 import config from "@/config";
 import helpers from "@/helpers";
