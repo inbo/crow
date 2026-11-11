@@ -175,7 +175,7 @@ function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
       ff: parseFloat(row.substring(41, 46)),
       dens: parseFloatOrZero(row.substring(76, 82)),
       sd_vvp: parseFloat(row.substring(53, 59)),
-      eta: parseFloatOrZero(row.substring(70, 75))
+      eta: parseFloatOrZero(row.substring(69, 75)) // 6-wide field, see vol2bird's libvol2bird.c output format
     };
   });
 
