@@ -38,7 +38,8 @@ function densityToBirdtam(density: number): number {
 
   More discussions at https://github.com/inbo/crow/issues/76
   */
-  return (density === 0 ? 0 : Math.floor(1.4427 * Math.log(density + 1) + 1.6781));
+  // Capped at 9, the top class: the colour scale has no code above it (https://github.com/inbo/crow/issues/76)
+  return (density === 0 ? 0 : Math.min(9, Math.floor(1.4427 * Math.log(density + 1) + 1.6781)));
 }
 
 function uuidv4(): string {

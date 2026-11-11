@@ -246,3 +246,18 @@ describe("A4 - responses for a previous selection are discarded", () => {
     expect(checked).toBeGreaterThan(500); // sanity floor: 830 cells pass the sd_vvp filter on 13 Oct
   });
 });
+
+describe("A5 - BirdTAM codes saturate at 9", () => {
+  test("very high densities map to BirdTAM 9 instead of wrapping around", () => {
+    /*
+    densityToBirdtam() had no upper bound, and the ordinal colour scale recycles
+    its range for unknown codes: 320 birds/km3 (code 10) was drawn white like
+    BirdTAM 0, 700 light green. Code 9 is the top class (extremes and rain).
+    */
+    expect(helpers.densityToBirdtam(150)).toBe(8);
+    expect(helpers.densityToBirdtam(200)).toBe(9);
+    expect(helpers.densityToBirdtam(320)).toBe(9);
+    expect(helpers.densityToBirdtam(1e6)).toBe(9);
+    expect(config.VPChartStyle.birdtamColors.get(helpers.densityToBirdtam(1000))).toBe("#333333");
+  });
+});
