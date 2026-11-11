@@ -58,3 +58,71 @@ describe("A1 - vol2bird fixed-width parser", () => {
     expect(parsed.dens).toBe(98.29);
   });
 });
+
+describe("A2 - total number of birds (cumulative migration traffic)", () => {
+  // Build the VPI entries exactly as the app does for a given UTC window:
+  // parse at app resolution, keep the first record per height in each slot,
+  // drop non-bird rows (filterVpts), then integrate each slot.
+  function appMtrSeries(contents: string[], fromIso: string, toIso: string): number[] {
+    config.appTemporalResolution = 10 * 60;
+    const heights = config.availableRadars[0].options[0].heights.length;
+    const rows = contents.flatMap(c =>
+      helpers.filterVpts(
+        Object.values(helpers.groupBy(helpers.parseVpts(c, "VOL2BIRD"), x => x.datetime))
+          .map(g => g.slice(0, heights))
+          .flat()
+      )
+    );
+    const bySlot = helpers.groupBy(rows, r => r.datetime);
+    const series = [];
+    for (let t = Date.parse(fromIso); t < Date.parse(toIso); t += 10 * 60 * 1000) {
+      series.push(bySlot[t] ? helpers.integrateProfile(bySlot[t]).mtr : NaN);
+    }
+    return series;
+  }
+
+  test("matches bioRad's cumulative traffic (mt) for 12 Oct 2020 within 1%", () => {
+    /*
+    The "about N birds flew across a 1 km line" sentence used to average the
+    non-NaN MTRs and multiply by the window length. Profiles where no layer
+    passes the sd_vvp filter (no birds) were treated as missing and imputed
+    with the mean of the others: 33,000 birds on 12 Oct against bioRad's
+    22,537. bioRad counts them as 0 and integrates MTR over time.
+    */
+    const reference = fs.readFileSync(path.resolve(__dirname, "./data/bewid_20201012-14.biorad_vpi_5min.csv"), "utf-8")
+      .trim().split("\n").slice(1).map((l: string) => l.replace(/"/g, "").split(","));
+    const bioradMt = +reference.filter((r: string[]) => r[0] < "2020-10-13")
+      .slice(-1)[0][5];
+
+    const mtr = appMtrSeries(readBewid().slice(0, 1), "2020-10-12T00:00:00Z", "2020-10-13T00:00:00Z");
+    const total = helpers.totalNumberOfBirds(mtr, 10 * 60);
+
+    expect(Math.abs(total - bioradMt) / bioradMt).toBeLessThan(0.01);
+  });
+
+  test("no-bird profiles count as zero, not as missing", () => {
+    /*
+    Half of a 24 h window at MTR 1000 birds/km/h and half without birds must
+    give 12,000 birds; imputing the empty half with the mean gave 24,000.
+    */
+    const mtr = [...Array(72).fill(1000), ...Array(72).fill(NaN)];
+    expect(helpers.totalNumberOfBirds(mtr, 10 * 60)).toBe(12000);
+  });
+
+  test("a window without any bird profile gives 0, not NaN", () => {
+    /*
+    Averaging an empty array made the sentence read "about NaN birds".
+    */
+    expect(helpers.totalNumberOfBirds([NaN, NaN], 10 * 60)).toBe(0);
+    expect(helpers.totalNumberOfBirds([], 10 * 60)).toBe(0);
+  });
+
+  test("the result is rounded to the nearest hundred", () => {
+    /*
+    The sentence says "about", so the precision shown must not suggest more
+    accuracy than the method has; this keeps the existing rounding.
+    */
+    expect(helpers.totalNumberOfBirds([1234 * 6], 10 * 60)).toBe(1200);
+    expect(helpers.totalNumberOfBirds([1250 * 6], 10 * 60)).toBe(1300);
+  });
+});

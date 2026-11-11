@@ -420,19 +420,10 @@ export default Vue.extend({
       return dataArray;
     },
     totalNumberOfBirds(): number {
-      // see https://github.com/inbo/crow/issues/112
-      // Build an array of all MTRs for the selected period
-      let mtrArray = this.integratedProfiles.map(vpiEntry => { return vpiEntry.integratedProfiles.mtr })
-
-      // Remove NaN values
-      mtrArray = mtrArray.filter(value => { return !Number.isNaN(value); });
-
-      // Process average
-      const mtrArrayAverage = mtrArray.reduce((a,b) => a + b, 0) / mtrArray.length;
-
-      // Multiply per number of hours, round to hundreds and return
-      const roundHundred = (value:number) => Math.round(value/100)*100;
-      return roundHundred(mtrArrayAverage * this.selectedIntervalInHours);
+      return helpers.totalNumberOfBirds(
+        this.integratedProfiles.map(vpiEntry => vpiEntry.integratedProfiles.mtr),
+        this.appTemporalResolution
+      );
     },
 
     integratedProfiles(): VPIEntry[] {

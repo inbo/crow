@@ -258,6 +258,18 @@ function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infi
   return ({ "mtr": mtr, "rtr": rtr, "vid": vid, "vir": vir })
 }
 
+function totalNumberOfBirds(mtrValues: number[], slotDurationSeconds: number): number {
+  // Cumulative migration traffic (birds across a 1 km line) over the shown period,
+  // like bioRad's `mt`: integrate MTR (birds/km/h) over time. A NaN MTR means no
+  // layer passed the sd_vvp filter (no birds) or no data for that slot; both count
+  // as 0, so nothing is extrapolated. See https://github.com/inbo/crow/issues/112
+  const slotHours = slotDurationSeconds / 3600;
+  const total = mtrValues
+    .filter(mtr => !Number.isNaN(mtr))
+    .reduce((sum, mtr) => sum + mtr * slotHours, 0);
+  return Math.round(total / 100) * 100; // The UI says "about": round to hundreds
+}
+
 function translateString(stringId: string, selectedLanguageCode: LangCode, translations: MultilanguageStringContainer): string {
   if (translations.hasOwnProperty(stringId) && translations[stringId].hasOwnProperty(selectedLanguageCode) && translations[stringId][selectedLanguageCode] !== null) {
     return translations[stringId][selectedLanguageCode];
@@ -291,4 +303,4 @@ const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
     return groups;
   }, {} as Record<K, T[]>);
 
-export default { parseVpts, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateStdGammaII, translateString, filterVpts, getBrowserFirstLangCode, buildVpTsDataUrl, groupBy }
+export default { parseVpts, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateStdGammaII, translateString, filterVpts, totalNumberOfBirds, getBrowserFirstLangCode, buildVpTsDataUrl, groupBy }
