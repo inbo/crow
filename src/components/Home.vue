@@ -245,6 +245,7 @@ export default Vue.extend({
     return {
       readyForCharts: false,
       filesLoadingCount: 0,
+      loadToken: 0, // Incremented on each load, so responses for a previous selection can be ignored
 
       VPIChartStyle: config.VPIChartStyle,
       VPIChartMode: this.vpiChartModeProp as IntegratedPropertyName,
@@ -611,8 +612,9 @@ export default Vue.extend({
       // Take into account the app temporal resolution and the upper limit (if resolution is 5 min and data shown until midgnight = data loaded until 23:55)
       //
       // Returns an array of strings in the 'YYYY-MM-DD' format
-      startMoment = startMoment.utc() // Data files are in UTC
-      stopMoment = stopMoment.subtract(this.appTemporalResolution, "seconds").utc();
+      // Clone: the moments come from the store and must not be mutated (that silently shrank the window on each reload)
+      startMoment = startMoment.clone().utc() // Data files are in UTC
+      stopMoment = stopMoment.clone().subtract(this.appTemporalResolution, "seconds").utc();
 
       var dateArray: Set<string> = new Set;
       var currentDate = startMoment;
@@ -631,10 +633,14 @@ export default Vue.extend({
       startMoment: moment.Moment,
       endMoment: moment.Moment
     ): void {
+      const token = ++this.loadToken;
       for (let currentDate of this.getDatesForData(startMoment, endMoment)) {
         const url = helpers.buildVpTsDataUrl(radar, moment(currentDate, "YYYY-MM-DD"));
         this.filesLoadingCount++;
         axios.get(url).then(response => {
+          if (token !== this.loadToken) {
+            return; // Response for a previous radar/date/interval: the grid now belongs to another selection
+          }
           // Data are floored to resolution of app (`parseVol2birdVpts()`), which can create multiple entries with the same datetime index
           // In this section:
           //  1/ Data are grouped per datetime (e.g. 10min app resolution and 5min data resolution => all heights occur twice)
@@ -646,7 +652,7 @@ export default Vue.extend({
               helpers.groupBy(
                 helpers.parseVpts(response.data, radar.vptsFileFormat), x => x.datetime)
             )
-            .map(x => x[1].slice(0, this.selectedRadar.heights.length))
+            .map(x => x[1].slice(0, radar.heights.length))
             .flat()
           )
           for (const val of dayData) {
