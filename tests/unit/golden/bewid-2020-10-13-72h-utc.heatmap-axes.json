@@ -1,0 +1,75 @@
+{
+  "viridis": {
+    "size": [
+      "773",
+      "300"
+    ],
+    "xAxis": [
+      "translate(90.5,0) 10:00 UTC",
+      "translate(198.50000000000003,0) 22:00 UTC",
+      "translate(306.5,0) 10:00 UTC",
+      "translate(414.49999999999994,0) 22:00 UTC",
+      "translate(522.5,0) 10:00 UTC",
+      "translate(630.5,0) 22:00 UTC"
+    ],
+    "yAxisMeters": [
+      "translate(0,250.5) 0",
+      "translate(0,240.5) ",
+      "translate(0,230.5) ",
+      "translate(0,220.5) ",
+      "translate(0,210.5) ",
+      "translate(0,200.5) 1000",
+      "translate(0,190.5) ",
+      "translate(0,180.5) ",
+      "translate(0,170.5) ",
+      "translate(0,160.5) ",
+      "translate(0,150.5) 2000",
+      "translate(0,140.5) ",
+      "translate(0,130.5) ",
+      "translate(0,120.5) ",
+      "translate(0,110.5) ",
+      "translate(0,100.5) 3000",
+      "translate(0,90.5) ",
+      "translate(0,80.5) ",
+      "translate(0,70.5) ",
+      "translate(0,60.5) ",
+      "translate(0,50.5) 4000",
+      "translate(0,40.5) ",
+      "translate(0,30.5) ",
+      "translate(0,20.5) ",
+      "translate(0,10.5) ",
+      "translate(0,0.5) 5000"
+    ],
+    "yAxisFeet": [
+      "translate(648, 0)",
+      "translate(0,250.5) 0",
+      "translate(0,220.019629358693) 2000",
+      "translate(0,189.539258717386) 4000",
+      "translate(0,159.05888807607897) 6000",
+      "translate(0,128.578517434772) 8000",
+      "translate(0,98.09814679346502) 10000",
+      "translate(0,67.617776152158) 12000",
+      "translate(0,37.13740551085101) 14000",
+      "translate(0,6.657034869544026) 16000"
+    ],
+    "axisLabels": [
+      "Height (meters)",
+      "Height (feet)"
+    ],
+    "legendTicks": [
+      "0",
+      "100",
+      "200 birds/km³"
+    ],
+    "midnightLines": [
+      "0 stroke-width: 1; pointer-events: none; stroke: white;",
+      "216 stroke-width: 1; pointer-events: none; stroke: white;",
+      "432 stroke-width: 1; pointer-events: none; stroke: white;"
+    ],
+    "dayLabels": [
+      "5 Oct 12",
+      "221 Oct 13",
+      "437 Oct 14"
+    ]
+  }
+}

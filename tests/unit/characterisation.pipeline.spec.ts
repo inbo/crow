@@ -4,21 +4,12 @@
 // with `npm run test:update-golden` only when the change is intended.
 process.env.TZ = "Europe/Brussels"; // results must not depend on the machine's time zone
 
-import moment from "moment-timezone";
 import config from "@/config";
 import TimelineChart from "@/components/TimelineChart.vue";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import { LangCode, Period, VPIEntry, VPTSDataRow } from "@/CrowTypes";
-import { ChartStubs, Scenario, expectGolden, mockMeteoBe, mountHome, restoreMocks, settle, toCsv } from "./support";
+import { ChartStubs, SCENARIOS, expectGolden, mockMeteoBe, mountHome, restoreMocks, settle, toCsv } from "./support";
 
-export const SCENARIOS: Record<string, Scenario> = {
-  // The URL used for the bioRad comparison (inbo/crow#45)
-  "bewid-2020-10-13-72h-utc": { radar: "bewid", date: "2020-10-13", interval: 72, timeDisplay: "UTC" },
-  // Local time: the window spans two UTC files
-  "bewid-2020-10-13-24h-local": { radar: "bewid", date: "2020-10-13", interval: 24, timeDisplay: "radarLocal" },
-  // The window starts on 11 Oct 22:00 UTC, a day we have no file for: 2 h without data
-  "bewid-2020-10-12-24h-local": { radar: "bewid", date: "2020-10-12", interval: 24, timeDisplay: "radarLocal" },
-};
 
 const iso = (ms: number) => new Date(ms).toISOString();
 
@@ -93,5 +84,3 @@ describe.each(Object.entries(SCENARIOS))("pipeline - %s", (name, scenario) => {
   });
 });
 
-// Keep moment-timezone loaded: the radar-local windows rely on it
-void moment;

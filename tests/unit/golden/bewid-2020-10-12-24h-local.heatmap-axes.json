@@ -1,0 +1,233 @@
+{
+  "viridis": {
+    "size": [
+      "773",
+      "300"
+    ],
+    "xAxis": [
+      "translate(0.5,0) 00:00 CEST",
+      "translate(81.5,0) 03:00 CEST",
+      "translate(162.5,0) 06:00 CEST",
+      "translate(243.5,0) 09:00 CEST",
+      "translate(324.5,0) 12:00 CEST",
+      "translate(405.5,0) 15:00 CEST",
+      "translate(486.5,0) 18:00 CEST",
+      "translate(567.5,0) 21:00 CEST",
+      "translate(648.5,0) 00:00 CEST"
+    ],
+    "yAxisMeters": [
+      "translate(0,250.5) 0",
+      "translate(0,240.5) ",
+      "translate(0,230.5) ",
+      "translate(0,220.5) ",
+      "translate(0,210.5) ",
+      "translate(0,200.5) 1000",
+      "translate(0,190.5) ",
+      "translate(0,180.5) ",
+      "translate(0,170.5) ",
+      "translate(0,160.5) ",
+      "translate(0,150.5) 2000",
+      "translate(0,140.5) ",
+      "translate(0,130.5) ",
+      "translate(0,120.5) ",
+      "translate(0,110.5) ",
+      "translate(0,100.5) 3000",
+      "translate(0,90.5) ",
+      "translate(0,80.5) ",
+      "translate(0,70.5) ",
+      "translate(0,60.5) ",
+      "translate(0,50.5) 4000",
+      "translate(0,40.5) ",
+      "translate(0,30.5) ",
+      "translate(0,20.5) ",
+      "translate(0,10.5) ",
+      "translate(0,0.5) 5000"
+    ],
+    "yAxisFeet": [
+      "translate(648, 0)",
+      "translate(0,250.5) 0",
+      "translate(0,220.019629358693) 2000",
+      "translate(0,189.539258717386) 4000",
+      "translate(0,159.05888807607897) 6000",
+      "translate(0,128.578517434772) 8000",
+      "translate(0,98.09814679346502) 10000",
+      "translate(0,67.617776152158) 12000",
+      "translate(0,37.13740551085101) 14000",
+      "translate(0,6.657034869544026) 16000"
+    ],
+    "axisLabels": [
+      "Height (meters)",
+      "Height (feet)"
+    ],
+    "legendTicks": [
+      "0",
+      "50",
+      "100 birds/km³"
+    ],
+    "midnightLines": [
+      "0 stroke-width: 1; pointer-events: none; stroke: white;"
+    ],
+    "dayLabels": [
+      "5 Oct 12"
+    ]
+  },
+  "biorad": {
+    "size": [
+      "773",
+      "300"
+    ],
+    "xAxis": [
+      "translate(0.5,0) 00:00 CEST",
+      "translate(81.5,0) 03:00 CEST",
+      "translate(162.5,0) 06:00 CEST",
+      "translate(243.5,0) 09:00 CEST",
+      "translate(324.5,0) 12:00 CEST",
+      "translate(405.5,0) 15:00 CEST",
+      "translate(486.5,0) 18:00 CEST",
+      "translate(567.5,0) 21:00 CEST",
+      "translate(648.5,0) 00:00 CEST"
+    ],
+    "yAxisMeters": [
+      "translate(0,250.5) 0",
+      "translate(0,240.5) ",
+      "translate(0,230.5) ",
+      "translate(0,220.5) ",
+      "translate(0,210.5) ",
+      "translate(0,200.5) 1000",
+      "translate(0,190.5) ",
+      "translate(0,180.5) ",
+      "translate(0,170.5) ",
+      "translate(0,160.5) ",
+      "translate(0,150.5) 2000",
+      "translate(0,140.5) ",
+      "translate(0,130.5) ",
+      "translate(0,120.5) ",
+      "translate(0,110.5) ",
+      "translate(0,100.5) 3000",
+      "translate(0,90.5) ",
+      "translate(0,80.5) ",
+      "translate(0,70.5) ",
+      "translate(0,60.5) ",
+      "translate(0,50.5) 4000",
+      "translate(0,40.5) ",
+      "translate(0,30.5) ",
+      "translate(0,20.5) ",
+      "translate(0,10.5) ",
+      "translate(0,0.5) 5000"
+    ],
+    "yAxisFeet": [
+      "translate(648, 0)",
+      "translate(0,250.5) 0",
+      "translate(0,220.019629358693) 2000",
+      "translate(0,189.539258717386) 4000",
+      "translate(0,159.05888807607897) 6000",
+      "translate(0,128.578517434772) 8000",
+      "translate(0,98.09814679346502) 10000",
+      "translate(0,67.617776152158) 12000",
+      "translate(0,37.13740551085101) 14000",
+      "translate(0,6.657034869544026) 16000"
+    ],
+    "axisLabels": [
+      "Height (meters)",
+      "Height (feet)"
+    ],
+    "legendTicks": [
+      "0",
+      "1",
+      "2",
+      "5",
+      "10",
+      "25",
+      "50",
+      "100",
+      "200",
+      "500",
+      "1000 birds/km³"
+    ],
+    "midnightLines": [
+      "0 stroke-width: 1; pointer-events: none; stroke: red;"
+    ],
+    "dayLabels": [
+      "5 Oct 12"
+    ]
+  },
+  "birdtam": {
+    "size": [
+      "773",
+      "300"
+    ],
+    "xAxis": [
+      "translate(0.5,0) 00:00 CEST",
+      "translate(81.5,0) 03:00 CEST",
+      "translate(162.5,0) 06:00 CEST",
+      "translate(243.5,0) 09:00 CEST",
+      "translate(324.5,0) 12:00 CEST",
+      "translate(405.5,0) 15:00 CEST",
+      "translate(486.5,0) 18:00 CEST",
+      "translate(567.5,0) 21:00 CEST",
+      "translate(648.5,0) 00:00 CEST"
+    ],
+    "yAxisMeters": [
+      "translate(0,250.5) 0",
+      "translate(0,240.5) ",
+      "translate(0,230.5) ",
+      "translate(0,220.5) ",
+      "translate(0,210.5) ",
+      "translate(0,200.5) 1000",
+      "translate(0,190.5) ",
+      "translate(0,180.5) ",
+      "translate(0,170.5) ",
+      "translate(0,160.5) ",
+      "translate(0,150.5) 2000",
+      "translate(0,140.5) ",
+      "translate(0,130.5) ",
+      "translate(0,120.5) ",
+      "translate(0,110.5) ",
+      "translate(0,100.5) 3000",
+      "translate(0,90.5) ",
+      "translate(0,80.5) ",
+      "translate(0,70.5) ",
+      "translate(0,60.5) ",
+      "translate(0,50.5) 4000",
+      "translate(0,40.5) ",
+      "translate(0,30.5) ",
+      "translate(0,20.5) ",
+      "translate(0,10.5) ",
+      "translate(0,0.5) 5000"
+    ],
+    "yAxisFeet": [
+      "translate(648, 0)",
+      "translate(0,250.5) 0",
+      "translate(0,220.019629358693) 2000",
+      "translate(0,189.539258717386) 4000",
+      "translate(0,159.05888807607897) 6000",
+      "translate(0,128.578517434772) 8000",
+      "translate(0,98.09814679346502) 10000",
+      "translate(0,67.617776152158) 12000",
+      "translate(0,37.13740551085101) 14000",
+      "translate(0,6.657034869544026) 16000"
+    ],
+    "axisLabels": [
+      "Height (meters)",
+      "Height (feet)"
+    ],
+    "legendTicks": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "> 8"
+    ],
+    "midnightLines": [
+      "0 stroke-width: 1; pointer-events: none; stroke: green;"
+    ],
+    "dayLabels": [
+      "5 Oct 12"
+    ]
+  }
+}

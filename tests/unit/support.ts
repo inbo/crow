@@ -75,6 +75,16 @@ export interface Scenario {
   timeDisplay: TimeDisplayedAsValue;
 }
 
+/** The real-data scenarios shared by the characterisation specs. */
+export const SCENARIOS: Record<string, Scenario> = {
+  // The URL used for the bioRad comparison (inbo/crow#45)
+  "bewid-2020-10-13-72h-utc": { radar: "bewid", date: "2020-10-13", interval: 72, timeDisplay: "UTC" },
+  // Local time: the window spans two UTC files
+  "bewid-2020-10-13-24h-local": { radar: "bewid", date: "2020-10-13", interval: 24, timeDisplay: "radarLocal" },
+  // The window starts on 11 Oct 22:00 UTC, a day we have no file for: 2 h without data
+  "bewid-2020-10-12-24h-local": { radar: "bewid", date: "2020-10-12", interval: 24, timeDisplay: "radarLocal" },
+};
+
 /** Stand-in for a chart that keeps its props and renders its slots (description text, timeline). */
 function chartStub(name: string, props: string[]): Component {
   return Vue.extend({ name, props, template: `<div class="stub-${name}"><slot name="header" /><slot name="in-x-axis-group" /></div>` });
@@ -99,6 +109,17 @@ export function childProps(wrapper: Wrapper<Vue>, child: Component): Record<stri
   return wrapper.findComponent(child).props();
 }
 
+/** Load a scenario through Home (stubbed charts) and return the props it gives the charts. */
+export async function scenarioChartProps(s: Scenario): Promise<{ vpi: Record<string, unknown>; vp: Record<string, unknown> }> {
+  mockMeteoBe();
+  const wrapper = mountHome(s);
+  await settle();
+  const props = { vpi: wrapper.findComponent(ChartStubs.VPIChart).props(), vp: wrapper.findComponent(ChartStubs.VPChart).props() };
+  wrapper.destroy();
+  restoreMocks();
+  return props;
+}
+
 /** Mount a chart component on its own, fully rendered. */
 export function mountChart(component: Component, props: Record<string, unknown>): Wrapper<Vue> {
   return mount(component, { localVue, propsData: props });
@@ -112,7 +133,8 @@ export type Cell = string | number | boolean | null | undefined;
 function formatCell(v: Cell): string {
   if (v === undefined || v === null) return "";
   if (typeof v === "number") return Number.isNaN(v) ? "NaN" : String(Math.round(v * 1e6) / 1e6);
-  return String(v);
+  const text = String(v);
+  return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text; // e.g. "rgb(68, 1, 84)"
 }
 
 export function toCsv(rows: Record<string, Cell>[]): string {
