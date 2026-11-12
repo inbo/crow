@@ -1,11 +1,7 @@
 // Time zone regression tests: they change process.env.TZ, so they live in their
 // own file and restore it afterwards.
-import { createLocalVue, shallowMount } from "@vue/test-utils";
-import { BootstrapVue } from "bootstrap-vue";
-import VueClipboard from "vue-clipboard2";
-import axios from "axios";
-import Home from "@/components/Home.vue";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { mockMeteoBe, mountHome, restoreMocks } from "./support";
 
 const originalTZ = process.env.TZ;
 afterAll(() => { process.env.TZ = originalTZ; });
@@ -45,20 +41,11 @@ describe("A6 - 'radar local' windows are centred on noon at the radar", () => {
 });
 
 describe("A8 - previous/next date buttons across DST changes", () => {
-  const localVue = createLocalVue();
-  localVue.use(BootstrapVue);
-  localVue.use(VueClipboard);
-
   function homeOn(date: string, interval: number) {
-    jest.spyOn(axios, "get").mockResolvedValue({ data: "#\n#\n#\n#\n\n" }); // an empty vol2bird file
-    const wrapper = shallowMount(Home, {
-      localVue,
-      propsData: { radarValueProp: "bewid", dateValueProp: date, intervalValueProp: interval, timeDisplayValueProp: "radarLocal" },
-      stubs: ["router-link"]
-    });
-    return wrapper.vm as any;
+    mockMeteoBe(); // no file for these dates: empty data
+    return mountHome({ radar: "bewid", date, interval, timeDisplay: "radarLocal" }).vm as any;
   }
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(restoreMocks);
 
   test("next/previous move by whole days on the 25 h and 23 h days", () => {
     /*

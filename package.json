@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "jest",
+    "test:update-golden": "UPDATE_GOLDEN=1 jest tests/unit/characterisation",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
