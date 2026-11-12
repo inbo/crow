@@ -14,6 +14,16 @@ data_dir <- "tests/unit/data"
 files <- file.path(data_dir, paste0("bewid_vpts_2020101", 2:4, ".txt"))
 
 vpts <- do.call(bind_into_vpts, lapply(files, read_vpts, radar = "bewid", wavelength = "C"))
+# CROW filters every radar with sd_vvp >= 2 m/s (helpers.ts SD_VVP_THRESHOLD).
+# read_vpts() on vol2bird .txt files sets NO threshold, whatever the wavelength, so
+# bioRad would not zero eta (VIR/RTR) below it. Set the attribute directly: the
+# `sd_vvp_threshold<-` setter also recomputes dens from eta, overriding the densities
+# vol2bird wrote in the file, which CROW uses.
+with_crow_threshold <- function(x) {
+  x$attributes$how$sd_vvp_thresh <- 2
+  x
+}
+vpts <- with_crow_threshold(vpts)
 
 write_vpi <- function(vpi, fname) {
   out <- data.frame(
@@ -37,3 +47,10 @@ write.csv(grid, file.path(data_dir, "bewid_20201012-14.biorad_vpts_10min.csv"), 
 
 writeLines(paste("Generated with bioRad", packageVersion("bioRad"), "on", R.version.string),
            file.path(data_dir, "bewid_20201012-14.biorad_version.txt"))
+
+# One hour of Helchteren (behel) data, compared profile by profile in crow.spec.ts.
+# Earlier versions of this reference had no sd_vvp threshold (see above), so
+# VIR/RTR could not match CROW.
+behel <- read_vpts(file.path(data_dir, "behel_vpts_20200129.truncated.txt"), radar = "behel", wavelength = "C")
+behel <- with_crow_threshold(behel)
+write_vpi(integrate_profile(behel), "behel_vpi_20200129.truncated.csv")

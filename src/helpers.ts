@@ -83,9 +83,9 @@ function parseFloatOrZero(str: string): number {
 
 function filterVpts(rows: VPTSDataRowFromFile[], sd_vvpThresh = SD_VVP_THRESHOLD): VPTSDataRowFromFile[] {
   // Filter out data rows that are likely not birds, based on sd_vvp (https://github.com/inbo/crow/issues/122)
-  return rows.filter(function (row) {
-    return !isNaN(row.sd_vvp) && row.sd_vvp >= sd_vvpThresh
-  })
+  // Only a measured sd_vvp below the threshold removes a row: where vol2bird could not
+  // estimate it (NaN) it still reports a density, which bioRad keeps too.
+  return rows.filter(row => !(row.sd_vvp < sd_vvpThresh))
 }
 
 interface csvDataRow { // An object whose key and values are both strings
@@ -162,7 +162,7 @@ function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
 
   let d = responseString.split("\n");
   d = d.splice(numHeaderLines); // Remove 4 header lines
-  d.pop() // The file is also terminated by a blank line, which cause issues.
+  d = d.filter(line => line.trim() !== ""); // Skip the terminating blank line, but never drop a data row (a file may lack the final newline)
 
   const r = d.map(function (row) {
     // There are NaN values everywhere in the data, D3 don't know how to interpret them
@@ -206,6 +206,10 @@ function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infi
     console.log("'altMin' should be smaller than 'altMax'");
   }
 
+  if (data.length == 0) { // No data loaded for this profile
+    return { "mtr": NaN, "rtr": NaN, "vid": NaN, "vir": NaN }
+  }
+
   // Filter data on requested heights
   // Get height ranges
   const altMinMaxFromData = d3.extent(data, d => d.height);
@@ -217,8 +221,8 @@ function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infi
     data = data.filter(d => d.height >= altMin && d.height <= altMax);
   }
 
-  // Filter data on sd_vvp values above sd_vvp threshold
-  data = data.filter(d => d.sd_vvp >= sd_vvpThresh);
+  // Filter out data whose (measured) sd_vvp is below the threshold; NaN is kept, see filterVpts()
+  data = data.filter(d => !(d.sd_vvp < sd_vvpThresh));
   if (data.length == 0) {
     return { "mtr": NaN, "rtr": NaN, "vid": NaN, "vir": NaN }
   }

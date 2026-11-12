@@ -433,6 +433,9 @@ export default Vue.extend({
         // VPTS values are stored in a tree per height, we need a flat array for integratedProfile
         const dataToIntegrate = [];
         for (const [height, vptsValues] of Object.entries(treeEntry.heightData)) {
+          if ((vptsValues as VPTSDataRow).noData) {
+            continue; // Empty cell (nothing loaded for this time/height)
+          }
           const o = { height: +height };
           dataToIntegrate.push({
             ...(vptsValues as VPTSDataRowFromFile),

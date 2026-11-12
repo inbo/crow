@@ -70,6 +70,17 @@ describe("A1 - vol2bird fixed-width parser", () => {
     expect(parsed.dens).toBe(98.29);
   });
 
+  test("the last data row is kept when the file lacks a final newline", () => {
+    /*
+    The parser always discarded the last line, assuming it was blank. The
+    hand-truncated BEHEL fixture ends without a newline, so its 11:30 / 4800 m
+    layer (eta 0.2) was lost and VIR differed from bioRad by 0.04.
+    */
+    const header = "#\n#\n#\n#\n";
+    const row = "20201012 1900 1200  -6.63  -8.66   -0.85 10.91 217.5   2.39 F   4.61 1081.2  98.29   4.39  9413 13368 11863 17193";
+    expect(helpers.parseVpts(header + row, "VOL2BIRD").length).toBe(1);
+    expect(helpers.parseVpts(header + row + "\n", "VOL2BIRD").length).toBe(1);
+  });
 });
 
 describe("A2 - total number of birds (cumulative migration traffic)", () => {
@@ -353,3 +364,43 @@ describe("A9 - integrateProfile with a migration direction (alpha)", () => {
   });
 });
 
+describe("B2 - layers with an undefined sd_vvp are kept, as in bioRad", () => {
+  const row = (sd_vvp: number) => ({ datetime: 0, height: 0, dd: NaN, ff: NaN, dens: 0.5, sd_vvp, eta: 5.5 });
+
+  test("only a measured sd_vvp below the threshold removes a layer", () => {
+    /*
+    vol2bird writes a density even where it cannot estimate sd_vvp (NaN), and
+    bioRad keeps it: `x[sd_vvp < threshold] <- 0` does not select NA. CROW used
+    to drop those rows, lowering VID by ~2.7% over the Wideumont sample and
+    drawing those (mostly high-altitude) cells as "no data".
+    */
+    expect(helpers.filterVpts([row(NaN), row(1.9), row(2), row(3)]).map(r => r.sd_vvp))
+      .toEqual([NaN, 2, 3]);
+    expect(helpers.integrateProfile([row(NaN)]).vid).toBeCloseTo(0.1, 6);
+    expect(helpers.integrateProfile([row(1.9)]).vid).toBeNaN();
+    expect(helpers.integrateProfile([]).vid).toBeNaN(); // a slot with nothing loaded
+  });
+
+  test("every 5 min Wideumont profile matches bioRad's MTR, VID, VIR and RTR", () => {
+    /*
+    End-to-end check of parsing (A1), sd_vvp filtering (B2) and integration
+    against bioRad 0.12.0 on 843 real profiles. A profile where no layer passes
+    the filter is NaN in CROW (shown as a gap) and 0 in bioRad; that display
+    choice is separate (B1), so NaN is compared as 0 here.
+    */
+    config.appTemporalResolution = 5 * 60;
+    const reference = fs.readFileSync(path.resolve(__dirname, "./data/bewid_20201012-14.biorad_vpi_5min.csv"), "utf-8")
+      .trim().split("\n").slice(1).map((l: string) => l.replace(/"/g, "").split(","));
+    const bySlot = helpers.groupBy(
+      readBewid().flatMap(c => helpers.filterVpts(helpers.parseVpts(c, "VOL2BIRD"))), r => r.datetime);
+    const round3 = (x: number) => Math.round(((Number.isNaN(x) ? 0 : x) + Number.EPSILON) * 1000) / 1000;
+
+    expect(reference.length).toBe(843);
+    for (const [datetime, mtr, rtr, vid, vir] of reference) {
+      const rows = bySlot[Date.parse(datetime)] || [];
+      const crow = rows.length ? helpers.integrateProfile(rows) : { mtr: NaN, rtr: NaN, vid: NaN, vir: NaN };
+      expect([datetime, round3(crow.mtr), round3(crow.vid), round3(crow.vir), round3(crow.rtr)])
+        .toEqual([datetime, round3(+mtr), round3(+vid), round3(+vir), round3(+rtr)]);
+    }
+  });
+});
