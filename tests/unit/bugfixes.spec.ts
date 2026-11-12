@@ -12,6 +12,8 @@ import helpers from "@/helpers";
 import config from "@/config";
 import { VPTSDataRowFromFile } from "@/CrowTypes";
 import Home from "@/components/Home.vue";
+import VPChart from "@/components/VPChart.vue";
+import "jest-canvas-mock";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 
 const fs = require("fs");
@@ -65,6 +67,7 @@ describe("A1 - vol2bird fixed-width parser", () => {
     expect(parsed.eta).toBe(1081.2);
     expect(parsed.dens).toBe(98.29);
   });
+
 });
 
 describe("A2 - total number of birds (cumulative migration traffic)", () => {
@@ -261,3 +264,26 @@ describe("A5 - BirdTAM codes saturate at 9", () => {
     expect(config.VPChartStyle.birdtamColors.get(helpers.densityToBirdtam(1000))).toBe("#333333");
   });
 });
+
+describe("A7 - feet axis lines up with the metre axis", () => {
+  test("a height in feet sits at the same pixel as the same height in metres", () => {
+    /*
+    The metre axis spans 0 to 5000 m (top of the 4800 m layer) but the feet
+    axis was scaled to 3.2808 x 4800 ft over the same pixels, so the feet
+    labels drifted by up to ~650 ft (about 4%) at the top of the chart.
+    */
+    const heights = Array.from({ length: 25 }, (_, i) => i * 200);
+    const vptsData = [0, 10].flatMap(minutes => heights.map(height => ({
+      timestamp: Date.parse("2020-10-13T00:00:00Z") + minutes * 60 * 1000, height, dd: 0, ff: 0, dens: 1, sd_vvp: 3, noData: false
+    })));
+    const wrapper = shallowMount(VPChart, {
+      localVue,
+      propsData: { vptsData, styleConfig: config.VPChartStyle, scheme: "viridis", showTimeAs: "UTC" }
+    });
+    const vm = wrapper.vm as any;
+    for (const meters of [0, 1000, 3000, 5000]) {
+      expect(vm.yScaleFeet(meters * 3.2808)).toBeCloseTo(vm.yScale(String(meters)), 6);
+    }
+  });
+});
+
