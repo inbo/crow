@@ -1,0 +1,11 @@
+{
+  "rectWidth": "5",
+  "rects": 144,
+  "bands": [
+    "0 night",
+    "166 twilight",
+    "216 day",
+    "509 twilight",
+    "563 night"
+  ]
+}

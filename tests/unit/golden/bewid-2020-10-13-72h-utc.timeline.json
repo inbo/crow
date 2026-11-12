@@ -1,0 +1,19 @@
+{
+  "rectWidth": "2",
+  "rects": 432,
+  "bands": [
+    "0 night",
+    "38 twilight",
+    "54 day",
+    "153 twilight",
+    "170 night",
+    "254 twilight",
+    "270 day",
+    "368 twilight",
+    "386 night",
+    "470 twilight",
+    "487 day",
+    "584 twilight",
+    "600 night"
+  ]
+}

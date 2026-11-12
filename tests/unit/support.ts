@@ -7,6 +7,7 @@ import VueClipboard from "vue-clipboard2";
 import axios from "axios";
 import Vue from "vue";
 import Home from "@/components/Home.vue";
+import TimelineChart from "@/components/TimelineChart.vue";
 import { TimeDisplayedAsValue } from "@/CrowTypes";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import "jest-canvas-mock";
@@ -110,11 +111,15 @@ export function mountHome(s: Scenario): Wrapper<Vue> {
 }
 
 /** Load a scenario through Home (stubbed charts) and return the props it gives the charts. */
-export async function scenarioChartProps(s: Scenario): Promise<{ vpi: Record<string, unknown>; vp: Record<string, unknown> }> {
+export async function scenarioChartProps(s: Scenario): Promise<Record<"vpi" | "vp" | "timeline", Record<string, unknown>>> {
   mockMeteoBe();
   const wrapper = mountHome(s);
   await settle();
-  const props = { vpi: wrapper.findComponent(ChartStubs.VPIChart).props(), vp: wrapper.findComponent(ChartStubs.VPChart).props() };
+  const props = {
+    vpi: wrapper.findComponent(ChartStubs.VPIChart).props(),
+    vp: wrapper.findComponent(ChartStubs.VPChart).props(),
+    timeline: wrapper.findComponent(TimelineChart).props()
+  };
   wrapper.destroy();
   restoreMocks();
   return props;
@@ -164,4 +169,20 @@ export function expectGolden(name: string, actual: string): void {
   expect({ file: name, line: firstDiff + 1, header: actualLines[0], content: actualLines[firstDiff] })
     .toEqual({ file: name, line: firstDiff + 1, header: expectedLines[0], content: expectedLines[firstDiff] });
   expect(actualLines.length).toBe(expectedLines.length);
+}
+
+// --- Animations ------------------------------------------------------------
+
+/** Fake clock (performance.now, requestAnimationFrame, timers) so animations can be run to their end. */
+export function useFakeClock(): void {
+  jest.useFakeTimers();
+}
+
+export function useRealClock(): void {
+  jest.useRealTimers();
+}
+
+/** Advance the fake clock, running every animation frame due meanwhile. */
+export function advanceClock(ms: number): void {
+  jest.advanceTimersByTime(ms);
 }
