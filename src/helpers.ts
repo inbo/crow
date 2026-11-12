@@ -153,7 +153,7 @@ function buildVpTsDataUrl(radar: RadarInterface, selectedDate: moment.Moment): s
 }
 
 function roundNearest(num: number, resolution: number) {
-  "Round to nearest integer value of the given resolution"
+  "Round down to a multiple of the given resolution"
   return Math.floor(num / resolution) * resolution;
 }
 
@@ -199,7 +199,7 @@ function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infi
   if (!(typeof altMin == "number") || !(typeof altMax == "number" || altMax == Infinity)) {
     throw "'altMin'/'altMax' need to be nunmeric";
   }
-  if (!(isNaN(alpha) || !(typeof alpha == "number"))) {
+  if (typeof alpha !== "number") { // NaN (no direction) is a number too
     throw "'alpha' needs to be numeric or Nan";
   }
   if (altMax <= altMin) {
@@ -233,7 +233,7 @@ function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infi
   if (isNaN(alpha)) {
     cosFactor = data.map(x => 1. + 0. * x.dd);
   } else {
-    cosFactor = data.map(x => Math.cos(x.dd - alpha) * Math.PI / 180);
+    cosFactor = data.map(x => Math.cos((x.dd - alpha) * Math.PI / 180)); // dd and alpha in degrees, as in bioRad
   }
 
   // Calculate mtr

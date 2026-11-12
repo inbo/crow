@@ -320,3 +320,36 @@ describe("A10 - VPI tooltip picks the nearest profile", () => {
   });
 });
 
+describe("A9 - integrateProfile with a migration direction (alpha)", () => {
+  // One 200 m layer flying at 10 m/s with 100 birds/km3, heading `dd` degrees
+  const layer = (dd: number) => [{ datetime: 0, height: 0, dd, ff: 10, dens: 100, sd_vvp: 3, eta: 0 }];
+
+  test("a numeric alpha is accepted", () => {
+    /*
+    The argument check was inverted: any numeric alpha threw "'alpha' needs to
+    be numeric or NaN", so the directional MTR could never be computed.
+    */
+    expect(() => helpers.integrateProfile(layer(90), 0, Infinity, 200, 2, 90)).not.toThrow();
+  });
+
+  test("MTR is projected on alpha with the angle in degrees", () => {
+    /*
+    The code computed cos(dd - alpha) * PI / 180 (cosine of degrees taken as
+    radians, then scaled) instead of cos((dd - alpha) * PI / 180), as bioRad's
+    integrate_profile does. Flying along alpha keeps the full MTR (720),
+    against it gives -720, perpendicular to it gives 0.
+    */
+    expect(helpers.integrateProfile(layer(90), 0, Infinity, 200, 2, 90).mtr).toBeCloseTo(720, 6);
+    expect(helpers.integrateProfile(layer(180), 0, Infinity, 200, 2, 0).mtr).toBeCloseTo(-720, 6);
+    expect(helpers.integrateProfile(layer(90), 0, Infinity, 200, 2, 0).mtr).toBeCloseTo(0, 6);
+  });
+
+  test("without alpha, MTR is non-directional (the app's default)", () => {
+    /*
+    The UI never passes alpha: MTR must stay the plain ff x dens sum, as with
+    bioRad's default alpha = NA.
+    */
+    expect(helpers.integrateProfile(layer(180)).mtr).toBeCloseTo(720, 6);
+  });
+});
+
