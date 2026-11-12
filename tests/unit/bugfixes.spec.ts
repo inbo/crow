@@ -24,7 +24,9 @@ describe("A1 - vol2bird fixed-width parser", () => {
     config.appTemporalResolution = 5 * 60; // no flooring, 1:1 with the file
 
     for (const content of readBewid()) {
-      const dataLines = content.split("\n").slice(4, -1);
+      // The parser returns rows in time order (see "Out-of-order profiles" below)
+      const dataLines = content.split("\n").slice(4, -1)
+        .sort((a: string, b: string) => a.substring(0, 13).localeCompare(b.substring(0, 13)));
       const parsed = helpers.parseVpts(content, "VOL2BIRD");
       expect(parsed.length).toBe(dataLines.length);
 
@@ -384,5 +386,24 @@ describe("Sun altitude in degrees (SunCalc 2 upgrade)", () => {
     expect(Math.max(...altitudes)).toBeGreaterThan(31.7);
     expect(Math.max(...altitudes)).toBeLessThan(32.7);
     expect(Math.min(...altitudes)).toBeGreaterThan(-90);
+  });
+});
+
+describe("Out-of-order profiles in a vol2bird file", () => {
+  test("each 10 min slot keeps its own on-the-slot profile", () => {
+    /*
+    The meteo.be file for bewid 2020-10-13 lists the 07:30-07:55 profiles out
+    of order (07:30, 07:50, 07:45, 07:40, ...). Downsampling to 10 min keeps
+    the first record per slot and height, which assumed sorted files: the
+    07:40 slot showed the 07:45 profile. Profiles are now sorted by their real
+    time before being floored to the app resolution.
+    */
+    config.appTemporalResolution = 10 * 60;
+    const header = "#\n#\n#\n#\n";
+    const line = (time: string, dens: string) =>
+      `20201013 ${time}  600   2.53   2.62    0.09  3.64  44.0   3.62 F   5.65   34.6 ${dens}   5.67   500   600   700   800\n`;
+    const rows = helpers.parseVpts(header + line("0745", "  4.84") + line("0740", "  5.86") + "\n", "VOL2BIRD");
+    expect(rows.map(r => [new Date(r.datetime).toISOString(), r.dens]))
+      .toEqual([["2020-10-13T07:40:00.000Z", 5.86], ["2020-10-13T07:40:00.000Z", 4.84]]);
   });
 });

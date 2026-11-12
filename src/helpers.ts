@@ -159,6 +159,10 @@ function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
   let d = responseString.split("\n");
   d = d.splice(numHeaderLines); // Remove 4 header lines
   d = d.filter(line => line.trim() !== ""); // Skip the terminating blank line, but never drop a data row (a file may lack the final newline)
+  // Profiles are not always in time order in the files (e.g. bewid 2020-10-13 07:30-07:55).
+  // Downsampling keeps the first record per slot, so sort by the real "YYYYMMDD HHmm"
+  // time first (stable: heights keep their order) for each slot to keep its own profile.
+  d.sort((a, b) => a.substring(0, 13).localeCompare(b.substring(0, 13)));
 
   const r = d.map(function (row) {
     // "nan" values are kept as NaN; filterVpts() decides which rows are usable and

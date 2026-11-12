@@ -8,7 +8,7 @@ import config from "@/config";
 import TimelineChart from "@/components/TimelineChart.vue";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import { LangCode, Period, VPIEntry, VPTSDataRow } from "@/CrowTypes";
-import { ChartStubs, SCENARIOS, expectGolden, mockMeteoBe, mountHome, restoreMocks, settle, toCsv } from "./support";
+import { ChartStubs, SCENARIOS, expectGolden, mockMeteoBe, mountHome, readBioradCsv, restoreMocks, settle, toCsv } from "./support";
 
 
 const iso = (ms: number) => new Date(ms).toISOString();
@@ -84,3 +84,32 @@ describe.each(Object.entries(SCENARIOS))("pipeline - %s", (name, scenario) => {
   });
 });
 
+
+describe("heatmap densities against bioRad", () => {
+  test("every cell with data equals bioRad's regularised 10 min grid", async () => {
+    /*
+    Independent check of the heatmap numbers, not just a pin: bioRad 0.12.0's
+    regularize_vpts() on the same files gives, for each 10 min slot and height,
+    the density of the profile at that time. Every cell CROW shows with data
+    must have that density (a NaN density counts as 0 on both sides, see
+    filterVpts). Cells shown as no data are not compared: CROW deliberately
+    hides layers failing the sd_vvp filter, which bioRad's grid keeps.
+    */
+    config.appTemporalResolution = 10 * 60;
+    mockMeteoBe();
+    const wrapper = mountHome(SCENARIOS["bewid-2020-10-13-72h-utc"]);
+    await settle();
+    const reference = new Map<string, number>();
+    for (const [datetime, height, dens] of readBioradCsv("bewid_20201012-14.biorad_vpts_10min.csv")) {
+      reference.set(`${datetime}/${height}`, dens === "NA" || dens === "NaN" ? 0 : +dens);
+    }
+    const cells = (wrapper.findComponent(ChartStubs.VPChart).props("vptsData") as (VPTSDataRow & { timestamp: number })[])
+      .filter(d => !d.noData);
+    expect(cells.length).toBeGreaterThan(5000);
+    const differing = cells
+      .map(d => ({ key: `${new Date(d.timestamp).toISOString().replace(".000Z", "Z")}/${d.height}`, crow: d.dens }))
+      .filter(c => Math.abs((c.crow as number) - reference.get(c.key)!) > 1e-9);
+    expect(differing).toEqual([]);
+    restoreMocks();
+  });
+});
