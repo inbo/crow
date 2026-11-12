@@ -3,7 +3,6 @@
 // are recorded (not whole HTML), so Bootstrap-Vue or Vue 2/3 markup changes do
 // not trigger diffs; regenerate with `npm run test:update-golden` only when a
 // change is intended.
-process.env.TZ = "Europe/Brussels"; // results must not depend on the machine's time zone
 
 import config from "@/config";
 import VPChart from "@/components/VPChart.vue";

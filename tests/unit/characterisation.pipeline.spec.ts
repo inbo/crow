@@ -2,7 +2,6 @@
 // Home hands to each chart (density grid, integrated profiles, sun periods) and
 // the description texts. Any change shows up as a golden file diff; regenerate
 // with `npm run test:update-golden` only when the change is intended.
-process.env.TZ = "Europe/Brussels"; // results must not depend on the machine's time zone
 
 import config from "@/config";
 import TimelineChart from "@/components/TimelineChart.vue";

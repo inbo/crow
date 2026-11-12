@@ -3,6 +3,12 @@
 // requiring TypeScript < 5, and @types/d3 7 needs TypeScript >= 5.1. The two
 // cannot coexist, so jest is configured directly here and the whole jest chain
 // moved to 29. This inlines what the preset used to provide.
+// Pin the time zone the tests run in. It must be set here, before Jest starts its
+// workers: each test file gets its own copy of process.env, so setting TZ in a
+// spec has no effect on Date. d3 time axes and moment's local time follow it.
+// A TZ given explicitly is kept (npm run test:unit uses that for the A6 tests).
+if (!process.env.TZ) process.env.TZ = "Europe/Brussels";
+
 module.exports = {
   testEnvironment: "jsdom",
 
