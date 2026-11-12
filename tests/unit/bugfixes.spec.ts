@@ -47,13 +47,12 @@ describe("A1 - vol2bird fixed-width parser", () => {
 
       parsed.forEach((row, i) => {
         const cols = dataLines[i].trim().split(/\s+/);
-        const orZero = (s: string) => (isNaN(parseFloat(s)) ? 0 : parseFloat(s));
         expect(row.height).toBe(parseInt(cols[2]));
         expect(row.ff).toEqual(parseFloat(cols[6]));
         expect(row.dd).toEqual(parseFloat(cols[7]));
         expect(row.sd_vvp).toEqual(parseFloat(cols[8]));
-        expect(row.eta).toBe(orZero(cols[11]));
-        expect(row.dens).toBe(orZero(cols[12]));
+        expect(row.eta).toEqual(parseFloat(cols[11]));
+        expect(row.dens).toEqual(parseFloat(cols[12]));
       });
     }
   });
@@ -379,6 +378,21 @@ describe("B2 - layers with an undefined sd_vvp are kept, as in bioRad", () => {
     expect(helpers.integrateProfile([row(NaN)]).vid).toBeCloseTo(0.1, 6);
     expect(helpers.integrateProfile([row(1.9)]).vid).toBeNaN();
     expect(helpers.integrateProfile([]).vid).toBeNaN(); // a slot with nothing loaded
+  });
+  test("a layer without any measurement stays 'no data'", () => {
+    /*
+    Keeping NaN-sd_vvp layers must not turn layers where vol2bird measured
+    nothing (dens and eta both nan) into a measured density of 0: those were
+    drawn as "0 birds/km3" instead of grey no-data cells (2,529 layers over the
+    three Wideumont days). bioRad shows them as NA too. A remaining NaN in a
+    kept layer counts as 0, so colours and integrals stay defined.
+    */
+    const empty = { datetime: 0, height: 0, dd: NaN, ff: NaN, dens: NaN, sd_vvp: NaN, eta: NaN };
+    expect(helpers.filterVpts([empty])).toEqual([]);
+    expect(helpers.filterVpts([{ ...empty, eta: 0.2 }])).toEqual([{ ...empty, eta: 0.2, dens: 0 }]);
+    expect(helpers.filterVpts([{ ...empty, sd_vvp: 3, eta: 4 }])).toEqual([{ ...empty, sd_vvp: 3, eta: 4, dens: 0 }]);
+    // sd_vvp measured but no density (review item B3, unchanged): kept, as 0
+    expect(helpers.filterVpts([{ ...empty, sd_vvp: 3 }])).toEqual([{ ...empty, sd_vvp: 3, dens: 0, eta: 0 }]);
   });
 
   test("every 5 min Wideumont profile matches bioRad's MTR, VID, VIR and RTR", () => {

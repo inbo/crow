@@ -72,20 +72,16 @@ function metersToFeet(meters: number): number {
   return meters * 3.281;
 }
 
-function parseFloatOrZero(str: string): number {
-  const val = parseFloat(str);
-  if (isNaN(val)) {
-    return 0;
-  } else {
-    return val;
-  }
-}
-
 function filterVpts(rows: VPTSDataRowFromFile[], sd_vvpThresh = SD_VVP_THRESHOLD): VPTSDataRowFromFile[] {
   // Filter out data rows that are likely not birds, based on sd_vvp (https://github.com/inbo/crow/issues/122)
   // Only a measured sd_vvp below the threshold removes a row: where vol2bird could not
-  // estimate it (NaN) it still reports a density, which bioRad keeps too.
-  return rows.filter(row => !(row.sd_vvp < sd_vvpThresh))
+  // estimate it (NaN) it may still report a density, which bioRad keeps too; rows where
+  // vol2bird measured nothing at all (sd_vvp, dens and eta all NaN) stay "no data".
+  // In the kept rows a NaN dens/eta counts as 0 (D3 can't use NaN).
+  const measuredNothing = (row: VPTSDataRowFromFile) => isNaN(row.sd_vvp) && isNaN(row.dens) && isNaN(row.eta);
+  return rows
+    .filter(row => !(row.sd_vvp < sd_vvpThresh) && !measuredNothing(row))
+    .map(row => ({ ...row, dens: isNaN(row.dens) ? 0 : row.dens, eta: isNaN(row.eta) ? 0 : row.eta }))
 }
 
 interface csvDataRow { // An object whose key and values are both strings
@@ -133,9 +129,9 @@ function parseCSVVpts(responseString: string): VPTSDataRowFromFile[] {
       height: parseInt(row.height),
       dd: parseFloat(row.dd),
       ff: parseFloat(row.ff),
-      dens: parseFloatOrZero(row.dens),
+      dens: parseFloat(row.dens),
       sd_vvp: parseFloat(row.sd_vvp),
-      eta: parseFloatOrZero(row.eta)
+      eta: parseFloat(row.eta)
     }
   });
 
@@ -165,8 +161,8 @@ function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
   d = d.filter(line => line.trim() !== ""); // Skip the terminating blank line, but never drop a data row (a file may lack the final newline)
 
   const r = d.map(function (row) {
-    // There are NaN values everywhere in the data, D3 don't know how to interpret them
-    // For now, we consider a non-numbers to mean 0
+    // "nan" values are kept as NaN; filterVpts() decides which rows are usable and
+    // turns the remaining NaN densities into 0 (D3 cannot use NaN)
 
     return {
       // assume 5 min is the absolute minimum resolution of the incoming data
@@ -174,9 +170,9 @@ function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
       height: +parseInt(row.substring(14, 18)),
       dd: parseFloat(row.substring(47, 52)),
       ff: parseFloat(row.substring(41, 46)),
-      dens: parseFloatOrZero(row.substring(76, 82)),
+      dens: parseFloat(row.substring(76, 82)), // NaN kept here: filterVpts() needs to tell "nan" from 0
       sd_vvp: parseFloat(row.substring(53, 59)),
-      eta: parseFloatOrZero(row.substring(69, 75)) // 6-wide field, see vol2bird's libvol2bird.c output format
+      eta: parseFloat(row.substring(69, 75)) // 6-wide field, see vol2bird's libvol2bird.c output format
     };
   });
 
