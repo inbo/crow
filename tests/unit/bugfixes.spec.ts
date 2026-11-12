@@ -13,6 +13,8 @@ import config from "@/config";
 import { VPTSDataRowFromFile } from "@/CrowTypes";
 import Home from "@/components/Home.vue";
 import VPChart from "@/components/VPChart.vue";
+import VPIChart from "@/components/VPIChart.vue";
+import moment from "moment-timezone";
 import "jest-canvas-mock";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 
@@ -284,6 +286,37 @@ describe("A7 - feet axis lines up with the metre axis", () => {
     for (const meters of [0, 1000, 3000, 5000]) {
       expect(vm.yScaleFeet(meters * 3.2808)).toBeCloseTo(vm.yScale(String(meters)), 6);
     }
+  });
+});
+
+describe("A10 - VPI tooltip picks the nearest profile", () => {
+  test("the mouse closer to the next slot selects the next slot", () => {
+    /*
+    mouseMove() compared seconds (x0.getTime() / 1000) with milliseconds, so the
+    comparison was always false and the tooltip always showed the previous
+    slot, up to 10 min early.
+    */
+    const start = moment.utc("2020-10-13T00:00:00Z");
+    const vpiData = [0, 1, 2].map(i => ({
+      moment: start.clone().add(i * 10, "minutes"),
+      integratedProfiles: { mtr: 100 * (i + 1), rtr: 0, vid: 0, vir: 0 }
+    }));
+    const wrapper = shallowMount(VPIChart, {
+      localVue,
+      propsData: { vpiData, styleConfig: config.VPIChartStyle, showTimeAs: "UTC", appTemporalResolution: 600, mode: "mtr", loading: false }
+    });
+    const vm = wrapper.vm as any;
+    const hover = (minutes: number) => vm.mouseMove({
+      clientX: vm.xScale(start.clone().add(minutes, "minutes").toDate()),
+      target: { getBoundingClientRect: () => ({ left: 0 }) }
+    });
+
+    hover(8); // 2 min before the 00:10 slot
+    expect(vm.VPIEntryAtTimeX).toBe(vpiData[1]);
+    hover(12); // 2 min after it
+    expect(vm.VPIEntryAtTimeX).toBe(vpiData[1]);
+    hover(2);
+    expect(vm.VPIEntryAtTimeX).toBe(vpiData[0]);
   });
 });
 
