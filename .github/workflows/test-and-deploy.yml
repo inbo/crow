@@ -1,33 +1,35 @@
-name: Run tests and deploy to GitHub pages if successful
+name: Run tests, and deploy to GitHub pages from main
 
 on:
   push:
-    branches:
-      - main
+  pull_request:
 
 jobs:
   run-unit-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # v2.3.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup Node 🔧
-        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 16
+          node-version: 24
+          cache: npm
 
-      - name: Install and run unit tests 🔧
-        run: | 
-          npm install --force
+      - name: Install, run unit tests and type-check 🔧
+        run: |
+          npm ci
           npm run test:unit
+          npm run build
 
   deploy-gh-pages:
     needs: run-unit-tests
-    runs-on: ubuntu-20.04
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # v2.3.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Apply local settings
         uses: finnp/create-file-action@ba7436058fbdd9579be2f36fcfb1b0ed1e692ab8 # master
@@ -36,13 +38,14 @@ jobs:
           FILE_DATA: 'URL_PREFIX = "/crow/"'
 
       - name: Setup Node 🔧
-        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 16
+          node-version: 24
+          cache: npm
 
       - name: Install and build 🔧
         run: |
-          npm install --force
+          npm ci
           npm run build
 
       - name: Deploy 🚀
