@@ -544,13 +544,11 @@ export default Vue.extend({
         });
 
         const metadataObj = {
-          sunAltitude:
-            SunCalc.getPosition(
-              currentMoment.toDate(),
-              this.selectedRadar.latitude,
-              this.selectedRadar.longitude
-            ).altitude *
-            (180 / Math.PI), // In degrees
+          sunAltitude: SunCalc.getPosition( // SunCalc >= 2 returns degrees (1.x returned radians)
+            currentMoment.toDate(),
+            this.selectedRadar.latitude,
+            this.selectedRadar.longitude
+          ).altitude,
           heightData: heightObj
         };
 

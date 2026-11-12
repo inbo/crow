@@ -364,3 +364,25 @@ describe("B2 - layers with an undefined sd_vvp are kept, as in bioRad", () => {
     }
   });
 });
+
+describe("Sun altitude in degrees (SunCalc 2 upgrade)", () => {
+  afterEach(restoreMocks);
+
+  test("the noon sun at Wideumont on 13 Oct 2020 is about 32 degrees high", async () => {
+    /*
+    SunCalc 2 returns the altitude in degrees, SunCalc 1 in radians; the
+    upgrade kept the radians-to-degrees conversion, so altitudes were 57 times
+    too large and the twilight band (0 to -18 degrees) shrank to the few
+    minutes around sunrise/sunset. Independent reference: the maximum solar
+    elevation is 90 - latitude + declination = 90 - 49.91 - 7.9 = 32.2 degrees.
+    */
+    config.appTemporalResolution = 10 * 60;
+    mockMeteoBe();
+    const wrapper = mountHome({ radar: "bewid", date: "2020-10-13", interval: 24, timeDisplay: "UTC" });
+    await settle();
+    const altitudes = ((wrapper.vm as any).timePeriods as { sunAltitude: number }[]).map(p => p.sunAltitude);
+    expect(Math.max(...altitudes)).toBeGreaterThan(31.7);
+    expect(Math.max(...altitudes)).toBeLessThan(32.7);
+    expect(Math.min(...altitudes)).toBeGreaterThan(-90);
+  });
+});
