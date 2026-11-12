@@ -562,14 +562,15 @@ export default Vue.extend({
     },
 
     decrementPeriod(): void {
+      // In days, not hours: adding 24 h to a local midnight fails on 23 h/25 h DST days
       this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
-        .subtract(this.selectedIntervalInHours, "hours")
+        .subtract(this.selectedIntervalInHours / 24, "days")
         .format(moment.HTML5_FMT.DATE);
     },
 
     incrementPeriod(): void {
       this.selectedDate = moment(this.selectedDate, "YYYY-MM-DD")
-        .add(this.selectedIntervalInHours, "hours")
+        .add(this.selectedIntervalInHours / 24, "days")
         .format(moment.HTML5_FMT.DATE);
     },
 
