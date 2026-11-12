@@ -5,9 +5,10 @@ import { createLocalVue, mount, shallowMount, Wrapper } from "@vue/test-utils";
 import { BootstrapVue } from "bootstrap-vue";
 import VueClipboard from "vue-clipboard2";
 import axios from "axios";
-import Vue, { Component } from "vue";
+import Vue from "vue";
 import Home from "@/components/Home.vue";
 import { TimeDisplayedAsValue } from "@/CrowTypes";
+import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import "jest-canvas-mock";
 
 const fs = require("fs");
@@ -86,7 +87,7 @@ export const SCENARIOS: Record<string, Scenario> = {
 };
 
 /** Stand-in for a chart that keeps its props and renders its slots (description text, timeline). */
-function chartStub(name: string, props: string[]): Component {
+function chartStub(name: string, props: string[]): typeof Vue {
   return Vue.extend({ name, props, template: `<div class="stub-${name}"><slot name="header" /><slot name="in-x-axis-group" /></div>` });
 }
 
@@ -97,16 +98,15 @@ export const ChartStubs = {
 
 /** Mount Home for a scenario, with the charts replaced by stubs that record their props. */
 export function mountHome(s: Scenario): Wrapper<Vue> {
+  // Home loads data when the store's choices change. The store outlives a mount, so
+  // start from an empty date, like a freshly opened app; otherwise a mount with the
+  // same choices as the previous test would load nothing.
+  UserChoicesStoreModule.setSelectedDate("");
   return shallowMount(Home, {
     localVue,
     propsData: { radarValueProp: s.radar, dateValueProp: s.date, intervalValueProp: s.interval, timeDisplayValueProp: s.timeDisplay },
     stubs: { "router-link": true, "v-p-i-chart": ChartStubs.VPIChart, "v-p-chart": ChartStubs.VPChart }
   });
-}
-
-/** Props received by the given child component (a stub from ChartStubs, or a real component). */
-export function childProps(wrapper: Wrapper<Vue>, child: Component): Record<string, unknown> {
-  return wrapper.findComponent(child).props();
 }
 
 /** Load a scenario through Home (stubbed charts) and return the props it gives the charts. */
@@ -121,7 +121,7 @@ export async function scenarioChartProps(s: Scenario): Promise<{ vpi: Record<str
 }
 
 /** Mount a chart component on its own, fully rendered. */
-export function mountChart(component: Component, props: Record<string, unknown>): Wrapper<Vue> {
+export function mountChart(component: typeof Vue, props: Record<string, unknown>): Wrapper<Vue> {
   return mount(component, { localVue, propsData: props });
 }
 
