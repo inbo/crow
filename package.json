@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:unit": "jest",
+    "test:unit": "jest && TZ=America/New_York jest tests/unit/bugfixes.timezone",
+    "test:update-golden": "UPDATE_GOLDEN=1 jest tests/unit/characterisation",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

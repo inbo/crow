@@ -1,0 +1,31 @@
+{
+  "window": [
+    "2020-10-12T22:00:00.000Z",
+    "2020-10-13T22:00:00.000Z"
+  ],
+  "vpiChart": {
+    "showTimeAs": "Europe/Brussels",
+    "appTemporalResolution": 600,
+    "mode": "mtr",
+    "loading": false
+  },
+  "vpChart": {
+    "showTimeAs": "Europe/Brussels",
+    "scheme": "viridis"
+  },
+  "totalNumberOfBirds": 20900,
+  "texts": {
+    "en": [
+      "<p>This chart shows the <strong>total number of birds</strong> passing at any given moment over the radar. In total about <strong>20900 birds</strong> flew across a 1 km line during the time shown.</p>",
+      "<p>This chart shows the measured <strong>bird density</strong> (colour: birds/km³) per height above mean sea level. The BirdTAM colour scale is tailored to aviation.</p>"
+    ],
+    "fr": [
+      "<p>Ce graphique montre le <strong>nombre total d'oiseaux</strong> passant à un moment donné au dessus du radar. Au total, environ <strong>20900 oiseaux</strong> ont traversé une ligne d'un kilomètre de large pendant la période affichée.</p>",
+      "<p>Ce graphique montre la <strong>densité mesurée d'oiseaux</strong> (couleur: nombre d'oiseaux/km³) en fonction de l'altitude (par rapport au niveau de la mer). La palette de couleurs BirdTAM est conçue pour l'aviation.</p>"
+    ],
+    "nl": [
+      "<p>Deze grafiek toont het <strong>totale aantal vogels</strong> dat op een bepaald moment over de radar passeert. In totaal vlogen ongeveer <strong>20900 vogels</strong> over een breedte van 1 km in de weergegeven tijd.</p>",
+      "<p>Deze grafiek toont de gemeten <strong>vogeldichtheid</strong> (kleur: vogels/km³) in functie van hoogte boven zeeniveau. Het BirdTAM kleurenpalet is ontworpen voor de luchtvaart.</p>"
+    ]
+  }
+}
