@@ -12,6 +12,10 @@ if (!process.env.TZ) process.env.TZ = "Europe/Brussels";
 module.exports = {
   testEnvironment: "jsdom",
 
+  // The real-data tests load and process whole days of vol2bird files and take
+  // 2-3 s each locally; on shared CI runners they can exceed Jest's 5 s default.
+  testTimeout: 30000,
+
   moduleFileExtensions: ["js", "jsx", "json", "vue", "ts", "tsx"],
 
   transform: {
