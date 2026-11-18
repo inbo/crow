@@ -36,7 +36,7 @@ import * as d3 from "d3";
 import moment from "moment-timezone";
 import { LangCode, MultilanguageStringContainer, Period } from "@/CrowTypes";
 import helpers from "@/helpers";
-import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { useUserChoicesStore } from "@/store/UserChoicesStore";
 
 interface DisplayablePeriod extends Period {
   x: number;
@@ -92,7 +92,7 @@ export default Vue.extend({
   },
   computed: {
     selectedLanguageCode(): LangCode {
-      return UserChoicesStoreModule.selectedLanguageCode;
+      return useUserChoicesStore().selectedLanguageCode;
     },
     xScale: function (): d3.ScaleTime<number, number> {
       return d3

@@ -9,7 +9,7 @@ import { VPTSDataRowFromFile } from "@/CrowTypes";
 import VPChart from "@/components/VPChart.vue";
 import VPIChart from "@/components/VPIChart.vue";
 import moment from "moment-timezone";
-import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { useUserChoicesStore } from "@/store/UserChoicesStore";
 import { mockMeteoBe, mountChart, mountHome, readBewid, readBioradCsv, restoreMocks, settle } from "./support";
 
 describe("A1 - vol2bird fixed-width parser", () => {
@@ -163,7 +163,7 @@ describe("A3 - the time window does not shrink on reload", () => {
     const wrapper = mountHome({ radar: "bewid", date: "2020-10-13", interval: 24, timeDisplay: "UTC" });
     await settle();
     for (const radar of ["bejab", "bewid", "bejab"]) {
-      UserChoicesStoreModule.setSelectedRadarCode(radar);
+      useUserChoicesStore().setSelectedRadarCode(radar);
       await settle();
       expect(Object.keys((wrapper.vm as any).radarVpts).length).toBe(144);
     }
@@ -189,7 +189,7 @@ describe("A4 - responses for a previous selection are discarded", () => {
 
     const wrapper = mountHome({ radar: "behel", date: "2020-10-13", interval: 24, timeDisplay: "UTC" });
     await settle();
-    UserChoicesStoreModule.setSelectedRadarCode("bewid");
+    useUserChoicesStore().setSelectedRadarCode("bewid");
     await settle();
     releaseBehel();
     await settle();

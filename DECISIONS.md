@@ -17,3 +17,8 @@ Append-only, newest last. Detailed rationale belongs in an ADR under `docs/adr/`
 **What:** Replaced vue-cli/webpack, Jest and Babel with Vite, Vitest and vue-tsc while still on Vue 2.7, and made the templates pass vue-tsc's template type check.
 **Why:** Change the tooling alone first, so any golden-file difference can only come from tooling, and the Vue 3 / bootstrap-vue-next step is guarded by type-checked templates.
 **Rejected:** Porting to Vue 3 first on vue-cli - it keeps the jest/ts-jest workaround chain and mixes tooling and framework changes in one diff.
+
+## 2026-11-18 - Pinia instead of Vuex, native clipboard
+**What:** Ported the two vuex-module-decorators stores to Pinia 2 (still on Vue 2.7) and replaced vue-clipboard2 with navigator.clipboard.writeText.
+**Why:** Pinia is Vue 3's recommended store and runs on 2.7, so the Vue 3 step gets smaller; the decorators were behind the type-check workarounds, and the clipboard is one native call.
+**Rejected:** Vuex 4 + vuex-module-decorators - keeps the decorator layer for two small stores.

@@ -96,10 +96,9 @@
                     :to="{ path: '/', query: { radar: selectedRadarCode, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpiMode: VPIChartMode, vpColorScheme: VPChartSelectedScheme, lang: selectedLanguageCode}}"
                   >
                     <b-button
-                      v-clipboard:copy="`${baseUrl}${publicPath}${href}`"
-                      v-clipboard:success="onCopyUrl"
                       size="sm"
                       variant="outline-primary"
+                      @click="copyUrl(`${baseUrl}${publicPath}${href}`)"
                     >
                       {{ t(copyUrlButtonText) }}
                     </b-button>
@@ -182,9 +181,8 @@ import config from "@/config";
 import helpers from "@/helpers";
 
 import { ColorSchemeIdentifier, IntegratedPropertyName, VPTSDataRowFromFile, TimeIntervalForRadioGroup, VPTSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer, Language, RadarInterface } from "@/CrowTypes";
-import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
-import { ConfigStoreModule } from "@/store/ConfigStore";
-import { mapMutations } from "vuex";
+import { useUserChoicesStore } from "@/store/UserChoicesStore";
+import { useConfigStore } from "@/store/ConfigStore";
 
 interface VPTSDataByHeight {
   [key: number]: VPTSDataRow;
@@ -333,15 +331,15 @@ export default Vue.extend({
   },
   computed: {
     availableLanguages(): Language[] {
-      return ConfigStoreModule.availableLanguages;
+      return useConfigStore().availableLanguages;
     },
 
     startMoment(): moment.Moment {
-      return UserChoicesStoreModule.startMoment;
+      return useUserChoicesStore().startMoment;
     },
 
     endMoment(): moment.Moment {
-      return UserChoicesStoreModule.endMoment;
+      return useUserChoicesStore().endMoment;
     },
 
     selectedRadarCode(): string {
@@ -349,41 +347,41 @@ export default Vue.extend({
     },
 
     selectedRadar(): RadarInterface {
-      return UserChoicesStoreModule.selectedRadarAsObject;
+      return useUserChoicesStore().selectedRadarAsObject;
     },
 
     selectedLanguageCode(): LangCode {
-      return UserChoicesStoreModule.selectedLanguageCode;
+      return useUserChoicesStore().selectedLanguageCode;
     },
 
     selectedDate: {
       get: function (): string {
-        return UserChoicesStoreModule.selectedDate;
+        return useUserChoicesStore().selectedDate;
       },
       set: function (newValue: string): void {
-        UserChoicesStoreModule.setSelectedDate(newValue);
+        useUserChoicesStore().setSelectedDate(newValue);
       }
     },
 
     timeDisplayedAs: {
       get: function (): TimeDisplayedAsValue {
-        return UserChoicesStoreModule.timeDisplayedAs;
+        return useUserChoicesStore().timeDisplayedAs;
       },
       set: function (newValue: TimeDisplayedAsValue): void {
-        UserChoicesStoreModule.setTimeDisplayedAs(newValue);
+        useUserChoicesStore().setTimeDisplayedAs(newValue);
       }
     },
 
     selectedIntervalInHours: {
       get: function (): number {
-        return UserChoicesStoreModule.selectedIntervalInHours;
+        return useUserChoicesStore().selectedIntervalInHours;
       },
       set: function (newValue: number): void {
-        UserChoicesStoreModule.setSelectedIntervalInHours(newValue);
+        useUserChoicesStore().setSelectedIntervalInHours(newValue);
       }
     },
     availableIntervals(): TimeIntervalForRadioGroup[] {
-      return ConfigStoreModule.availableIntervals.map(i => {
+      return useConfigStore().availableIntervals.map(i => {
         return {text: this.t(i.stringId), value: i.value}
       });
     },
@@ -392,10 +390,10 @@ export default Vue.extend({
       return new Date().toISOString().split("T")[0];
     },
     selectedIntervalStringId(): string {
-      return UserChoicesStoreModule.selectedIntervalStringId;
+      return useUserChoicesStore().selectedIntervalStringId;
     },
     timeZoneToShow(): string {
-      return UserChoicesStoreModule.timeZoneToShow;
+      return useUserChoicesStore().timeZoneToShow;
     },
     timePeriods(): Period[] {
       // An array of all time periods currently shown (derived from radarVpts) with metadata such as the sun's position.
@@ -510,11 +508,11 @@ export default Vue.extend({
     initializeUserChoiceStore(): void {
       // Load initial values in the user choices store.
       // Props contains either parameters from the route, or default values from the config file.
-      UserChoicesStoreModule.setSelectedRadarCode(this.radarValueProp);
-      UserChoicesStoreModule.setSelectedIntervalInHours(this.intervalValueProp);
-      UserChoicesStoreModule.setTimeDisplayedAs(this.timeDisplayValueProp);
-      UserChoicesStoreModule.setSelectedDate(this.dateValueProp);
-      UserChoicesStoreModule.setSelectedLanguageCode(this.chooseAppLanguage());
+      useUserChoicesStore().setSelectedRadarCode(this.radarValueProp);
+      useUserChoicesStore().setSelectedIntervalInHours(this.intervalValueProp);
+      useUserChoicesStore().setTimeDisplayedAs(this.timeDisplayValueProp);
+      useUserChoicesStore().setSelectedDate(this.dateValueProp);
+      useUserChoicesStore().setSelectedLanguageCode(this.chooseAppLanguage());
     },
     vpColorSchemeChanged(schemeName: ColorSchemeIdentifier): void {
       this.VPChartSelectedScheme = schemeName;
@@ -525,8 +523,10 @@ export default Vue.extend({
     trimLastSlash(s: string): string {
       return s.replace(/\/$/, "");
     },
-    onCopyUrl(): void {
-      this.copyUrlButtonText = "Link copied";
+    copyUrl(url: string): void {
+      navigator.clipboard.writeText(url).then(() => {
+        this.copyUrlButtonText = "Link copied";
+      });
     },
     /* Initialize radarVpts with empty data
        - The temporal range is [startMoment, endMoment] (resolution: appTemporalResolution - in seconds)
@@ -665,9 +665,6 @@ export default Vue.extend({
         });
       }
     },
-    ...mapMutations([
-      "setSelectedIntervalInHours"
-    ])
   }
 });
 </script>

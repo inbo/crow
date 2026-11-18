@@ -5,7 +5,7 @@
 
 import config from "@/config";
 import TimelineChart from "@/components/TimelineChart.vue";
-import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { useUserChoicesStore } from "@/store/UserChoicesStore";
 import { LangCode, Period, VPIEntry, VPTSDataRow } from "@/CrowTypes";
 import { ChartStubs, SCENARIOS, expectGolden, mockMeteoBe, mountHome, readBioradCsv, restoreMocks, settle, toCsv } from "./support";
 
@@ -67,12 +67,12 @@ describe.each(Object.entries(SCENARIOS))("pipeline - %s", (name, scenario) => {
     const vp = wrapper.findComponent(ChartStubs.VPChart);
     const texts: Record<string, string[]> = {};
     for (const lang of ["en", "fr", "nl"] as LangCode[]) {
-      UserChoicesStoreModule.setSelectedLanguageCode(lang);
+      useUserChoicesStore().setSelectedLanguageCode(lang);
       await wrapper.vm.$nextTick();
       texts[lang] = [vpi.find("p").html(), vp.find("p").html()];
     }
     const meta = {
-      window: [UserChoicesStoreModule.startMoment.toISOString(), UserChoicesStoreModule.endMoment.toISOString()],
+      window: [useUserChoicesStore().startMoment.toISOString(), useUserChoicesStore().endMoment.toISOString()],
       vpiChart: { showTimeAs: vpi.props("showTimeAs"), appTemporalResolution: vpi.props("appTemporalResolution"),
                   mode: vpi.props("mode"), loading: vpi.props("loading") },
       vpChart: { showTimeAs: vp.props("showTimeAs"), scheme: vp.props("scheme") },

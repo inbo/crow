@@ -14,7 +14,7 @@
 import { LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 import LanguageSelector from "@/components/LanguageSelector.vue";
 import helpers from "@/helpers";
-import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { useUserChoicesStore } from "@/store/UserChoicesStore";
 import Vue from "vue";
 
 export default Vue.extend({
@@ -35,7 +35,7 @@ export default Vue.extend({
   },
   computed: {
     selectedLanguageCode(): LangCode {
-      return UserChoicesStoreModule.selectedLanguageCode;
+      return useUserChoicesStore().selectedLanguageCode;
     },
   },
   methods: {

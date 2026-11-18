@@ -18,7 +18,7 @@
 <script lang="ts">
 import { LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 import helpers from "@/helpers";
-import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { useUserChoicesStore } from "@/store/UserChoicesStore";
 import Vue from "vue";
 
 declare const __COMMIT_HASH__: string;
@@ -48,7 +48,7 @@ export default Vue.extend({
   },
   computed: {
     selectedLanguageCode(): LangCode {
-      return UserChoicesStoreModule.selectedLanguageCode;
+      return useUserChoicesStore().selectedLanguageCode;
     },
   },
   methods: {

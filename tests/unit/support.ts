@@ -3,13 +3,12 @@
 // changing this file, not the specs.
 import { createLocalVue, mount, shallowMount, Wrapper } from "@vue/test-utils";
 import { BootstrapVue } from "bootstrap-vue";
-import VueClipboard from "vue-clipboard2";
 import axios from "axios";
 import Vue from "vue";
 import Home from "@/components/Home.vue";
 import TimelineChart from "@/components/TimelineChart.vue";
 import { TimeDisplayedAsValue } from "@/CrowTypes";
-import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { useUserChoicesStore } from "@/store/UserChoicesStore";
 import "vitest-canvas-mock";
 
 const fs = require("fs");
@@ -68,7 +67,6 @@ export async function settle(): Promise<void> {
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
-localVue.use(VueClipboard);
 
 export interface Scenario {
   radar: string;
@@ -102,7 +100,7 @@ export function mountHome(s: Scenario): Wrapper<Vue> {
   // Home loads data when the store's choices change. The store outlives a mount, so
   // start from an empty date, like a freshly opened app; otherwise a mount with the
   // same choices as the previous test would load nothing.
-  UserChoicesStoreModule.setSelectedDate("");
+  useUserChoicesStore().setSelectedDate("");
   return shallowMount(Home, {
     localVue,
     propsData: { radarValueProp: s.radar, dateValueProp: s.date, intervalValueProp: s.interval, timeDisplayValueProp: s.timeDisplay },

@@ -1,123 +1,111 @@
 import config from "@/config";
 import { GroupedRadarInterface, LangCode, RadarInterface, TimeDisplayedAsValue } from "@/CrowTypes";
 import moment from "moment-timezone";
-import { getModule, Module, Mutation, VuexModule } from "vuex-module-decorators";
-import { ConfigStoreModule } from "./ConfigStore";
+import { defineStore } from "pinia";
+import { useConfigStore } from "./ConfigStore";
 
-import store from "./index";
-
-@Module({ dynamic: true, store, name: "userChoices" })
-export class UserChoicesStore extends VuexModule {
+export const useUserChoicesStore = defineStore("userChoices", {
   // The "real" variable initialization (based on the URL OR, by default, on the config file) happens in the CROW component
   // We kinda duplicate part of this initialization here for two specific reasons:
   //    - to make TS happy (so it nows about variable types)
   //    - performance reasons: the data files will be loaded only once if the selected* variables actually not changed by the initialization code in CROW
   //
   // (selectedLanguageCode: the real initialization happens here because it's not available in the router)
-
-  selectedDate = ""
-  selectedRadarCode = config.initialRadarCode;
-  selectedIntervalInHours = config.initialTimeInterval;  // The chart show this amount of hours around selectedDate at noon
-  timeDisplayedAs: TimeDisplayedAsValue = "radarLocal"
-
-  selectedLanguageCode = config.initialLanguageCode;
-
-  @Mutation
-  setSelectedLanguageCode(code: LangCode) {
-    this.selectedLanguageCode = code;
-  }
-
-  @Mutation
-  setSelectedRadarCode(code: string) {
-    this.selectedRadarCode = code;
-  }
-
-  @Mutation
-  setSelectedIntervalInHours(interval: number) {
-    this.selectedIntervalInHours = interval;
-  }
-
-  @Mutation
-  setTimeDisplayedAs(val: TimeDisplayedAsValue) {
-    this.timeDisplayedAs = val;
-  }
-
-  @Mutation
-  setSelectedDate(val: string) {
-    this.selectedDate = val;
-  }
-
-  get selectedLanguageLabel(): string {
-    const found = ConfigStoreModule.availableLanguages.find(
-      d => d.code == this.selectedLanguageCode
-    );
-
-    return found ? found.label : config.initialLanguageCode;
-  }
-
-  get startMoment(): moment.Moment {
-    return moment(this.selectedDateNoon).subtract(
-      this.selectedIntervalInHours / 2,
-      "hours"
-    );
-  }
-
-  get endMoment(): moment.Moment {
-    return moment(this.selectedDateNoon).add(
-      this.selectedIntervalInHours / 2,
-      "hours"
-    );
-  }
-
-  get selectedDateNoon(): moment.Moment {
-    if (this.timeZoneToShow == "UTC") {
-      // Noon UTC, if we are in UTC mode
-      return moment
-        .utc(this.selectedDate, "YYYY-MM-DD")
-        .hour(12)
-        .minute(0)
-        .second(0);
-    } else {
-      // Noon at radar location, if we are in radarLocal mode. Parse the date in the radar's
-      // zone: parsing in the browser's zone then converting shifted the window for viewers elsewhere.
-      return moment
-        .tz(this.selectedDate, "YYYY-MM-DD", this.timeZoneToShow)
-        .hour(12)
-        .minute(0)
-        .second(0);
-    }
-  }
-
-  get timeZoneToShow(): string {
-    if (this.timeDisplayedAs == "radarLocal") {
-      return this.selectedRadarAsObject.timezone;
-    } else {
-      return "UTC";
-    }
-  }
-
-  get selectedIntervalStringId(): string {
-    const found = ConfigStoreModule.availableIntervals.find(
-      d => d.value == this.selectedIntervalInHours
-    );
-
-    return found ? found.stringId : "";
-  }
-
-  get selectedRadarAsObject(): RadarInterface {
-    let found = ConfigStoreModule.availableRadars[0].options[0];
-
-    ConfigStoreModule.availableRadars.forEach((radarGroup: GroupedRadarInterface) => {
-      const groupFound = radarGroup.options.find(
-        (d) => d.odimCode == this.selectedRadarCode
+  state: () => ({
+    selectedDate: "",
+    selectedRadarCode: config.initialRadarCode,
+    selectedIntervalInHours: config.initialTimeInterval,  // The chart show this amount of hours around selectedDate at noon
+    timeDisplayedAs: "radarLocal" as TimeDisplayedAsValue,
+    selectedLanguageCode: config.initialLanguageCode,
+  }),
+  actions: {
+    setSelectedLanguageCode(code: LangCode) {
+      this.selectedLanguageCode = code;
+    },
+    setSelectedRadarCode(code: string) {
+      this.selectedRadarCode = code;
+    },
+    setSelectedIntervalInHours(interval: number) {
+      this.selectedIntervalInHours = interval;
+    },
+    setTimeDisplayedAs(val: TimeDisplayedAsValue) {
+      this.timeDisplayedAs = val;
+    },
+    setSelectedDate(val: string) {
+      this.selectedDate = val;
+    },
+  },
+  getters: {
+    selectedLanguageLabel(): string {
+      const found = useConfigStore().availableLanguages.find(
+        d => d.code == this.selectedLanguageCode
       );
-      if (groupFound) {
-        found = groupFound;
+
+      return found ? found.label : config.initialLanguageCode;
+    },
+
+    startMoment(): moment.Moment {
+      return moment(this.selectedDateNoon).subtract(
+        this.selectedIntervalInHours / 2,
+        "hours"
+      );
+    },
+
+    endMoment(): moment.Moment {
+      return moment(this.selectedDateNoon).add(
+        this.selectedIntervalInHours / 2,
+        "hours"
+      );
+    },
+
+    selectedDateNoon(): moment.Moment {
+      if (this.timeZoneToShow == "UTC") {
+        // Noon UTC, if we are in UTC mode
+        return moment
+          .utc(this.selectedDate, "YYYY-MM-DD")
+          .hour(12)
+          .minute(0)
+          .second(0);
+      } else {
+        // Noon at radar location, if we are in radarLocal mode. Parse the date in the radar's
+        // zone: parsing in the browser's zone then converting shifted the window for viewers elsewhere.
+        return moment
+          .tz(this.selectedDate, "YYYY-MM-DD", this.timeZoneToShow)
+          .hour(12)
+          .minute(0)
+          .second(0);
       }
-    });
+    },
 
-    return found;
-  }
-}
+    timeZoneToShow(): string {
+      if (this.timeDisplayedAs == "radarLocal") {
+        return this.selectedRadarAsObject.timezone;
+      } else {
+        return "UTC";
+      }
+    },
 
-export const UserChoicesStoreModule = getModule(UserChoicesStore);
+    selectedIntervalStringId(): string {
+      const found = useConfigStore().availableIntervals.find(
+        d => d.value == this.selectedIntervalInHours
+      );
+
+      return found ? found.stringId : "";
+    },
+
+    selectedRadarAsObject(): RadarInterface {
+      let found = useConfigStore().availableRadars[0].options[0];
+
+      useConfigStore().availableRadars.forEach((radarGroup: GroupedRadarInterface) => {
+        const groupFound = radarGroup.options.find(
+          (d) => d.odimCode == this.selectedRadarCode
+        );
+        if (groupFound) {
+          found = groupFound;
+        }
+      });
+
+      return found;
+    },
+  },
+});

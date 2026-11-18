@@ -116,7 +116,7 @@ import {
   LangCode,
   MultilanguageStringContainer,
 } from "@/CrowTypes";
-import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { useUserChoicesStore } from "@/store/UserChoicesStore";
 
 interface Scales {
   x: d3.ScaleTime<number, number>; // TODO: check <number, number> is correct (multiple generic types)
@@ -264,7 +264,7 @@ export default Vue.extend({
   },
   computed: {
     selectedLanguageCode(): LangCode {
-      return UserChoicesStoreModule.selectedLanguageCode;
+      return useUserChoicesStore().selectedLanguageCode;
     },
     selectedColorSchemeConfig: function (): ColorSchemeConfigEntry {
       const found = this.availableColorSchemes.find(

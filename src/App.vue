@@ -15,12 +15,8 @@ import Home from "@/components/Home.vue";
 import PageNotFound from "@/components/PageNotFound.vue";
 import Navbar from "@/components/Navbar.vue";
 import PageFooter from "@/components/PageFooter.vue";
-import VueClipboard from "vue-clipboard2";
 
-Vue.use(VueClipboard);
 Vue.use(VueRouter);
-
-import store from "./store/index";
 
 const routes = [
   {
@@ -46,7 +42,6 @@ const router = new VueRouter({
 
 export default Vue.extend({
   router,
-  store,
   name: "App",
   components: {
     Navbar,
