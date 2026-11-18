@@ -131,8 +131,8 @@ export async function scenarioChartProps(s: Scenario): Promise<Record<"vpi" | "v
 }
 
 /** Mount a chart component on its own, fully rendered. */
-export function mountChart(component: Component, props: Record<string, unknown>): VueWrapper {
-  return mount(component, { props, global: { plugins: plugins() } });
+export function mountChart(component: Component, props: Record<string, unknown>, options: { attachTo?: Element } = {}): VueWrapper {
+  return mount(component, { props, global: { plugins: plugins() }, ...options });
 }
 
 // --- Golden files ----------------------------------------------------------
