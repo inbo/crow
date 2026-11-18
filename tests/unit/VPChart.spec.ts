@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils"
 import VPChart from "../../src/components/VPChart.vue"
-import "jest-canvas-mock";
+import "vitest-canvas-mock";
 import { createLocalVue } from "@vue/test-utils"
 import { BootstrapVue } from "bootstrap-vue"
 

@@ -21,7 +21,7 @@
         <template #title>
           {{ formatMoment(period.moment) }}
         </template>
-        {{ period.localizedName | capitalize }} ({{ t('solar elevation angle') }} : {{ period.sunAltitude | round2decimals }}°)
+        {{ capitalize(period.localizedName) }} ({{ t('solar elevation angle') }} : {{ round2decimals(period.sunAltitude) }}°)
       </b-popover>
     </template>
   </g>
@@ -45,17 +45,6 @@ interface DisplayablePeriod extends Period {
 }
 
 export default Vue.extend({
-  filters: {
-    capitalize: function (value: string): string {
-      if (!value) return ""
-      value = value.toString()
-      return value.charAt(0).toUpperCase() + value.slice(1)
-    },
-
-    round2decimals: function (num: number): string {
-      return (Math.round(num * 100) / 100).toFixed(2);
-    }
-  },
   props: {
     periods: Array as () => Period[], // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
     styleConfig: Object,
@@ -148,6 +137,14 @@ export default Vue.extend({
     this.uuid = helpers.uuidv4();
   },
   methods: {
+    capitalize: function (value: string): string {
+      if (!value) return ""
+      value = value.toString()
+      return value.charAt(0).toUpperCase() + value.slice(1)
+    },
+    round2decimals: function (num: number): string {
+      return (Math.round(num * 100) / 100).toFixed(2);
+    },
     t(stringId: string) {
       return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
     },

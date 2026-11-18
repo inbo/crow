@@ -1,4 +1,4 @@
-// Shared test support. Everything specific to the test runner (Jest) or to the
+// Shared test support. Everything specific to the test runner (Vitest) or to the
 // Vue 2 test utils lives here, so that porting the suite to Vue 3 / Vitest means
 // changing this file, not the specs.
 import { createLocalVue, mount, shallowMount, Wrapper } from "@vue/test-utils";
@@ -10,7 +10,7 @@ import Home from "@/components/Home.vue";
 import TimelineChart from "@/components/TimelineChart.vue";
 import { TimeDisplayedAsValue } from "@/CrowTypes";
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
-import "jest-canvas-mock";
+import "vitest-canvas-mock";
 
 const fs = require("fs");
 const path = require("path");
@@ -46,7 +46,7 @@ export function readBioradCsv(name: string): string[][] {
 export function mockMeteoBe(override: (url: string) => Promise<unknown> | undefined = () => undefined): void {
   const byDate: Record<string, string> = {};
   readBewid().forEach((content, i) => { byDate[BEWID_DATES[i]] = content; });
-  jest.spyOn(axios, "get").mockImplementation((url: string) => {
+  vi.spyOn(axios, "get").mockImplementation((url: string) => {
     const overridden = override(url);
     if (overridden) return overridden as Promise<never>;
     const match = url.match(/_vpts_(\d{8})\.txt$/);
@@ -56,7 +56,7 @@ export function mockMeteoBe(override: (url: string) => Promise<unknown> | undefi
 }
 
 export function restoreMocks(): void {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 }
 
 /** Let watchers, $nextTick callbacks and mocked downloads all run. */
@@ -175,14 +175,14 @@ export function expectGolden(name: string, actual: string): void {
 
 /** Fake clock (performance.now, requestAnimationFrame, timers) so animations can be run to their end. */
 export function useFakeClock(): void {
-  jest.useFakeTimers();
+  vi.useFakeTimers();
 }
 
 export function useRealClock(): void {
-  jest.useRealTimers();
+  vi.useRealTimers();
 }
 
 /** Advance the fake clock, running every animation frame due meanwhile. */
 export function advanceClock(ms: number): void {
-  jest.advanceTimersByTime(ms);
+  vi.advanceTimersByTime(ms);
 }

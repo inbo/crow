@@ -7,10 +7,10 @@
         <!-- eslint-disable-next-line vue/no-v-html -->
         <p v-html="t('Algorithm description')" />
         <p class="logos">
-          <img src="logo/inbo.svg" width="30%">
-          <img src="logo/kmi_irm.png" width="15%">
-          <img src="logo/rbins.png" width="30%">
-          <img src="logo/belspo.png" width="15%">
+          <img src="@/assets/logo/inbo.svg" width="30%">
+          <img src="@/assets/logo/kmi_irm.png" width="15%">
+          <img src="@/assets/logo/rbins.png" width="30%">
+          <img src="@/assets/logo/belspo.png" width="15%">
         </p>
       </b-col>
       <b-col lg>

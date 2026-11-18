@@ -2,10 +2,9 @@
   "compilerOptions": {
     "target": "es5",
     "experimentalDecorators": true,
-    "module": "es2015",
+    "module": "esnext",
     "strict": true,
     "jsx": "preserve",
-    "importHelpers": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -23,7 +22,13 @@
       "dom",
       "dom.iterable",
       "scripthost"
-    ]
+    ],
+    "types": [
+      "vite/client",
+      "vitest/globals",
+      "node"
+    ],
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*.ts",
@@ -34,5 +39,8 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "vueCompilerOptions": {
+    "target": 2.7
+  }
 }

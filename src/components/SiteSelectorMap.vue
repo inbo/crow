@@ -78,13 +78,14 @@ export default Vue.extend({
       return d3.geoPath().projection(this.projection);
     },
 
-    countryPath: function (): string | null {
-      return this.pathGenerator(this.countriesFeatures)
+    countryPath: function (): string | undefined {
+      return this.pathGenerator(this.countriesFeatures) ?? undefined
     }
   },
   methods: {
-    projectRadar(radar: RadarInterface): [number, number] | null {
-      return this.projection([radar.longitude, radar.latitude])
+    projectRadar(radar: RadarInterface): [number, number] {
+      // Only null for points the projection clips, and every configured radar is on the map
+      return this.projection([radar.longitude, radar.latitude]) as [number, number]
     },
     getRadarExtraClass(radar: RadarInterface): string {
       return radar.odimCode === this.selectedRadarCode ? "radar-circle-selected" : "radar-circle-unselected"
