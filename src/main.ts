@@ -1,15 +1,35 @@
-import "@babel/polyfill"
-import "mutationobserver-shim"
-import Vue from "vue"
-import { createPinia, PiniaVuePlugin } from "pinia"
-import "./plugins/bootstrap-vue"
+import { createApp } from "vue"
+import { createPinia } from "pinia"
+import { createRouter, createWebHashHistory, RouteLocationNormalized } from "vue-router"
+import { createBootstrap } from "bootstrap-vue-next"
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap-vue-next/dist/bootstrap-vue-next.css"
 import App from "./App.vue"
-import { CreateElement, VNode } from "vue/types/umd"
+import Home from "@/components/Home.vue"
+import PageNotFound from "@/components/PageNotFound.vue"
 
-Vue.config.productionTip = false
-Vue.use(PiniaVuePlugin)
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes: [
+    {
+      path: "/",
+      component: Home,
+      props: (route: RouteLocationNormalized): unknown => ({
+        radarValueProp: route.query.radar,
+        dateValueProp: route.query.date,
+        intervalValueProp: route.query.interval,
+        timeDisplayValueProp: route.query.timedisplay,
+        vpChartSelectedSchemeProp: route.query.vpColorScheme,
+        vpiChartModeProp: route.query.vpiMode,
+        langCodeProp: route.query.lang,
+      })
+    }, // Example URL: http://localhost:8080/#/?radar=bezav
+    { path: "/:pathMatch(.*)*", component: PageNotFound }
+  ]
+})
 
-new Vue({
-  pinia: createPinia(),
-  render: (h: CreateElement): VNode => h(App),
-}).$mount("#app")
+createApp(App)
+  .use(createPinia())
+  .use(router)
+  .use(createBootstrap())
+  .mount("#app")

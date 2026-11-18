@@ -1,7 +1,7 @@
 /// <reference types="vitest/config" />
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import vue from "@vitejs/plugin-vue2";
+import vue from "@vitejs/plugin-vue";
 import { defineConfig, loadEnv } from "vite";
 
 export default defineConfig(({ mode }) => {

@@ -14,14 +14,14 @@
                   :description="t('Charts are noon centered')"
                 >
                   <b-input-group size="sm">
-                    <b-input-group-prepend>
+                    <template #prepend>
                       <b-button
                         variant="outline-secondary"
                         @click="decrementPeriod"
                       >
                         -{{ t(selectedIntervalStringId) }}
                       </b-button>
-                    </b-input-group-prepend>
+                    </template>
                     <b-form-input
                       id="input-date"
                       v-model="selectedDate"
@@ -29,14 +29,14 @@
                       placeholder="Type a date..."
                       :max="todayAsString"
                     />
-                    <b-input-group-append>
+                    <template #append>
                       <b-button
                         variant="outline-secondary"
                         @click="incrementPeriod"
                       >
                         +{{ t(selectedIntervalStringId) }}
                       </b-button>
-                    </b-input-group-append>
+                    </template>
                   </b-input-group>
                 </b-form-group>
               </b-col>
@@ -92,7 +92,7 @@
                 >
                   <router-link
                     v-slot="{ href }"
-                    append
+                    custom
                     :to="{ path: '/', query: { radar: selectedRadarCode, date: selectedDate, interval: selectedIntervalInHours, timedisplay: timeDisplayedAs, vpiMode: VPIChartMode, vpColorScheme: VPChartSelectedScheme, lang: selectedLanguageCode}}"
                   >
                     <b-button
@@ -165,7 +165,8 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
+import { defineComponent, PropType } from "vue";
+import { BButton, BCol, BContainer, BForm, BFormGroup, BFormInput, BFormRadio, BFormRadioGroup, BInputGroup, BRow } from "bootstrap-vue-next";
 import VPIChart from "@/components/VPIChart.vue";
 import VPChart from "@/components/VPChart.vue";
 import SiteSelector from "@/components/SiteSelector.vue";
@@ -180,7 +181,7 @@ import * as SunCalc from "suncalc";
 import config from "@/config";
 import helpers from "@/helpers";
 
-import { ColorSchemeIdentifier, IntegratedPropertyName, VPTSDataRowFromFile, TimeIntervalForRadioGroup, VPTSDataRow, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer, Language, RadarInterface } from "@/CrowTypes";
+import { ColorSchemeIdentifier, IntegratedPropertyName, VPTSDataRowFromFile, TimeIntervalForRadioGroup, VPTSDataRow, VPTSEntry, VPIEntry, Period, TimeDisplayedAsValue, LangCode, MultilanguageStringContainer, Language, RadarInterface } from "@/CrowTypes";
 import { useUserChoicesStore } from "@/store/UserChoicesStore";
 import { useConfigStore } from "@/store/ConfigStore";
 
@@ -199,15 +200,25 @@ interface RadarVptsAsTree {
 
 const initialCopyUrlText = "Copy link";
 
-export default Vue.extend({
+export default defineComponent({
   name: "Home",
   components: {
+    BButton,
+    BCol,
+    BContainer,
+    BForm,
+    BFormGroup,
+    BFormInput,
+    BFormRadio,
+    BFormRadioGroup,
+    BInputGroup,
+    BRow,
     SiteSelector,
     VPIChart,
     VPChart,
     TimelineChart,
     Introduction,
-    Partners
+    Partners,
   },
   props: {
     radarValueProp: {
@@ -408,12 +419,13 @@ export default Vue.extend({
 
       return periods;
     },
-    radarVptsAsArray(): VPTSDataRow[] {
-      const dataArray = [];
+    radarVptsAsArray(): VPTSEntry[] {
+      const dataArray: VPTSEntry[] = [];
       for (const [timestamp, metadataObj] of Object.entries(this.radarVpts)) {
         for (const [height, props] of Object.entries(metadataObj.heightData)) {
           const o = { timestamp: +timestamp, height: +height };
-          dataArray.push({ ...o, ...(props as VPTSDataRow) });
+          // Rows with noData have no measurements: VPChart only reads them when noData is false
+          dataArray.push({ ...o, ...(props as VPTSDataRow) } as VPTSEntry);
         }
       }
       return dataArray;
@@ -552,11 +564,7 @@ export default Vue.extend({
           heightData: heightObj
         };
 
-        this.$set(
-          this.radarVpts,
-          currentMoment.toDate().getTime(),
-          metadataObj
-        );
+        this.radarVpts[currentMoment.toDate().getTime()] = metadataObj;
 
         currentMoment.add(this.appTemporalResolution, "seconds");
       }
@@ -601,11 +609,7 @@ export default Vue.extend({
           vptsDataRow.datetime
         )
       ) {
-          this.$set(
-            this.radarVpts[vptsDataRow.datetime].heightData,
-            vptsDataRow.height,
-            objToStore
-          );
+          this.radarVpts[vptsDataRow.datetime].heightData[vptsDataRow.height] = objToStore;
       }
     },
 

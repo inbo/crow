@@ -2,12 +2,12 @@
   <b-form-group id="input-radar-group" :label="t('Location:')" label-for="input-radar">
     <b-form-select
       id="input-radar"
-      :value="selectedRadarCode"
+      :model-value="selectedRadarCode"
       value-field="odimCode"
       text-field="displayLabel"
       size="sm"
       :options="availableRadars"
-      @change="setSelectedRadarCode"
+      @update:model-value="setSelectedRadarCode($event as string)"
     />
     <b-form-text>
       {{ selectedRadarLocation }} {{ t("is located at") }}
@@ -22,7 +22,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
+import { BFormGroup, BFormSelect, BFormText } from "bootstrap-vue-next";
 import { mapActions } from "pinia";
 
 import { GroupedRadarInterface, LangCode, MultilanguageStringContainer, RadarInterface } from "@/CrowTypes";
@@ -33,10 +34,13 @@ import { useUserChoicesStore } from "@/store/UserChoicesStore";
 import SiteSelectorMap from "@/components/SiteSelectorMap.vue";
 import helpers from "@/helpers";
 
-export default Vue.extend({
+export default defineComponent({
   name: "SiteSelector",
   components: {
-    SiteSelectorMap
+    BFormGroup,
+    BFormSelect,
+    BFormText,
+    SiteSelectorMap,
   },
   data: function() {
     return {

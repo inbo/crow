@@ -2,23 +2,23 @@
   <svg class="d-none d-lg-block mt-3 mx-auto" :width="svgWidth" :height="svgHeight">
     <g>
       <path id="country" :d="countryPath" stroke="#000" stroke-width="1" />
-      <circle v-for="radar in visibleRadars" :id="'circle-radar-' + radar.odimCode" :key="radar.odimCode" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.odimCode)">
-        <b-popover :target="'circle-radar-' + radar.odimCode" triggers="hover">
-          {{ radar.displayLabel }}
-        </b-popover>
-      </circle>
+      <circle v-for="radar in visibleRadars" :id="'circle-radar-' + radar.odimCode" :key="radar.odimCode" v-b-popover.hover.right.body="radar.displayLabel" :class="getRadarExtraClass(radar)" r="5px" :cx="projectRadar(radar)[0]" :cy="projectRadar(radar)[1]" @click="$emit('click-circle', radar.odimCode)" />
     </g>
   </svg>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
+import { vBPopover } from "bootstrap-vue-next";
 import * as d3 from "d3";
 import { GroupedRadarInterface, RadarInterface } from "@/CrowTypes";
 import basemap from "@/geojson_basemap.json";
 
-export default Vue.extend({
+export default defineComponent({
   name: "SiteSelectorMap",
+  directives: {
+    bPopover: vBPopover,
+  },
   props: {
     sites: {
       type: Array as () => GroupedRadarInterface[],
@@ -29,6 +29,7 @@ export default Vue.extend({
       default: ""
     }
   },
+  emits: ["click-circle"],
   data: function () {
     return {
       svgWidth: 300,

@@ -1,8 +1,6 @@
-import { mount } from "@vue/test-utils"
 import VPChart from "../../src/components/VPChart.vue"
 import "vitest-canvas-mock";
-import { createLocalVue } from "@vue/test-utils"
-import { BootstrapVue } from "bootstrap-vue"
+import { mountChart } from "./support"
 
 // TODO: move test data to other file?
 const vptsData = [ // 1 hr of Helchteren data (Feb 9, 2020, centered around noon local time)
@@ -2708,8 +2706,6 @@ const vptsData = [ // 1 hr of Helchteren data (Feb 9, 2020, centered around noon
   }
 ]
 
-const localVue = createLocalVue()
-localVue.use(BootstrapVue)
 
 const styleConfig = {
   margin: { top: 20, right: 60, bottom: 30, left: 65 },
@@ -2741,13 +2737,15 @@ const styleConfig = {
 };
 
 test("General Chart component rendering & behaviour", () => {
-  const wrapper = mount(VPChart, {
-    localVue,
-    propsData: {
-      vptsData: vptsData,
-      showTimeAs: "Europe/Brussels",
-      styleConfig: styleConfig
-    }
+  /*
+  Smoke test: the heatmap mounts and draws its SVG from one hour of real
+  Helchteren data, including rows with missing values (NaN from the Vue devtools
+  copy), without throwing.
+  */
+  const wrapper = mountChart(VPChart, {
+    vptsData: vptsData,
+    showTimeAs: "Europe/Brussels",
+    styleConfig: styleConfig
   });
 
   expect(wrapper.get("svg"));

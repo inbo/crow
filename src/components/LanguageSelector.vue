@@ -10,10 +10,15 @@
 import { LangCode, Language } from "@/CrowTypes";
 import { useConfigStore } from "@/store/ConfigStore";
 import { useUserChoicesStore } from "@/store/UserChoicesStore";
-import Vue from "vue";
+import { defineComponent } from "vue";
+import { BDropdownItem, BNavItemDropdown } from "bootstrap-vue-next";
 
-export default Vue.extend({
+export default defineComponent({
   name: "LanguageSelector",
+  components: {
+    BDropdownItem,
+    BNavItemDropdown,
+  },
   computed: {
     availableLanguages(): Language[] {
       return useConfigStore().availableLanguages;

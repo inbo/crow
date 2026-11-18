@@ -42,33 +42,17 @@
         </g>
         <g v-yaxis-left="{'scale': yScale}" />
 
-        <template v-for="d in vptsDataPrepared">
-          <rect
-            :id="'rect-' + d.timestamp + '-' + d.height"
-            :key="'rect-' + d.timestamp + '-' + d.height"
-            :x="d.x"
-            :y="d.y"
-            :fill="d.fill"
-            :height="rectHeight"
-            :width="rectWidth"
-          />
-
-          <b-popover
-            v-if="styleConfig.showTooltip"
-            :key="'popover-' + d.timestamp + '-' + d.height"
-            :target="'rect-' + d.timestamp + '-' + d.height"
-            triggers="hover"
-            placement="top"
-          >
-            <!-- eslint-disable-next-line vue/valid-v-slot -->
-            <template #title>{{ formatTimestampForTooltip(d.timestamp) }}</template>
-            <b>Height</b>
-            {{ d.height }}m
-            <br />
-            <b>Density</b>
-            {{ d.dens }}
-          </b-popover>
-        </template>
+        <rect
+          v-for="d in vptsDataPrepared"
+          :id="'rect-' + d.timestamp + '-' + d.height"
+          :key="d.timestamp + '-' + d.height"
+          v-b-popover.hover.top.body="cellPopover(d)"
+          :x="d.x"
+          :y="d.y"
+          :fill="d.fill"
+          :height="rectHeight"
+          :width="rectWidth"
+        />
 
         <g 
           v-yaxis-right="{'scale': yScaleFeet }" 
@@ -102,7 +86,8 @@
 /* eslint-disable vue/require-default-prop */
 
 // TODO: create a single popover for performance reasons?
-import Vue from "vue";
+import { defineComponent, PropType } from "vue";
+import { BForm, BFormGroup, BFormSelect, vBPopover } from "bootstrap-vue-next";
 import * as d3 from "d3";
 import helpers from "@/helpers";
 import DailyLines from "@/components/DailyLines.vue";
@@ -130,13 +115,17 @@ interface VPTSEntryPrepared extends VPTSEntry {
   fill: string;
 }
 
-export default Vue.extend({
+export default defineComponent({
   name: "VPChart",
   components: {
+    BForm,
+    BFormGroup,
+    BFormSelect,
     DailyLines,
     ColorLegend,
   },
   directives: {
+    bPopover: vBPopover,
     yaxisRight(el, binding): void {
       const scaleFunction = binding.value.scale;
 
@@ -174,11 +163,12 @@ export default Vue.extend({
     },
   },
   props: {
-    vptsData: Array as () => VPTSEntry[],
-    styleConfig: Object,
+    vptsData: { type: Array as PropType<VPTSEntry[]>, required: true },
+    styleConfig: { type: Object, required: true },
     scheme: String as () => ColorSchemeIdentifier,
-    showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")
+    showTimeAs: { type: String, required: true }, // "UTC" or a TZ database entry (such as "Europe/Brussels")
   },
+  emits: ["color-scheme-changed"],
   data: function () {
     return {
       margin: this.styleConfig.margin,
@@ -386,6 +376,10 @@ export default Vue.extend({
     },
   },
   methods: {
+    cellPopover(d: { timestamp: number, height: number, dens?: number }): { title: string, body: string } | { active: false } {
+      if (!this.styleConfig.showTooltip) return { active: false };
+      return { title: this.formatTimestampForTooltip(d.timestamp), body: `Height ${d.height}m, Density ${d.dens}` };
+    },
     t(stringId: string) {
       return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
     },
