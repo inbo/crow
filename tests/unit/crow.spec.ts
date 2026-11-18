@@ -1,5 +1,5 @@
-import { createLocalVue, shallowMount } from "@vue/test-utils"
-import { BootstrapVue } from "bootstrap-vue"
+import { shallowMount } from "@vue/test-utils"
+import { settle } from "./support"
 import helpers from "../../src/helpers"
 import Home from "../../src/components/Home.vue";
 import config from "@/config";
@@ -10,9 +10,6 @@ import moment from "moment";
 import * as Papa from "papaparse";
 const fs = require("fs");
 const path = require("path");
-
-const localVue = createLocalVue()
-localVue.use(BootstrapVue)
 
 
 test("Home component rendering", () => {
@@ -90,6 +87,11 @@ test("Profile integration code (compare to bioRad output)", () => {
 });
 
 test("Raw data filtering by rounding datetime to app resolution and retain only first occurrence with aligned data", async() => {
+  /*
+  Data rows whose datetime falls exactly on the app's 30 min slots are kept, and
+  only the first row per slot: the charts must show one profile per slot, not
+  pile up the 5 min vol2bird profiles in between.
+  */
   // Mock any call to `axios.get` with test data
   vi.spyOn(axios, 'get').mockResolvedValue(
     {"data": fs.readFileSync(path.resolve(__dirname, "./data/behel_vpts_20200129.truncated.txt"), "utf-8")})
@@ -97,18 +99,14 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
   let appResolution = 30;
   config.appTemporalResolution = appResolution * 60
 
-  const localVue = createLocalVue()
-  localVue.use(BootstrapVue)
-    const wrapper = shallowMount(Home, {
-    localVue,
-    propsData: {
+  const wrapper = shallowMount(Home, {
+    props: {
       dateValueProp: moment.utc("2020-01-29 00:00:00").format(moment.HTML5_FMT.DATE),
     },
-    stubs: ['router-link']
-    }
-  )
+    global: { stubs: ['router-link'] }
+  })
   await (wrapper.vm as any).loadData()
-  await wrapper.vm.$nextTick()
+  await settle() // let the mocked download be parsed and stored
   let vptsAllRows = (wrapper.vm as any).radarVpts
 
   // Only 30min resolution timestamps should be in the radarVptsobject
@@ -151,6 +149,11 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
 })
 
 test("Raw data filtering by rounding datetime to app resolution and retain only first occurrence with misaligned data", async() => {
+  /*
+  Same as the aligned case for a file whose timestamps are off the slot grid:
+  rows are rounded to the nearest slot and the first one wins, so a radar with
+  shifted scan times still fills every slot once.
+  */
   // Mock any call to `axios.get` with test data
   vi.spyOn(axios, 'get').mockResolvedValue(
     {"data": fs.readFileSync(path.resolve(__dirname, "./data/behel_vpts_20200129.truncated.timeoff.txt"), "utf-8")})
@@ -158,18 +161,14 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
   let appResolution = 30;
   config.appTemporalResolution = appResolution * 60
 
-  const localVue = createLocalVue()
-  localVue.use(BootstrapVue)
-    const wrapper = shallowMount(Home, {
-    localVue,
-    propsData: {
+  const wrapper = shallowMount(Home, {
+    props: {
       dateValueProp: moment.utc("2020-01-29 00:00:00").format(moment.HTML5_FMT.DATE),
     },
-    stubs: ['router-link']
-    }
-  )
+    global: { stubs: ['router-link'] }
+  })
   await (wrapper.vm as any).loadData()
-  await wrapper.vm.$nextTick()
+  await settle() // let the mocked download be parsed and stored
   let vptsAllRows = (wrapper.vm as any).radarVpts
 
   // Only 30min resolution timestamps should be in the radarVptsobject

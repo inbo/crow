@@ -53,8 +53,8 @@ describe.each(Object.entries(SCENARIOS))("pipeline - %s", (name, scenario) => {
     */
     const timelines = wrapper.findAllComponents(TimelineChart);
     expect(timelines.length).toBe(2);
-    const periods = timelines.at(0).props("periods") as Period[];
-    expect(timelines.at(1).props("periods")).toEqual(periods);
+    const periods = timelines[0].props("periods") as Period[];
+    expect(timelines[1].props("periods")).toEqual(periods);
     expectGolden(`${name}.periods.csv`, toCsv(periods.map(p => ({ timestamp: p.moment.toISOString(), sunAltitude: p.sunAltitude }))));
   });
 

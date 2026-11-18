@@ -166,7 +166,7 @@ describe.each(Object.entries(SCENARIOS))("timeline - %s", (name, scenario) => {
     const { timeline } = await scenarioChartProps(scenario);
     // Tooltips off: one hover popover per band makes jsdom crawl, and they draw nothing until hovered
     const styleConfig = { ...(timeline.styleConfig as object), showTooltip: false };
-    const root = mountChart(TimelineChart, { ...timeline, styleConfig }).element;
+    const root: Element = mountChart(TimelineChart, { ...timeline, styleConfig }).element;
     const rects = Array.from(root.querySelectorAll("rect"));
     expect(rects.length).toBe((timeline.periods as unknown[]).length);
     const widths = new Set(rects.map(r => r.getAttribute("width")));

@@ -1,11 +1,9 @@
 <template>
-  <b-navbar type="light" variant="light">
-    <b-container>
-      <b-navbar-brand>{{ t("Title") }}</b-navbar-brand>
-      <b-navbar-nav class="ml-auto">
-        <language-selector />
-      </b-navbar-nav>
-    </b-container>
+  <b-navbar variant="light" container>
+    <b-navbar-brand>{{ t("Title") }}</b-navbar-brand>
+    <b-navbar-nav class="ms-auto">
+      <language-selector />
+    </b-navbar-nav>
   </b-navbar>
 </template>
 
@@ -15,12 +13,16 @@ import { LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 import LanguageSelector from "@/components/LanguageSelector.vue";
 import helpers from "@/helpers";
 import { useUserChoicesStore } from "@/store/UserChoicesStore";
-import Vue from "vue";
+import { defineComponent } from "vue";
+import { BNavbar, BNavbarBrand, BNavbarNav } from "bootstrap-vue-next";
 
-export default Vue.extend({
+export default defineComponent({
   name: "Navbar",
   components: {
-    LanguageSelector
+    BNavbar,
+    BNavbarBrand,
+    BNavbarNav,
+    LanguageSelector,
   },
   data: function () {
     return {

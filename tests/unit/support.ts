@@ -1,10 +1,10 @@
 // Shared test support. Everything specific to the test runner (Vitest) or to the
-// Vue 2 test utils lives here, so that porting the suite to Vue 3 / Vitest means
-// changing this file, not the specs.
-import { createLocalVue, mount, shallowMount, Wrapper } from "@vue/test-utils";
-import { BootstrapVue } from "bootstrap-vue";
+// Vue test utils lives here, so that changing either means changing this file,
+// not the specs.
+import { mount, shallowMount, VueWrapper } from "@vue/test-utils";
+import { createBootstrap } from "bootstrap-vue-next";
 import axios from "axios";
-import Vue from "vue";
+import { Component, defineComponent, h } from "vue";
 import Home from "@/components/Home.vue";
 import TimelineChart from "@/components/TimelineChart.vue";
 import { TimeDisplayedAsValue } from "@/CrowTypes";
@@ -65,8 +65,8 @@ export async function settle(): Promise<void> {
 
 // --- Mounting --------------------------------------------------------------
 
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
+// Fresh per mount: the app installs bootstrap-vue-next once, a test mounts many times.
+const plugins = () => [createBootstrap()];
 
 export interface Scenario {
   radar: string;
@@ -86,8 +86,11 @@ export const SCENARIOS: Record<string, Scenario> = {
 };
 
 /** Stand-in for a chart that keeps its props and renders its slots (description text, timeline). */
-function chartStub(name: string, props: string[]): typeof Vue {
-  return Vue.extend({ name, props, template: `<div class="stub-${name}"><slot name="header" /><slot name="in-x-axis-group" /></div>` });
+function chartStub<P extends string>(name: string, props: P[]) {
+  return defineComponent({
+    name, props,
+    render() { return h("div", { class: `stub-${name}` }, [this.$slots.header?.(), this.$slots["in-x-axis-group"]?.()]); }
+  });
 }
 
 export const ChartStubs = {
@@ -96,15 +99,19 @@ export const ChartStubs = {
 };
 
 /** Mount Home for a scenario, with the charts replaced by stubs that record their props. */
-export function mountHome(s: Scenario): Wrapper<Vue> {
+export function mountHome(s: Scenario): VueWrapper {
   // Home loads data when the store's choices change. The store outlives a mount, so
   // start from an empty date, like a freshly opened app; otherwise a mount with the
   // same choices as the previous test would load nothing.
   useUserChoicesStore().setSelectedDate("");
   return shallowMount(Home, {
-    localVue,
-    propsData: { radarValueProp: s.radar, dateValueProp: s.date, intervalValueProp: s.interval, timeDisplayValueProp: s.timeDisplay },
-    stubs: { "router-link": true, "v-p-i-chart": ChartStubs.VPIChart, "v-p-chart": ChartStubs.VPChart }
+    props: { radarValueProp: s.radar, dateValueProp: s.date, intervalValueProp: s.interval, timeDisplayValueProp: s.timeDisplay },
+    global: {
+      plugins: plugins(),
+      // The charts sit inside layout components (b-container, b-col...): stubs must render their content
+      renderStubDefaultSlot: true,
+      stubs: { "router-link": true, VPIChart: ChartStubs.VPIChart, VPChart: ChartStubs.VPChart }
+    }
   });
 }
 
@@ -118,14 +125,14 @@ export async function scenarioChartProps(s: Scenario): Promise<Record<"vpi" | "v
     vp: wrapper.findComponent(ChartStubs.VPChart).props(),
     timeline: wrapper.findComponent(TimelineChart).props()
   };
-  wrapper.destroy();
+  wrapper.unmount();
   restoreMocks();
   return props;
 }
 
 /** Mount a chart component on its own, fully rendered. */
-export function mountChart(component: typeof Vue, props: Record<string, unknown>): Wrapper<Vue> {
-  return mount(component, { localVue, propsData: props });
+export function mountChart(component: Component, props: Record<string, unknown>, options: { attachTo?: Element } = {}): VueWrapper {
+  return mount(component, { props, global: { plugins: plugins() }, ...options });
 }
 
 // --- Golden files ----------------------------------------------------------

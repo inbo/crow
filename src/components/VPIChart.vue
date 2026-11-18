@@ -19,7 +19,6 @@
       </b-form-group>
     </b-form>
 
-    <div id="ignore-mouse-events" style="pointer-events: none" />
 
     <svg
       id="new-vpi-chart"
@@ -75,22 +74,6 @@
             r="4"
             :style="`fill: ${styleConfig.strokeColor}`"
           />
-
-          <b-popover
-            container="ignore-mouse-events"
-            :show.sync="tooltipVisible"
-            target="tooltipCircle"
-            placement="top"
-            :no-fade="true"
-            :delay="0"
-          >
-            <!-- eslint-disable-next-line vue/valid-v-slot -->
-            <template #title>{{ formattedMomentAtTimeX }}</template>
-            <div>
-              {{ selectedModeLabel }}:
-              {{ rounddecimals(selectedValAtTimeX, selectedModePrecision) }}
-            </div>
-          </b-popover>
         </template>
 
         <!-- finally, the chart line -->
@@ -105,12 +88,34 @@
         <daily-lines v-if="!noData" :days="daysCovered" :height="innerHeight" />
       </g>
     </svg>
+
+    <!-- Outside the <svg>: a <b-popover> declared inside it would get the SVG namespace and never display -->
+    <b-popover
+      v-if="styleConfig.showTooltip"
+      v-model="tooltipVisible"
+      manual
+      teleport-to="body"
+      style="pointer-events: none"
+      target="tooltipCircle"
+      placement="top"
+      :no-fade="true"
+      :delay="0"
+    >
+      <template #title>
+        {{ formattedMomentAtTimeX }}
+      </template>
+      <div>
+        {{ selectedModeLabel }}:
+        {{ rounddecimals(selectedValAtTimeX, selectedModePrecision) }}
+      </div>
+    </b-popover>
   </div>
 </template>
 
 <script lang="ts">
 /* eslint-disable vue/require-default-prop */
-import Vue from "vue";
+import { defineComponent, PropType } from "vue";
+import { BForm, BFormGroup, BFormSelect, BPopover } from "bootstrap-vue-next";
 import * as d3 from "d3";
 import moment from "moment-timezone";
 
@@ -152,9 +157,13 @@ interface VPIEntryForPath {
   sourceVal: number; // source data (no scaling - NaN if missing data)
 }
 
-export default Vue.extend({
+export default defineComponent({
   name: "VPIChart",
   components: {
+    BForm,
+    BFormGroup,
+    BFormSelect,
+    BPopover,
     DailyLines,
   },
   directives: {
@@ -186,14 +195,14 @@ export default Vue.extend({
     },
   },
   props: {
-    // eslint-disable-next-line vue/require-default-prop
-    vpiData: Array as () => VPIEntry[],
-    styleConfig: Object,
-    showTimeAs: String, // "UTC" or a TZ database entry (such as "Europe/Brussels")
+    vpiData: { type: Array as PropType<VPIEntry[]>, required: true },
+    styleConfig: { type: Object, required: true },
+    showTimeAs: { type: String, required: true }, // "UTC" or a TZ database entry (such as "Europe/Brussels")
     appTemporalResolution: Number,
     mode: String as () => IntegratedPropertyName,
     loading: Boolean
   },
+  emits: ["mode-changed"],
   data: function () {
     return {
       vpiDataForPath: [] as VPIEntryForPath[],
@@ -542,8 +551,8 @@ export default Vue.extend({
             .easing(Easing.Quadratic.Out)
             .to({ val: newScaledValue, sourceVal: rawValue }, 300)
             .onUpdate(() => {
-              this.$set(this.vpiDataForPath[foundIndex], "val", cloneElem.val);
-              this.$set(this.vpiDataForPath[foundIndex], "sourceVal", cloneElem.sourceVal);
+              this.vpiDataForPath[foundIndex].val = cloneElem.val;
+              this.vpiDataForPath[foundIndex].sourceVal = cloneElem.sourceVal;
             })
             .start(tweenNow()); // Start the tween immediately.
         }

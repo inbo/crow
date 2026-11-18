@@ -34,11 +34,17 @@
 <script lang="ts">
 import { LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 import { useUserChoicesStore } from "@/store/UserChoicesStore";
-import Vue from "vue";
+import { defineComponent } from "vue";
+import { BCol, BContainer, BRow } from "bootstrap-vue-next";
 import helpers from "@/helpers";
 
-export default Vue.extend({
+export default defineComponent({
   name: "Partners",
+  components: {
+    BCol,
+    BContainer,
+    BRow,
+  },
   data: function () {
     return {
       texts: {

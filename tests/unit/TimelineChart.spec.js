@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils"
+import { mountChart } from "./support"
 import TimelineChart from "../../src/components/TimelineChart.vue"
 import moment from "moment-timezone";
 
@@ -32,13 +32,16 @@ let testPeriods = [
 ]
 
 test("General TimelineChart component rendering & behaviour", () => {
-  const wrapper = mount(TimelineChart, {
-    propsData: {
-      styleConfig: styleConfig,
-      dataTemporalResolution: 300,
-      showTimeAs: "Europe/Brussels",
-      periods: testPeriods
-    }
+  /*
+  One hour of 5 min periods draws 12 equal day bands over the 1152 px plot
+  width, and the chart infers the 5 min resolution from the periods: the bands
+  must line up with the heatmap columns above them.
+  */
+  const wrapper = mountChart(TimelineChart, {
+    styleConfig: styleConfig,
+    dataTemporalResolution: 300,
+    showTimeAs: "Europe/Brussels",
+    periods: testPeriods
   });
 
   // To cover 1 hours by 5 minutes increment, we need 12 rectangles
@@ -48,57 +51,65 @@ test("General TimelineChart component rendering & behaviour", () => {
   expect(wrapper.find("rect").attributes("width")).toBe("96");
 
   // With this basic dataset, everything should be 'day'
-  wrapper.findAll("rect").wrappers.forEach(wp => expect(wp.classes()).toContain("day"));
+  wrapper.findAll("rect").forEach(wp => expect(wp.classes()).toContain("day"));
 
   // Check it can correctly autodetect the temporal resolution (5 minutes)
   expect(wrapper.vm.dataTemporalResolution).toBe(5 * 60);
 });
 
 test("Have popovers when asked in the config", () => {
-  const wrapper = mount(TimelineChart, {
-    propsData: {
-      styleConfig: styleConfig,
-      dataTemporalResolution: 300,
-      showTimeAs: "Europe/Brussels",
-      periods: testPeriods
-    }
+  /*
+  With showTooltip on, each period gets its own popover (12 for one hour), so
+  hovering any band shows its time and sun elevation. The popovers are mounted
+  under <body> (an SVG element cannot hold them), so they are counted there.
+  */
+  const before = document.body.querySelectorAll(".popover").length;
+  mountChart(TimelineChart, {
+    styleConfig: styleConfig,
+    dataTemporalResolution: 300,
+    showTimeAs: "Europe/Brussels",
+    periods: testPeriods
   });
 
-  expect(wrapper.get("b-popover"));
-  expect(wrapper.findAll("b-popover").length).toBe(12); // 1 per period
+  expect(document.body.querySelectorAll(".popover").length - before).toBe(12); // 1 per period
   // TODO: check popover content
 });
 
 test("Don't have popovers when asked in the config", () => {
+  /*
+  With showTooltip off, no popover is created at all: they are costly when the
+  chart covers 72 h, so the config switch must really remove them.
+  */
+  const before = document.body.querySelectorAll(".popover").length;
   let disabledPopoverconfig = styleConfig;
   disabledPopoverconfig.showTooltip = false;
   
-  const wrapper = mount(TimelineChart, {
-    propsData: {
-      styleConfig: disabledPopoverconfig,
-      dataTemporalResolution: 300,
-      showTimeAs: "Europe/Brussels",
-      periods: testPeriods
-    }
+  mountChart(TimelineChart, {
+    styleConfig: disabledPopoverconfig,
+    dataTemporalResolution: 300,
+    showTimeAs: "Europe/Brussels",
+    periods: testPeriods
   });
 
-  expect(wrapper.find("b-popover").exists()).toBe(false);
+  expect(document.body.querySelectorAll(".popover").length).toBe(before);
 });
 
 
 // TODO: check popover content
 
 test("TimelineChart axis can be disabled", () => {
+  /*
+  With showXAxis off, no tick is drawn: the timeline sits inside the other
+  charts' x axis and must not draw a second one.
+  */
   let disabledAxisconfig = styleConfig;
   disabledAxisconfig.showXAxis = false;
 
-  const wrapper = mount(TimelineChart, {
-    propsData: {
-      styleConfig: disabledAxisconfig,
-      dataTemporalResolution: 300,
-      showTimeAs: "UTC",
-      periods: testPeriods
-    }
+  const wrapper = mountChart(TimelineChart, {
+    styleConfig: disabledAxisconfig,
+    dataTemporalResolution: 300,
+    showTimeAs: "UTC",
+    periods: testPeriods
   });
   expect(wrapper.find("g.tick").exists()).toBe(false);
 });

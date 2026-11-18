@@ -6,7 +6,7 @@
           <!-- eslint-disable-next-line vue/no-v-html -->
           <span v-html="t('Created by')" />
         </b-col>
-        <b-col lg class="text-right">
+        <b-col lg class="text-end">
           <a href="https://github.com/inbo/crow/">{{ t('Source code') }}</a> {{ t('version') }}
           <code><a :href="'https://github.com/inbo/crow/tree/' + commitHash()">{{ commitHash() }}</a></code>
         </b-col>
@@ -19,12 +19,18 @@
 import { LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 import helpers from "@/helpers";
 import { useUserChoicesStore } from "@/store/UserChoicesStore";
-import Vue from "vue";
+import { defineComponent } from "vue";
+import { BCol, BContainer, BRow } from "bootstrap-vue-next";
 
 declare const __COMMIT_HASH__: string;
 
-export default Vue.extend({
+export default defineComponent({
   name: "PageFooter",
+  components: {
+    BCol,
+    BContainer,
+    BRow,
+  },
   data: function () {
     return {
       texts: {

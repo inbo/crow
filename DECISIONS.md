@@ -22,3 +22,8 @@ Append-only, newest last. Detailed rationale belongs in an ADR under `docs/adr/`
 **What:** Ported the two vuex-module-decorators stores to Pinia 2 (still on Vue 2.7) and replaced vue-clipboard2 with navigator.clipboard.writeText.
 **Why:** Pinia is Vue 3's recommended store and runs on 2.7, so the Vue 3 step gets smaller; the decorators were behind the type-check workarounds, and the clipboard is one native call.
 **Rejected:** Vuex 4 + vuex-module-decorators - keeps the decorator layer for two small stores.
+
+## 2026-11-18 - Vue 3 with bootstrap-vue-next and Bootstrap 5.3
+**What:** Moved to Vue 3.5, vue-router 5, Pinia 4, bootstrap-vue-next and Bootstrap 5.3, keeping the Options API; hover popovers on SVG elements use the v-b-popover directive.
+**Why:** Vue 2 and bootstrap-vue are end of life, and bootstrap-vue cannot run Bootstrap 5; a <b-popover> declared inside an <svg> gets the SVG namespace (Teleport included) and never shows, while the directive mounts each popover in its own HTML tree.
+**Rejected:** A custom shared tooltip for the charts - more code for the same result; a <script setup> rewrite - a refactor with no behaviour change, left for later.

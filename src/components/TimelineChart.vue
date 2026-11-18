@@ -1,29 +1,16 @@
 <template>
   <g :transform="`translate(${margin.left}, ${margin.top})`">
-    <template v-for="period in populatedPeriods">
-      <rect
-        :id="uuid + '-period-at-' + period.x"
-        :key="'rect ' + period.x"
-        :x="period.x"
-        y="0"
-        :width="periodWidth"
-        :height="styleConfig.height"
-        :class="period.class"
-      />
-
-      <b-popover
-        v-if="styleConfig.showTooltip"
-        :key="'popover ' + period.x"
-        :target="uuid + '-period-at-' + period.x"
-        triggers="hover"
-        placement="bottom"
-      >
-        <template #title>
-          {{ formatMoment(period.moment) }}
-        </template>
-        {{ capitalize(period.localizedName) }} ({{ t('solar elevation angle') }} : {{ round2decimals(period.sunAltitude) }}°)
-      </b-popover>
-    </template>
+    <rect
+      v-for="period in populatedPeriods"
+      :id="uuid + '-period-at-' + period.x"
+      :key="period.x"
+      v-b-popover.hover.bottom.body="periodPopover(period)"
+      :x="period.x"
+      y="0"
+      :width="periodWidth"
+      :height="styleConfig.height"
+      :class="period.class"
+    />
   </g>
 </template>
 
@@ -31,7 +18,8 @@
 /* eslint-disable vue/require-default-prop */
 
 // TODO: margin.top in the main SVG group seems different than with TimelineChart.vue
-import Vue from "vue";
+import { defineComponent, PropType } from "vue";
+import { vBPopover } from "bootstrap-vue-next";
 import * as d3 from "d3";
 import moment from "moment-timezone";
 import { LangCode, MultilanguageStringContainer, Period } from "@/CrowTypes";
@@ -44,11 +32,14 @@ interface DisplayablePeriod extends Period {
   localizedName: string;
 }
 
-export default Vue.extend({
+export default defineComponent({
+  directives: {
+    bPopover: vBPopover,
+  },
   props: {
-    periods: Array as () => Period[], // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
-    styleConfig: Object,
-    showTimeAs: String
+    periods: { type: Array as PropType<Period[]>, required: true }, // Each entry: {moment: <moment-tz object>, sunAltitude: <altitude>}
+    styleConfig: { type: Object, required: true },
+    showTimeAs: { type: String, required: true }
   },
   data: function () {
     return {
@@ -137,6 +128,13 @@ export default Vue.extend({
     this.uuid = helpers.uuidv4();
   },
   methods: {
+    periodPopover(period: DisplayablePeriod): { title: string, body: string } | { active: false } {
+      if (!this.styleConfig.showTooltip) return { active: false };
+      return {
+        title: this.formatMoment(period.moment),
+        body: `${this.capitalize(period.localizedName)} (${this.t('solar elevation angle')} : ${this.round2decimals(period.sunAltitude)}°)`
+      };
+    },
     capitalize: function (value: string): string {
       if (!value) return ""
       value = value.toString()

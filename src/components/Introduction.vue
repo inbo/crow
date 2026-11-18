@@ -12,11 +12,15 @@
 <script lang="ts">
 import { LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 import { useUserChoicesStore } from "@/store/UserChoicesStore";
-import Vue from "vue";
+import { defineComponent } from "vue";
+import { BContainer } from "bootstrap-vue-next";
 import helpers from "@/helpers";
 
-export default Vue.extend({
+export default defineComponent({
   name: "Introduction",
+  components: {
+    BContainer,
+  },
   data: function () {
     return {
       texts: {
