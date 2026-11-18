@@ -1,0 +1,1 @@
+Generated with bioRad 0.12.0 on R version 4.6.2 (2026-10-29)

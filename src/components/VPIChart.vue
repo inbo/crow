@@ -581,8 +581,8 @@ export default Vue.extend({
 
       if (d0 && d1) { // Avoid errors at chart boundaries (undefined d0 left, undefined d1 right)
         this.VPIEntryAtTimeX =
-          x0.getTime() / 1000 - d0.moment.valueOf() >
-            d1.moment.valueOf() - x0.getTime() / 1000
+          x0.getTime() - d0.moment.valueOf() >
+            d1.moment.valueOf() - x0.getTime()
             ? d1
             : d0;
       } else {

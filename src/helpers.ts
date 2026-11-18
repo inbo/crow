@@ -38,7 +38,8 @@ function densityToBirdtam(density: number): number {
 
   More discussions at https://github.com/inbo/crow/issues/76
   */
-  return (density === 0 ? 0 : Math.floor(1.4427 * Math.log(density + 1) + 1.6781));
+  // Capped at 9, the top class: the colour scale has no code above it (https://github.com/inbo/crow/issues/76)
+  return (density === 0 ? 0 : Math.min(9, Math.floor(1.4427 * Math.log(density + 1) + 1.6781)));
 }
 
 function uuidv4(): string {
@@ -71,20 +72,16 @@ function metersToFeet(meters: number): number {
   return meters * 3.281;
 }
 
-function parseFloatOrZero(str: string): number {
-  const val = parseFloat(str);
-  if (isNaN(val)) {
-    return 0;
-  } else {
-    return val;
-  }
-}
-
 function filterVpts(rows: VPTSDataRowFromFile[], sd_vvpThresh = SD_VVP_THRESHOLD): VPTSDataRowFromFile[] {
   // Filter out data rows that are likely not birds, based on sd_vvp (https://github.com/inbo/crow/issues/122)
-  return rows.filter(function (row) {
-    return !isNaN(row.sd_vvp) && row.sd_vvp >= sd_vvpThresh
-  })
+  // Only a measured sd_vvp below the threshold removes a row: where vol2bird could not
+  // estimate it (NaN) it may still report a density, which bioRad keeps too; rows where
+  // vol2bird measured nothing at all (sd_vvp, dens and eta all NaN) stay "no data".
+  // In the kept rows a NaN dens/eta counts as 0 (D3 can't use NaN).
+  const measuredNothing = (row: VPTSDataRowFromFile) => isNaN(row.sd_vvp) && isNaN(row.dens) && isNaN(row.eta);
+  return rows
+    .filter(row => !(row.sd_vvp < sd_vvpThresh) && !measuredNothing(row))
+    .map(row => ({ ...row, dens: isNaN(row.dens) ? 0 : row.dens, eta: isNaN(row.eta) ? 0 : row.eta }))
 }
 
 interface csvDataRow { // An object whose key and values are both strings
@@ -132,9 +129,9 @@ function parseCSVVpts(responseString: string): VPTSDataRowFromFile[] {
       height: parseInt(row.height),
       dd: parseFloat(row.dd),
       ff: parseFloat(row.ff),
-      dens: parseFloatOrZero(row.dens),
+      dens: parseFloat(row.dens),
       sd_vvp: parseFloat(row.sd_vvp),
-      eta: parseFloatOrZero(row.eta)
+      eta: parseFloat(row.eta)
     }
   });
 
@@ -152,7 +149,7 @@ function buildVpTsDataUrl(radar: RadarInterface, selectedDate: moment.Moment): s
 }
 
 function roundNearest(num: number, resolution: number) {
-  "Round to nearest integer value of the given resolution"
+  "Round down to a multiple of the given resolution"
   return Math.floor(num / resolution) * resolution;
 }
 
@@ -161,11 +158,15 @@ function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
 
   let d = responseString.split("\n");
   d = d.splice(numHeaderLines); // Remove 4 header lines
-  d.pop() // The file is also terminated by a blank line, which cause issues.
+  d = d.filter(line => line.trim() !== ""); // Skip the terminating blank line, but never drop a data row (a file may lack the final newline)
+  // Profiles are not always in time order in the files (e.g. bewid 2020-10-13 07:30-07:55).
+  // Downsampling keeps the first record per slot, so sort by the real "YYYYMMDD HHmm"
+  // time first (stable: heights keep their order) for each slot to keep its own profile.
+  d.sort((a, b) => a.substring(0, 13).localeCompare(b.substring(0, 13)));
 
   const r = d.map(function (row) {
-    // There are NaN values everywhere in the data, D3 don't know how to interpret them
-    // For now, we consider a non-numbers to mean 0
+    // "nan" values are kept as NaN; filterVpts() decides which rows are usable and
+    // turns the remaining NaN densities into 0 (D3 cannot use NaN)
 
     return {
       // assume 5 min is the absolute minimum resolution of the incoming data
@@ -173,9 +174,9 @@ function parseVol2birdVpts(responseString: string): VPTSDataRowFromFile[] {
       height: +parseInt(row.substring(14, 18)),
       dd: parseFloat(row.substring(47, 52)),
       ff: parseFloat(row.substring(41, 46)),
-      dens: parseFloatOrZero(row.substring(76, 82)),
+      dens: parseFloat(row.substring(76, 82)), // NaN kept here: filterVpts() needs to tell "nan" from 0
       sd_vvp: parseFloat(row.substring(53, 59)),
-      eta: parseFloatOrZero(row.substring(70, 75))
+      eta: parseFloat(row.substring(69, 75)) // 6-wide field, see vol2bird's libvol2bird.c output format
     };
   });
 
@@ -198,11 +199,15 @@ function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infi
   if (!(typeof altMin == "number") || !(typeof altMax == "number" || altMax == Infinity)) {
     throw "'altMin'/'altMax' need to be nunmeric";
   }
-  if (!(isNaN(alpha) || !(typeof alpha == "number"))) {
+  if (typeof alpha !== "number") { // NaN (no direction) is a number too
     throw "'alpha' needs to be numeric or Nan";
   }
   if (altMax <= altMin) {
     console.log("'altMin' should be smaller than 'altMax'");
+  }
+
+  if (data.length == 0) { // No data loaded for this profile
+    return { "mtr": NaN, "rtr": NaN, "vid": NaN, "vir": NaN }
   }
 
   // Filter data on requested heights
@@ -216,8 +221,8 @@ function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infi
     data = data.filter(d => d.height >= altMin && d.height <= altMax);
   }
 
-  // Filter data on sd_vvp values above sd_vvp threshold
-  data = data.filter(d => d.sd_vvp >= sd_vvpThresh);
+  // Filter out data whose (measured) sd_vvp is below the threshold; NaN is kept, see filterVpts()
+  data = data.filter(d => !(d.sd_vvp < sd_vvpThresh));
   if (data.length == 0) {
     return { "mtr": NaN, "rtr": NaN, "vid": NaN, "vir": NaN }
   }
@@ -232,7 +237,7 @@ function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infi
   if (isNaN(alpha)) {
     cosFactor = data.map(x => 1. + 0. * x.dd);
   } else {
-    cosFactor = data.map(x => Math.cos(x.dd - alpha) * Math.PI / 180);
+    cosFactor = data.map(x => Math.cos((x.dd - alpha) * Math.PI / 180)); // dd and alpha in degrees, as in bioRad
   }
 
   // Calculate mtr
@@ -256,6 +261,18 @@ function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infi
     .reduce((a, b) => a + b, 0);
 
   return ({ "mtr": mtr, "rtr": rtr, "vid": vid, "vir": vir })
+}
+
+function totalNumberOfBirds(mtrValues: number[], slotDurationSeconds: number): number {
+  // Cumulative migration traffic (birds across a 1 km line) over the shown period,
+  // like bioRad's `mt`: integrate MTR (birds/km/h) over time. A NaN MTR means no
+  // layer passed the sd_vvp filter (no birds) or no data for that slot; both count
+  // as 0, so nothing is extrapolated. See https://github.com/inbo/crow/issues/112
+  const slotHours = slotDurationSeconds / 3600;
+  const total = mtrValues
+    .filter(mtr => !Number.isNaN(mtr))
+    .reduce((sum, mtr) => sum + mtr * slotHours, 0);
+  return Math.round(total / 100) * 100; // The UI says "about": round to hundreds
 }
 
 function translateString(stringId: string, selectedLanguageCode: LangCode, translations: MultilanguageStringContainer): string {
@@ -291,4 +308,4 @@ const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
     return groups;
   }, {} as Record<K, T[]>);
 
-export default { parseVpts, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateStdGammaII, translateString, filterVpts, getBrowserFirstLangCode, buildVpTsDataUrl, groupBy }
+export default { parseVpts, integrateProfile, metersToFeet, makeSafeForCSS, formatTimestamp, formatMoment, uuidv4, densityToBirdtam, interpolateStdGammaII, translateString, filterVpts, totalNumberOfBirds, getBrowserFirstLangCode, buildVpTsDataUrl, groupBy }

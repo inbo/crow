@@ -342,7 +342,8 @@ export default Vue.extend({
       return this.distinctHeightsMeters[this.distinctHeightsMeters.length - 1]
     },
     maxHeightFeet: function(): number {
-      return 3.2808 * this.maxHeightMeters;
+      // Top of the highest layer, like the metre axis (distinctHeightsMetersPlusOne)
+      return 3.2808 * (this.maxHeightMeters + this.dataVerticalResolutionMeters);
     },
     scale: function (): Scales {
       // Computed property created just so the "axis" directive can be more easily reused and shared

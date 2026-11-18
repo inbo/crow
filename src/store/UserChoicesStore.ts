@@ -1,6 +1,6 @@
 import config from "@/config";
 import { GroupedRadarInterface, LangCode, RadarInterface, TimeDisplayedAsValue } from "@/CrowTypes";
-import moment from "moment";
+import moment from "moment-timezone";
 import { getModule, Module, Mutation, VuexModule } from "vuex-module-decorators";
 import { ConfigStoreModule } from "./ConfigStore";
 
@@ -78,11 +78,13 @@ export class UserChoicesStore extends VuexModule {
         .minute(0)
         .second(0);
     } else {
-      return moment(this.selectedDate, "YYYY-MM-DD") // Noon at radar location, if we are in radarLocal mode
+      // Noon at radar location, if we are in radarLocal mode. Parse the date in the radar's
+      // zone: parsing in the browser's zone then converting shifted the window for viewers elsewhere.
+      return moment
+        .tz(this.selectedDate, "YYYY-MM-DD", this.timeZoneToShow)
         .hour(12)
         .minute(0)
-        .second(0)
-        .tz(this.timeZoneToShow);
+        .second(0);
     }
   }
 

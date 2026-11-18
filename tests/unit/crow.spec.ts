@@ -82,15 +82,13 @@ test("Profile integration code (compare to bioRad output)", () => {
     const VirJs = round3decimals(integratedProfileJS.vir);
     const VirBiorad = round3decimals(integratedProfilesBiorad[index].vir);
 
-    //const RtrJs = round3decimals(integratedProfileJS.rtr);
-    //const RtrBiorad = round3decimals(integratedProfilesBiorad[index].rtr);
+    const RtrJs = round3decimals(integratedProfileJS.rtr);
+    const RtrBiorad = round3decimals(integratedProfilesBiorad[index].rtr);
 
     expect(MtrJs).toEqual(MtrBiorad);
     expect(VidJs).toEqual(VidBiorad);
-    //expect(VirJs).toEqual(VirBiorad);
-    //console.log(VirJs, VirBiorad);
-    //console.log(RtrJs, RtrBiorad);
-    //expect(RtrJs).toEqual(RtrBiorad);
+    expect(VirJs).toEqual(VirBiorad);
+    expect(RtrJs).toEqual(RtrBiorad);
   });
 });
 
@@ -109,9 +107,6 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
     localVue,
     propsData: {
       dateValueProp: moment.utc("2020-01-29 00:00:00").format(moment.HTML5_FMT.DATE),
-      startMoment: moment.utc("2020-01-29 00:00:00"),
-      endMoment: moment.utc("2020-01-30 00:00:00"),
-      selectedRadar: config.availableRadars[0].options[0]
     },
     stubs: ['router-link']
     }
@@ -133,8 +128,9 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
     {"datetime":1580295600000,"height":0,"dd":NaN,"ff":NaN,"dens":0,"sd_vvp":3.26,"eta":0,"noData":false})
   expect(vptsAllRows[moment.utc("2020-01-29 11:00").valueOf()].heightData["1000"]).toEqual(
     {"datetime":1580295600000,"height":1000,"dd":203.8,"ff":1.75,"dens":0.79,"sd_vvp":2.95,"eta":8.7,"noData":false})
+  // sd_vvp is NaN at 4800 m, but vol2bird reports eta there: the layer is kept, as in bioRad
   expect(vptsAllRows[moment.utc("2020-01-29 11:00").valueOf()].heightData["4800"]).toEqual(
-    {"noData":true})
+    {"datetime":1580295600000,"height":4800,"dd":NaN,"ff":NaN,"dens":0,"sd_vvp":NaN,"eta":0.2,"noData":false})
 
   // Resulting profiles match the reference Biorad data of the corresponding timestamps
   interface BioRadProfile {
@@ -173,9 +169,6 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
     localVue,
     propsData: {
       dateValueProp: moment.utc("2020-01-29 00:00:00").format(moment.HTML5_FMT.DATE),
-      startMoment: moment.utc("2020-01-29 00:00:00"),
-      endMoment: moment.utc("2020-01-30 00:00:00"),
-      selectedRadar: config.availableRadars[0].options[0]
     },
     stubs: ['router-link']
     }
@@ -197,6 +190,7 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
     {"datetime":1580295600000,"height":0,"dd":NaN,"ff":NaN,"dens":0,"sd_vvp":3.26,"eta":0,"noData":false})
   expect(vptsAllRows[moment.utc("2020-01-29 11:00").valueOf()].heightData["1000"]).toEqual(
     {"datetime":1580295600000,"height":1000,"dd":203.8,"ff":1.75,"dens":0.79,"sd_vvp":2.95,"eta":8.7,"noData":false})
+  // sd_vvp is NaN at 4800 m, but vol2bird reports eta there: the layer is kept, as in bioRad
   expect(vptsAllRows[moment.utc("2020-01-29 11:00").valueOf()].heightData["4800"]).toEqual(
-    {"noData":true})
+    {"datetime":1580295600000,"height":4800,"dd":NaN,"ff":NaN,"dens":0,"sd_vvp":NaN,"eta":0.2,"noData":false})
 })
