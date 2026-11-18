@@ -48,14 +48,14 @@ export default Vue.extend({
     daysWithMidnightInParetnChart: function (): DayData[] {
       return this.days.filter(dayData => { return dayData.xPositionAtMidnight >= 0 })
     },
-    lineStyle: function (): Record<string, unknown> {
+    lineStyle: function (): Record<string, string | number> {
       return {
         "stroke-width": 1,
         "pointer-events": "none",
         "stroke": this.color
       }
     },
-    textStyle: function (): Record<string, unknown> {
+    textStyle: function (): Record<string, string> {
       return {
         "font": "12px sans-serif",
         "fill": this.color

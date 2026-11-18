@@ -123,7 +123,7 @@
             >
               <template #header>
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p v-html="t('VPI chart description').replace('{{ birdsCount }}', totalNumberOfBirds)" />
+                <p v-html="t('VPI chart description').replace('{{ birdsCount }}', String(totalNumberOfBirds))" />
               </template>
 
               <template #in-x-axis-group>
@@ -259,7 +259,7 @@ export default Vue.extend({
       // All timestamps are kept in UTC (transformed later, in the viz components)
       radarVpts: {} as RadarVptsAsTree,
 
-      publicPath: process.env.BASE_URL,
+      publicPath: import.meta.env.BASE_URL,
       baseUrl: "",
       copyUrlButtonText: initialCopyUrlText,
       texts: {

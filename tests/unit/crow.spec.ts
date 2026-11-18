@@ -93,8 +93,8 @@ test("Profile integration code (compare to bioRad output)", () => {
 });
 
 test("Raw data filtering by rounding datetime to app resolution and retain only first occurrence with aligned data", async() => {
-  // Tell Jest to mock any call to `axios.get` with test data
-  jest.spyOn(axios, 'get').mockResolvedValue(
+  // Mock any call to `axios.get` with test data
+  vi.spyOn(axios, 'get').mockResolvedValue(
     {"data": fs.readFileSync(path.resolve(__dirname, "./data/behel_vpts_20200129.truncated.txt"), "utf-8")})
 
   let appResolution = 30;
@@ -155,8 +155,8 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
 })
 
 test("Raw data filtering by rounding datetime to app resolution and retain only first occurrence with misaligned data", async() => {
-  // Tell Jest to mock any call to `axios.get` with test data
-  jest.spyOn(axios, 'get').mockResolvedValue(
+  // Mock any call to `axios.get` with test data
+  vi.spyOn(axios, 'get').mockResolvedValue(
     {"data": fs.readFileSync(path.resolve(__dirname, "./data/behel_vpts_20200129.truncated.timeoff.txt"), "utf-8")})
 
   let appResolution = 30;

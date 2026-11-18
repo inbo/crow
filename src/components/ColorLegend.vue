@@ -106,14 +106,14 @@ export default Vue.extend({
     ctx: function (): CanvasRenderingContext2D | null {
       return (this.$refs.canvas as HTMLCanvasElement).getContext("2d");
     },
-    styleObjectDivPrepared: function (): Record<string, unknown> {
+    styleObjectDivPrepared: function (): Record<string, string> {
       return {
         display: "inline-block",
         position: "relative",
         width: this.styleDiv.width + "px"
       };
     },
-    styleCanvasPrepared: function (): Record<string, unknown> {
+    styleCanvasPrepared: function (): Record<string, string> {
       return {
         height: this.canvasHeight + "px",
         width: this.canvasWidth + "px",

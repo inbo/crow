@@ -12,3 +12,8 @@ Append-only, newest last. Detailed rationale belongs in an ADR under `docs/adr/`
 **What:** Pin the data Home hands to each chart and what each chart draws, as CSV/JSON golden files (`npm run test:update-golden`), with runner/Vue-specific code isolated in `tests/unit/support.ts`.
 **Why:** Make the Vue 3 / Vitest port and refactoring safe: any change to the shown science surfaces as a reviewable data diff, and the specs port by changing one file.
 **Rejected:** Jest `.snap` snapshots and whole-HTML snapshots - their format and markup noise would churn during the port.
+
+## 2026-11-18 - Move to Vite + Vitest before the Vue 3 port
+**What:** Replaced vue-cli/webpack, Jest and Babel with Vite, Vitest and vue-tsc while still on Vue 2.7, and made the templates pass vue-tsc's template type check.
+**Why:** Change the tooling alone first, so any golden-file difference can only come from tooling, and the Vue 3 / bootstrap-vue-next step is guarded by type-checked templates.
+**Rejected:** Porting to Vue 3 first on vue-cli - it keeps the jest/ts-jest workaround chain and mixes tooling and framework changes in one diff.

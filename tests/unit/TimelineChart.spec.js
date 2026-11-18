@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils"
-import TimelineChart from "../../src/components/TimelineChart"
+import TimelineChart from "../../src/components/TimelineChart.vue"
 import moment from "moment-timezone";
 
 let styleConfig = {

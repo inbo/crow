@@ -21,7 +21,7 @@
         :max-scale-density="maxColorLegendValue"
         :tick-values="selectedColorSchemeConfig.tickValues"
         :number-of-ticks="selectedColorSchemeConfig.numberOfTicks"
-        :last-tick-suffix="t(selectedColorSchemeConfig.units)"
+        :last-tick-suffix="selectedColorSchemeConfig.units && t(selectedColorSchemeConfig.units)"
         opacity="1"
         topic="Density"
       />

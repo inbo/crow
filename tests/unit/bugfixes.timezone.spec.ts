@@ -1,8 +1,8 @@
 // Time zone regression tests. Each one only means something with the browser in
-// a given zone, and the zone cannot be changed from inside a test (Jest gives each
+// a given zone, and the zone cannot be changed from inside a test (Vitest gives each
 // file its own copy of process.env). So each describe runs only when the process
 // is in its zone, and is skipped otherwise: npm run test:unit runs this file twice,
-// in Europe/Brussels (the default from jest.config.js) and in America/New_York.
+// in Europe/Brussels (the default from vite.config.ts) and in America/New_York.
 import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
 import { mockMeteoBe, mountHome, restoreMocks } from "./support";
 

@@ -23,6 +23,7 @@ export interface ColorSchemeConfigEntry {
 export interface DayData {
   moment: moment.Moment;
   xPositionAtMidnight: number;
+  dayLabel: string;
 }
 
 export interface Period {

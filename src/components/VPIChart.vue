@@ -88,7 +88,7 @@
             <template #title>{{ formattedMomentAtTimeX }}</template>
             <div>
               {{ selectedModeLabel }}:
-              {{ selectedValAtTimeX | rounddecimals(selectedModePrecision) }}
+              {{ rounddecimals(selectedValAtTimeX, selectedModePrecision) }}
             </div>
           </b-popover>
         </template>
@@ -183,12 +183,6 @@ export default Vue.extend({
         });
 
       d3Axis(d3.select((el as unknown) as SVGGElement)); // TODO: TS: There's probably a better solution than this double casting
-    },
-  },
-  filters: {
-    rounddecimals: function (num: number, precision: number): string {
-      const multiplier = Math.pow(10, precision);
-      return (Math.round(num * multiplier) / multiplier).toFixed(precision);
     },
   },
   props: {
@@ -350,11 +344,11 @@ export default Vue.extend({
       }
       return null;
     },
-    closestMomentXPosition: function (): number | null {
+    closestMomentXPosition: function (): number | undefined {
       if (this.VPIEntryAtTimeX) {
         return this.xScale(this.VPIEntryAtTimeX.moment.valueOf());
       }
-      return null;
+      return undefined;
     },
     maxVID: function (): number {
       const max = d3.max(this.vpiData, function (d) {
@@ -440,7 +434,7 @@ export default Vue.extend({
         .range([this.innerHeight, 0])
         .domain([0, this.yMaxVal]);
     },
-    pathData: function (): string | null {
+    pathData: function (): string | undefined {
       const path = d3
         .area<VPIEntryForPath>()
         .defined((vpiEntryFP) => {
@@ -454,7 +448,7 @@ export default Vue.extend({
         })
         .y1(this.innerHeight);
 
-      return path(this.vpiDataForPath);
+      return path(this.vpiDataForPath) ?? undefined;
     },
   },
   watch: {
@@ -475,6 +469,11 @@ export default Vue.extend({
     },
   },
   methods: {
+    // null (no value under the mouse) shows as 0, as it did when this was a filter
+    rounddecimals: function (num: number | null, precision: number): string {
+      const multiplier = Math.pow(10, precision);
+      return (Math.round((num ?? 0) * multiplier) / multiplier).toFixed(precision);
+    },
     t(stringId: string) {
       return helpers.translateString(stringId, this.selectedLanguageCode, this.texts);
     },
