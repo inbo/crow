@@ -31,6 +31,7 @@ export default defineConfig(({ mode }) => {
     test: {
       environment: "jsdom",
       globals: true,
+      setupFiles: ["tests/unit/setup.ts"],
       include: ["tests/unit/**/*.spec.[jt]s?(x)"],
       // The real-data tests load and process whole days of vol2bird files and take
       // 2-3 s each locally; on shared CI runners they can exceed the defaults.

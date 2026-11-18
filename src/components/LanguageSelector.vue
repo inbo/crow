@@ -8,26 +8,26 @@
 
 <script lang="ts">
 import { LangCode, Language } from "@/CrowTypes";
-import { ConfigStoreModule } from "@/store/ConfigStore";
-import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { useConfigStore } from "@/store/ConfigStore";
+import { useUserChoicesStore } from "@/store/UserChoicesStore";
 import Vue from "vue";
 
 export default Vue.extend({
   name: "LanguageSelector",
   computed: {
     availableLanguages(): Language[] {
-      return ConfigStoreModule.availableLanguages;
+      return useConfigStore().availableLanguages;
     },
     selectedLanguageCode: {
       get: function (): LangCode {
-        return UserChoicesStoreModule.selectedLanguageCode;
+        return useUserChoicesStore().selectedLanguageCode;
       },
       set: function (code: LangCode) {
-        UserChoicesStoreModule.setSelectedLanguageCode(code);
+        useUserChoicesStore().setSelectedLanguageCode(code);
       }
     },
     selectedLanguageLabel(): string {
-      return UserChoicesStoreModule.selectedLanguageLabel
+      return useUserChoicesStore().selectedLanguageLabel
     } 
   },
 });

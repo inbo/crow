@@ -121,7 +121,7 @@ import helpers from "@/helpers";
 import { DayData, VPIEntry, IntegratedPropertyName, LangCode, MultilanguageStringContainer } from "@/CrowTypes";
 
 import { Tween, Easing, Group, now as tweenNow } from "@tweenjs/tween.js";
-import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { useUserChoicesStore } from "@/store/UserChoicesStore";
 
 // Since tween.js v21 the global TWEEN group is deprecated and tweens are no longer
 // added to it automatically: they have to be registered with an explicit group.
@@ -290,7 +290,7 @@ export default Vue.extend({
       return this.availableModes.map(mode => ({...mode, descriptionCurrentLanguage: this.t(mode.variableDescriptionId)}))
     },
     selectedLanguageCode(): LangCode {
-      return UserChoicesStoreModule.selectedLanguageCode;
+      return useUserChoicesStore().selectedLanguageCode;
     },
     selectedModePrecision(): number {
       switch (this.selectedMode) {

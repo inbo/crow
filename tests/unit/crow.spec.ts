@@ -1,6 +1,5 @@
 import { createLocalVue, shallowMount } from "@vue/test-utils"
 import { BootstrapVue } from "bootstrap-vue"
-import VueClipboard from "vue-clipboard2"
 import helpers from "../../src/helpers"
 import Home from "../../src/components/Home.vue";
 import config from "@/config";
@@ -9,13 +8,11 @@ import axios from 'axios';
 import moment from "moment";
 
 import * as Papa from "papaparse";
-import { ConfigStoreModule } from "@/store/ConfigStore";
 const fs = require("fs");
 const path = require("path");
 
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
-localVue.use(VueClipboard)
 
 
 test("Home component rendering", () => {
@@ -102,8 +99,7 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
 
   const localVue = createLocalVue()
   localVue.use(BootstrapVue)
-  localVue.use(VueClipboard)
-  const wrapper = shallowMount(Home, {
+    const wrapper = shallowMount(Home, {
     localVue,
     propsData: {
       dateValueProp: moment.utc("2020-01-29 00:00:00").format(moment.HTML5_FMT.DATE),
@@ -164,8 +160,7 @@ test("Raw data filtering by rounding datetime to app resolution and retain only 
 
   const localVue = createLocalVue()
   localVue.use(BootstrapVue)
-  localVue.use(VueClipboard)
-  const wrapper = shallowMount(Home, {
+    const wrapper = shallowMount(Home, {
     localVue,
     propsData: {
       dateValueProp: moment.utc("2020-01-29 00:00:00").format(moment.HTML5_FMT.DATE),

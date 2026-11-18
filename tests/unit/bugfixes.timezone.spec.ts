@@ -3,7 +3,7 @@
 // file its own copy of process.env). So each describe runs only when the process
 // is in its zone, and is skipped otherwise: npm run test:unit runs this file twice,
 // in Europe/Brussels (the default from vite.config.ts) and in America/New_York.
-import { UserChoicesStoreModule } from "@/store/UserChoicesStore";
+import { useUserChoicesStore } from "@/store/UserChoicesStore";
 import { mockMeteoBe, mountHome, restoreMocks } from "./support";
 
 /** `describe` when the tests run in time zone `tz`, `describe.skip` otherwise. */
@@ -20,13 +20,13 @@ describeInZone("America/New_York")("A6 - 'radar local' windows are centred on no
     link showed different data per viewer. Noon must be 12:00 Europe/Brussels
     for Wideumont, whatever the browser's zone.
     */
-    UserChoicesStoreModule.setSelectedRadarCode("bewid");
-    UserChoicesStoreModule.setTimeDisplayedAs("radarLocal");
-    UserChoicesStoreModule.setSelectedDate("2020-10-13");
-    UserChoicesStoreModule.setSelectedIntervalInHours(24);
+    useUserChoicesStore().setSelectedRadarCode("bewid");
+    useUserChoicesStore().setTimeDisplayedAs("radarLocal");
+    useUserChoicesStore().setSelectedDate("2020-10-13");
+    useUserChoicesStore().setSelectedIntervalInHours(24);
 
-    expect(UserChoicesStoreModule.startMoment.toISOString()).toBe("2020-10-12T22:00:00.000Z");
-    expect(UserChoicesStoreModule.endMoment.toISOString()).toBe("2020-10-13T22:00:00.000Z");
+    expect(useUserChoicesStore().startMoment.toISOString()).toBe("2020-10-12T22:00:00.000Z");
+    expect(useUserChoicesStore().endMoment.toISOString()).toBe("2020-10-13T22:00:00.000Z");
   });
 
   test("UTC mode is unaffected by the browser's time zone", () => {
@@ -34,12 +34,12 @@ describeInZone("America/New_York")("A6 - 'radar local' windows are centred on no
     Guards the other branch of the same getter: UTC windows were already right
     and must stay so.
     */
-    UserChoicesStoreModule.setTimeDisplayedAs("UTC");
-    UserChoicesStoreModule.setSelectedDate("2020-10-13");
-    UserChoicesStoreModule.setSelectedIntervalInHours(72);
+    useUserChoicesStore().setTimeDisplayedAs("UTC");
+    useUserChoicesStore().setSelectedDate("2020-10-13");
+    useUserChoicesStore().setSelectedIntervalInHours(72);
 
-    expect(UserChoicesStoreModule.startMoment.toISOString()).toBe("2020-10-12T00:00:00.000Z");
-    expect(UserChoicesStoreModule.endMoment.toISOString()).toBe("2020-10-15T00:00:00.000Z");
+    expect(useUserChoicesStore().startMoment.toISOString()).toBe("2020-10-12T00:00:00.000Z");
+    expect(useUserChoicesStore().endMoment.toISOString()).toBe("2020-10-15T00:00:00.000Z");
   });
 });
 
@@ -57,12 +57,12 @@ describeInZone("Europe/Brussels")("A8 - previous/next date buttons across DST ch
     on the 25th, and on the 23 h day 'previous' from 2021-03-29 jumped to the 27th.
     */
     homeOn("2020-10-25", 24).incrementPeriod();
-    expect(UserChoicesStoreModule.selectedDate).toBe("2020-10-26");
+    expect(useUserChoicesStore().selectedDate).toBe("2020-10-26");
 
     homeOn("2021-03-29", 24).decrementPeriod();
-    expect(UserChoicesStoreModule.selectedDate).toBe("2021-03-28");
+    expect(useUserChoicesStore().selectedDate).toBe("2021-03-28");
 
     homeOn("2020-10-23", 72).incrementPeriod();
-    expect(UserChoicesStoreModule.selectedDate).toBe("2020-10-26");
+    expect(useUserChoicesStore().selectedDate).toBe("2020-10-26");
   });
 });
