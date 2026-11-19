@@ -11,7 +11,8 @@ import VPChart from "@/components/VPChart.vue";
 import VPIChart from "@/components/VPIChart.vue";
 import moment from "moment-timezone";
 import { useUserChoicesStore } from "@/store/UserChoicesStore";
-import { mockMeteoBe, mountChart, mountHome, readBewid, readBioradCsv, restoreMocks, settle } from "./support";
+import { useConfigStore } from "@/store/ConfigStore";
+import { mockMeteoBe, mountChart, mountHome, readBewid, readBioradCsv, readDataFile, restoreMocks, settle } from "./support";
 
 describe("A1 - vol2bird fixed-width parser", () => {
   test("every numeric field matches the whitespace-separated vol2bird columns", () => {
@@ -434,5 +435,37 @@ describe("CSV timestamps not aligned on the minute (issue #198)", () => {
     const rows = helpers.parseVpts(csv, "CSV");
     expect(rows.map(r => [new Date(r.datetime).toISOString(), r.dens]))
       .toEqual([["2023-09-09T00:00:00.000Z", 72.5], ["2023-09-09T00:10:00.000Z", 90]]);
+  });
+
+  test("the real nlhrw files of the issue fill every slot of the window", async () => {
+    /*
+    End-to-end on the files behind the issue URL (nlhrw, 2023-09-08, 24 h,
+    radar local time): the window spans two UTC files, both at HH:MM:04Z.
+    Before the fix not a single row reached Home's grid; now every 10 min
+    slot gets a profile. This repo's config still serves nlhrw from meteo.be
+    in vol2bird format, so the radar is switched to the aloftdata CSV here.
+    */
+    config.appTemporalResolution = 10 * 60;
+    const nlhrw = useConfigStore().availableRadars.flatMap(g => g.options).find(r => r.odimCode === "nlhrw")!;
+    const original = { ...nlhrw };
+    nlhrw.vptsFileFormat = "CSV";
+    nlhrw.endpoint = "https://aloftdata.s3-eu-west-1.amazonaws.com/baltrad/daily/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.csv";
+    mockMeteoBe(url => {
+      const match = url.match(/nlhrw_vpts_(\d{8})\.csv$/);
+      return match ? Promise.resolve({ data: readDataFile(`nlhrw_vpts_${match[1]}.window.csv`) }) : undefined;
+    });
+    try {
+      const wrapper = mountHome({ radar: "nlhrw", date: "2023-09-08", interval: 24, timeDisplay: "radarLocal" });
+      await settle();
+      const slots = Object.values((wrapper.vm as any).radarVpts) as { heightData: Record<string, { noData: boolean }> }[];
+      const filled = slots.filter(s => Object.values(s.heightData).some(h => !h.noData));
+      const storedRows = slots.flatMap(s => Object.values(s.heightData)).filter(h => !h.noData);
+      expect(slots.length).toBe(144);
+      expect(filled.length).toBe(144);
+      expect(storedRows.length).toBe(3201);
+    } finally {
+      Object.assign(nlhrw, original);
+      restoreMocks();
+    }
   });
 });
