@@ -29,13 +29,22 @@ Install with:
 npm install
 ```
 
-Update dependencies with:
+Update dependencies regularly (minor and patch versions, within the ranges in `package.json`) with:
 
 ```
-npx npm-check-updates     # Show outdated dependencies
-npx npm-check-updates -i  # Update interactively
-npx npm-check-updates -u  # Write changes to package.json
+npm update
 ```
+
+Major versions are upgraded deliberately, one package at a time, as they can require code changes:
+
+```
+npx npm-check-updates     # Show outdated dependencies, majors included
+npx npm-check-updates -i  # Pick which ones to upgrade
+```
+
+Dependabot only opens security update PRs, grouped into one (see `.github/dependabot.yml`). Updating the lockfile yourself (`npm update` or `npm audit fix`) closes them automatically.
+
+Run build, lint and unit tests after any update.
 
 Run in development with:
 
