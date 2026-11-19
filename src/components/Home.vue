@@ -455,7 +455,8 @@ export default defineComponent({
 
         integratedProfiles.push({
           moment: moment.utc(+timestamp),
-          integratedProfiles: helpers.integrateProfile(dataToIntegrate)
+          // Layer height from the radar's configured heights (the ones the grid is built from)
+          integratedProfiles: helpers.integrateProfile(dataToIntegrate, 0, Infinity, this.selectedRadar.heights[1] - this.selectedRadar.heights[0])
         });
       }
       return integratedProfiles;

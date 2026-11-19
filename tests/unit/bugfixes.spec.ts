@@ -469,3 +469,45 @@ describe("CSV timestamps not aligned on the minute (issue #198)", () => {
     }
   });
 });
+
+describe("sd_vvp threshold read from the data (issue #288)", () => {
+  // One CSV profile layer with the given sd_vvp, optionally with the sd_vvp_threshold column
+  const csv = (sd_vvp: number, threshold?: number) => {
+    const withThreshold = threshold !== undefined;
+    return '"radar","datetime","height","ff","dd","sd_vvp","eta","dens"' + (withThreshold ? ',"sd_vvp_threshold"' : "") + "\n"
+      + `xxsbd,2023-09-08T00:00:00Z,200,3.0,90.0,${sd_vvp},500.0,50.0` + (withThreshold ? `,${threshold}` : "") + "\n";
+  };
+
+  test("a CSV threshold below 2 keeps layers CROW used to drop as non-birds", () => {
+    /*
+    CROW hardcoded sd_vvp >= 2 as "birds". bioRad uses the threshold the data
+    was processed with, which the aloftdata CSV carries per row; S-band radars
+    use 1. With such a file, a layer at sd_vvp 1.5 is birds and must be kept,
+    while one at 0.5 is still dropped.
+    */
+    config.appTemporalResolution = 10 * 60;
+    expect(helpers.filterVpts(helpers.parseVpts(csv(1.5, 1), "CSV")).length).toBe(1);
+    expect(helpers.filterVpts(helpers.parseVpts(csv(0.5, 1), "CSV")).length).toBe(0);
+    expect(helpers.integrateProfile(helpers.parseVpts(csv(1.5, 1), "CSV")).vid).toBeCloseTo(10, 6);
+  });
+
+  test("a CSV threshold above 2 drops layers the default would keep", () => {
+    /*
+    The data's threshold wins in both directions: a file processed with a
+    stricter threshold must not have its sub-threshold layers counted as birds.
+    */
+    config.appTemporalResolution = 10 * 60;
+    expect(helpers.filterVpts(helpers.parseVpts(csv(2.5, 3), "CSV")).length).toBe(0);
+    expect(helpers.integrateProfile(helpers.parseVpts(csv(2.5, 3), "CSV")).vid).toBeNaN();
+  });
+
+  test("files without a threshold keep the default of 2", () => {
+    /*
+    vol2bird text files and older CSVs carry no threshold: behaviour must stay
+    exactly as before (and as in the bioRad references, generated with 2).
+    */
+    config.appTemporalResolution = 10 * 60;
+    expect(helpers.filterVpts(helpers.parseVpts(csv(1.5), "CSV")).length).toBe(0);
+    expect(helpers.filterVpts(helpers.parseVpts(csv(2.5), "CSV")).length).toBe(1);
+  });
+});

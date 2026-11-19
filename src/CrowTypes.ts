@@ -82,6 +82,7 @@ export interface VPTSDataRowFromFile {
   ff: number;
   dens: number;
   sd_vvp: number;
+  sd_vvp_threshold?: number; // From the data when the file has it (CSV), else the default applies
   eta: number;
 }
 

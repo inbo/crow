@@ -72,6 +72,11 @@ function metersToFeet(meters: number): number {
   return meters * 3.281;
 }
 
+/* The sd_vvp threshold the row was processed with, or the default when the file does not say (vol2bird text, older CSV) */
+function thresholdOf(row: VPTSDataRowFromFile, fallback: number): number {
+  return Number.isFinite(row.sd_vvp_threshold) ? row.sd_vvp_threshold as number : fallback;
+}
+
 function filterVpts(rows: VPTSDataRowFromFile[], sd_vvpThresh = SD_VVP_THRESHOLD): VPTSDataRowFromFile[] {
   // Filter out data rows that are likely not birds, based on sd_vvp (https://github.com/inbo/crow/issues/122)
   // Only a measured sd_vvp below the threshold removes a row: where vol2bird could not
@@ -80,7 +85,7 @@ function filterVpts(rows: VPTSDataRowFromFile[], sd_vvpThresh = SD_VVP_THRESHOLD
   // In the kept rows a NaN dens/eta counts as 0 (D3 can't use NaN).
   const measuredNothing = (row: VPTSDataRowFromFile) => isNaN(row.sd_vvp) && isNaN(row.dens) && isNaN(row.eta);
   return rows
-    .filter(row => !(row.sd_vvp < sd_vvpThresh) && !measuredNothing(row))
+    .filter(row => !(row.sd_vvp < thresholdOf(row, sd_vvpThresh)) && !measuredNothing(row))
     .map(row => ({ ...row, dens: isNaN(row.dens) ? 0 : row.dens, eta: isNaN(row.eta) ? 0 : row.eta }))
 }
 
@@ -132,6 +137,7 @@ function parseCSVVpts(responseString: string): VPTSDataRowFromFile[] {
       ff: parseFloat(row.ff),
       dens: parseFloat(row.dens),
       sd_vvp: parseFloat(row.sd_vvp),
+      sd_vvp_threshold: parseFloat(row.sd_vvp_threshold), // NaN if the file has no such column
       eta: parseFloat(row.eta)
     }
   });
@@ -193,7 +199,6 @@ function parseVpts(responseString: string, format: VPTSFileFormat): VPTSDataRowF
 }
 
 function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infinity, interval = 200, sd_vvpThresh = SD_VVP_THRESHOLD, alpha = NaN): Profiles {
-  // TODO: interval and vvpThresh should actually be derived from data/metadata itself
   // TODO: extract the data - could be improved by using data itself as input
 
   // Check input arguments
@@ -223,7 +228,7 @@ function integrateProfile(data: VPTSDataRowFromFile[], altMin = 0, altMax = Infi
   }
 
   // Filter out data whose (measured) sd_vvp is below the threshold; NaN is kept, see filterVpts()
-  data = data.filter(d => !(d.sd_vvp < sd_vvpThresh));
+  data = data.filter(d => !(d.sd_vvp < thresholdOf(d, sd_vvpThresh)));
   if (data.length == 0) {
     return { "mtr": NaN, "rtr": NaN, "vid": NaN, "vir": NaN }
   }
