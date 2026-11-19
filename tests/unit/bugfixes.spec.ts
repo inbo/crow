@@ -413,3 +413,26 @@ describe("Out-of-order profiles in a vol2bird file", () => {
       .toEqual([["2020-10-13T07:40:00.000Z", 5.86], ["2020-10-13T07:40:00.000Z", 4.84]]);
   });
 });
+
+describe("CSV timestamps not aligned on the minute (issue #198)", () => {
+  test("CSV profiles are floored to the app resolution, like vol2bird ones", () => {
+    /*
+    Aloftdata CSV files can carry timestamps a few seconds past the minute
+    (nlhrw 2023-09-09: every profile at HH:MM:04Z). The CSV parser kept them
+    as-is, so no row matched the empty 10 min slots built by Home and every
+    row was silently dropped: "No data found" although the file had data.
+    The 00:05:04 profile falls in the same slot and is dropped as a duplicate,
+    which is the same downsampling vol2bird data gets.
+    */
+    config.appTemporalResolution = 10 * 60;
+    const header = '"radar","datetime","height","ff","dd","sd_vvp","eta","dens"\n';
+    const csv = header
+      + "nlhrw,2023-09-09T00:00:04Z,200,3.0,129.2,3.3,798.5,72.5\n"
+      + "nlhrw,2023-09-09T00:05:04Z,200,4.0,130.0,3.4,800.0,80.0\n"
+      + "nlhrw,2023-09-09T00:10:04Z,200,5.0,131.0,3.5,810.0,90.0\n";
+
+    const rows = helpers.parseVpts(csv, "CSV");
+    expect(rows.map(r => [new Date(r.datetime).toISOString(), r.dens]))
+      .toEqual([["2023-09-09T00:00:00.000Z", 72.5], ["2023-09-09T00:10:00.000Z", 90]]);
+  });
+});

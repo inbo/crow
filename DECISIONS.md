@@ -27,3 +27,8 @@ Append-only, newest last. Detailed rationale belongs in an ADR under `docs/adr/`
 **What:** Moved to Vue 3.5, vue-router 5, Pinia 4, bootstrap-vue-next and Bootstrap 5.3, keeping the Options API; hover popovers on SVG elements use the v-b-popover directive.
 **Why:** Vue 2 and bootstrap-vue are end of life, and bootstrap-vue cannot run Bootstrap 5; a <b-popover> declared inside an <svg> gets the SVG namespace (Teleport included) and never shows, while the directive mounts each popover in its own HTML tree.
 **Rejected:** A custom shared tooltip for the charts - more code for the same result; a <script setup> rewrite - a refactor with no behaviour change, left for later.
+
+## 2026-11-19 - Floor CSV vpts timestamps to the app resolution
+**What:** parseCSVVpts now floors each datetime to appTemporalResolution, as parseVol2birdVpts already did (issue #198).
+**Why:** Aloftdata CSV timestamps can be seconds off the minute (nlhrw at HH:MM:04Z); unfloored rows matched no slot and were all dropped, showing "No data found".
+**Rejected:** Rounding to the nearest slot - would differ from the vol2bird downsampling the charts rely on.
