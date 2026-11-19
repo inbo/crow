@@ -1,4 +1,5 @@
 import { mountChart } from "./support"
+import { useUserChoicesStore } from "../../src/store/UserChoicesStore"
 import TimelineChart from "../../src/components/TimelineChart.vue"
 import moment from "moment-timezone";
 
@@ -72,7 +73,37 @@ test("Have popovers when asked in the config", () => {
   });
 
   expect(document.body.querySelectorAll(".popover").length - before).toBe(12); // 1 per period
-  // TODO: check popover content
+});
+
+test("Popovers show the period time, name and sun elevation", async () => {
+  /*
+  Each band's popover has the period start as title (in the selected time
+  display, with the tooltip format) and the translated, capitalised period name
+  with the sun elevation rounded to 2 decimals as body. A sun at -5 degrees is
+  twilight, not night (night starts below -18). The text follows the selected
+  language.
+  */
+  const before = document.body.querySelectorAll(".popover").length;
+  mountChart(TimelineChart, {
+    styleConfig: { ...styleConfig, showTooltip: true, tooltipTimeFormat: "MMM D - HH:mm z" },
+    showTimeAs: "UTC",
+    periods: [
+      { moment: moment("2020-01-23T10:30:00.000Z"), sunAltitude: 19.200964203532266 },
+      { moment: moment("2020-01-23T10:35:00.000Z"), sunAltitude: -5 }
+    ]
+  });
+  const popovers = () => [...document.body.querySelectorAll(".popover")].slice(before)
+    .map(p => [p.querySelector(".popover-header").textContent, p.querySelector(".popover-body").textContent]);
+
+  expect(popovers()).toEqual([
+    ["Jan 23 - 10:30 UTC", "Day (solar elevation angle : 19.20\u00b0)"],
+    ["Jan 23 - 10:35 UTC", "Twilight (solar elevation angle : -5.00\u00b0)"]
+  ]);
+
+  useUserChoicesStore().setSelectedLanguageCode("fr");
+  await new Promise(resolve => setTimeout(resolve));
+  expect(popovers()[1][1]).toBe("Cr\u00e9puscule (angle d'\u00e9l\u00e9vation solaire : -5.00\u00b0)");
+  useUserChoicesStore().setSelectedLanguageCode("en");
 });
 
 test("Don't have popovers when asked in the config", () => {
@@ -94,8 +125,6 @@ test("Don't have popovers when asked in the config", () => {
   expect(document.body.querySelectorAll(".popover").length).toBe(before);
 });
 
-
-// TODO: check popover content
 
 test("TimelineChart axis can be disabled", () => {
   /*
