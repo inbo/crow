@@ -125,7 +125,8 @@ function parseCSVVpts(responseString: string): VPTSDataRowFromFile[] {
 
   let r = d.map(function (row) {
     return {
-      datetime: moment.utc(row.datetime, dateTimeFormat).valueOf(),
+      // Floored like vol2bird: timestamps can be a few seconds off the minute (issue #198)
+      datetime: roundNearest(moment.utc(row.datetime, dateTimeFormat).valueOf(), config.appTemporalResolution * 1000),
       height: parseInt(row.height),
       dd: parseFloat(row.dd),
       ff: parseFloat(row.ff),

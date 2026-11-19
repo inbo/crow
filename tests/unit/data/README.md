@@ -20,3 +20,4 @@ Then saved the file with:
 
 > ts2csv(vpi)
 ```
+- `nlhrw_vpts_20230907.window.csv`, `nlhrw_vpts_20230908.window.csv`: Herwijnen (nlhrw) CSV files from the aloftdata server (`https://aloftdata.s3-eu-west-1.amazonaws.com/baltrad/daily/nlhrw/2023/nlhrw_vpts_YYYYMMDD.csv`), with every timestamp at `HH:MM:04Z` (inbo/crow#198). Trimmed to the rows of the 2023-09-08 radar-local window (07 22:00Z - 08 21:55Z) and to the columns CROW reads; values untouched.

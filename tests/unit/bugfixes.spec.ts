@@ -11,7 +11,8 @@ import VPChart from "@/components/VPChart.vue";
 import VPIChart from "@/components/VPIChart.vue";
 import moment from "moment-timezone";
 import { useUserChoicesStore } from "@/store/UserChoicesStore";
-import { mockMeteoBe, mountChart, mountHome, readBewid, readBioradCsv, restoreMocks, settle } from "./support";
+import { useConfigStore } from "@/store/ConfigStore";
+import { mockMeteoBe, mountChart, mountHome, readBewid, readBioradCsv, readDataFile, restoreMocks, settle } from "./support";
 
 describe("A1 - vol2bird fixed-width parser", () => {
   test("every numeric field matches the whitespace-separated vol2bird columns", () => {
@@ -411,5 +412,60 @@ describe("Out-of-order profiles in a vol2bird file", () => {
     const rows = helpers.parseVpts(header + line("0745", "  4.84") + line("0740", "  5.86") + "\n", "VOL2BIRD");
     expect(rows.map(r => [new Date(r.datetime).toISOString(), r.dens]))
       .toEqual([["2020-10-13T07:40:00.000Z", 5.86], ["2020-10-13T07:40:00.000Z", 4.84]]);
+  });
+});
+
+describe("CSV timestamps not aligned on the minute (issue #198)", () => {
+  test("CSV profiles are floored to the app resolution, like vol2bird ones", () => {
+    /*
+    Aloftdata CSV files can carry timestamps a few seconds past the minute
+    (nlhrw 2023-09-09: every profile at HH:MM:04Z). The CSV parser kept them
+    as-is, so no row matched the empty 10 min slots built by Home and every
+    row was silently dropped: "No data found" although the file had data.
+    The 00:05:04 profile falls in the same slot and is dropped as a duplicate,
+    which is the same downsampling vol2bird data gets.
+    */
+    config.appTemporalResolution = 10 * 60;
+    const header = '"radar","datetime","height","ff","dd","sd_vvp","eta","dens"\n';
+    const csv = header
+      + "nlhrw,2023-09-09T00:00:04Z,200,3.0,129.2,3.3,798.5,72.5\n"
+      + "nlhrw,2023-09-09T00:05:04Z,200,4.0,130.0,3.4,800.0,80.0\n"
+      + "nlhrw,2023-09-09T00:10:04Z,200,5.0,131.0,3.5,810.0,90.0\n";
+
+    const rows = helpers.parseVpts(csv, "CSV");
+    expect(rows.map(r => [new Date(r.datetime).toISOString(), r.dens]))
+      .toEqual([["2023-09-09T00:00:00.000Z", 72.5], ["2023-09-09T00:10:00.000Z", 90]]);
+  });
+
+  test("the real nlhrw files of the issue fill every slot of the window", async () => {
+    /*
+    End-to-end on the files behind the issue URL (nlhrw, 2023-09-08, 24 h,
+    radar local time): the window spans two UTC files, both at HH:MM:04Z.
+    Before the fix not a single row reached Home's grid; now every 10 min
+    slot gets a profile. This repo's config still serves nlhrw from meteo.be
+    in vol2bird format, so the radar is switched to the aloftdata CSV here.
+    */
+    config.appTemporalResolution = 10 * 60;
+    const nlhrw = useConfigStore().availableRadars.flatMap(g => g.options).find(r => r.odimCode === "nlhrw")!;
+    const original = { ...nlhrw };
+    nlhrw.vptsFileFormat = "CSV";
+    nlhrw.endpoint = "https://aloftdata.s3-eu-west-1.amazonaws.com/baltrad/daily/{odimCode}/{yyyy}/{odimCode}_vpts_{yyyymmdd}.csv";
+    mockMeteoBe(url => {
+      const match = url.match(/nlhrw_vpts_(\d{8})\.csv$/);
+      return match ? Promise.resolve({ data: readDataFile(`nlhrw_vpts_${match[1]}.window.csv`) }) : undefined;
+    });
+    try {
+      const wrapper = mountHome({ radar: "nlhrw", date: "2023-09-08", interval: 24, timeDisplay: "radarLocal" });
+      await settle();
+      const slots = Object.values((wrapper.vm as any).radarVpts) as { heightData: Record<string, { noData: boolean }> }[];
+      const filled = slots.filter(s => Object.values(s.heightData).some(h => !h.noData));
+      const storedRows = slots.flatMap(s => Object.values(s.heightData)).filter(h => !h.noData);
+      expect(slots.length).toBe(144);
+      expect(filled.length).toBe(144);
+      expect(storedRows.length).toBe(3201);
+    } finally {
+      Object.assign(nlhrw, original);
+      restoreMocks();
+    }
   });
 });
