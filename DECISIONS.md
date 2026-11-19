@@ -32,3 +32,8 @@ Append-only, newest last. Detailed rationale belongs in an ADR under `docs/adr/`
 **What:** parseCSVVpts now floors each datetime to appTemporalResolution, as parseVol2birdVpts already did (issue #198).
 **Why:** Aloftdata CSV timestamps can be seconds off the minute (nlhrw at HH:MM:04Z); unfloored rows matched no slot and were all dropped, showing "No data found".
 **Rejected:** Rounding to the nearest slot - would differ from the vol2bird downsampling the charts rely on.
+
+## 2026-11-19 - sd_vvp threshold from the data, layer height from the radar config
+**What:** filterVpts/integrateProfile use each CSV row's sd_vvp_threshold (default 2 when absent); Home passes the layer height from the radar's configured heights (issue #288).
+**Why:** A source processed with another threshold or layer height (e.g. S-band, threshold 1) would otherwise give silently wrong bird numbers.
+**Rejected:** Layer height derived from the data - the grid, chart and downsampling are built on the configured heights, and a profile with missing layers would give a wrong step.
