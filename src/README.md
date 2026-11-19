@@ -20,7 +20,7 @@ App
 └── PageFooter
 ```
 
-_Note: [Vuex](https://vuex.vuejs.org/) is used as a centralized data store since many components act on the same data, and therefore share a common state. Since it was only introduced quite late during CROW's development, it is not yet used for all data that could be considered shared state (those live mainly in the `Home` component). Two Vuex data stores with explicit names are currently implemented: `ConfigStore` and `UserChoicesStore`._<!--TODO: update if fully implemented-->
+_Note: [Pinia](https://pinia.vuejs.org/) is used as a centralized data store since many components act on the same data, and therefore share a common state. Since it was only introduced quite late during CROW's development, it is not yet used for all data that could be considered shared state (those live mainly in the `Home` component). Two Pinia stores with explicit names are currently implemented: `ConfigStore` and `UserChoicesStore`._<!--TODO: update if fully implemented-->
 
 CROW's configuration and initial selection (form state) is kept in `src/config.ts`.
 
